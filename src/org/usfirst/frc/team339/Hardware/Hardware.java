@@ -14,12 +14,16 @@
 // ====================================================================
 package org.usfirst.frc.team339.Hardware;
 
+import org.usfirst.frc.team339.HardwareInterfaces.DoubleSolenoid;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
+import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Talon;
 
@@ -156,6 +160,8 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // Compressor class - runs the compressor
 // ====================================
 
+public static Compressor compressor = new Compressor();
+
 // ====================================
 // Pneumatic Control Module
 // ====================================
@@ -166,6 +172,9 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // ------------------------------------
 // Double Solenoids
 // ------------------------------------
+
+public static DoubleSolenoid liftingSolenoid = new DoubleSolenoid(0, 1);// check
+                                                                        // ports
 
 // ------------------------------------
 // Single Solenoids
@@ -185,6 +194,8 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // Potentiometers
 // -------------------------------------
 // -------------------------------------
+
+public static RobotPotentiometer delayPot = new RobotPotentiometer(2);
 
 // -------------------------------------
 // Sonar/Ultrasonic
@@ -219,6 +230,13 @@ public static DriverStation driverStation = DriverStation.getInstance();
 // ------------------------------------
 // Joystick classes
 // ------------------------------------
+public static Joystick rightDriver = new Joystick(0);
+
+public static Joystick leftDriver = new Joystick(1);
+
+public static Joystick rightOperator = new Joystick(2);
+
+public static Joystick leftOperator = new Joystick(3);
 
 // **********************************************************
 // Kilroy's Ancillary classes
