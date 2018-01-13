@@ -14,7 +14,6 @@
 // ====================================================================
 package org.usfirst.frc.team339.Hardware;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
@@ -22,6 +21,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Talon;
 
 
 // -------------------------------------------------------
@@ -64,13 +64,13 @@ public class Hardware
 // ------------------------------------
 // Talon classes
 // ------------------------------------
-public static TalonSRX rightMotor = new TalonSRX(1);
+public static Talon rightDriveMotor = new Talon(1);
 
-public static TalonSRX leftMotor = new TalonSRX(2);
+public static Talon leftDriveMotor = new Talon(2);
 
-public static TalonSRX liftingMotor = new TalonSRX(3);
+public static Talon liftingMotor = new Talon(3);
 
-public static TalonSRX cubeIntakeMotor = new TalonSRX(4);
+public static Talon cubeIntakeMotor = new Talon(4);
 
 // ------------------------------------
 // Victor Classes
@@ -107,13 +107,13 @@ public static SixPositionSwitch autoStateSwitch = new SixPositionSwitch(
 // Encoders
 // ------------------------------------
 
-public static Encoder leftRearEncoder = new Encoder(10, 11);
+public static Encoder leftRearDriveEncoder = new Encoder(10, 11);
 
-public static Encoder rightRearEncoder = new Encoder(12, 13);
+public static Encoder rightRearDriveEncoder = new Encoder(12, 13);
 
-public static Encoder leftFrontEncoder = new Encoder(14, 15);
+public static Encoder leftFrontDriveEncoder = new Encoder(14, 15);
 
-public static Encoder rightFrontEncoder = new Encoder(16, 17);
+public static Encoder rightFrontDriveEncoder = new Encoder(16, 17);
 
 public static Encoder liftingEncoder = new Encoder(18, 19);
 
@@ -190,7 +190,9 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // Sonar/Ultrasonic
 // -------------------------------------
 
-public static UltraSonic frontUltraSonic = new UltraSonic(1);
+public static UltraSonic frontUltraSonic = new UltraSonic(0);
+
+public static UltraSonic rearUltraSonic = new UltraSonic(1);
 
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
