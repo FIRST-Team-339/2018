@@ -31,7 +31,7 @@
 // ====================================================================
 package org.usfirst.frc.team339.robot;
 
-
+import org.usfirst.frc.team339.Hardware.Hardware;
 
 /**
  * An Autonomous class.
@@ -64,6 +64,13 @@ public static void init ()
 
 } // end Init
 
+public static enum State
+    {
+INIT, FINISH
+    }
+
+
+public static State autoState = State.INIT;
 
 /**
  * User Periodic code for autonomous mode should go here. Will be called
@@ -74,7 +81,26 @@ public static void init ()
  */
 public static void periodic ()
 {
+    if (Hardware.disableAutoSwitch.get() == false)
+        {
+        switch (autoState)
+            {
+            case INIT:
 
+
+
+                break;
+
+            case FINISH:
+
+
+                break;
+
+            default:
+                break;
+            }
+        }
 }
 
 } // end class
+

@@ -14,7 +14,14 @@
 // ====================================================================
 package org.usfirst.frc.team339.Hardware;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
+import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
+import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
+import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Relay;
 
 
 // -------------------------------------------------------
@@ -57,6 +64,13 @@ public class Hardware
 // ------------------------------------
 // Talon classes
 // ------------------------------------
+public static TalonSRX rightMotor = new TalonSRX(1);
+
+public static TalonSRX leftMotor = new TalonSRX(2);
+
+public static TalonSRX liftingMotor = new TalonSRX(3);
+
+public static TalonSRX cubeIntakeMotor = new TalonSRX(4);
 
 // ------------------------------------
 // Victor Classes
@@ -70,12 +84,20 @@ public class Hardware
 // Relay classes
 // ====================================
 
+public static Relay ringLightRelay = new Relay(0);
+
 // ====================================
 // Digital Inputs
 // ====================================
 // ------------------------------------
 // Single and double throw switches
 // ------------------------------------
+
+public static SingleThrowSwitch disableAutoSwitch = new SingleThrowSwitch(
+        23);
+
+public static SixPositionSwitch autoStateSwitch = new SixPositionSwitch(
+        1, 2, 3, 4, 5, 6);
 
 // ------------------------------------
 // Gear Tooth Sensors
@@ -84,6 +106,18 @@ public class Hardware
 // ------------------------------------
 // Encoders
 // ------------------------------------
+
+public static Encoder leftRearEncoder = new Encoder(10, 11);
+
+public static Encoder rightRearEncoder = new Encoder(12, 13);
+
+public static Encoder leftFrontEncoder = new Encoder(14, 15);
+
+public static Encoder rightFrontEncoder = new Encoder(16, 17);
+
+public static Encoder liftingEncoder = new Encoder(18, 19);
+
+public static Encoder cubeIntakeEncoder = new Encoder(20, 21);
 
 // -----------------------
 // Wiring diagram
@@ -104,6 +138,12 @@ public class Hardware
 // -------------------------------------
 // Red Light/IR Sensor class
 // -------------------------------------
+
+public static LightSensor rightRedLight = new LightSensor(7);
+
+public static LightSensor leftRedLight = new LightSensor(8);
+
+public static LightSensor cubePhotoSwitch = new LightSensor(22);
 
 // ====================================
 // I2C Classes
@@ -149,6 +189,8 @@ public class Hardware
 // -------------------------------------
 // Sonar/Ultrasonic
 // -------------------------------------
+
+public static UltraSonic frontUltraSonic = new UltraSonic(1);
 
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
