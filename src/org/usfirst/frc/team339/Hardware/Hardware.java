@@ -121,8 +121,6 @@ public static Encoder rightFrontDriveEncoder = new Encoder(16, 17);
 
 public static Encoder liftingEncoder = new Encoder(18, 19);
 
-public static Encoder cubeIntakeEncoder = new Encoder(20, 21);
-
 // -----------------------
 // Wiring diagram
 // -----------------------
