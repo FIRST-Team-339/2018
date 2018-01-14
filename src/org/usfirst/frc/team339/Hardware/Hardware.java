@@ -14,18 +14,18 @@
 // ====================================================================
 package org.usfirst.frc.team339.Hardware;
 
-import org.usfirst.frc.team339.HardwareInterfaces.DoubleSolenoid;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
-import edu.wpi.first.wpilibj.Compressor;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Victor;
 
 
 // -------------------------------------------------------
@@ -68,24 +68,26 @@ public class Hardware
 // ------------------------------------
 // Talon classes
 // ------------------------------------
-public static Talon rightDriveMotor = new Talon(1);
+public static Talon rightDriveMotor = new Talon(2);
 
-public static Talon leftDriveMotor = new Talon(2);
+public static Talon leftDriveMotor = new Talon(3);
 
-public static Talon liftingMotor = new Talon(3);
-
-public static Talon cubeIntakeMotor = new Talon(4);
 
 // ------------------------------------
 // Victor Classes
 // ------------------------------------
+public static Victor liftingMotor = new Victor(0);
+
+public static Victor cubeIntakeMotor = new Victor(1);
+
+public static Victor intakeDeployArm = new Victor(4);
 
 // ====================================
 // CAN classes
 // ====================================
 
 // ====================================
-// Relay classes
+// Relay clases
 // ====================================
 
 public static Relay ringLightRelay = new Relay(0);
@@ -121,7 +123,7 @@ public static Encoder rightFrontDriveEncoder = new Encoder(16, 17);
 
 public static Encoder liftingEncoder = new Encoder(18, 19);
 
-public static Encoder cubeIntakeEncoder = new Encoder(20, 21);
+public static Encoder intakeDeployEncoder = new Encoder(23, 24);
 
 // -----------------------
 // Wiring diagram
@@ -160,8 +162,6 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // Compressor class - runs the compressor
 // ====================================
 
-public static Compressor compressor = new Compressor();
-
 // ====================================
 // Pneumatic Control Module
 // ====================================
@@ -173,8 +173,6 @@ public static Compressor compressor = new Compressor();
 // Double Solenoids
 // ------------------------------------
 
-public static DoubleSolenoid liftingSolenoid = new DoubleSolenoid(0, 1);// check
-                                                                        // ports
 
 // ------------------------------------
 // Single Solenoids
@@ -195,7 +193,8 @@ public static DoubleSolenoid liftingSolenoid = new DoubleSolenoid(0, 1);// check
 // -------------------------------------
 // -------------------------------------
 
-public static RobotPotentiometer delayPot = new RobotPotentiometer(2);
+public static RobotPotentiometer delayPot = new RobotPotentiometer(2,
+        270);
 
 // -------------------------------------
 // Sonar/Ultrasonic
@@ -253,7 +252,8 @@ public static Joystick leftOperator = new Joystick(3);
 // ------------------------------------
 // Transmission class
 // ------------------------------------
-
+public static TractionTransmission tractionDrive = new TractionTransmission(
+        leftDriveMotor, rightDriveMotor);
 // ------------------------------------
 // Drive system
 // ------------------------------------
