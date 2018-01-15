@@ -19,6 +19,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
@@ -69,7 +70,7 @@ public class Hardware
 // ------------------------------------
 // Talon classes
 // ------------------------------------
-public static Talon rightDriveMotor = new Talon(1);
+public static Talon rightDriveMotor = new Talon(2);
 
 public static Talon leftDriveMotor = new Talon(3);
 
@@ -88,7 +89,7 @@ public static Victor intakeDeployArm = new Victor(4);
 // ====================================
 
 // ====================================
-// Relay clases
+// Relay classes
 // ====================================
 
 public static Relay ringLightRelay = new Relay(0);
@@ -101,7 +102,7 @@ public static Relay ringLightRelay = new Relay(0);
 // ------------------------------------
 
 public static SingleThrowSwitch disableAutoSwitch = new SingleThrowSwitch(
-        23);
+        20);
 
 public static SixPositionSwitch autoStateSwitch = new SixPositionSwitch(
         1, 2, 3, 4, 5, 6);
@@ -256,14 +257,13 @@ public static Joystick leftOperator = new Joystick(3);
 // ------------------------------------
 public static TractionTransmission tractionDrive = new TractionTransmission(
         leftDriveMotor, rightDriveMotor);
+
 // ------------------------------------
 // Drive system
 // ------------------------------------
-
-// =====================================================================
-// Drive classes
-// =====================================================================
-
+public static Drive autoDrive = new Drive(tractionDrive,
+        leftFrontDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
+        rearUltraSonic, null);
 // -------------------
 // Assembly classes (e.g. forklift)
 // -------------------
