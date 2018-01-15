@@ -102,7 +102,6 @@ public static void periodic ()
         }
     System.out.println(switchSide);
 
-
     if (Hardware.disableAutoSwitch.get() == false)
         {
         switch (autoState)
@@ -117,6 +116,7 @@ public static void periodic ()
                                 * Hardware.delayPot.get(0.0, 1.0))
                     {
                     // determine which auto to use
+                    // autoState = State.
                     break;
                     }
 
