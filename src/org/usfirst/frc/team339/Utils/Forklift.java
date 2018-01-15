@@ -19,6 +19,8 @@ private Victor intakeMotor = null;
 
 private Victor intakeDeployMotor = null;
 
+private Encoder intakeDeployEncoder = null;
+
 private LightSensor intakeSwitch = null;
 
 private Encoder forkliftEncoder = null;
@@ -32,13 +34,14 @@ private Encoder forkliftEncoder = null;
  */
 public Forklift (Victor forkliftMotor, Victor intakeMotor,
         LightSensor intakeSwitch, Encoder forkliftEncoder,
-        Victor intakeDeploy)
+        Victor intakeDeploy, Encoder intakeDeployEncoder)
 {
     this.forkliftMotor = forkliftMotor;
     this.intakeMotor = intakeMotor;
     this.intakeSwitch = intakeSwitch;
     this.forkliftEncoder = forkliftEncoder;
     this.intakeDeployMotor = intakeDeploy;
+    this.intakeDeployEncoder = intakeDeployEncoder;
 
 }
 
@@ -98,6 +101,11 @@ public boolean pushOutCube ()
         return false;
         }
     this.intakeMotor.set(0);
+    return true;
+}
+
+public boolean deployCubeIntake ()
+{
     return true;
 }
 
