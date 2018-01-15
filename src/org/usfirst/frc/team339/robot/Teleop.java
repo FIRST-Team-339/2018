@@ -72,20 +72,55 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-
     // =================================================================
     // CAMERA CODE
     // =================================================================
 
-
     // =================================================================
     // Driving code
     // =================================================================
-    Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
-            Hardware.rightDriver.getY());
+
+    if (isTestingDrive == false)
+        Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
+                Hardware.rightDriver.getY());
+
+    if (Hardware.leftDriver.getRawButton(9))
+        isTestingDrive = true;
+    
+    if (isTestingDrive == true)
+        {
+
+        if (testingDriveState == 0)
+            if (Hardware.autoDrive.driveInches(36, .6))
+                testingDriveState++;
+        if (testingDriveState == 1)
+            if (Hardware.autoDrive.brake())
+                {
+                testingDriveState = 0;
+                isTestingDrive = false;
+                }
+
+        if (Hardware.leftDriver.getRawButton(10))
+            {
+            testingDriveState = 0;
+            isTestingDrive = false;
+            }
+
+        }
+
+    Hardware.autoDrive.setBrakeScalingFactor(
+            ((Hardware.leftDriver.getThrottle() + 1) / 2) * 20);
+    System.out.println("Brake Scaling Factor: "
+            + ((Hardware.leftDriver.getThrottle() + 1) / 2) * 20);
+
+
 }
 // end
 // Periodic
+
+private static boolean isTestingDrive = false;
+
+private static int testingDriveState = 0;
 
 /**
  * stores print statements for future use in the print "bank", statements
