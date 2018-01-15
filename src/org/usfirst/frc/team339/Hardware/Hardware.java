@@ -87,7 +87,7 @@ public static Victor intakeDeployArm = new Victor(4);
 // ====================================
 
 // ====================================
-// Relay clases
+// Relay classes
 // ====================================
 
 public static Relay ringLightRelay = new Relay(0);
