@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
@@ -43,6 +44,8 @@ import edu.wpi.first.wpilibj.Victor;
 
 public class Hardware
 {
+public static Servo climbingMechanismServo = new Servo(5); // 5 is not set
+
 // ------------------------------------
 // Public Constants
 // ------------------------------------
