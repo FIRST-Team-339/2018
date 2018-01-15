@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * An Autonomous class.
@@ -60,7 +61,8 @@ public class Autonomous
  */
 public static void init ()
 {
-
+    Hardware.autoTimer.reset();
+    Hardware.autoTimer.start();
 
 } // end Init
 
@@ -69,6 +71,13 @@ public static enum State
 INIT, FINISH
     }
 
+public static enum Switch
+    {
+LEFT, RIGHT, NULL
+    }
+
+
+public static Switch switchSide = Switch.NULL;
 
 public static State autoState = State.INIT;
 
@@ -81,13 +90,35 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
+    String gameData;
+    gameData = DriverStation.getInstance().getGameSpecificMessage();
+    if (gameData.charAt(0) == 'L')
+        {
+        switchSide = Switch.LEFT;
+        }
+    else
+        {
+        switchSide = Switch.RIGHT;
+        }
+    System.out.println(switchSide);
+
+
     if (Hardware.disableAutoSwitch.get() == false)
         {
         switch (autoState)
             {
             case INIT:
-
-
+                if (Hardware.disableAutoSwitch.get() == true)
+                    {
+                    break;
+                    }
+                if (Hardware.delayPot.get(0.0, 1.0) > 0.2
+                        && Hardware.autoTimer.get() >= 5
+                                * Hardware.delayPot.get(0.0, 1.0))
+                    {
+                    // determine which auto to use
+                    break;
+                    }
 
                 break;
 
