@@ -19,12 +19,15 @@ import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 
 
@@ -41,6 +44,8 @@ import edu.wpi.first.wpilibj.Victor;
 
 public class Hardware
 {
+public static Servo climbingMechanismServo = new Servo(5); // 5 is not set
+
 // ------------------------------------
 // Public Constants
 // ------------------------------------
@@ -87,7 +92,7 @@ public static Victor intakeDeployArm = new Victor(4);
 // ====================================
 
 // ====================================
-// Relay clases
+// Relay classes
 // ====================================
 
 public static Relay ringLightRelay = new Relay(0);
@@ -100,7 +105,7 @@ public static Relay ringLightRelay = new Relay(0);
 // ------------------------------------
 
 public static SingleThrowSwitch disableAutoSwitch = new SingleThrowSwitch(
-        23);
+        20);
 
 public static SixPositionSwitch autoStateSwitch = new SixPositionSwitch(
         1, 2, 3, 4, 5, 6);
@@ -122,6 +127,7 @@ public static Encoder leftFrontDriveEncoder = new Encoder(14, 15);
 public static Encoder rightFrontDriveEncoder = new Encoder(16, 17);
 
 public static Encoder liftingEncoder = new Encoder(18, 19);
+
 
 public static Encoder intakeDeployEncoder = new Encoder(23, 24);
 
@@ -254,14 +260,13 @@ public static Joystick leftOperator = new Joystick(3);
 // ------------------------------------
 public static TractionTransmission tractionDrive = new TractionTransmission(
         leftDriveMotor, rightDriveMotor);
+
 // ------------------------------------
 // Drive system
 // ------------------------------------
-
-// =====================================================================
-// Drive classes
-// =====================================================================
-
+public static Drive autoDrive = new Drive(tractionDrive,
+        leftFrontDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
+        rearUltraSonic, null);
 // -------------------
 // Assembly classes (e.g. forklift)
 // -------------------
@@ -269,5 +274,7 @@ public static TractionTransmission tractionDrive = new TractionTransmission(
 // ------------------------------------
 // Utility classes
 // ------------------------------------
+
+public static final Timer autoTimer = new Timer();
 
 } // end class
