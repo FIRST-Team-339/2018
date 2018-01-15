@@ -68,7 +68,7 @@ public class Hardware
 // ------------------------------------
 // Talon classes
 // ------------------------------------
-public static Talon rightDriveMotor = new Talon(2);
+public static Talon rightDriveMotor = new Talon(1);
 
 public static Talon leftDriveMotor = new Talon(3);
 
@@ -87,7 +87,7 @@ public static Victor intakeDeployArm = new Victor(4);
 // ====================================
 
 // ====================================
-// Relay clases
+// Relay classes
 // ====================================
 
 public static Relay ringLightRelay = new Relay(0);
@@ -122,6 +122,7 @@ public static Encoder leftFrontDriveEncoder = new Encoder(14, 15);
 public static Encoder rightFrontDriveEncoder = new Encoder(16, 17);
 
 public static Encoder liftingEncoder = new Encoder(18, 19);
+
 
 public static Encoder intakeDeployEncoder = new Encoder(23, 24);
 
