@@ -19,6 +19,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
@@ -255,14 +256,13 @@ public static Joystick leftOperator = new Joystick(3);
 // ------------------------------------
 public static TractionTransmission tractionDrive = new TractionTransmission(
         leftDriveMotor, rightDriveMotor);
+
 // ------------------------------------
 // Drive system
 // ------------------------------------
-
-// =====================================================================
-// Drive classes
-// =====================================================================
-
+public static Drive autoDrive = new Drive(tractionDrive,
+        leftFrontDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
+        rearUltraSonic, null);
 // -------------------
 // Assembly classes (e.g. forklift)
 // -------------------

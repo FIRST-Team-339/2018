@@ -31,6 +31,8 @@
 // ====================================================================
 package org.usfirst.frc.team339.robot;
 
+import org.usfirst.frc.team339.Hardware.Hardware;
+
 /**
  * This class contains all of the user code for the Autonomous part of the
  * match, namely, the Init and Periodic code
@@ -70,20 +72,46 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-
     // =================================================================
     // CAMERA CODE
     // =================================================================
-
 
     // =================================================================
     // Driving code
     // =================================================================
 
 
+    if (isTestingDrive == true)
+        {
+        
+        if (testingDriveState == 0)
+            if (Hardware.autoDrive.driveInches(36, .6))
+                testingDriveState++;
+        if (testingDriveState == 1)
+            if (Hardware.autoDrive.brake())
+                {
+                testingDriveState = 0;
+                isTestingDrive = false;
+                }
+
+        if (Hardware.leftDriver.getRawButton(10))
+            {
+            testingDriveState = 0;
+            isTestingDrive = false;
+            }
+
+        }
+    
+    Hardware.autoDrive.setBrakeScalingFactor(Hardware.leftDriver.getThrottle() * 5);
+
+
 }
 // end
 // Periodic
+
+private static boolean isTestingDrive = false;
+
+private static int testingDriveState = 0;
 
 /**
  * stores print statements for future use in the print "bank", statements
