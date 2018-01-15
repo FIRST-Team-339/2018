@@ -66,7 +66,7 @@ public static void init ()
  */
 public static void periodic ()
 {
-
+    printStatements();
 
     // =================================================================
     // OPERATOR CONTROLS
@@ -144,7 +144,6 @@ public static void printStatements ()
     // =================================
     // Motor
     // Prints the value of motors
-
     // =================================
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
@@ -258,6 +257,8 @@ public static void printStatements ()
     // =========================
     // Servos
     // =========================
+    // System.out.println("Climbing Mechanism Servo" +
+    // Hardware.climbingMechanismServo.get());
     //
     // ================
     // GYRO
