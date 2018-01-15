@@ -86,7 +86,7 @@ public static void periodic ()
 
     if (Hardware.leftDriver.getRawButton(9))
         isTestingDrive = true;
-    
+
     if (isTestingDrive == true)
         {
 
@@ -114,6 +114,7 @@ public static void periodic ()
             + ((Hardware.leftDriver.getThrottle() + 1) / 2) * 20);
 
 
+    printStatements();
 }
 // end
 // Periodic
@@ -145,15 +146,15 @@ public static void printStatements ()
     // Prints the value of motors
 
     // =================================
-    System.out.println(
-            "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    System.out.println(
-            "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    System.out.println(
-            "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    System.out.println(
-            "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+    // System.out.println(
+    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    // System.out.println(
+    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println(
+    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+    // System.out.println(
+    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -162,8 +163,8 @@ public static void printStatements ()
     // =================================
     // Relay
     // =================================
-    System.out.println(
-            "Ring Light Relay " + Hardware.ringLightRelay.get());
+    // System.out.println(
+    // "Ring Light Relay " + Hardware.ringLightRelay.get());
 
     // =================================
     // Digital Inputs
@@ -173,36 +174,54 @@ public static void printStatements ()
     // Switches
     // prints state of switches
     // ---------------------------------
-    System.out.println(
-            "Disable Auto Switch " + Hardware.disableAutoSwitch.isOn());
-    System.out.println("Auto State Switch "
-            + Hardware.autoStateSwitch.getPosition());
+    // System.out.println(
+    // "Disable Auto Switch " + Hardware.disableAutoSwitch.isOn());
+    // System.out.println("Auto State Switch "
+    // + Hardware.autoStateSwitch.getPosition());
 
     // ---------------------------------
     // Encoders
-    System.out.println("Left Front Drive Encoder Distance"
-            + Hardware.leftFrontDriveEncoder.getDistance());
-    System.out.println("Right Front Drive Encoder Distance "
-            + Hardware.rightFrontDriveEncoder.getDistance());
-    System.out.println("Left Rear Drive Encoder Distance "
-            + Hardware.leftRearDriveEncoder.getDistance());
-    System.out.println("Right Rear Drive Encoder Distance "
-            + Hardware.rightRearDriveEncoder.getDistance());
-    System.out.println(
-            "Lifting Encoder " + Hardware.liftingEncoder.getDistance());
-    System.out.println("Intake Deploy Encoder "
-            + Hardware.intakeDeployEncoder.getDistance());
+    // System.out.println("Left Front Drive Encoder Distance"
+    // + Hardware.leftFrontDriveEncoder.getDistance());
+    // System.out.println("Right Front Drive Encoder Distance "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
+    // System.out.println("Left Rear Drive Encoder Distance "
+    // + Hardware.leftRearDriveEncoder.getDistance());
+    // System.out.println("Right Rear Drive Encoder Distance "
+    // + Hardware.rightRearDriveEncoder.getDistance());
+    // System.out.println(
+    // "Lifting Encoder " + Hardware.liftingEncoder.getDistance());
+    // System.out.println("Intake Deploy Encoder "
+    // + Hardware.intakeDeployEncoder.getDistance());
+
+    // System.out.println("Left Front Encoder: "
+    // + Hardware.leftFrontDriveEncoder.get());
+    // System.out.println("Left Rear Encoder: "
+    // + Hardware.leftRearDriveEncoder.get());
+    // System.out.println("Right Front Encoder: "
+    // + Hardware.rightFrontDriveEncoder.get());
+    // System.out.println("Right Rear Encoder: "
+    // + Hardware.rightRearDriveEncoder.get());
+
+     System.out.println("Left Front Encoder: "
+     + Hardware.leftFrontDriveEncoder.getRate());
+     System.out.println("Left Rear Encoder: "
+     + Hardware.leftRearDriveEncoder.getRate());
+     System.out.println("Right Front Encoder: "
+     + Hardware.rightFrontDriveEncoder.getRate());
+     System.out.println("Right Rear Encoder: "
+     + Hardware.rightRearDriveEncoder.getRate());
     // ---------------------------------
 
     // ---------------------------------
     // Red Light/IR Sensors
     // prints the state of the sensor
     // ---------------------------------
-    System.out
-            .println("Right Red Light " + Hardware.rightRedLight.get());
-    System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
+    // System.out
+    // .println("Right Red Light " + Hardware.rightRedLight.get());
+    // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
+    // System.out.println(
+    // "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
 
     // =================================
     // Pneumatics
@@ -226,16 +245,16 @@ public static void printStatements ()
     // pots
     // where the pot is turned to
     // ---------------------------------
-    System.out
-            .println("Delay Potentiometer " + Hardware.delayPot.get());
+    // System.out
+    // .println("Delay Potentiometer " + Hardware.delayPot.get());
 
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    System.out.println("Front UltraSonic "
-            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    System.out.println("Rear UltraSonic "
-            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Front UltraSonic "
+    // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Rear UltraSonic "
+    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     // =========================
     // Servos
     // =========================
@@ -261,14 +280,14 @@ public static void printStatements ()
     // Joysticks
     // information about the joysticks
     // ---------------------------------
-    System.out.println(
-            "Right Driver Joystick " + Hardware.rightDriver.getY());
-    System.out.println(
-            "Left Driver Joystick " + Hardware.leftDriver.getY());
-    System.out.println(
-            "Right Operator Joystick " + Hardware.rightOperator.getY());
-    System.out.println(
-            "Left Operator Joystick " + Hardware.leftOperator.getY());
+    // System.out.println(
+    // "Right Driver Joystick " + Hardware.rightDriver.getY());
+    // System.out.println(
+    // "Left Driver Joystick " + Hardware.leftDriver.getY());
+    // System.out.println(
+    // "Right Operator Joystick " + Hardware.rightOperator.getY());
+    // System.out.println(
+    // "Left Operator Joystick " + Hardware.leftOperator.getY());
     // =================================
     // Kilroy ancillary items
     // =================================

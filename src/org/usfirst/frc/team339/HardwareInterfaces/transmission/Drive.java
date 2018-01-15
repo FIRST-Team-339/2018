@@ -364,9 +364,9 @@ public boolean brake ()
             rightRearEncoder.getRate() * brakeScalar);
 
     getTransmission().getSpeedController(MotorPosition.LEFT_REAR)
-            .set(this.brakeMotorPower[0]);
+            .set(-this.brakeMotorPower[0]);
     getTransmission().getSpeedController(MotorPosition.RIGHT_REAR)
-            .set(this.brakeMotorPower[1]);
+            .set(-this.brakeMotorPower[1]);
 
     // Only test the other encoders if it is a 4 wheel system
     if (transmissionType != TransmissionType.TRACTION)
@@ -376,9 +376,9 @@ public boolean brake ()
         this.brakeMotorPower[3] = inRange(rightFrontEncoder.getRate()
                 * brakeScalar);
         getTransmission().getSpeedController(MotorPosition.LEFT_FRONT)
-                .set(this.brakeMotorPower[2]);
+                .set(-this.brakeMotorPower[2]);
         getTransmission().getSpeedController(MotorPosition.RIGHT_FRONT)
-                .set(this.brakeMotorPower[3]);
+                .set(-this.brakeMotorPower[3]);
         }
 
     // Use boolean short circuiting to test the powers and transmission types
@@ -760,7 +760,7 @@ private static final int COLLECTION_TIME = 10;
 
 // The change in inches per [COLLECTION_TIME] where the robot is considered
 // "stopped".
-private static final double BRAKE_DEADBAND = .1;
+private static final double BRAKE_DEADBAND = .2;
 
 // The distance from the left side wheel to the right-side wheel divided by
 // 2, in inches. Used in turnDegrees.
