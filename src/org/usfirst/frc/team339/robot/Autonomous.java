@@ -61,8 +61,20 @@ public class Autonomous
  */
 public static void init ()
 {
-    Hardware.autoTimer.reset();
-    Hardware.autoTimer.start();
+    // Testing the game data the driver station provides us with
+    String gameData;
+    gameData = DriverStation.getInstance().getGameSpecificMessage();
+
+    if (gameData.charAt(0) == 'L')
+        {
+        switchSide = Switch.LEFT;
+        }
+    else
+        {
+        switchSide = Switch.RIGHT;
+        }
+
+    System.out.println(switchSide);
 
 } // end Init
 
@@ -70,7 +82,8 @@ public static void init ()
 // State of autonomous
 public static enum State
     {
-INIT, DRIVEACROSSBASELINE, DRIVETOSAMESIDESCALE, FINISH
+INIT, DELAY, DRIVEACROSSBASELINE, DRIVETOSAMESIDESCALE, FINISH
+
     }
 
 public static enum Switch
@@ -92,52 +105,40 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-    String gameData;
-    gameData = DriverStation.getInstance().getGameSpecificMessage();
-    if (gameData.charAt(0) == 'L')
+    if (Hardware.disableAutoSwitch.isOn() == true)
+        return;
+
+    switch (autoState)
         {
-        switchSide = Switch.LEFT;
+        case INIT:
+            // Reset and start the delay timer
+            Hardware.autoTimer.reset();
+            Hardware.autoTimer.start();
+            break;
+
+        case DELAY:
+            // Delay using the potentiometer, from 0 to 5 seconds
+            if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
+                    5.0))
+                {
+                // determine which auto to use
+                // autoState = State.
+                break;
+                }
+
+        case DRIVEACROSSBASELINE:
+            Hardware.autoDrive.driveInches(120, 0.5);
+            // autoState = State.FINISH;
+            break;
+
+        case FINISH:
+
+            break;
+
+        default:
+            break;
         }
-    else
-        {
-        switchSide = Switch.RIGHT;
-        }
-    System.out.println(switchSide);
 
-    if (Hardware.disableAutoSwitch.get() == false)
-        {
-        switch (autoState)
-            {
-            case INIT:
-                if (Hardware.disableAutoSwitch.get() == true)
-                    {
-                    break;
-                    }
-                if (Hardware.delayPot.get(0.0, 1.0) > 0.2
-                        && Hardware.autoTimer.get() >= 5
-                                * Hardware.delayPot.get(0.0, 1.0))
-                    {
-                    // determine which auto to use
-                    // autoState = State.
-                    break;
-                    }
-
-                break;
-
-            case DRIVEACROSSBASELINE:
-                Hardware.autoDrive.driveInches(120, 0.5);
-                // autoState = State.FINISH;
-                break;
-
-            case FINISH:
-
-
-                break;
-
-            default:
-                break;
-            }
-        }
 }
 
 } // end class

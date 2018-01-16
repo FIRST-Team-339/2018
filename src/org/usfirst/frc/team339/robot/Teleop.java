@@ -66,7 +66,6 @@ public static void init ()
  */
 public static void periodic ()
 {
-    printStatements();
 
     // =================================================================
     // OPERATOR CONTROLS
@@ -86,7 +85,7 @@ public static void periodic ()
 
     if (Hardware.leftDriver.getRawButton(9))
         isTestingDrive = true;
-    
+
     if (isTestingDrive == true)
         {
 
@@ -114,6 +113,7 @@ public static void periodic ()
             + ((Hardware.leftDriver.getThrottle() + 1) / 2) * 20);
 
 
+    printStatements();
 }
 // end
 // Periodic
@@ -191,6 +191,24 @@ public static void printStatements ()
     // "Lifting Encoder " + Hardware.liftingEncoder.getDistance());
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
+
+    // System.out.println("Left Front Encoder: "
+    // + Hardware.leftFrontDriveEncoder.get());
+    // System.out.println("Left Rear Encoder: "
+    // + Hardware.leftRearDriveEncoder.get());
+    // System.out.println("Right Front Encoder: "
+    // + Hardware.rightFrontDriveEncoder.get());
+    // System.out.println("Right Rear Encoder: "
+    // + Hardware.rightRearDriveEncoder.get());
+
+    System.out.println("Left Front Encoder: "
+            + Hardware.leftFrontDriveEncoder.getRate());
+    // System.out.println("Left Rear Encoder: "
+    // + Hardware.leftRearDriveEncoder.getRate());
+    System.out.println("Right Front Encoder: "
+            + Hardware.rightFrontDriveEncoder.getRate());
+    // System.out.println("Right Rear Encoder: "
+    // + Hardware.rightRearDriveEncoder.getRate());
     // ---------------------------------
 
     // ---------------------------------
