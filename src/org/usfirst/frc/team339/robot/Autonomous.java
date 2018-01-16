@@ -61,7 +61,7 @@ public class Autonomous
  */
 public static void init ()
 {
-    //Testing the game data the driver station provides us with
+    // Testing the game data the driver station provides us with
     String gameData;
     gameData = DriverStation.getInstance().getGameSpecificMessage();
 
@@ -78,6 +78,8 @@ public static void init ()
 
 } // end Init
 
+
+// State of autonomous
 public static enum State
     {
 INIT, DELAY, CHOOSE_PATH,
@@ -126,14 +128,15 @@ public static void periodic ()
                 autoState = State.CHOOSE_PATH;
                 break;
                 }
+
             break;
         case CHOOSE_PATH:
             
         
             
         break;
-        case FINISH:
 
+        case FINISH:
 
             break;
 
