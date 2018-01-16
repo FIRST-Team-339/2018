@@ -84,12 +84,7 @@ public static void init ()
 // State of autonomous
 public static enum State
     {
-INIT, DELAY, CHOOSE_PATH,
-AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE,
-CENTER_SWITCH,
-SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R,
-OFFSET_SWITCH,
-FINISH
+INIT, DELAY, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
     }
 
 public static enum Switch
@@ -133,18 +128,28 @@ public static void periodic ()
 
             break;
         case CHOOSE_PATH:
-            //FORWARD position 
-            if(Hardware.autoEnableSwitch.getPosition() == Value.kOff)
+            // FORWARD position
+            if (Hardware.autoEnableSwitch.getPosition() == Value.kOff)
                 {
-                
+
                 }
-            else if(Hardware.autoEnableSwitch.getPosition() == Value.kForward)
+            else if (Hardware.autoEnableSwitch
+                    .getPosition() == Value.kForward)
                 {
-                
+
                 }
-        
-            
-        break;
+
+
+            break;
+        case AUTOLINE:
+            Hardware.autoDrive.driveStraightInches(120, .5);
+            autoState = State.FINISH;
+            break;
+
+        case AUTOLINE_SCALE:
+            Hardware.autoDrive.driveInches(207, .7);
+            autoState = State.FINISH;
+            break;
 
         case FINISH:
 
@@ -155,6 +160,45 @@ public static void periodic ()
         }
 
 }
+/*
+ * ================================
+ * Constants
+ * ================================
+ */
+
+// INIT
+
+
+// DELAY
+
+
+// CHOOSE_PATH
+
+
+// AUTOLINE
+
+
+// AUTOLINE_SCALE
+
+
+// AUTOLINE_EXCHANGE
+
+
+// CENTER_SWITCH
+
+
+// SWITCH_OR_SCALE_L
+
+
+// SWITCH_OR_SCALE_R
+
+
+// OFFSET_SWITCH
+
+
+// FINISH
+
+
 
 } // end class
 
