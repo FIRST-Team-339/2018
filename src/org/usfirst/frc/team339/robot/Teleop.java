@@ -203,12 +203,12 @@ public static void printStatements ()
 
     System.out.println("Left Front Encoder: "
             + Hardware.leftFrontDriveEncoder.getRate());
-    System.out.println("Left Rear Encoder: "
-            + Hardware.leftRearDriveEncoder.getRate());
+    // System.out.println("Left Rear Encoder: "
+    // + Hardware.leftRearDriveEncoder.getRate());
     System.out.println("Right Front Encoder: "
             + Hardware.rightFrontDriveEncoder.getRate());
-    System.out.println("Right Rear Encoder: "
-            + Hardware.rightRearDriveEncoder.getRate());
+    // System.out.println("Right Rear Encoder: "
+    // + Hardware.rightRearDriveEncoder.getRate());
     // ---------------------------------
 
     // ---------------------------------

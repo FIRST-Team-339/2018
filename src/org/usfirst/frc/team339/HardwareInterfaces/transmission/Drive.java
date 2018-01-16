@@ -444,6 +444,7 @@ public boolean driveInches (int distance, double speed)
     if (this.isAnyEncoderLargerThan(distance) == true)
         {
         this.driveInchesInit = true;
+        this.getTransmission().stop();
         return true;
         }
 
