@@ -33,6 +33,8 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * An Autonomous class.
@@ -109,7 +111,7 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-    if (Hardware.disableAutoSwitch.isOn() == true)
+    if (Hardware.autoEnableSwitch.getPosition() == Value.kReverse)
         return;
 
     switch (autoState)
@@ -131,7 +133,15 @@ public static void periodic ()
 
             break;
         case CHOOSE_PATH:
-            
+            //FORWARD position 
+            if(Hardware.autoEnableSwitch.getPosition() == Value.kOff)
+                {
+                
+                }
+            else if(Hardware.autoEnableSwitch.getPosition() == Value.kForward)
+                {
+                
+                }
         
             
         break;
