@@ -80,7 +80,12 @@ public static void init ()
 
 public static enum State
     {
-INIT, DELAY, FINISH
+INIT, DELAY, CHOOSE_PATH,
+AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE,
+CENTER_SWITCH,
+SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R,
+OFFSET_SWITCH,
+FINISH
     }
 
 public static enum Switch
@@ -118,12 +123,15 @@ public static void periodic ()
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
                     5.0))
                 {
-                // determine which auto to use
-                // autoState = State.
+                autoState = State.CHOOSE_PATH;
                 break;
                 }
-
             break;
+        case CHOOSE_PATH:
+            
+        
+            
+        break;
         case FINISH:
 
 
