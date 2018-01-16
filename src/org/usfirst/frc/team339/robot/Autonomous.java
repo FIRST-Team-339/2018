@@ -66,9 +66,11 @@ public static void init ()
 
 } // end Init
 
+
+// State of autonomous
 public static enum State
     {
-INIT, FINISH
+INIT, DRIVEACROSSBASELINE, DRIVETOSAMESIDESCALE, FINISH
     }
 
 public static enum Switch
@@ -120,6 +122,11 @@ public static void periodic ()
                     break;
                     }
 
+                break;
+
+            case DRIVEACROSSBASELINE:
+                Hardware.autoDrive.driveInches(120, 0.5);
+                // autoState = State.FINISH;
                 break;
 
             case FINISH:
