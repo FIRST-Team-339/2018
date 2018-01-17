@@ -6,7 +6,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Victor;
 
 /**
- * Class for forklift and intake subsystems
+ * Class for forklift and intake subsystems which includes as of 1/16/2018, an
+ * intake, and an intake deploy thingy
  * 
  * @author Becky Button
  *
@@ -31,6 +32,7 @@ private Encoder forkliftEncoder = null;
  * @param intakeSwitch
  * @param forkliftEncoder
  * @param intakeDeploy
+ * @param intakeDeployEncoder
  */
 public Forklift (Victor forkliftMotor, Victor intakeMotor,
         LightSensor intakeSwitch, Encoder forkliftEncoder,
@@ -54,48 +56,57 @@ public Forklift (Victor forkliftMotor, Victor intakeMotor,
  */
 public double getForkliftHeight ()
 {
-    return forkliftEncoder.getDistance();
+    return this.forkliftEncoder.getDistance();
 }
 
 /**
+ * YO NEWBIES-- USE THIS TO MOVE THE FORKLIFT
  * 
  * @param operatorJoystick
  *            Joystick object
  */
-public void moveLiftWithController (Joystick operatorJoystick)
+public void moveForkliftWithController (Joystick operatorJoystick)
 {
     if (getForkliftHeight() < FORKLIFT_MAX_HEIGHT
             || getForkliftHeight() > FORKLIFT_MIN_HEIGHT)
         {
-        forkliftMotor.set(
+        this.forkliftMotor.set(
                 (operatorJoystick.getY()) * FORKLIFT_SPEED_COEFFICIENT);
         }
     else
         {
-        forkliftMotor.set(0);
+        this.forkliftMotor.set(0);
         }
 }
 
 /**
- * @return
+ * Intake runs until the light switch is on
+ * 
+ * NEWBIES USE ON A BUTTON!!!!
+ * 
+ * @return true if the the cube is in, the light switch is off
  */
 public boolean intakeCube ()
 {
-    if (intakeSwitch.isOn() == false)
+    if (this.intakeSwitch.isOn() == false)
         {
-        intakeMotor.set(INTAKE_SPEED);
+        this.intakeMotor.set(INTAKE_SPEED);
         return false;
         }
-    intakeMotor.set(0);
+    this.intakeMotor.set(0);
     return true;
 }
 
 /**
- * @return
+ * Runs intake in reverse of intakeCube()
+ * 
+ * NEWBIES USE ON A BUTTON!!!!
+ * 
+ * @return true if the light sensor equals true
  */
 public boolean pushOutCube ()
 {
-    if (intakeSwitch.isOn() == true)
+    if (this.intakeSwitch.isOn() == true)
         {
         this.intakeMotor.set(-this.INTAKE_SPEED);
         return false;
@@ -104,8 +115,23 @@ public boolean pushOutCube ()
     return true;
 }
 
+/**
+ * Method for moving deploy arm to the down position
+ * 
+ * NEWBIES CAN IGNORE -- THIS ONLY APPLIES TO AUTO
+ * 
+ * @return true if the arm is down, false if it is still moving
+ */
 public boolean deployCubeIntake ()
 {
+    if (this.intakeDeployEncoder.getDistance() <= INTAKE_ANGLE)
+        {
+        this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+        }
+    else
+        {
+        this.intakeDeployMotor.set(0);
+        }
     return true;
 }
 
@@ -121,48 +147,78 @@ public boolean deployCubeIntake ()
  */
 public void moveIntake (double speed)
 {
-    this.intakeMotor.set(speed);
+    if (Math.abs(speed) > Math.abs(JOYSTICK_DEADBAND))
+        {
+        this.intakeMotor.set(speed);
+        }
 }
 
 /**
- * moves the arm to the desired position
+ * Moves the arm to the desired position, 0 is the bottom, X is the top
+ * 
+ * NEWBIES CAN IGNORE
  * 
  * @param distance
  *            the desired distance the forklift goes in inches.
- * @return true if the forklift is at or above the specified height
+ * @param forkliftSpeed
+ *            the speed of the forklift
+ * @return true if the forklift is at or above the specified height, set the
+ *         distance higher if you are going down from where the forklift was
+ *         initially
  */
-public boolean moveLiftDistance (double distance)
+public boolean moveLiftDistance (double distance, double forkliftSpeed)
 {
     double direction = distance - getForkliftHeight();
     boolean mustGoUp = direction > 1;
-    // if (getForkliftHeight() < distance)
-    // {
-    // forkliftMotor.set(FORKLIFT_SPEED);
-    // return false;
-    // }
-    // else if ()
-    // {
-    // forkliftMotor.set(0);
-    return true;
-    // }
+
+    if (mustGoUp == true)
+        {
+        this.forkliftMotor.set(forkliftSpeed);
+        if (this.forkliftEncoder.getDistance() >= distance)
+            {
+            this.forkliftMotor.set(0);
+            return true;
+            }
+        this.forkliftMotor.set(forkliftSpeed);
+        return false;
+        }
+    this.forkliftMotor.set(-forkliftSpeed);
+    if (this.forkliftEncoder.getDistance() <= distance)
+        {
+        this.forkliftMotor.set(0);
+        return true;
+        }
+    this.forkliftMotor.set(-forkliftSpeed);
+    return false;
 }
 
+/**
+ * Scores a cube on a switch - NEWBIES - SET THIS TO A BUTTON
+ * 
+ * @return true if a cube has been scored in the switch
+ */
 public boolean scoreSwitch ()
 {
     scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
     switch (switchState)
         {
         case MOVE_LIFT:
-            if (moveLiftDistance(SWITCH_HEIGHT) == true)
+            if (moveLiftDistance(SWITCH_HEIGHT, FORKLIFT_SPEED) == true)
                 {
                 switchState = scoreSwitchState.DEPLOY_INTAKE;
                 }
             break;
         case DEPLOY_INTAKE:
-            switchState = scoreSwitchState.SPIT_OUT_CUBE;
+            if (deployCubeIntake() == true)
+                {
+                switchState = scoreSwitchState.SPIT_OUT_CUBE;
+                }
             break;
         case SPIT_OUT_CUBE:
-            switchState = scoreSwitchState.FINISHED;
+            if (pushOutCube() == true)
+                {
+                switchState = scoreSwitchState.FINISHED;
+                }
             break;
         case FINISHED:
             return true;
@@ -209,9 +265,13 @@ private final double FORKLIFT_SPEED = .9;
 
 private final double FORKLIFT_SPEED_COEFFICIENT = .9;
 
-private final double FORKLIFT_UPPER_TOLERANCE = 1.5;
-
 private final double INTAKE_SPEED = .5;
 
 private final double SWITCH_HEIGHT = 30;
+
+private final double INTAKE_ANGLE = 90;
+
+private final double INTAKE_DEPLOY_SPEED = .9;
+
+private final double JOYSTICK_DEADBAND = .2;
 }
