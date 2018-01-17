@@ -33,7 +33,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
@@ -206,14 +205,40 @@ public static void periodic ()
 
 /**
  * Delivers the cube to the switch based on vision processing.
+ * 
  * @return
- *          Whether or not the robot has finished the action
+ *         Whether or not the robot has finished the action
  */
-public static boolean centerSwitchPath()
+public static boolean centerSwitchPath ()
 {
+    switch (visionAuto)
+        {
+        case DRIVE_SIX_INCHES:
+            if (Hardware.autoDrive.driveStraightInches(6, .5) == true)
+                {
 
-return false;
+                }
+            break;
+
+        }
+    return false;
 }
+
+/**
+ * 
+ */
+public static centerState visionAuto = centerState.DRIVE_SIX_INCHES;
+
+/**
+ * Possible states for center vision autonomous
+ * 
+ * @author Becky Button
+ *
+ */
+public static enum centerState
+    {
+DRIVE_SIX_INCHES, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, STOP_BEFORE_PICTURE, DRIVE_BY_CAMERA, DRIVE_BY_US, DEPLOY_INTAKE, SPIT_OUT_CUBE, BRAKE, DONE
+    }
 
 
 /*
@@ -241,6 +266,10 @@ return false;
 
 
 // CENTER_SWITCH
+
+private final double ANGLE_TOWARDS_LEFT = 35;
+
+private final double ANGLE_TOWARDS_RIGHT = 24.5;
 
 
 // SWITCH_OR_SCALE_L
