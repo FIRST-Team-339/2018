@@ -33,6 +33,8 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * An Autonomous class.
@@ -61,14 +63,28 @@ public class Autonomous
  */
 public static void init ()
 {
-    Hardware.autoTimer.reset();
-    Hardware.autoTimer.start();
+    // Testing the game data the driver station provides us with
+    String gameData;
+    gameData = DriverStation.getInstance().getGameSpecificMessage();
+
+    if (gameData.charAt(0) == 'L')
+        {
+        switchSide = Switch.LEFT;
+        }
+    else
+        {
+        switchSide = Switch.RIGHT;
+        }
+
+    System.out.println(switchSide);
 
 } // end Init
 
+
+// State of autonomous
 public static enum State
     {
-INIT, FINISH
+INIT, DELAY, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
     }
 
 public static enum Switch
@@ -90,48 +106,99 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-    String gameData;
-    gameData = DriverStation.getInstance().getGameSpecificMessage();
-    if (gameData.charAt(0) == 'L')
+    if (Hardware.autoEnableSwitch.getPosition() == Value.kReverse)
+        return;
+
+    switch (autoState)
         {
-        switchSide = Switch.LEFT;
-        }
-    else
-        {
-        switchSide = Switch.RIGHT;
-        }
-    System.out.println(switchSide);
+        case INIT:
+            // Reset and start the delay timer
+            Hardware.autoTimer.reset();
+            Hardware.autoTimer.start();
+            break;
 
-    if (Hardware.disableAutoSwitch.get() == false)
-        {
-        switch (autoState)
-            {
-            case INIT:
-                if (Hardware.disableAutoSwitch.get() == true)
-                    {
-                    break;
-                    }
-                if (Hardware.delayPot.get(0.0, 1.0) > 0.2
-                        && Hardware.autoTimer.get() >= 5
-                                * Hardware.delayPot.get(0.0, 1.0))
-                    {
-                    // determine which auto to use
-                    // autoState = State.
-                    break;
-                    }
-
+        case DELAY:
+            // Delay using the potentiometer, from 0 to 5 seconds
+            if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
+                    5.0))
+                {
+                autoState = State.CHOOSE_PATH;
                 break;
+                }
 
-            case FINISH:
+            break;
+        case CHOOSE_PATH:
+            // FORWARD position
+            if (Hardware.autoEnableSwitch.getPosition() == Value.kOff)
+                {
+
+                }
+            else if (Hardware.autoEnableSwitch
+                    .getPosition() == Value.kForward)
+                {
+
+                }
 
 
-                break;
+            break;
+        case AUTOLINE:
+            Hardware.autoDrive.driveStraightInches(120, .5);
+            autoState = State.FINISH;
+            break;
 
-            default:
-                break;
-            }
+        case AUTOLINE_SCALE:
+            Hardware.autoDrive.driveInches(207, .7);
+            autoState = State.FINISH;
+            break;
+
+        case FINISH:
+
+            break;
+
+        default:
+            break;
         }
+
 }
+/*
+ * ================================
+ * Constants
+ * ================================
+ */
+
+// INIT
+
+
+// DELAY
+
+
+// CHOOSE_PATH
+
+
+// AUTOLINE
+
+
+// AUTOLINE_SCALE
+
+
+// AUTOLINE_EXCHANGE
+
+
+// CENTER_SWITCH
+
+
+// SWITCH_OR_SCALE_L
+
+
+// SWITCH_OR_SCALE_R
+
+
+// OFFSET_SWITCH
+
+
+// FINISH
+
+
 
 } // end class
 
