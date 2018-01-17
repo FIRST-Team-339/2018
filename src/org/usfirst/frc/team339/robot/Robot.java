@@ -105,7 +105,14 @@ public void autonomousInit ()
     // =========================================================
     // User code goes below here
     // =========================================================
+    Hardware.rightFrontDriveEncoder.reset();
+    Hardware.leftFrontDriveEncoder.reset();
+    Hardware.rightRearDriveEncoder.reset();
+    Hardware.leftRearDriveEncoder.reset();
+    Hardware.intakeDeployEncoder.reset();
+    Hardware.liftingEncoder.reset();
     Autonomous.init();
+
     // =========================================================
     // User code goes above here
     // =========================================================
@@ -209,6 +216,7 @@ public void disabledPeriodic ()
 @Override
 public void robotInit ()
 {
+    double UltraSonicScalingFactor = .223;
     // ---------------------------------------
     // start setup - tell the user we are beginning
     // setup
@@ -217,7 +225,15 @@ public void robotInit ()
 
     // =========================================================
     // User code goes below here
+    Hardware.rightFrontDriveEncoder.reset();
+    Hardware.leftFrontDriveEncoder.reset();
+    Hardware.rightRearDriveEncoder.reset();
+    Hardware.leftRearDriveEncoder.reset();
+    Hardware.intakeDeployEncoder.reset();
+    Hardware.liftingEncoder.reset();
 
+    Hardware.frontUltraSonic.setScalingFactor(UltraSonicScalingFactor);
+    Hardware.rearUltraSonic.setScalingFactor(UltraSonicScalingFactor);
     Hardware.leftDriveMotor.setInverted(false);
     Hardware.rightDriveMotor.setInverted(true);
     
@@ -254,8 +270,14 @@ public void teleopInit ()
     System.out.println("Started teleopInit().");
     // =========================================================
     // User code goes below here
-
+    Hardware.rightFrontDriveEncoder.reset();
+    Hardware.leftFrontDriveEncoder.reset();
+    Hardware.rightRearDriveEncoder.reset();
+    Hardware.leftRearDriveEncoder.reset();
+    Hardware.intakeDeployEncoder.reset();
+    Hardware.liftingEncoder.reset();
     Teleop.init();
+
 
     // User code goes above here
     // =========================================================
