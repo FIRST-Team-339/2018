@@ -84,7 +84,7 @@ public static void init ()
 // State of autonomous
 public static enum State
     {
-INIT, DELAY, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
+INIT, DELAY, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE_L, AUTOLINE_EXCHANGE_R, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
     }
 
 public static enum Switch
@@ -106,6 +106,7 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
+    // Disable autonomous
     if (Hardware.autoEnableSwitch.getPosition() == Value.kReverse)
         return;
 
@@ -135,7 +136,9 @@ public static void periodic ()
                 // 2nd position is cross auto line and setup for scale (long
                 // distance)
                 // 3rd position is cross auto line and setup for exchange zone
-                // in teleop
+                // in teleop from the left side
+                // 4th position is cross auto line and setup for exchange zone
+                // in teleop from the right side
                 // If anything else, the disable auto
                 switch (Hardware.autoStateSwitch.getPosition())
                     {
@@ -146,7 +149,10 @@ public static void periodic ()
                         autoState = State.AUTOLINE_SCALE;
                         break;
                     case 2:
-                        autoState = State.AUTOLINE_EXCHANGE;
+                        autoState = State.AUTOLINE_EXCHANGE_L;
+                        break;
+                    case 3:
+                        autoState = State.AUTOLINE_EXCHANGE_R;
                         break;
                     default:
                         autoState = State.FINISH;
@@ -182,20 +188,45 @@ public static void periodic ()
                     }
                 }
 
-
             break;
         case AUTOLINE:
+            // TODO THIS IS WRONG! fix this ashley. pls
             Hardware.autoDrive.driveStraightInches(120, .5);
             autoState = State.FINISH;
             break;
-
         case AUTOLINE_SCALE:
+            // TODO THIS IS WRONG TOO! fix this ashley. pls
             Hardware.autoDrive.driveStraightInches(207, .7);
             autoState = State.FINISH;
             break;
-
+        case AUTOLINE_EXCHANGE_L:
+            if (leftAutoLineExchangePath() == true)
+                autoState = State.FINISH;
+            break;
+        case AUTOLINE_EXCHANGE_R:
+            if (rightAutoLineExchangePath() == true)
+                autoState = State.FINISH;
+            break;
+        case CENTER_SWITCH:
+            if (centerSwitchPath() == true)
+                autoState = State.FINISH;
+            break;
+        case SWITCH_OR_SCALE_L:
+            if (leftSwitchOrScalePath() == true)
+                autoState = State.FINISH;
+            break;
+        case SWITCH_OR_SCALE_R:
+            if (rightSwitchOrScalePath() == true)
+                autoState = State.FINISH;
+            break;
+        case OFFSET_SWITCH:
+            if (offsetSwitchPath() == true)
+                autoState = State.FINISH;
+            break;
         case FINISH:
-
+            Hardware.tractionDrive.stop();
+            Hardware.autoTimer.stop();
+            Hardware.autoTimer.reset();
             break;
 
         default:
@@ -205,14 +236,82 @@ public static void periodic ()
 }
 
 /**
- * Delivers the cube to the switch based on vision processing.
+ * Crosses the auto line and returns to the exchange zone to setup for teleop.
+ * Starts in the left corner.
+ * 
  * @return
- *          Whether or not the robot has finished the action
  */
-public static boolean centerSwitchPath()
+public static boolean leftAutoLineExchangePath ()
 {
 
-return false;
+    return false;
+}
+
+/**
+ * Crosses the auto line and returns to the exchange zone to setup for teleop.
+ * Starts in the right corner.
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean rightAutoLineExchangePath ()
+{
+
+    return false;
+}
+
+/**
+ * Delivers the cube to the switch based on vision processing.
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean centerSwitchPath ()
+{
+
+    return false;
+}
+
+/**
+ * Delivers the cube to the switch if its on the left side.. If not, then setup
+ * to either the left or right scale, all based on game data from the driver
+ * station
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean leftSwitchOrScalePath ()
+{
+
+
+    return false;
+}
+
+/**
+ * Delivers the cube to the switch if it's on the right side... If not, then
+ * setup to either the left or right scale, all based on game data from the
+ * driver station.
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean rightSwitchOrScalePath ()
+{
+
+    return false;
+}
+
+/**
+ * Delivers the cube if another robot chooses to deliver in the center. Goes
+ * around the switch to deliver on the end.
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean offsetSwitchPath ()
+{
+
+    return false;
 }
 
 
