@@ -214,11 +214,45 @@ public static boolean centerSwitchPath ()
     switch (visionAuto)
         {
         case DRIVE_SIX_INCHES:
-            if (Hardware.autoDrive.driveStraightInches(6, .5) == true)
+            if (Hardware.autoDrive.driveStraightInches(6,
+                    AUTO_SPEED_VISION) == true)
                 {
-
+                if (Hardware.autoDrive.brake() == true)
+                    {
+                    if (switchSide == Switch.LEFT)
+                        {
+                        visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
+                        }
+                    else if (switchSide == Switch.RIGHT)
+                        {
+                        visionAuto = centerState.TURN_TOWARDS_RIGHT_SIDE;
+                        }
+                    else
+                        {
+                        visionAuto = centerState.DONE;
+                        }
+                    }
                 }
             break;
+        case TURN_TOWARDS_LEFT_SIDE:
+            if (Hardware.autoDrive.turnDegrees(ANGLE_TOWARDS_LEFT,
+                    AUTO_SPEED_VISION))
+                {
+                if (Hardware.autoDrive.brake() == true)
+                    {
+
+                    }
+                }
+            break;
+        case TURN_TOWARDS_RIGHT_SIDE:
+            if (Hardware.autoDrive.turnDegrees(ANGLE_TOWARDS_RIGHT,
+                    AUTO_SPEED_VISION))
+                {
+                if (Hardware.autoDrive.brake() == true)
+                    {
+
+                    }
+                }
 
         }
     return false;
@@ -237,7 +271,7 @@ public static centerState visionAuto = centerState.DRIVE_SIX_INCHES;
  */
 public static enum centerState
     {
-DRIVE_SIX_INCHES, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, STOP_BEFORE_PICTURE, DRIVE_BY_CAMERA, DRIVE_BY_US, DEPLOY_INTAKE, SPIT_OUT_CUBE, BRAKE, DONE
+DRIVE_SIX_INCHES, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, DONE
     }
 
 
@@ -266,10 +300,18 @@ DRIVE_SIX_INCHES, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, STOP_BEFORE_P
 
 
 // CENTER_SWITCH
+private final static double DISTANCE_TO_LEFT_TARGET = 118;
 
-private final double ANGLE_TOWARDS_LEFT = 35;
+private final static double DISTANCE_TO_RIGHT_TARGET = 116;
 
-private final double ANGLE_TOWARDS_RIGHT = 24.5;
+// TODO change all of these to be real numbers -- just placeholders for right
+// now
+private final static int ANGLE_TOWARDS_LEFT = 35;
+
+private final static int ANGLE_TOWARDS_RIGHT = 24;
+
+// TODO change for actual auto speed
+private final static double AUTO_SPEED_VISION = .5;
 
 
 // SWITCH_OR_SCALE_L
