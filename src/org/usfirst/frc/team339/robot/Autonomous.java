@@ -63,20 +63,6 @@ public class Autonomous
  */
 public static void init ()
 {
-    // Testing the game data the driver station provides us with
-    String gameData;
-    gameData = DriverStation.getInstance().getGameSpecificMessage();
-
-    if (gameData.charAt(0) == 'L')
-        {
-        switchSide = Switch.LEFT;
-        }
-    else
-        {
-        switchSide = Switch.RIGHT;
-        }
-
-    System.out.println(switchSide);
 
 } // end Init
 
@@ -84,7 +70,7 @@ public static void init ()
 // State of autonomous
 public static enum State
     {
-INIT, DELAY, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE_L, AUTOLINE_EXCHANGE_R, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
+INIT, DELAY, GRAB_DATA, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE_L, AUTOLINE_EXCHANGE_R, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
     }
 
 public static enum Switch
@@ -106,10 +92,6 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-    // Disable autonomous
-    if (Hardware.autoEnableSwitch.getPosition() == Value.kReverse)
-        return;
-
     switch (autoState)
         {
         case INIT:
@@ -123,10 +105,35 @@ public static void periodic ()
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
                     5.0))
                 {
-                autoState = State.CHOOSE_PATH;
+                autoState = State.GRAB_DATA;
                 break;
                 }
 
+            break;
+
+        case GRAB_DATA:
+
+            // Testing the game data the driver station provides us with
+            String gameData = DriverStation.getInstance()
+                    .getGameSpecificMessage();
+
+            // Stay in this state if there are not 3 letters in the game data
+            // provided
+            if (gameData.length() < 3)
+                break;
+
+            if (gameData.charAt(0) == 'L')
+                {
+                switchSide = Switch.LEFT;
+                }
+            else
+                {
+                switchSide = Switch.RIGHT;
+                }
+
+            System.out.println(switchSide);
+
+            autoState = State.CHOOSE_PATH;
             break;
         case CHOOSE_PATH:
             // Middle position is for the auto line
@@ -297,9 +304,59 @@ public static boolean leftSwitchOrScalePath ()
  */
 public static boolean rightSwitchOrScalePath ()
 {
+    switch (currentSwitchOrScaleState)
+        {
+        case INIT:
+        
+            break;
+        case DRIVE1:
+            if(Hardware.autoDrive.driveStraightInches(SWITCH_OR_SCALE_DRIVE_DISTANCE[0], DRIVE_SPEED))
+                {
+                if(switchSide == Switch.RIGHT)
+                    
+                    //TODO Pick up where I left off
+                currentSwitchOrScaleState = SwitchOrScaleStates.TURN1;
+                }
+            break;
+        case TURN1:
+            break;
+        case DRIVE_WITH_ULTRSNC:
 
+            break;
+        case DRIVE2:
+
+            break;
+        case TURN2:
+
+            break;
+        case DRIVE3:
+
+            break;
+        case TURN3:
+
+            break;
+        case DRIVE4:
+
+            break;
+        case TURN4:
+
+            break;
+
+        default:
+        case FINISH:
+
+            break;
+        }
     return false;
 }
+
+
+private static SwitchOrScaleStates currentSwitchOrScaleState = SwitchOrScaleStates.INIT;
+
+private static enum SwitchOrScaleStates
+    {
+INIT, DRIVE1, TURN1, DRIVE_WITH_ULTRSNC, DRIVE2, TURN2, DRIVE3, TURN3, DRIVE4, TURN4, FINISH
+    }
 
 /**
  * Delivers the cube if another robot chooses to deliver in the center. Goes
@@ -320,6 +377,9 @@ public static boolean offsetSwitchPath ()
  * Constants
  * ================================
  */
+
+private static final double DRIVE_SPEED = .6;
+private static final double TURN_SPEED = .5;
 
 // INIT
 
@@ -343,7 +403,8 @@ public static boolean offsetSwitchPath ()
 
 
 // SWITCH_OR_SCALE_L
-
+private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
+    {133, 67, 31, 169};
 
 // SWITCH_OR_SCALE_R
 
