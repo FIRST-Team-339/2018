@@ -128,15 +128,58 @@ public static void periodic ()
 
             break;
         case CHOOSE_PATH:
-            // FORWARD position
+            // Middle position is for the auto line
             if (Hardware.autoEnableSwitch.getPosition() == Value.kOff)
                 {
-
+                // 1st position on 6pos is regular cross auto line
+                // 2nd position is cross auto line and setup for scale (long
+                // distance)
+                // 3rd position is cross auto line and setup for exchange zone
+                // in teleop
+                // If anything else, the disable auto
+                switch (Hardware.autoStateSwitch.getPosition())
+                    {
+                    case 0:
+                        autoState = State.AUTOLINE;
+                        break;
+                    case 1:
+                        autoState = State.AUTOLINE_SCALE;
+                        break;
+                    case 2:
+                        autoState = State.AUTOLINE_EXCHANGE;
+                        break;
+                    default:
+                        autoState = State.FINISH;
+                    }
                 }
+            // Forward position is for the main autos
             else if (Hardware.autoEnableSwitch
                     .getPosition() == Value.kForward)
                 {
-
+                // 1st pos on 6pos switch is Center Switch with Vision
+                // 2nd pos chooses switch or scale based on game data, on the
+                // left side
+                // 3rd pos chooses switch or scale based on game data, on the
+                // right side
+                // 4th pos delivers to switch from the offset-center position
+                // If anything else, disable auto.
+                switch (Hardware.autoStateSwitch.getPosition())
+                    {
+                    case 0:
+                        autoState = State.CENTER_SWITCH;
+                        break;
+                    case 1:
+                        autoState = State.SWITCH_OR_SCALE_L;
+                        break;
+                    case 2:
+                        autoState = State.SWITCH_OR_SCALE_R;
+                        break;
+                    case 3:
+                        autoState = State.OFFSET_SWITCH;
+                        break;
+                    default:
+                        autoState = State.FINISH;
+                    }
                 }
 
 
@@ -147,7 +190,7 @@ public static void periodic ()
             break;
 
         case AUTOLINE_SCALE:
-            Hardware.autoDrive.driveInches(207, .7);
+            Hardware.autoDrive.driveStraightInches(207, .7);
             autoState = State.FINISH;
             break;
 
@@ -160,6 +203,19 @@ public static void periodic ()
         }
 
 }
+
+/**
+ * Delivers the cube to the switch based on vision processing.
+ * @return
+ *          Whether or not the robot has finished the action
+ */
+public static boolean centerSwitchPath()
+{
+
+return false;
+}
+
+
 /*
  * ================================
  * Constants
