@@ -6,7 +6,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Victor;
 
 /**
- * Class for forklift and intake subsystems
+ * Class for forklift and intake subsystems which includes as of 1/16/2018, an
+ * intake, and an intake deploy thingy
  * 
  * @author Becky Button
  *
@@ -31,6 +32,7 @@ private Encoder forkliftEncoder = null;
  * @param intakeSwitch
  * @param forkliftEncoder
  * @param intakeDeploy
+ * @param intakeDeployEncoder
  */
 public Forklift (Victor forkliftMotor, Victor intakeMotor,
         LightSensor intakeSwitch, Encoder forkliftEncoder,
@@ -191,6 +193,8 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
 }
 
 /**
+ * Scores a cube on a switch - NEWBIES - SET THIS TO A BUTTON
+ * 
  * @return true if a cube has been scored in the switch
  */
 public boolean scoreSwitch ()
@@ -205,10 +209,16 @@ public boolean scoreSwitch ()
                 }
             break;
         case DEPLOY_INTAKE:
-            switchState = scoreSwitchState.SPIT_OUT_CUBE;
+            if (deployCubeIntake() == true)
+                {
+                switchState = scoreSwitchState.SPIT_OUT_CUBE;
+                }
             break;
         case SPIT_OUT_CUBE:
-            switchState = scoreSwitchState.FINISHED;
+            if (pushOutCube() == true)
+                {
+                switchState = scoreSwitchState.FINISHED;
+                }
             break;
         case FINISHED:
             return true;
