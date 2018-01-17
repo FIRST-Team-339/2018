@@ -14,6 +14,7 @@
 // ====================================================================
 package org.usfirst.frc.team339.Hardware;
 
+import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
@@ -104,8 +105,8 @@ public static Relay ringLightRelay = new Relay(0);
 // Single and double throw switches
 // ------------------------------------
 
-public static SingleThrowSwitch disableAutoSwitch = new SingleThrowSwitch(
-        20);
+public static DoubleThrowSwitch autoEnableSwitch = new DoubleThrowSwitch(
+        20, 21);
 
 public static SixPositionSwitch autoStateSwitch = new SixPositionSwitch(
         1, 2, 3, 4, 5, 6);

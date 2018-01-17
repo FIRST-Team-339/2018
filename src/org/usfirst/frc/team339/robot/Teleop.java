@@ -66,7 +66,6 @@ public static void init ()
  */
 public static void periodic ()
 {
-    printStatements();
 
     // =================================================================
     // OPERATOR CONTROLS
@@ -108,12 +107,7 @@ public static void periodic ()
 
         }
 
-    Hardware.autoDrive.setBrakeScalingFactor(
-            ((Hardware.leftDriver.getThrottle() + 1) / 2) * 20);
-    // System.out.println("Brake Scaling Factor: "
-    // + ((Hardware.leftDriver.getThrottle() + 1) / 2) * 20);
-
-
+    printStatements();
 }
 // end
 // Periodic

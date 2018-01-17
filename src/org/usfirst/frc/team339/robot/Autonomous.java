@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * An Autonomous class.
@@ -61,14 +62,28 @@ public class Autonomous
  */
 public static void init ()
 {
-    Hardware.autoTimer.reset();
-    Hardware.autoTimer.start();
+    // Testing the game data the driver station provides us with
+    String gameData;
+    gameData = DriverStation.getInstance().getGameSpecificMessage();
+
+    if (gameData.charAt(0) == 'L')
+        {
+        switchSide = Switch.LEFT;
+        }
+    else
+        {
+        switchSide = Switch.RIGHT;
+        }
+
+    System.out.println(switchSide);
 
 } // end Init
 
+
+// State of autonomous
 public static enum State
     {
-INIT, FINISH
+INIT, DELAY, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE_L, AUTOLINE_EXCHANGE_R, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
     }
 
 public static enum Switch
@@ -90,48 +105,325 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-    String gameData;
-    gameData = DriverStation.getInstance().getGameSpecificMessage();
-    if (gameData.charAt(0) == 'L')
-        {
-        switchSide = Switch.LEFT;
-        }
-    else
-        {
-        switchSide = Switch.RIGHT;
-        }
-    System.out.println(switchSide);
+    // Disable autonomous
+    if (Hardware.autoEnableSwitch.getPosition() == Value.kReverse)
+        return;
 
-
-    if (Hardware.disableAutoSwitch.get() == false)
+    switch (autoState)
         {
-        switch (autoState)
-            {
-            case INIT:
-                if (Hardware.disableAutoSwitch.get() == true)
+        case INIT:
+            // Reset and start the delay timer
+            Hardware.autoTimer.reset();
+            Hardware.autoTimer.start();
+            break;
+
+        case DELAY:
+            // Delay using the potentiometer, from 0 to 5 seconds
+            if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
+                    5.0))
+                {
+                autoState = State.CHOOSE_PATH;
+                break;
+                }
+
+            break;
+        case CHOOSE_PATH:
+            // Middle position is for the auto line
+            if (Hardware.autoEnableSwitch.getPosition() == Value.kOff)
+                {
+                // 1st position on 6pos is regular cross auto line
+                // 2nd position is cross auto line and setup for scale (long
+                // distance)
+                // 3rd position is cross auto line and setup for exchange zone
+                // in teleop from the left side
+                // 4th position is cross auto line and setup for exchange zone
+                // in teleop from the right side
+                // If anything else, the disable auto
+                switch (Hardware.autoStateSwitch.getPosition())
                     {
-                    break;
+                    case 0:
+                        autoState = State.AUTOLINE;
+                        break;
+                    case 1:
+                        autoState = State.AUTOLINE_SCALE;
+                        break;
+                    case 2:
+                        autoState = State.AUTOLINE_EXCHANGE_L;
+                        break;
+                    case 3:
+                        autoState = State.AUTOLINE_EXCHANGE_R;
+                        break;
+                    default:
+                        autoState = State.FINISH;
                     }
-                if (Hardware.delayPot.get(0.0, 1.0) > 0.2
-                        && Hardware.autoTimer.get() >= 5
-                                * Hardware.delayPot.get(0.0, 1.0))
+                }
+            // Forward position is for the main autos
+            else if (Hardware.autoEnableSwitch
+                    .getPosition() == Value.kForward)
+                {
+                // 1st pos on 6pos switch is Center Switch with Vision
+                // 2nd pos chooses switch or scale based on game data, on the
+                // left side
+                // 3rd pos chooses switch or scale based on game data, on the
+                // right side
+                // 4th pos delivers to switch from the offset-center position
+                // If anything else, disable auto.
+                switch (Hardware.autoStateSwitch.getPosition())
                     {
-                    // determine which auto to use
-                    break;
+                    case 0:
+                        autoState = State.CENTER_SWITCH;
+                        break;
+                    case 1:
+                        autoState = State.SWITCH_OR_SCALE_L;
+                        break;
+                    case 2:
+                        autoState = State.SWITCH_OR_SCALE_R;
+                        break;
+                    case 3:
+                        autoState = State.OFFSET_SWITCH;
+                        break;
+                    default:
+                        autoState = State.FINISH;
                     }
+                }
 
-                break;
+            break;
+        case AUTOLINE:
+            // TODO THIS IS WRONG! fix this ashley. pls
+            Hardware.autoDrive.driveStraightInches(120, .5);
+            autoState = State.FINISH;
+            break;
+        case AUTOLINE_SCALE:
+            // TODO THIS IS WRONG TOO! fix this ashley. pls
+            Hardware.autoDrive.driveStraightInches(207, .7);
+            autoState = State.FINISH;
+            break;
+        case AUTOLINE_EXCHANGE_L:
+            if (leftAutoLineExchangePath() == true)
+                autoState = State.FINISH;
+            break;
+        case AUTOLINE_EXCHANGE_R:
+            if (rightAutoLineExchangePath() == true)
+                autoState = State.FINISH;
+            break;
+        case CENTER_SWITCH:
+            if (centerSwitchPath() == true)
+                autoState = State.FINISH;
+            break;
+        case SWITCH_OR_SCALE_L:
+            if (leftSwitchOrScalePath() == true)
+                autoState = State.FINISH;
+            break;
+        case SWITCH_OR_SCALE_R:
+            if (rightSwitchOrScalePath() == true)
+                autoState = State.FINISH;
+            break;
+        case OFFSET_SWITCH:
+            if (offsetSwitchPath() == true)
+                autoState = State.FINISH;
+            break;
+        case FINISH:
+            Hardware.tractionDrive.stop();
+            Hardware.autoTimer.stop();
+            Hardware.autoTimer.reset();
+            break;
 
-            case FINISH:
-
-
-                break;
-
-            default:
-                break;
-            }
+        default:
+            break;
         }
+
 }
+
+
+
+/**
+ * Delivers the cube to the switch based on vision processing.
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean leftAutoLineExchangePath ()
+{
+
+    return false;
+}
+
+/**
+ * Crosses the auto line and returns to the exchange zone to setup for teleop.
+ * Starts in the right corner.
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean rightAutoLineExchangePath ()
+{
+
+    return false;
+}
+
+/**
+ * Crosses the auto line and returns to the exchange zone to setup for teleop.
+ * Starts in the left corner.
+ * 
+ * @return
+ *         Whether or not the robot has finished the action
+ */
+public static boolean centerSwitchPath ()
+{
+    switch (visionAuto)
+        {
+        case DRIVE_SIX_INCHES:
+            if (Hardware.autoDrive.driveStraightInches(6,
+                    AUTO_SPEED_VISION) == true)
+                {
+                if (Hardware.autoDrive.brake() == true)
+                    {
+                    if (switchSide == Switch.LEFT)
+                        {
+                        visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
+                        }
+                    else if (switchSide == Switch.RIGHT)
+                        {
+                        visionAuto = centerState.TURN_TOWARDS_RIGHT_SIDE;
+                        }
+                    else
+                        {
+                        visionAuto = centerState.DONE;
+                        }
+                    }
+                }
+            break;
+        case TURN_TOWARDS_LEFT_SIDE:
+            if (Hardware.autoDrive.turnDegrees(ANGLE_TOWARDS_LEFT,
+                    AUTO_SPEED_VISION))
+                {
+                if (Hardware.autoDrive.brake() == true)
+                    {
+                    }
+                }
+            break;
+        case TURN_TOWARDS_RIGHT_SIDE:
+            if (Hardware.autoDrive.turnDegrees(ANGLE_TOWARDS_RIGHT,
+                    AUTO_SPEED_VISION))
+                {
+                if (Hardware.autoDrive.brake() == true)
+                    {
+
+                    }
+                }
+
+        }
+    return false;
+}
+
+public static centerState visionAuto = centerState.DRIVE_SIX_INCHES;
+
+/**
+ * Possible states for center vision autonomous
+ * 
+ * @author Becky Button
+ *
+ */
+public static enum centerState
+    {
+DRIVE_SIX_INCHES, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, DONE
+    }
+
+
+/**
+ * Delivers the cube to the switch if its on the left side.. If not, then setup
+ * to either the left or right scale, all based on game data from the driver
+ * station
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean leftSwitchOrScalePath ()
+{
+
+
+    return false;
+}
+
+/**
+ * Delivers the cube to the switch if it's on the right side... If not, then
+ * setup to either the left or right scale, all based on game data from the
+ * driver station.
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean rightSwitchOrScalePath ()
+{
+
+    return false;
+}
+
+/**
+ * Delivers the cube if another robot chooses to deliver in the center. Goes
+ * around the switch to deliver on the end.
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean offsetSwitchPath ()
+{
+
+    return false;
+}
+
+
+/*
+ * ================================
+ * Constants
+ * ================================
+ */
+
+// INIT
+
+
+// DELAY
+
+
+// CHOOSE_PATH
+
+
+// AUTOLINE
+
+
+// AUTOLINE_SCALE
+
+
+// AUTOLINE_EXCHANGE
+
+
+// CENTER_SWITCH
+private final static double DISTANCE_TO_LEFT_TARGET = 118;
+
+private final static double DISTANCE_TO_RIGHT_TARGET = 116;
+
+// TODO change all of these to be real numbers -- just placeholders for right
+// now
+private final static int ANGLE_TOWARDS_LEFT = 35;
+
+private final static int ANGLE_TOWARDS_RIGHT = 24;
+
+// TODO change for actual auto speed
+private final static double AUTO_SPEED_VISION = .5;
+
+
+// SWITCH_OR_SCALE_L
+
+
+// SWITCH_OR_SCALE_R
+
+
+// OFFSET_SWITCH
+
+
+// FINISH
+
+
 
 } // end class
 

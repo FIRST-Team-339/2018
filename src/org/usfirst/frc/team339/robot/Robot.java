@@ -60,6 +60,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**
@@ -233,6 +234,10 @@ public void robotInit ()
 
     Hardware.frontUltraSonic.setScalingFactor(UltraSonicScalingFactor);
     Hardware.rearUltraSonic.setScalingFactor(UltraSonicScalingFactor);
+    Hardware.leftDriveMotor.setInverted(false);
+    Hardware.rightDriveMotor.setInverted(true);
+    
+    Hardware.autoDrive.setEncoderDistancePerPulse(KILROY_XV_ENCODER_DPP, MotorPosition.ALL);
 
     // User code goes above here
     // =========================================================
@@ -358,6 +363,8 @@ public void testPeriodic ()
 // ==========================================
 // TUNEABLES
 // ==========================================
+
+private static final double KILROY_XV_ENCODER_DPP = .0014784;
 
 } // end class
 
