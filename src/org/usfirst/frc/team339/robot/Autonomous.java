@@ -97,6 +97,7 @@ public static void periodic ()
             // Reset and start the delay timer
             Hardware.autoTimer.reset();
             Hardware.autoTimer.start();
+            autoState = State.DELAY;
             break;
 
         case DELAY:
@@ -104,36 +105,13 @@ public static void periodic ()
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
                     5.0))
                 {
-                autoState = State.GRAB_DATA;
+                autoState = State.CHOOSE_PATH;
                 break;
                 }
 
             break;
 
-        case GRAB_DATA:
 
-            // Testing the game data the driver station provides us with
-            String gameData = DriverStation.getInstance()
-                    .getGameSpecificMessage();
-
-            // Stay in this state if there are not 3 letters in the game data
-            // provided
-            if (gameData.length() < 3)
-                break;
-
-            if (gameData.charAt(0) == 'L')
-                {
-                switchSide = Switch.LEFT;
-                }
-            else
-                {
-                switchSide = Switch.RIGHT;
-                }
-
-            System.out.println(switchSide);
-
-            autoState = State.CHOOSE_PATH;
-            break;
         case CHOOSE_PATH:
             // Middle position is for the auto line
             if (Hardware.autoEnableSwitch.getPosition() == Value.kOff)
@@ -197,13 +175,26 @@ public static void periodic ()
             break;
         case AUTOLINE:
             // TODO THIS IS WRONG! fix this ashley. pls
-            Hardware.autoDrive.driveStraightInches(120, .5);
-            autoState = State.FINISH;
+            if (Hardware.autoDrive.driveStraightInches(120,
+                    .5) == false)
+                {
+                Hardware.autoDrive.driveStraightInches(120, .5);
+                }
+            else
+                {
+                autoState = State.FINISH;
+                }
             break;
         case AUTOLINE_SCALE:
-            // TODO THIS IS WRONG TOO! fix this ashley. pls
-            Hardware.autoDrive.driveStraightInches(207, .7);
-            autoState = State.FINISH;
+            if (Hardware.autoDrive.driveStraightInches(207,
+                    .7) == false)
+                {
+                Hardware.autoDrive.driveStraightInches(207, .7);
+                }
+            else
+                {
+                autoState = State.FINISH;
+                }
             break;
         case AUTOLINE_EXCHANGE_L:
             if (leftAutoLineExchangePath() == true)
@@ -241,6 +232,37 @@ public static void periodic ()
 
 }
 
+
+/**
+ * Receives the game data involving the switch sides and scale side
+ * 
+ * @return
+ *         Switch side either RIGHT or LEFT
+ */
+public static Switch grabData ()
+{
+    // Testing the game data the driver station provides us with
+    String gameData = DriverStation.getInstance()
+            .getGameSpecificMessage();
+
+    // Stay in this state if there are not 3 letters in the game data
+    // provided
+    if (gameData.length() < 3)
+        // return
+
+        if (gameData.charAt(0) == 'L')
+            {
+            switchSide = Switch.LEFT;
+            }
+        else
+            {
+            switchSide = Switch.RIGHT;
+            }
+
+    System.out.println(switchSide);
+
+    return switchSide;
+}
 
 
 /**
@@ -365,15 +387,16 @@ public static boolean rightSwitchOrScalePath ()
     switch (currentSwitchOrScaleState)
         {
         case INIT:
-        
+
             break;
         case DRIVE1:
-            if(Hardware.autoDrive.driveStraightInches(SWITCH_OR_SCALE_DRIVE_DISTANCE[0], DRIVE_SPEED))
+            if (Hardware.autoDrive.driveStraightInches(
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0], DRIVE_SPEED))
                 {
-                if(switchSide == Switch.RIGHT)
-                    
-                    //TODO Pick up where I left off
-                currentSwitchOrScaleState = SwitchOrScaleStates.TURN1;
+                if (switchSide == Switch.RIGHT)
+
+                    // TODO Pick up where I left off
+                    currentSwitchOrScaleState = SwitchOrScaleStates.TURN1;
                 }
             break;
         case TURN1:
@@ -437,6 +460,7 @@ public static boolean offsetSwitchPath ()
  */
 
 private static final double DRIVE_SPEED = .6;
+
 private static final double TURN_SPEED = .5;
 
 // INIT
