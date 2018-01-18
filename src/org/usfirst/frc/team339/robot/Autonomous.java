@@ -79,11 +79,6 @@ public static enum GameData
 LEFT, RIGHT, NULL
     }
 
-
-public static GameData switchSide = GameData.NULL;
-
-public static GameData scaleSide = GameData.NULL;
-
 public static State autoState = State.INIT;
 
 /**
@@ -228,7 +223,7 @@ public static void periodic ()
  * @return
  *         Switch side either RIGHT or LEFT
  */
-public static GameData grabData ()
+public static GameData grabData (GameDataType dataType)
 {
     // Testing the game data the driver station provides us with
     String gameData = DriverStation.getInstance()
@@ -239,18 +234,30 @@ public static GameData grabData ()
     if (gameData.length() < 3)
         // return
 
-        if (gameData.charAt(0) == 'L')
+        if (dataType == GameDataType.SWITCH && gameData.charAt(0) == 'L')
             {
-            switchSide = GameData.LEFT;
+            return GameData.LEFT;
             }
-        else
+        else if (dataType == GameDataType.SWITCH && gameData.charAt(0) == 'R')
             {
-            switchSide = GameData.RIGHT;
+            return GameData.RIGHT;
+            }
+    
+        if(dataType == GameDataType.SCALE && gameData.charAt(1) == 'L')
+            {
+            return GameData.LEFT;
+            }
+        else if(dataType == GameDataType.SCALE && gameData.charAt(1) == 'R')
+            {
+            return GameData.RIGHT;
             }
 
-    System.out.println(switchSide);
+    return GameData.NULL;
+}
 
-    return switchSide;
+private enum GameDataType
+{
+SWITCH, SCALE
 }
 
 
@@ -296,11 +303,11 @@ public static boolean centerSwitchPath ()
                 {
                 if (Hardware.autoDrive.brake() == true)
                     {
-                    if (switchSide == GameData.LEFT)
+                    if (grabData(GameDataType.SWITCH) == GameData.LEFT)
                         {
                         visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
                         }
-                    else if (switchSide == GameData.RIGHT)
+                    else if (grabData(GameDataType.SWITCH) == GameData.RIGHT)
                         {
                         visionAuto = centerState.TURN_TOWARDS_RIGHT_SIDE;
                         }
@@ -382,9 +389,9 @@ public static boolean rightSwitchOrScalePath ()
             if (Hardware.autoDrive.driveStraightInches(
                     SWITCH_OR_SCALE_DRIVE_DISTANCE[0], DRIVE_SPEED))
                 {
-                if (switchSide == GameData.RIGHT)
+                if (grabData(GameDataType.SWITCH) == GameData.RIGHT)
 
-                    // TODO Pick up where I left off
+                   
                     currentSwitchOrScaleState = SwitchOrScaleStates.TURN1;
                 }
             break;
