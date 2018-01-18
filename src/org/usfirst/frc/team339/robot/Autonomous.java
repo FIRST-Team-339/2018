@@ -163,13 +163,7 @@ public static void periodic ()
                 }
             break;
         case AUTOLINE:
-            // TODO THIS IS WRONG! fix this ashley. pls
-            if (Hardware.autoDrive.driveStraightInches(120,
-                    .5) == false)
-                {
-                Hardware.autoDrive.driveStraightInches(120, .5);
-                }
-            else
+            if (autolinePath() == true)
                 {
                 autoState = State.FINISH;
                 }
@@ -177,10 +171,6 @@ public static void periodic ()
         case AUTOLINE_SCALE:
             if (Hardware.autoDrive.driveStraightInches(207,
                     .7) == false)
-                {
-                Hardware.autoDrive.driveStraightInches(207, .7);
-                }
-            else
                 {
                 autoState = State.FINISH;
                 }
@@ -251,6 +241,38 @@ public static GameData grabData ()
     System.out.println(switchSide);
 
     return switchSide;
+}
+
+/**
+ * crosses the autoline and stops
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean autolinePath ()
+{
+    if (Hardware.autoDrive.driveStraightInches(
+            DISTANCE_TO_CROSS_AUTOLINE,
+            DRIVE_SPEED) == false)
+        return true;
+    return false;
+}
+
+/**
+ * crosses the autoline and drives near to scale and stops
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean autolinePathToScale ()
+{
+    if (Hardware.autoDrive.driveStraightInches(
+            DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE,
+            DRIVE_SPEED) == true)
+        {
+        return true;
+        }
+    return false;
 }
 
 
@@ -462,10 +484,10 @@ private static final double TURN_SPEED = .5;
 
 
 // AUTOLINE
-
+private final static int DISTANCE_TO_CROSS_AUTOLINE = 120;
 
 // AUTOLINE_SCALE
-
+private final static int DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE = 207;
 
 // AUTOLINE_EXCHANGE
 
