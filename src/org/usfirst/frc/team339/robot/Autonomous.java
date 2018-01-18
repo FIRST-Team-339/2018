@@ -158,13 +158,7 @@ public static void periodic ()
                 }
             break;
         case AUTOLINE:
-            // TODO THIS IS WRONG! fix this ashley. pls
-            if (Hardware.autoDrive.driveStraightInches(120,
-                    .5) == false)
-                {
-                Hardware.autoDrive.driveStraightInches(120, .5);
-                }
-            else
+            if (autolinePath() == true)
                 {
                 autoState = State.FINISH;
                 }
@@ -172,10 +166,6 @@ public static void periodic ()
         case AUTOLINE_SCALE:
             if (Hardware.autoDrive.driveStraightInches(207,
                     .7) == false)
-                {
-                Hardware.autoDrive.driveStraightInches(207, .7);
-                }
-            else
                 {
                 autoState = State.FINISH;
                 }
@@ -263,15 +253,104 @@ private enum GameDataType
 SWITCH, SCALE
     }
 
+/**
+ * crosses the autoline and stops
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean autolinePath ()
+{
+    if (Hardware.autoDrive.driveStraightInches(
+            DISTANCE_TO_CROSS_AUTOLINE,
+            DRIVE_SPEED) == true)
+        return true;
+    return false;
+}
 
 /**
- * Delivers the cube to the switch based on vision processing.
+ * crosses the autoline and drives near to scale and stops
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean autolinePathToScale ()
+{
+    if (Hardware.autoDrive.driveStraightInches(
+            DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE,
+            DRIVE_SPEED) == true)
+        {
+        return true;
+        }
+    return false;
+}
+
+/**
+ * crosses the autoline and stops
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean driveBackAcrossAutoline ()
+{
+    // if (Hardware.autoDrive.driveStraightInches(
+    // DISTANCE_TO_CROSS_AUTOLINE,
+    // -DRIVE_SPEED) == true)
+    // return true;
+    return false;
+}
+
+public static leftExchangeState leftExchangeAuto = leftExchangeState.DONE;
+
+/**
+ * Possible states for left exchange autonomous
+ * 
+ * @author Ashley Espeland
+ *
+ */
+public static enum leftExchangeState
+    {
+DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES, DRIVE_TO_EXCHANGE, DONE
+    }
+
+
+
+/**
+ * Crosses the auto line and returns to the exchange zone to setup for teleop.
+ * Starts in the left corner.
  * 
  * @return
  *         Whether or not the robot has finished the path
  */
 public static boolean leftAutoLineExchangePath ()
 {
+    switch (leftExchangeAuto)
+        {
+        case DRIVE_ACROSS_AUTOLINE:
+            if (autolinePath() == true)
+                {
+                leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                }
+            break;
+
+        case DRIVE_BACK_ACROSS_AUTOLINE:
+
+            break;
+
+        case TURN_90_DEGREES:
+
+            break;
+
+        case DRIVE_TO_EXCHANGE:
+
+            break;
+
+        case DONE:
+
+            break;
+
+        }
+
 
     return false;
 }
@@ -401,6 +480,7 @@ public static boolean rightSwitchOrScalePath ()
                 else
                     // If not, then keep driving forwards.
                     currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;
+
                 }
             break;
         case BRAKE_DRIVE1:
@@ -512,10 +592,10 @@ private static final double INTAKE_EJECT_TIME = 1;//Seconds
 
 
 // AUTOLINE
-
+private final static int DISTANCE_TO_CROSS_AUTOLINE = 120;
 
 // AUTOLINE_SCALE
-
+private final static int DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE = 207;
 
 // AUTOLINE_EXCHANGE
 

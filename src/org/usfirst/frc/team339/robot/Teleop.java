@@ -107,10 +107,12 @@ public static void periodic ()
 
         }
 
+
     printStatements();
 }
 // end
 // Periodic
+
 
 private static boolean isTestingDrive = false;
 
