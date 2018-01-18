@@ -263,7 +263,7 @@ public static boolean autolinePath ()
 {
     if (Hardware.autoDrive.driveStraightInches(
             DISTANCE_TO_CROSS_AUTOLINE,
-            DRIVE_SPEED) == false)
+            DRIVE_SPEED) == true)
         return true;
     return false;
 }
@@ -285,15 +285,73 @@ public static boolean autolinePathToScale ()
     return false;
 }
 
+/**
+ * crosses the autoline and stops
+ * 
+ * @return
+ *         Whether or not the robot has finished the path
+ */
+public static boolean driveBackAcrossAutoline ()
+{
+    // if (Hardware.autoDrive.driveStraightInches(
+    // DISTANCE_TO_CROSS_AUTOLINE,
+    // -DRIVE_SPEED) == true)
+    // return true;
+    return false;
+}
+
+
+public static leftExchangeState leftExchangeAuto = leftExchangeState.DONE;
 
 /**
- * Delivers the cube to the switch based on vision processing.
+ * Possible states for left exchange autonomous
+ * 
+ * @author Ashley Espeland
+ *
+ */
+public static enum leftExchangeState
+    {
+DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES, DRIVE_TO_EXCHANGE, DONE
+    }
+
+
+
+/**
+ * Crosses the auto line and returns to the exchange zone to setup for teleop.
+ * Starts in the left corner.
  * 
  * @return
  *         Whether or not the robot has finished the path
  */
 public static boolean leftAutoLineExchangePath ()
 {
+    switch (leftExchangeAuto)
+        {
+        case DRIVE_ACROSS_AUTOLINE:
+            if (autolinePath() == true)
+                {
+                leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                }
+            break;
+
+        case DRIVE_BACK_ACROSS_AUTOLINE:
+
+            break;
+
+        case TURN_90_DEGREES:
+
+            break;
+
+        case DRIVE_TO_EXCHANGE:
+
+            break;
+
+        case DONE:
+
+            break;
+
+        }
+
 
     return false;
 }
