@@ -101,6 +101,7 @@ public static void periodic ()
             // Reset and start the delay timer
             Hardware.autoTimer.reset();
             Hardware.autoTimer.start();
+            autoState = State.DELAY;
             break;
 
         case DELAY:
@@ -108,45 +109,12 @@ public static void periodic ()
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
                     5.0))
                 {
-                autoState = State.GRAB_DATA;
+                autoState = State.CHOOSE_PATH;
                 break;
                 }
 
             break;
 
-        case GRAB_DATA:
-
-            // Testing the game data the driver station provides us with
-            String gameData = DriverStation.getInstance()
-                    .getGameSpecificMessage();
-
-            // Stay in this state if there are not 3 letters in the game data
-            // provided
-            if (gameData.length() < 3)
-                break;
-
-            if (gameData.charAt(0) == 'L')
-                {
-                switchSide = GameData.LEFT;
-                }
-            else
-                {
-                switchSide = GameData.RIGHT;
-                }
-
-            if (gameData.charAt(1) == 'L')
-                {
-                scaleSide = GameData.LEFT;
-                }
-            else
-                {
-                scaleSide = GameData.RIGHT;
-                }
-
-            System.out.println(switchSide);
-
-            autoState = State.CHOOSE_PATH;
-            break;
         case CHOOSE_PATH:
             /*
              * States:
@@ -196,13 +164,26 @@ public static void periodic ()
             break;
         case AUTOLINE:
             // TODO THIS IS WRONG! fix this ashley. pls
-            Hardware.autoDrive.driveStraightInches(120, .5);
-            autoState = State.FINISH;
+            if (Hardware.autoDrive.driveStraightInches(120,
+                    .5) == false)
+                {
+                Hardware.autoDrive.driveStraightInches(120, .5);
+                }
+            else
+                {
+                autoState = State.FINISH;
+                }
             break;
         case AUTOLINE_SCALE:
-            // TODO THIS IS WRONG TOO! fix this ashley. pls
-            Hardware.autoDrive.driveStraightInches(207, .7);
-            autoState = State.FINISH;
+            if (Hardware.autoDrive.driveStraightInches(207,
+                    .7) == false)
+                {
+                Hardware.autoDrive.driveStraightInches(207, .7);
+                }
+            else
+                {
+                autoState = State.FINISH;
+                }
             break;
         case AUTOLINE_EXCHANGE_L:
             if (leftAutoLineExchangePath() == true)
@@ -240,6 +221,37 @@ public static void periodic ()
 
 }
 
+
+/**
+ * Receives the game data involving the switch sides and scale side
+ * 
+ * @return
+ *         Switch side either RIGHT or LEFT
+ */
+public static GameData grabData ()
+{
+    // Testing the game data the driver station provides us with
+    String gameData = DriverStation.getInstance()
+            .getGameSpecificMessage();
+
+    // Stay in this state if there are not 3 letters in the game data
+    // provided
+    if (gameData.length() < 3)
+        // return
+
+        if (gameData.charAt(0) == 'L')
+            {
+            switchSide = GameData.LEFT;
+            }
+        else
+            {
+            switchSide = GameData.RIGHT;
+            }
+
+    System.out.println(switchSide);
+
+    return switchSide;
+}
 
 
 /**
