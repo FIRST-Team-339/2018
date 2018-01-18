@@ -293,12 +293,29 @@ public static boolean autolinePathToScale ()
  */
 public static boolean driveBackAcrossAutoline ()
 {
-    // if (Hardware.autoDrive.driveStraightInches(
-    // DISTANCE_TO_CROSS_AUTOLINE,
-    // -DRIVE_SPEED) == true)
-    // return true;
+    if (Hardware.autoDrive.driveStraightInches(
+            DISTANCE_BACK_ACROSS_AUTOLINE,
+            -DRIVE_SPEED) == true)
+        return true;
     return false;
 }
+
+/**
+ * drives to the exchange zone
+ * 
+ * @return
+ *         boolean Whether or not the robot has finished the path
+ */
+public static boolean leftDriveToExchange ()
+{
+
+    if (Hardware.autoDrive.driveStraightInches(
+            LEFT_DISTANCE_TO_EXCHANGE,
+            DRIVE_SPEED) == true)
+        return true;
+    return false;
+}
+
 
 public static leftExchangeState leftExchangeAuto = leftExchangeState.DONE;
 
@@ -334,7 +351,10 @@ public static boolean leftAutoLineExchangePath ()
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
-
+            if (driveBackAcrossAutoline() == true)
+                {
+                leftExchangeAuto = leftExchangeState.TURN_90_DEGREES;
+                }
             break;
 
         case TURN_90_DEGREES:
@@ -342,7 +362,10 @@ public static boolean leftAutoLineExchangePath ()
             break;
 
         case DRIVE_TO_EXCHANGE:
-
+            if (leftDriveToExchange() == true)
+                {
+                leftExchangeAuto = leftExchangeState.DONE;
+                }
             break;
 
         case DONE:
@@ -508,8 +531,8 @@ public static boolean rightSwitchOrScalePath ()
 
             break;
         case BRAKE_ULTRSNC:
-            //Brake after driving using the ultrasonic
-            if(Hardware.autoDrive.brake())
+            // Brake after driving using the ultrasonic
+            if (Hardware.autoDrive.brake())
                 {
                 Hardware.autoTimer.stop();
                 Hardware.autoTimer.reset();
@@ -518,11 +541,11 @@ public static boolean rightSwitchOrScalePath ()
                 }
             break;
         case EJECT_CUBE:
-        //TODO Where I left off
-                
-        break;
+            // TODO Where I left off
+
+            break;
         case DRIVE2:
-            
+
             break;
         case TURN2:
 
@@ -580,7 +603,7 @@ private static final double DRIVE_SPEED = .6;
 
 private static final double TURN_SPEED = .5;
 
-private static final double INTAKE_EJECT_TIME = 1;//Seconds
+private static final double INTAKE_EJECT_TIME = 1;// Seconds
 
 // INIT
 
@@ -598,7 +621,9 @@ private final static int DISTANCE_TO_CROSS_AUTOLINE = 120;
 private final static int DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE = 207;
 
 // AUTOLINE_EXCHANGE
+private final static int DISTANCE_BACK_ACROSS_AUTOLINE = 100;
 
+private final static int LEFT_DISTANCE_TO_EXCHANGE = 58;
 
 // CENTER_SWITCH
 private final static double DISTANCE_TO_LEFT_TARGET = 118;
