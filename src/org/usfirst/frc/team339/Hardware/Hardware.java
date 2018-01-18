@@ -105,7 +105,7 @@ public static Relay ringLightRelay = new Relay(0);
 // Single and double throw switches
 // ------------------------------------
 
-public static DoubleThrowSwitch autoEnableSwitch = new DoubleThrowSwitch(
+public static DoubleThrowSwitch autoSelectorSwitch = new DoubleThrowSwitch(
         20, 21);
 
 public static SixPositionSwitch autoStateSwitch = new SixPositionSwitch(
