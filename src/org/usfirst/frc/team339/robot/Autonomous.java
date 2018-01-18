@@ -62,7 +62,9 @@ public class Autonomous
  */
 public static void init ()
 {
-
+    // Disable auto
+    if (Hardware.autoSelectorSwitch.getPosition() == Value.kOff)
+        autoState = State.FINISH;
 } // end Init
 
 
@@ -72,13 +74,15 @@ public static enum State
 INIT, DELAY, GRAB_DATA, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE_L, AUTOLINE_EXCHANGE_R, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
     }
 
-public static enum Switch
+public static enum GameData
     {
 LEFT, RIGHT, NULL
     }
 
 
-public static Switch switchSide = Switch.NULL;
+public static GameData switchSide = GameData.NULL;
+
+public static GameData scaleSide = GameData.NULL;
 
 public static State autoState = State.INIT;
 
@@ -123,11 +127,20 @@ public static void periodic ()
 
             if (gameData.charAt(0) == 'L')
                 {
-                switchSide = Switch.LEFT;
+                switchSide = GameData.LEFT;
                 }
             else
                 {
-                switchSide = Switch.RIGHT;
+                switchSide = GameData.RIGHT;
+                }
+
+            if (gameData.charAt(1) == 'L')
+                {
+                scaleSide = GameData.LEFT;
+                }
+            else
+                {
+                scaleSide = GameData.RIGHT;
                 }
 
             System.out.println(switchSide);
@@ -135,65 +148,51 @@ public static void periodic ()
             autoState = State.CHOOSE_PATH;
             break;
         case CHOOSE_PATH:
-            // Middle position is for the auto line
-            if (Hardware.autoEnableSwitch.getPosition() == Value.kOff)
-                {
-                // 1st position on 6pos is regular cross auto line
-                // 2nd position is cross auto line and setup for scale (long
-                // distance)
-                // 3rd position is cross auto line and setup for exchange zone
-                // in teleop from the left side
-                // 4th position is cross auto line and setup for exchange zone
-                // in teleop from the right side
-                // If anything else, the disable auto
-                switch (Hardware.autoStateSwitch.getPosition())
-                    {
-                    case 0:
-                        autoState = State.AUTOLINE;
-                        break;
-                    case 1:
-                        autoState = State.AUTOLINE_SCALE;
-                        break;
-                    case 2:
-                        autoState = State.AUTOLINE_EXCHANGE_L;
-                        break;
-                    case 3:
-                        autoState = State.AUTOLINE_EXCHANGE_R;
-                        break;
-                    default:
-                        autoState = State.FINISH;
-                    }
-                }
-            // Forward position is for the main autos
-            else if (Hardware.autoEnableSwitch
-                    .getPosition() == Value.kForward)
-                {
-                // 1st pos on 6pos switch is Center Switch with Vision
-                // 2nd pos chooses switch or scale based on game data, on the
-                // left side
-                // 3rd pos chooses switch or scale based on game data, on the
-                // right side
-                // 4th pos delivers to switch from the offset-center position
-                // If anything else, disable auto.
-                switch (Hardware.autoStateSwitch.getPosition())
-                    {
-                    case 0:
-                        autoState = State.CENTER_SWITCH;
-                        break;
-                    case 1:
-                        autoState = State.SWITCH_OR_SCALE_L;
-                        break;
-                    case 2:
-                        autoState = State.SWITCH_OR_SCALE_R;
-                        break;
-                    case 3:
-                        autoState = State.OFFSET_SWITCH;
-                        break;
-                    default:
-                        autoState = State.FINISH;
-                    }
-                }
+            /*
+             * States:
+             * 0 = AUTOLINE
+             * 1 = AUTOLINE THEN SCALE
+             * 2 = AUTOLINE THEN EXCHANGE
+             * 3 = CENTER SWITCH W/ VISION
+             * 4 = SWITCH OR SCALE W/ GAME DATA
+             * 5 = OFFSET SWITCH DROP OFF
+             */
 
+            switch (Hardware.autoStateSwitch.getPosition())
+                {
+                case 0:
+                    autoState = State.AUTOLINE;
+                    break;
+                case 1:
+                    autoState = State.AUTOLINE_SCALE;
+                    break;
+                case 2:
+                    // Depends on whether left or right is selected
+                    if (Hardware.autoSelectorSwitch
+                            .getPosition() == Value.kForward)
+                        autoState = State.AUTOLINE_EXCHANGE_L;
+                    else
+                        autoState = State.AUTOLINE_EXCHANGE_R;
+                    break;
+                case 3:
+                    autoState = State.CENTER_SWITCH;
+                    break;
+                case 4:
+                    // Depends on whether left or right is selected
+                    if (Hardware.autoSelectorSwitch
+                            .getPosition() == Value.kForward)
+                        autoState = State.SWITCH_OR_SCALE_L;
+                    else
+                        autoState = State.SWITCH_OR_SCALE_R;
+                    break;
+                case 5:
+                    autoState = State.OFFSET_SWITCH;
+                    break;
+                default:
+                    // If for some reason we failed, then disable.
+                    autoState = State.FINISH;
+                    break;
+                }
             break;
         case AUTOLINE:
             // TODO THIS IS WRONG! fix this ashley. pls
@@ -285,11 +284,11 @@ public static boolean centerSwitchPath ()
                 {
                 if (Hardware.autoDrive.brake() == true)
                     {
-                    if (switchSide == Switch.LEFT)
+                    if (switchSide == GameData.LEFT)
                         {
                         visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
                         }
-                    else if (switchSide == Switch.RIGHT)
+                    else if (switchSide == GameData.RIGHT)
                         {
                         visionAuto = centerState.TURN_TOWARDS_RIGHT_SIDE;
                         }
@@ -365,15 +364,16 @@ public static boolean rightSwitchOrScalePath ()
     switch (currentSwitchOrScaleState)
         {
         case INIT:
-        
+
             break;
         case DRIVE1:
-            if(Hardware.autoDrive.driveStraightInches(SWITCH_OR_SCALE_DRIVE_DISTANCE[0], DRIVE_SPEED))
+            if (Hardware.autoDrive.driveStraightInches(
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0], DRIVE_SPEED))
                 {
-                if(switchSide == Switch.RIGHT)
-                    
-                    //TODO Pick up where I left off
-                currentSwitchOrScaleState = SwitchOrScaleStates.TURN1;
+                if (switchSide == GameData.RIGHT)
+
+                    // TODO Pick up where I left off
+                    currentSwitchOrScaleState = SwitchOrScaleStates.TURN1;
                 }
             break;
         case TURN1:
@@ -437,6 +437,7 @@ public static boolean offsetSwitchPath ()
  */
 
 private static final double DRIVE_SPEED = .6;
+
 private static final double TURN_SPEED = .5;
 
 // INIT
