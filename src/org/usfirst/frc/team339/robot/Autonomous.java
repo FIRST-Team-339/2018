@@ -63,7 +63,7 @@ public class Autonomous
 public static void init ()
 {
     // Disable auto
-    if (Hardware.autoSelectorSwitch.getPosition() == Value.kOff)
+    if (Hardware.leftRightDisableAutoSwitch.getPosition() == Value.kOff)
         autoState = State.FINISH;
 } // end Init
 
@@ -121,7 +121,7 @@ public static void periodic ()
              * 5 = OFFSET SWITCH DROP OFF
              */
 
-            switch (Hardware.autoStateSwitch.getPosition())
+            switch (Hardware.autoSixPosSwitch.getPosition())
                 {
                 case 0:
                     autoState = State.AUTOLINE;
@@ -131,7 +131,7 @@ public static void periodic ()
                     break;
                 case 2:
                     // Depends on whether left or right is selected
-                    if (Hardware.autoSelectorSwitch
+                    if (Hardware.leftRightDisableAutoSwitch
                             .getPosition() == Value.kForward)
                         autoState = State.AUTOLINE_EXCHANGE_L;
                     else
@@ -142,7 +142,7 @@ public static void periodic ()
                     break;
                 case 4:
                     // Depends on whether left or right is selected
-                    if (Hardware.autoSelectorSwitch
+                    if (Hardware.leftRightDisableAutoSwitch
                             .getPosition() == Value.kForward)
                         autoState = State.SWITCH_OR_SCALE_L;
                     else
@@ -463,6 +463,7 @@ public static boolean leftSwitchOrScalePath ()
  */
 public static boolean rightSwitchOrScalePath ()
 {
+    System.out.println("Current State: " + currentSwitchOrScaleState);
     switch (currentSwitchOrScaleState)
         {
         case INIT:
@@ -500,6 +501,13 @@ public static boolean rightSwitchOrScalePath ()
             if (Hardware.autoDrive.brake())
                 currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_WITH_ULTRSNC;
             break;
+        case RAISE_ARM1:
+            // Raise the arm for the switch after turning towards it, but before
+            // driving to the wall.
+            if (Hardware.cubeManipulator.moveLiftDistance(
+                    SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED))
+                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_WITH_ULTRSNC;
+            break;
         case DRIVE_WITH_ULTRSNC:
             // Drive to the switch until the ultrasonic tells us to stop
             if (Hardware.frontUltraSonic
@@ -508,8 +516,8 @@ public static boolean rightSwitchOrScalePath ()
 
             break;
         case BRAKE_ULTRSNC:
-            //Brake after driving using the ultrasonic
-            if(Hardware.autoDrive.brake())
+            // Brake after driving using the ultrasonic
+            if (Hardware.autoDrive.brake())
                 {
                 Hardware.autoTimer.stop();
                 Hardware.autoTimer.reset();
@@ -518,11 +526,18 @@ public static boolean rightSwitchOrScalePath ()
                 }
             break;
         case EJECT_CUBE:
-        //TODO Where I left off
-                
-        break;
+            //Eject the cube onto the switch platform.
+            Hardware.cubeIntakeMotor.set(-INTAKE_SPEED);
+            if(Hardware.autoTimer.get() > INTAKE_EJECT_TIME)
+                {
+                Hardware.cubeManipulator.stopIntake();
+                Hardware.autoTimer.stop();
+                currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
+                }
+
+            break;
         case DRIVE2:
-            
+
             break;
         case TURN2:
 
@@ -542,8 +557,7 @@ public static boolean rightSwitchOrScalePath ()
 
         default:
         case FINISH:
-
-            break;
+            return true;
         }
     return false;
 }
@@ -553,7 +567,7 @@ private static SwitchOrScaleStates currentSwitchOrScaleState = SwitchOrScaleStat
 
 private static enum SwitchOrScaleStates
     {
-INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, RAISE_ARM, EJECT_CUBE, DRIVE2, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, DRIVE4, BRAKE_DRIVE4, TURN4, BRAKE_B4_FINISH, FINISH
+INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE, DRIVE2, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, DRIVE4, BRAKE_DRIVE4, TURN4, BRAKE_B4_FINISH, FINISH
     }
 
 /**
@@ -580,7 +594,13 @@ private static final double DRIVE_SPEED = .6;
 
 private static final double TURN_SPEED = .5;
 
-private static final double INTAKE_EJECT_TIME = 1;//Seconds
+private static final double INTAKE_EJECT_TIME = 1;// Seconds
+
+private static final int SWITCH_LIFT_HEIGHT = 24;// Inches
+
+private static final double FORKLIFT_SPEED = .5;
+
+private static final double INTAKE_SPEED = 1;
 
 // INIT
 
