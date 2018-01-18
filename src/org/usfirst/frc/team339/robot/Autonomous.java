@@ -234,31 +234,34 @@ public static GameData grabData (GameDataType dataType)
     if (gameData.length() < 3)
         // return
 
-        if (dataType == GameDataType.SWITCH && gameData.charAt(0) == 'L')
+        if (dataType == GameDataType.SWITCH
+                && gameData.charAt(0) == 'L')
             {
             return GameData.LEFT;
             }
-        else if (dataType == GameDataType.SWITCH && gameData.charAt(0) == 'R')
+        else if (dataType == GameDataType.SWITCH
+                && gameData.charAt(0) == 'R')
             {
             return GameData.RIGHT;
             }
-    
-        if(dataType == GameDataType.SCALE && gameData.charAt(1) == 'L')
-            {
-            return GameData.LEFT;
-            }
-        else if(dataType == GameDataType.SCALE && gameData.charAt(1) == 'R')
-            {
-            return GameData.RIGHT;
-            }
+
+    if (dataType == GameDataType.SCALE && gameData.charAt(1) == 'L')
+        {
+        return GameData.LEFT;
+        }
+    else if (dataType == GameDataType.SCALE
+            && gameData.charAt(1) == 'R')
+        {
+        return GameData.RIGHT;
+        }
 
     return GameData.NULL;
 }
 
 private enum GameDataType
-{
+    {
 SWITCH, SCALE
-}
+    }
 
 
 /**
@@ -307,7 +310,8 @@ public static boolean centerSwitchPath ()
                         {
                         visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
                         }
-                    else if (grabData(GameDataType.SWITCH) == GameData.RIGHT)
+                    else if (grabData(
+                            GameDataType.SWITCH) == GameData.RIGHT)
                         {
                         visionAuto = centerState.TURN_TOWARDS_RIGHT_SIDE;
                         }
@@ -386,22 +390,59 @@ public static boolean rightSwitchOrScalePath ()
 
             break;
         case DRIVE1:
+            // FIRST driveInches: drive forward to switch
             if (Hardware.autoDrive.driveStraightInches(
                     SWITCH_OR_SCALE_DRIVE_DISTANCE[0], DRIVE_SPEED))
                 {
+                // If the switch IS on the right side, brake before turning
+                // towards it
                 if (grabData(GameDataType.SWITCH) == GameData.RIGHT)
-
-                   
-                    currentSwitchOrScaleState = SwitchOrScaleStates.TURN1;
+                    currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_DRIVE1;
+                else
+                    // If not, then keep driving forwards.
+                    currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;
                 }
             break;
+        case BRAKE_DRIVE1:
+            // Brake before turning towards the switch
+            if (Hardware.autoDrive.brake())
+                currentSwitchOrScaleState = SwitchOrScaleStates.TURN1;
+            break;
         case TURN1:
+            // Turn towards the switch
+            if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN1;
+
+            break;
+        case BRAKE_TURN1:
+            // Brake after turning, and before going to the switch with
+            // ultrasonic
+            if (Hardware.autoDrive.brake())
+                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_WITH_ULTRSNC;
             break;
         case DRIVE_WITH_ULTRSNC:
+            // Drive to the switch until the ultrasonic tells us to stop
+            if (Hardware.frontUltraSonic
+                    .getDistanceFromNearestBumper() < SWITCH_OR_SCALE_ULTRSNC_DISTANCE)
+                currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_ULTRSNC;
 
             break;
+        case BRAKE_ULTRSNC:
+            //Brake after driving using the ultrasonic
+            if(Hardware.autoDrive.brake())
+                {
+                Hardware.autoTimer.stop();
+                Hardware.autoTimer.reset();
+                Hardware.autoTimer.start();
+                currentSwitchOrScaleState = SwitchOrScaleStates.EJECT_CUBE;
+                }
+            break;
+        case EJECT_CUBE:
+        //TODO Where I left off
+                
+        break;
         case DRIVE2:
-
+            
             break;
         case TURN2:
 
@@ -432,7 +473,7 @@ private static SwitchOrScaleStates currentSwitchOrScaleState = SwitchOrScaleStat
 
 private static enum SwitchOrScaleStates
     {
-INIT, DRIVE1, TURN1, DRIVE_WITH_ULTRSNC, DRIVE2, TURN2, DRIVE3, TURN3, DRIVE4, TURN4, FINISH
+INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, RAISE_ARM, EJECT_CUBE, DRIVE2, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, DRIVE4, BRAKE_DRIVE4, TURN4, BRAKE_B4_FINISH, FINISH
     }
 
 /**
@@ -458,6 +499,8 @@ public static boolean offsetSwitchPath ()
 private static final double DRIVE_SPEED = .6;
 
 private static final double TURN_SPEED = .5;
+
+private static final double INTAKE_EJECT_TIME = 1;//Seconds
 
 // INIT
 
@@ -495,6 +538,8 @@ private final static double AUTO_SPEED_VISION = .5;
 // SWITCH_OR_SCALE_L
 private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
     {133, 67, 31, 169};
+
+private static final int SWITCH_OR_SCALE_ULTRSNC_DISTANCE = 4;// Inches
 
 // SWITCH_OR_SCALE_R
 
