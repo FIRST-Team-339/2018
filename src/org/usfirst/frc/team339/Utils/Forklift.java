@@ -3,6 +3,7 @@ package org.usfirst.frc.team339.Utils;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 
 /**
@@ -26,6 +27,8 @@ private LightSensor intakeSwitch = null;
 
 private Encoder forkliftEncoder = null;
 
+private Timer switchTimer = null;
+
 /**
  * @param forkliftMotor
  * @param intakeMotor
@@ -33,10 +36,11 @@ private Encoder forkliftEncoder = null;
  * @param forkliftEncoder
  * @param intakeDeploy
  * @param intakeDeployEncoder
+ * @param timer
  */
 public Forklift (Victor forkliftMotor, Victor intakeMotor,
         LightSensor intakeSwitch, Encoder forkliftEncoder,
-        Victor intakeDeploy, Encoder intakeDeployEncoder)
+        Victor intakeDeploy, Encoder intakeDeployEncoder, Timer timer)
 {
     this.forkliftMotor = forkliftMotor;
     this.intakeMotor = intakeMotor;
@@ -44,6 +48,7 @@ public Forklift (Victor forkliftMotor, Victor intakeMotor,
     this.forkliftEncoder = forkliftEncoder;
     this.intakeDeployMotor = intakeDeploy;
     this.intakeDeployEncoder = intakeDeployEncoder;
+    this.switchTimer = timer;
 
 }
 
@@ -75,7 +80,7 @@ public void moveForkliftWithController (Joystick operatorJoystick)
         }
     else
         {
-        this.forkliftMotor.set(0);
+        this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
         }
 }
 
@@ -98,22 +103,54 @@ public boolean intakeCube ()
 }
 
 /**
+ * 
+ * 
+ * Hardware.cubeManipulator.stopIntake();
+ * Hardware.autoTimer.stop();
+ * currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
+ * }
  * Runs intake in reverse of intakeCube()
  * 
  * NEWBIES USE ON A BUTTON!!!!
  * 
- * @return true if the light sensor equals true
+ * @return true if the time runs out
  */
 public boolean pushOutCube ()
 {
-    if (this.intakeSwitch.isOn() == true)
+    switch (pushState)
         {
-        this.intakeMotor.set(-this.INTAKE_SPEED);
-        return false;
+        case INIT:
+            switchTimer.reset();
+            switchTimer.start();
+            pushState = pushOutState.PUSH_OUT;
+            break;
+        case PUSH_OUT:
+            if (switchTimer.get() < EJECT_TIME)
+                {
+                this.intakeMotor.set(-this.INTAKE_SPEED);
+                }
+            else
+                {
+                switchTimer.stop();
+                pushState = pushOutState.DONE;
+                }
+            break;
+        case DONE:
+            this.intakeMotor.set(0);
+            break;
         }
-    this.intakeMotor.set(0);
     return true;
 }
+
+
+
+
+private pushOutState pushState = pushOutState.INIT;
+
+private static enum pushOutState
+    {
+INIT, PUSH_OUT, DONE
+    }
 
 /**
  * Method for moving deploy arm to the down position
@@ -176,7 +213,7 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
         this.forkliftMotor.set(forkliftSpeed);
         if (this.forkliftEncoder.getDistance() >= distance)
             {
-            this.forkliftMotor.set(0);
+            this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
             return true;
             }
         this.forkliftMotor.set(forkliftSpeed);
@@ -185,7 +222,7 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
     this.forkliftMotor.set(-forkliftSpeed);
     if (this.forkliftEncoder.getDistance() <= distance)
         {
-        this.forkliftMotor.set(0);
+        this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
         return true;
         }
     this.forkliftMotor.set(-forkliftSpeed);
@@ -215,10 +252,9 @@ public boolean scoreSwitch ()
                 }
             break;
         case SPIT_OUT_CUBE:
-            if (pushOutCube() == true)
-                {
-                switchState = scoreSwitchState.FINISHED;
-                }
+            pushOutCube();
+            switchState = scoreSwitchState.FINISHED;
+
             break;
         case FINISHED:
             return true;
@@ -237,16 +273,16 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
 // STOP STUFF
 public void stopEverything ()
 {
-    this.forkliftMotor.set(0);
+    this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
     this.intakeMotor.set(0);
 }
 
 /**
- * Stops the forklift
+ * Keeps the forklift in the same position, stopping it from moving anymore
  */
 public void stopForklift ()
 {
-    this.forkliftMotor.set(0);
+    this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
 }
 
 /**
@@ -265,6 +301,8 @@ private final double FORKLIFT_SPEED = .9;
 
 private final double FORKLIFT_SPEED_COEFFICIENT = .9;
 
+private final double FORKLIFT_STAY_UP_SPEED = .1;
+
 private final double INTAKE_SPEED = .5;
 
 private final double SWITCH_HEIGHT = 30;
@@ -274,4 +312,6 @@ private final double INTAKE_ANGLE = 90;
 private final double INTAKE_DEPLOY_SPEED = .9;
 
 private final double JOYSTICK_DEADBAND = .2;
+
+private final double EJECT_TIME = 2;
 }

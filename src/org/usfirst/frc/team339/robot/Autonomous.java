@@ -293,12 +293,29 @@ public static boolean autolinePathToScale ()
  */
 public static boolean driveBackAcrossAutoline ()
 {
-    // if (Hardware.autoDrive.driveStraightInches(
-    // DISTANCE_TO_CROSS_AUTOLINE,
-    // -DRIVE_SPEED) == true)
-    // return true;
+    if (Hardware.autoDrive.driveStraightInches(
+            DISTANCE_BACK_ACROSS_AUTOLINE,
+            -DRIVE_SPEED) == true)
+        return true;
     return false;
 }
+
+/**
+ * drives to the exchange zone
+ * 
+ * @return
+ *         boolean Whether or not the robot has finished the path
+ */
+public static boolean leftDriveToExchange ()
+{
+
+    if (Hardware.autoDrive.driveStraightInches(
+            LEFT_DISTANCE_TO_EXCHANGE,
+            DRIVE_SPEED) == true)
+        return true;
+    return false;
+}
+
 
 public static leftExchangeState leftExchangeAuto = leftExchangeState.DONE;
 
@@ -334,7 +351,10 @@ public static boolean leftAutoLineExchangePath ()
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
-
+            if (driveBackAcrossAutoline() == true)
+                {
+                leftExchangeAuto = leftExchangeState.TURN_90_DEGREES;
+                }
             break;
 
         case TURN_90_DEGREES:
@@ -342,7 +362,10 @@ public static boolean leftAutoLineExchangePath ()
             break;
 
         case DRIVE_TO_EXCHANGE:
-
+            if (leftDriveToExchange() == true)
+                {
+                leftExchangeAuto = leftExchangeState.DONE;
+                }
             break;
 
         case DONE:
@@ -383,42 +406,69 @@ public static boolean centerSwitchPath ()
             if (Hardware.autoDrive.driveStraightInches(6,
                     AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive.brake() == true)
-                    {
-                    if (grabData(GameDataType.SWITCH) == Position.LEFT)
-                        {
-                        visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
-                        }
-                    else if (grabData(
-                            GameDataType.SWITCH) == Position.RIGHT)
-                        {
-                        visionAuto = centerState.TURN_TOWARDS_RIGHT_SIDE;
-                        }
-                    else
-                        {
-                        visionAuto = centerState.DONE;
-                        }
-                    }
+                visionAuto = centerState.BRAKE_1;
+                }
+            break;
+        case BRAKE_1:
+            if (Hardware.autoDrive.brake() == true)
+                {
+                visionAuto = centerState.GRAB_DATA;
+                }
+            break;
+        case GRAB_DATA:
+            if (grabData(GameDataType.SWITCH) == Position.LEFT)
+                {
+                visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
+                }
+            else if (grabData(
+                    GameDataType.SWITCH) == Position.RIGHT)
+                {
+                visionAuto = centerState.TURN_TOWARDS_RIGHT_SIDE;
+                }
+            else
+                {
+                visionAuto = centerState.DONE;
                 }
             break;
         case TURN_TOWARDS_LEFT_SIDE:
             if (Hardware.autoDrive.turnDegrees(ANGLE_TOWARDS_LEFT,
                     AUTO_SPEED_VISION))
                 {
-                if (Hardware.autoDrive.brake() == true)
-                    {
-                    }
+                visionAuto = centerState.BRAKE_2_L;
                 }
             break;
         case TURN_TOWARDS_RIGHT_SIDE:
             if (Hardware.autoDrive.turnDegrees(ANGLE_TOWARDS_RIGHT,
                     AUTO_SPEED_VISION))
                 {
-                if (Hardware.autoDrive.brake() == true)
-                    {
-
-                    }
+                visionAuto = centerState.BRAKE_2_R;
                 }
+        case BRAKE_2_L:
+            if (Hardware.autoDrive.brake())
+                {
+                visionAuto = centerState.DRIVE_STRAIGHT_TO_SWITCH_LEFT;
+                }
+            break;
+        case BRAKE_2_R:
+            if (Hardware.autoDrive.brake())
+                {
+                visionAuto = centerState.DRIVE_STRAIGHT_TO_SWITCH_RIGHT;
+                }
+            break;
+        case DRIVE_STRAIGHT_TO_SWITCH_LEFT:
+            if (Hardware.autoDrive.driveStraightInches(
+                    DRIVE_NO_CAMERA_LEFT, AUTO_SPEED_VISION))
+                {
+
+                }
+            break;
+        case DRIVE_STRAIGHT_TO_SWITCH_RIGHT:
+            if (Hardware.autoDrive.driveStraightInches(
+                    DRIVE_NO_CAMERA_RIGHT, AUTO_SPEED_VISION))
+                {
+                }
+            break;
+
 
         }
     return false;
@@ -434,7 +484,7 @@ public static centerState visionAuto = centerState.DRIVE_SIX_INCHES;
  */
 public static enum centerState
     {
-DRIVE_SIX_INCHES, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, DONE
+DRIVE_SIX_INCHES, BRAKE_1, GRAB_DATA, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, BRAKE_2_L, BRAKE_2_R, DRIVE_STRAIGHT_TO_SWITCH_LEFT, DRIVE_STRAIGHT_TO_SWITCH_RIGHT, DONE
     }
 
 /**
@@ -718,12 +768,14 @@ private final static int DISTANCE_TO_CROSS_AUTOLINE = 120;
 private final static int DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE = 207;
 
 // AUTOLINE_EXCHANGE
+private final static int DISTANCE_BACK_ACROSS_AUTOLINE = 100;
 
+private final static int LEFT_DISTANCE_TO_EXCHANGE = 58;
 
 // CENTER_SWITCH
-private final static double DISTANCE_TO_LEFT_TARGET = 118;
+private final static int DRIVE_NO_CAMERA_LEFT = 118;
 
-private final static double DISTANCE_TO_RIGHT_TARGET = 116;
+private final static int DRIVE_NO_CAMERA_RIGHT = 116;
 
 // TODO change all of these to be real numbers -- just placeholders for right
 // now
