@@ -452,41 +452,41 @@ DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_LEFT, DRIVE_T
  */
 public static boolean rightAutoLineExchangePath ()
 {
-    switch (rightExchangeAuto)
+switch (rightExchangeAuto)
+{
+case DRIVE_ACROSS_AUTOLINE:
+    if (autolinePath() == true)
         {
-        case DRIVE_ACROSS_AUTOLINE:
-            if (autolinePath() == true)
-                {
-                rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
-                }
-            break;
-
-        case DRIVE_BACK_ACROSS_AUTOLINE:
-            if (driveBackAcrossAutoline() == true)
-                {
-                rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
-                }
-            break;
-
-        case TURN_90_DEGREES_LEFT:
-            if (turn90DegreesLeft() == true)
-                {
-                rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
-                }
-            break;
-
-        case DRIVE_TO_EXCHANGE:
-            if (rightDriveToExchange() == true)
-                {
-                rightExchangeAuto = rightExchangeState.DONE;
-                }
-            break;
-
-        case DONE:
-
-            break;
-
+        rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
         }
+    break;
+
+case DRIVE_BACK_ACROSS_AUTOLINE:
+    if (driveBackAcrossAutoline() == true)
+        {
+        rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
+        }
+    break;
+
+case TURN_90_DEGREES_LEFT:
+    if (turn90DegreesLeft() == true)
+        {
+        rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
+        }
+    break;
+
+case DRIVE_TO_EXCHANGE:
+    if (rightDriveToExchange() == true)
+        {
+        rightExchangeAuto = rightExchangeState.DONE;
+        }
+    break;
+
+case DONE:
+
+    break;
+
+}
 
     return false;
 }
