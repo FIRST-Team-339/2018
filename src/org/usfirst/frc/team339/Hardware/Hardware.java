@@ -17,7 +17,6 @@ package org.usfirst.frc.team339.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
-import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
@@ -258,6 +257,12 @@ public static Joystick leftOperator = new Joystick(3);
 // -------------------------------------
 
 // ------------------------------------
+// Utility classes
+// ------------------------------------
+
+public static final Timer autoTimer = new Timer();
+
+// ------------------------------------
 // Transmission class
 // ------------------------------------
 public static TractionTransmission tractionDrive = new TractionTransmission(
@@ -275,12 +280,8 @@ public static Drive autoDrive = new Drive(tractionDrive,
 
 public static Forklift cubeManipulator = new Forklift(liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
-        intakeDeployArm, intakeDeployEncoder);
+        intakeDeployArm, intakeDeployEncoder, autoTimer);
 
-// ------------------------------------
-// Utility classes
-// ------------------------------------
 
-public static final Timer autoTimer = new Timer();
 
 } // end class
