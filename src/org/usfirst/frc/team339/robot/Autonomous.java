@@ -33,7 +33,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * An Autonomous class.
@@ -63,7 +62,7 @@ public class Autonomous
 public static void init ()
 {
     // Disable auto
-    if (Hardware.leftRightDisableAutoSwitch.getPosition() == Value.kOff)
+    if (Hardware.disableAutonomousSwitch.isOn() == false)
         autoState = State.FINISH;
 } // end Init
 
@@ -131,8 +130,7 @@ public static void periodic ()
                     break;
                 case 2:
                     // Depends on whether left or right is selected
-                    if (Hardware.leftRightDisableAutoSwitch
-                            .getPosition() == Value.kForward)
+                    if (Hardware.leftAutoSwitch.isOn() == true)
                         autoState = State.AUTOLINE_EXCHANGE_L;
                     else
                         autoState = State.AUTOLINE_EXCHANGE_R;
@@ -142,8 +140,7 @@ public static void periodic ()
                     break;
                 case 4:
                     // Depends on whether left or right is selected
-                    if (Hardware.leftRightDisableAutoSwitch
-                            .getPosition() == Value.kForward)
+                    if (Hardware.leftAutoSwitch.isOn() == true)
                         autoState = State.SWITCH_OR_SCALE_L;
                     else
                         autoState = State.SWITCH_OR_SCALE_R;
@@ -526,9 +523,9 @@ public static boolean rightSwitchOrScalePath ()
                 }
             break;
         case EJECT_CUBE:
-            //Eject the cube onto the switch platform.
+            // Eject the cube onto the switch platform.
             Hardware.cubeIntakeMotor.set(-INTAKE_SPEED);
-            if(Hardware.autoTimer.get() > INTAKE_EJECT_TIME)
+            if (Hardware.autoTimer.get() > INTAKE_EJECT_TIME)
                 {
                 Hardware.cubeManipulator.stopIntake();
                 Hardware.autoTimer.stop();

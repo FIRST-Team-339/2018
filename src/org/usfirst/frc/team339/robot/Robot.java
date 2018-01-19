@@ -110,7 +110,6 @@ public void autonomousInit ()
     Hardware.rightRearDriveEncoder.reset();
     Hardware.leftRearDriveEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
-    Hardware.liftingEncoder.reset();
     Autonomous.init();
 
     // =========================================================
@@ -236,8 +235,9 @@ public void robotInit ()
     Hardware.rearUltraSonic.setScalingFactor(UltraSonicScalingFactor);
     Hardware.leftDriveMotor.setInverted(false);
     Hardware.rightDriveMotor.setInverted(true);
-    
-    Hardware.autoDrive.setEncoderDistancePerPulse(KILROY_XV_ENCODER_DPP, MotorPosition.ALL);
+
+    Hardware.autoDrive.setEncoderDistancePerPulse(KILROY_XV_ENCODER_DPP,
+            MotorPosition.ALL);
 
     // User code goes above here
     // =========================================================
@@ -275,7 +275,6 @@ public void teleopInit ()
     Hardware.rightRearDriveEncoder.reset();
     Hardware.leftRearDriveEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
-    Hardware.liftingEncoder.reset();
     Teleop.init();
 
 
