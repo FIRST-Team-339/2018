@@ -70,7 +70,61 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+    if (Hardware.rightOperator.getRawButton(6) == true)
+        {
+        Hardware.cubeManipulator.intakeCube();
+        }
 
+    if (Hardware.rightOperator.getRawButton(5) == true)
+        {
+        Hardware.cubeManipulator.moveLiftDistance(55.0, 0.8);
+        }
+
+    if (Hardware.rightOperator.getRawButton(4) == true)
+        {
+        Hardware.cubeManipulator.scoreSwitch();
+        }
+
+    if (Hardware.rightOperator.getRawButton(3) == true)
+        {
+        Hardware.cubeManipulator.stopEverything();
+        }
+
+    if (Hardware.rightOperator.getRawButton(2) == true)
+        {
+        Hardware.cubeManipulator.stopForklift();
+        }
+
+    if (Hardware.rightOperator.getRawButton(1) == true)
+        {
+        Hardware.cubeManipulator.stopIntake();
+        }
+
+    if (Hardware.rightOperator.getRawButton(7) == true)
+        {
+        Hardware.cubeManipulator.moveIntake(0.7);
+        }
+
+    if (Hardware.rightOperator.getRawButton(8) == true)
+        {
+        Hardware.cubeManipulator.deployCubeIntake();
+        }
+
+    if (Hardware.rightOperator.getRawButton(9) == true)
+        {
+        Hardware.cubeManipulator.pushOutCube();
+        }
+
+    if (Hardware.rightOperator.getRawButton(10) == true)
+        {
+        Hardware.cubeManipulator
+                .moveForkliftWithController(Hardware.rightOperator);
+        }
+
+    if (Hardware.rightOperator.getRawButton(11) == true)
+        {
+        Hardware.cubeManipulator.getForkliftHeight();
+        }
     // =================================================================
     // CAMERA CODE
     // =================================================================
