@@ -316,6 +316,52 @@ public static boolean leftDriveToExchange ()
     return false;
 }
 
+/**
+ * drives to the exchange zone
+ * 
+ * @return
+ *         boolean Whether or not the robot has finished the path
+ */
+public static boolean rightDriveToExchange ()
+{
+
+    if (Hardware.autoDrive.driveStraightInches(
+            RIGHT_DISTANCE_TO_EXCHANGE,
+            DRIVE_SPEED) == true)
+        return true;
+    return false;
+}
+
+/**
+ * turns 90 degrees to the right
+ * 
+ * @return
+ *         boolean Whether or not the robot has finished the path
+ */
+public static boolean turn90DegreesRight ()
+{
+
+    if (Hardware.autoDrive.turnDegrees(LEFT_SIDE_TURN_TOWARDS_EXCHANGE,
+            TURN_SPEED) == true)
+        return true;
+    return false;
+}
+
+/**
+ * turns 90 degrees to the left
+ * 
+ * @return
+ *         boolean Whether or not the robot has finished the path
+ */
+public static boolean turn90DegreesLeft ()
+{
+
+    if (Hardware.autoDrive.turnDegrees(RIGHT_SIDE_TURN_TOWARDS_EXCHANGE,
+            TURN_SPEED) == true)
+        return true;
+    return false;
+}
+
 
 public static leftExchangeState leftExchangeAuto = leftExchangeState.DONE;
 
@@ -327,7 +373,7 @@ public static leftExchangeState leftExchangeAuto = leftExchangeState.DONE;
  */
 public static enum leftExchangeState
     {
-DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES, DRIVE_TO_EXCHANGE, DONE
+DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_RIGHT, DRIVE_TO_EXCHANGE, DONE
     }
 
 
@@ -353,12 +399,15 @@ public static boolean leftAutoLineExchangePath ()
         case DRIVE_BACK_ACROSS_AUTOLINE:
             if (driveBackAcrossAutoline() == true)
                 {
-                leftExchangeAuto = leftExchangeState.TURN_90_DEGREES;
+                leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
                 }
             break;
 
-        case TURN_90_DEGREES:
-
+        case TURN_90_DEGREES_RIGHT:
+            if (turn90DegreesRight() == true)
+                {
+                leftExchangeAuto = leftExchangeState.DRIVE_TO_EXCHANGE;
+                }
             break;
 
         case DRIVE_TO_EXCHANGE:
@@ -378,6 +427,22 @@ public static boolean leftAutoLineExchangePath ()
     return false;
 }
 
+public static rightExchangeState rightExchangeAuto = rightExchangeState.DONE;
+
+/**
+ * Possible states for right exchange autonomous
+ * 
+ * @author Ashley Espeland
+ *
+ */
+public static enum rightExchangeState
+    {
+DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_LEFT, DRIVE_TO_EXCHANGE, DONE
+    }
+
+
+
+
 /**
  * Crosses the auto line and returns to the exchange zone to setup for teleop.
  * Starts in the right corner.
@@ -387,6 +452,41 @@ public static boolean leftAutoLineExchangePath ()
  */
 public static boolean rightAutoLineExchangePath ()
 {
+    switch (rightExchangeAuto)
+        {
+        case DRIVE_ACROSS_AUTOLINE:
+            if (autolinePath() == true)
+                {
+                rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                }
+            break;
+
+        case DRIVE_BACK_ACROSS_AUTOLINE:
+            if (driveBackAcrossAutoline() == true)
+                {
+                rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
+                }
+            break;
+
+        case TURN_90_DEGREES_LEFT:
+            if (turn90DegreesLeft() == true)
+                {
+                rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
+                }
+            break;
+
+        case DRIVE_TO_EXCHANGE:
+            if (rightDriveToExchange() == true)
+                {
+                rightExchangeAuto = rightExchangeState.DONE;
+                }
+            break;
+
+        case DONE:
+
+            break;
+
+        }
 
     return false;
 }
@@ -576,9 +676,9 @@ public static boolean rightSwitchOrScalePath ()
                 }
             break;
         case EJECT_CUBE:
-            //Eject the cube onto the switch platform.
+            // Eject the cube onto the switch platform.
             Hardware.cubeIntakeMotor.set(-INTAKE_SPEED);
-            if(Hardware.autoTimer.get() > INTAKE_EJECT_TIME)
+            if (Hardware.autoTimer.get() > INTAKE_EJECT_TIME)
                 {
                 Hardware.cubeManipulator.stopIntake();
                 Hardware.autoTimer.stop();
@@ -672,6 +772,12 @@ private final static int DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE = 207;
 private final static int DISTANCE_BACK_ACROSS_AUTOLINE = 100;
 
 private final static int LEFT_DISTANCE_TO_EXCHANGE = 58;
+
+private final static int LEFT_SIDE_TURN_TOWARDS_EXCHANGE = 90;
+
+private final static int RIGHT_SIDE_TURN_TOWARDS_EXCHANGE = -90;
+
+private final static int RIGHT_DISTANCE_TO_EXCHANGE = 130;
 
 // CENTER_SWITCH
 private final static int DRIVE_NO_CAMERA_LEFT = 118;
