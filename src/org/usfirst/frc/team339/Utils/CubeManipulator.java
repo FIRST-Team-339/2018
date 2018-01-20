@@ -113,14 +113,6 @@ public boolean intakeCube ()
 }
 
 /**
- * 
- * 
- * Hardware.cubeManipulator.stopIntake();
- * Hardware.autoTimer.stop();
- * currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
- * }
- * Runs intake in reverse of intakeCube()
- * 
  * NEWBIES USE ON A BUTTON!!!!
  * 
  * @return true if the complete
@@ -299,7 +291,8 @@ public void stopIntake ()
 }
 
 /**
- * 
+ * NEWBIES -- Call this in periodic.
+ * State machine for the forklift
  */
 public void forkliftUpdate ()
 {
