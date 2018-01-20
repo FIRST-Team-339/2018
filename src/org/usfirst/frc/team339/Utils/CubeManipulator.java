@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Victor;
  * @author Becky Button
  *
  */
-public class Forklift
+public class CubeManipulator
 {
 private Victor forkliftMotor = null;
 
@@ -45,7 +45,7 @@ private boolean finishedForkliftMove = false;
  * @param intakeDeployEncoder
  * @param timer
  */
-public Forklift (Victor forkliftMotor, Victor intakeMotor,
+public CubeManipulator (Victor forkliftMotor, Victor intakeMotor,
         LightSensor intakeSwitch, Encoder forkliftEncoder,
         Victor intakeDeploy, Encoder intakeDeployEncoder, Timer timer)
 {
@@ -123,7 +123,7 @@ public boolean intakeCube ()
  * 
  * NEWBIES USE ON A BUTTON!!!!
  * 
- * @return true if the time runs out
+ * @return true if the complete
  */
 public boolean pushOutCube ()
 {
@@ -147,14 +147,11 @@ public boolean pushOutCube ()
             break;
         case DONE:
             this.intakeMotor.set(0);
-            break;
+            pushState = pushOutState.INIT;
+            return true;
         }
-
-    return true;
+    return false;
 }
-
-
-
 
 private pushOutState pushState = pushOutState.INIT;
 
@@ -179,8 +176,10 @@ public boolean deployCubeIntake ()
     else
         {
         this.intakeDeployMotor.set(0);
+        return true;
         }
-    return true;
+    return false;
+
 }
 
 /**
@@ -216,7 +215,7 @@ public void moveIntake (double speed)
  */
 public boolean moveLiftDistance (double distance, double forkliftSpeed)
 {
-    finishedForkliftMove = false;
+    // finishedForkliftMove = false;
     double direction = distance - getForkliftHeight();
     boolean mustGoUp = direction > 1;
     this.forkliftHeight = distance;
@@ -238,7 +237,6 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
  */
 public boolean scoreSwitch ()
 {
-    scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
     switch (switchState)
         {
         case MOVE_LIFT:
@@ -259,10 +257,15 @@ public boolean scoreSwitch ()
 
             break;
         case FINISHED:
+            stopEverything();
+            switchState = scoreSwitchState.MOVE_LIFT;
             return true;
         }
+
     return false;
 }
+
+scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
 
 private enum scoreSwitchState
     {
@@ -304,6 +307,7 @@ public void forkliftUpdate ()
         {
         case MOVING_UP:
             this.forkliftMotor.set(this.forkliftSpeed);
+            finishedForkliftMove = false;
             if (this.forkliftEncoder
                     .getDistance() >= this.forkliftHeight)
                 {
@@ -313,9 +317,11 @@ public void forkliftUpdate ()
             break;
         case MOVING_DOWN:
             this.forkliftMotor.set(-this.forkliftSpeed);
+            finishedForkliftMove = false;
             if (this.forkliftEncoder
                     .getDistance() <= this.forkliftHeight)
                 {
+                finishedForkliftMove = true;
                 }
             this.forkliftMotor.set(-this.forkliftSpeed);
             break;
