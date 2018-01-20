@@ -29,6 +29,13 @@ private Encoder forkliftEncoder = null;
 
 private Timer switchTimer = null;
 
+private double forkliftHeight = 0;
+
+private double forkliftSpeed = 0;
+
+private boolean finishedForkliftMove = false;
+
+
 /**
  * @param forkliftMotor
  * @param intakeMotor
@@ -49,7 +56,6 @@ public Forklift (Victor forkliftMotor, Victor intakeMotor,
     this.intakeDeployMotor = intakeDeploy;
     this.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
-
 }
 
 /**
@@ -72,15 +78,19 @@ public double getForkliftHeight ()
  */
 public void moveForkliftWithController (Joystick operatorJoystick)
 {
-    if (getForkliftHeight() < FORKLIFT_MAX_HEIGHT
-            || getForkliftHeight() > FORKLIFT_MIN_HEIGHT)
+    if (operatorJoystick.getY() >= JOYSTICK_DEADBAND)
         {
-        this.forkliftMotor.set(
-                (operatorJoystick.getY()) * FORKLIFT_SPEED_COEFFICIENT);
+        this.forkliftHeight = FORKLIFT_MAX_HEIGHT;
+        liftState = forkliftState.MOVING_UP;
+        }
+    else if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND)
+        {
+        this.forkliftHeight = FORKLIFT_MIN_HEIGHT;
+        liftState = forkliftState.MOVING_DOWN;
         }
     else
         {
-        this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
+        liftState = forkliftState.STAY_AT_POSITION;
         }
 }
 
@@ -139,6 +149,7 @@ public boolean pushOutCube ()
             this.intakeMotor.set(0);
             break;
         }
+
     return true;
 }
 
@@ -205,28 +216,19 @@ public void moveIntake (double speed)
  */
 public boolean moveLiftDistance (double distance, double forkliftSpeed)
 {
+    finishedForkliftMove = false;
     double direction = distance - getForkliftHeight();
     boolean mustGoUp = direction > 1;
-
+    this.forkliftHeight = distance;
+    this.forkliftSpeed = forkliftSpeed;
     if (mustGoUp == true)
         {
-        this.forkliftMotor.set(forkliftSpeed);
-        if (this.forkliftEncoder.getDistance() >= distance)
-            {
-            this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
-            return true;
-            }
-        this.forkliftMotor.set(forkliftSpeed);
-        return false;
+        liftState = forkliftState.MOVING_UP;
+        return this.finishedForkliftMove;
         }
-    this.forkliftMotor.set(-forkliftSpeed);
-    if (this.forkliftEncoder.getDistance() <= distance)
-        {
-        this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
-        return true;
-        }
-    this.forkliftMotor.set(-forkliftSpeed);
-    return false;
+    liftState = forkliftState.MOVING_DOWN;
+    return this.finishedForkliftMove;
+
 }
 
 /**
@@ -273,7 +275,7 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
 // STOP STUFF
 public void stopEverything ()
 {
-    this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
+    liftState = forkliftState.STAY_AT_POSITION;
     this.intakeMotor.set(0);
 }
 
@@ -282,7 +284,7 @@ public void stopEverything ()
  */
 public void stopForklift ()
 {
-    this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
+    liftState = forkliftState.STAY_AT_POSITION;
 }
 
 /**
@@ -292,6 +294,50 @@ public void stopIntake ()
 {
     this.intakeMotor.set(0);
 }
+
+/**
+ * 
+ */
+public void forkliftUpdate ()
+{
+    switch (liftState)
+        {
+        case MOVING_UP:
+            this.forkliftMotor.set(this.forkliftSpeed);
+            if (this.forkliftEncoder
+                    .getDistance() >= this.forkliftHeight)
+                {
+                liftState = forkliftState.STAY_AT_POSITION;
+                finishedForkliftMove = true;
+                }
+            break;
+        case MOVING_DOWN:
+            this.forkliftMotor.set(-this.forkliftSpeed);
+            if (this.forkliftEncoder
+                    .getDistance() <= this.forkliftHeight)
+                {
+                }
+            this.forkliftMotor.set(-this.forkliftSpeed);
+            break;
+        case STAY_AT_POSITION:
+            this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
+            break;
+        case AT_STARTING_POSITION:
+            break;
+        }
+}
+
+private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
+
+/**
+ * @author Becky Button
+ *
+ */
+public enum forkliftState
+    {
+MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION
+
+    }
 
 private final double FORKLIFT_MAX_HEIGHT = 100;
 
