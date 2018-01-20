@@ -116,8 +116,8 @@ public static void periodic ()
 
     if (Hardware.rightOperator.getRawButton(10) == true)
         {
-    Hardware.cubeManipulator
-            .moveForkliftWithController(Hardware.rightOperator);
+        Hardware.cubeManipulator
+                .moveForkliftWithController(Hardware.rightOperator);
         }
 
 

@@ -452,41 +452,41 @@ DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_LEFT, DRIVE_T
  */
 public static boolean rightAutoLineExchangePath ()
 {
-switch (rightExchangeAuto)
-{
-case DRIVE_ACROSS_AUTOLINE:
-    if (autolinePath() == true)
+    switch (rightExchangeAuto)
         {
-        rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+        case DRIVE_ACROSS_AUTOLINE:
+            if (autolinePath() == true)
+                {
+                rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                }
+            break;
+
+        case DRIVE_BACK_ACROSS_AUTOLINE:
+            if (driveBackAcrossAutoline() == true)
+                {
+                rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
+                }
+            break;
+
+        case TURN_90_DEGREES_LEFT:
+            if (turn90DegreesLeft() == true)
+                {
+                rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
+                }
+            break;
+
+        case DRIVE_TO_EXCHANGE:
+            if (rightDriveToExchange() == true)
+                {
+                rightExchangeAuto = rightExchangeState.DONE;
+                }
+            break;
+
+        case DONE:
+
+            break;
+
         }
-    break;
-
-case DRIVE_BACK_ACROSS_AUTOLINE:
-    if (driveBackAcrossAutoline() == true)
-        {
-        rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
-        }
-    break;
-
-case TURN_90_DEGREES_LEFT:
-    if (turn90DegreesLeft() == true)
-        {
-        rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
-        }
-    break;
-
-case DRIVE_TO_EXCHANGE:
-    if (rightDriveToExchange() == true)
-        {
-        rightExchangeAuto = rightExchangeState.DONE;
-        }
-    break;
-
-case DONE:
-
-    break;
-
-}
 
     return false;
 }
@@ -494,6 +494,10 @@ case DONE:
 /**
  * Crosses the auto line and returns to the exchange zone to setup for teleop.
  * Starts in the left corner.
+ *
+ * Left Plan: Drive ten inches, brake, turn 90 degrees to left, drive 73 inches,
+ * turn 90 degrees to right, drive 54 inhes with camera, drive 24 inches with
+ * ultrasonic
  * 
  * @return
  *         Whether or not the robot has finished the action
@@ -502,8 +506,8 @@ public static boolean centerSwitchPath ()
 {
     switch (visionAuto)
         {
-        case DRIVE_SIX_INCHES:
-            if (Hardware.autoDrive.driveStraightInches(6,
+        case DRIVE_TEN_INCHES:
+            if (Hardware.autoDrive.driveStraightInches(10,
                     AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_1;
@@ -574,7 +578,7 @@ public static boolean centerSwitchPath ()
     return false;
 }
 
-public static centerState visionAuto = centerState.DRIVE_SIX_INCHES;
+public static centerState visionAuto = centerState.DRIVE_TEN_INCHES;
 
 /**
  * Possible states for center vision autonomous
@@ -584,11 +588,7 @@ public static centerState visionAuto = centerState.DRIVE_SIX_INCHES;
  */
 public static enum centerState
     {
-DRIVE_SIX_INCHES, BRAKE_1,
-/**
- * 
- */
-GRAB_DATA, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, BRAKE_2_L, BRAKE_2_R, DRIVE_STRAIGHT_TO_SWITCH_LEFT, DRIVE_STRAIGHT_TO_SWITCH_RIGHT, DONE
+DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, BRAKE_2_L, BRAKE_2_R, DRIVE_STRAIGHT_TO_SWITCH_LEFT, DRIVE_STRAIGHT_TO_SWITCH_RIGHT, DONE
     }
 
 /**
@@ -742,7 +742,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                     {
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_DRIVE3;
                     }
-                //No? adventure on...
+                // No? adventure on...
                 else
                     {
                     currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE4;

@@ -21,7 +21,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
-import org.usfirst.frc.team339.Utils.Forklift;
+import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -281,7 +281,7 @@ public static Drive autoDrive = new Drive(tractionDrive,
 // Assembly classes (e.g. forklift)
 // -------------------
 
-public static Forklift cubeManipulator = new Forklift(liftingMotor,
+public static CubeManipulator cubeManipulator = new CubeManipulator(liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
         intakeDeployArm, intakeDeployEncoder, autoTimer);
 
