@@ -503,6 +503,7 @@ public static boolean centerSwitchPath ()
     switch (visionAuto)
         {
         case DRIVE_TEN_INCHES:
+            // drive 10 inches to make the turn
             if (Hardware.autoDrive.driveStraightInches(10,
                     AUTO_SPEED_VISION) == true)
                 {
@@ -510,12 +511,14 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case BRAKE_1:
+            // brakes!!!
             if (Hardware.autoDrive.brake() == true)
                 {
                 visionAuto = centerState.GRAB_DATA;
                 }
             break;
         case GRAB_DATA:
+            // know where to go
             if (grabData(GameDataType.SWITCH) == Position.LEFT)
                 {
                 visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
@@ -531,44 +534,64 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case TURN_TOWARDS_LEFT_SIDE:
-            if (Hardware.autoDrive.turnDegrees(ANGLE_TOWARDS_LEFT,
+            // Turn 90 degrees to the left, if the switch is on the left
+            if (Hardware.autoDrive.turnDegrees(-90,
                     AUTO_SPEED_VISION))
                 {
                 visionAuto = centerState.BRAKE_2_L;
                 }
             break;
         case TURN_TOWARDS_RIGHT_SIDE:
-            if (Hardware.autoDrive.turnDegrees(ANGLE_TOWARDS_RIGHT,
+            // Turn 90 degrees to the right, if the switch is one the right
+            if (Hardware.autoDrive.turnDegrees(90,
                     AUTO_SPEED_VISION))
                 {
                 visionAuto = centerState.BRAKE_2_R;
                 }
         case BRAKE_2_L:
+            // brake switch is on left
             if (Hardware.autoDrive.brake())
                 {
                 visionAuto = centerState.DRIVE_STRAIGHT_TO_SWITCH_LEFT;
                 }
             break;
         case BRAKE_2_R:
+            // brake switch is on right
             if (Hardware.autoDrive.brake())
                 {
                 visionAuto = centerState.DRIVE_STRAIGHT_TO_SWITCH_RIGHT;
                 }
             break;
         case DRIVE_STRAIGHT_TO_SWITCH_LEFT:
+            // drive straight, switch is on the left
             if (Hardware.autoDrive.driveStraightInches(
                     DRIVE_NO_CAMERA_LEFT, AUTO_SPEED_VISION))
                 {
-
+                visionAuto = centerState.TURN_AGAIN_LEFT;
                 }
             break;
         case DRIVE_STRAIGHT_TO_SWITCH_RIGHT:
+            // drive straight, switch is on the right
             if (Hardware.autoDrive.driveStraightInches(
                     DRIVE_NO_CAMERA_RIGHT, AUTO_SPEED_VISION))
                 {
                 }
             break;
-
+        // case TURN_AGAIN_LEFT:
+        // if (Hardware.autoDrive.turnDegrees(90, AUTO_SPEED_VISION))
+        // {
+        // visionAuto = centerState.DRIVE_WITH_CAMERA;
+        // }
+        // break;
+        // case DRIVE_WITH_CAMERA:
+        // visionAuto = centerState.DEPLOY_ARM;
+        // break;
+        // case DEPLOY_ARM:
+        // visionAuto = centerState.DRIVE_ULTRASONIC;
+        // break;
+        // case DRIVE_ULTRASONIC:
+        // visionAuto = centerState.MAKE_DEPOSIT;
+        // break;
 
         }
     return false;
@@ -584,7 +607,7 @@ public static centerState visionAuto = centerState.DRIVE_TEN_INCHES;
  */
 public static enum centerState
     {
-DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, BRAKE_2_L, BRAKE_2_R, DRIVE_STRAIGHT_TO_SWITCH_LEFT, DRIVE_STRAIGHT_TO_SWITCH_RIGHT, DONE
+DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, BRAKE_2_L, BRAKE_2_R, DRIVE_STRAIGHT_TO_SWITCH_LEFT, DRIVE_STRAIGHT_TO_SWITCH_RIGHT, TURN_AGAIN_LEFT, TURN_AGAIN_RIGHT, DRIVE_WITH_CAMERA, DEPLOY_ARM, DRIVE_ULTRASONIC, MAKE_DEPOSIT, DONE
     }
 
 /**
@@ -1050,15 +1073,9 @@ private final static int RIGHT_SIDE_TURN_TOWARDS_EXCHANGE = -90;
 private final static int RIGHT_DISTANCE_TO_EXCHANGE = 130;
 
 // CENTER_SWITCH
-private final static int DRIVE_NO_CAMERA_LEFT = 118;
+private final static int DRIVE_NO_CAMERA_LEFT = 73;
 
 private final static int DRIVE_NO_CAMERA_RIGHT = 116;
-
-// TODO change all of these to be real numbers -- just placeholders for right
-// now
-private final static int ANGLE_TOWARDS_LEFT = 35;
-
-private final static int ANGLE_TOWARDS_RIGHT = 24;
 
 // TODO change for actual auto speed
 private final static double AUTO_SPEED_VISION = .5;

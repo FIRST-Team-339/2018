@@ -814,6 +814,43 @@ private boolean turnDegreesInit = true;
  * to score, etc.
  */
 
+public boolean driveToSwitch ()
+{
+    if (this.frontUltrasonic
+            .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
+        {
+        visionProcessor.processImage();
+        double center = (visionProcessor.getNthSizeBlob(0).center.x
+                + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+
+        if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
+                && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+            {
+            driveStraight(ALIGN_TO_SWITCH_SPEED);
+            }
+        else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+            {
+            // center is too far right, drive faster on the left
+            }
+        else
+            {
+            // center is too far left, drive faster on the right
+            }
+
+        }
+    return false;
+}
+
+// ================VISION TUNABLES================
+private final double CAMERA_NO_LONGER_WORKS = 24;
+
+private final double CAMERA_DEADBAND = 2;
+
+// TODO TEST TO FIND ACTUAL VALUE
+private final double SWITCH_CAMERA_CENTER = 45;
+
+private final double ALIGN_TO_SWITCH_SPEED = .7;
+
 // ================TUNABLES================
 
 // Number of milliseconds that will pass before collecting data on encoders

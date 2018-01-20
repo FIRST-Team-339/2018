@@ -246,6 +246,9 @@ public static void printStatements ()
     // System.out.println(
     // "Right = on");
     //
+
+    System.out.println("6 pos = "
+            + Hardware.autoSixPosSwitch.getPosition());
     //
     // ---------------------------------
     // Encoders
