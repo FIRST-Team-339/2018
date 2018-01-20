@@ -20,7 +20,6 @@ import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
-import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.Utils.Forklift;
@@ -106,9 +105,11 @@ public static Relay ringLightRelay = new Relay(0);
 // ------------------------------------
 // Single and double throw switches
 // ------------------------------------
-public static SingleThrowSwitch leftAutoSwitch = new SingleThrowSwitch(20);
+public static SingleThrowSwitch leftAutoSwitch = new SingleThrowSwitch(
+        20);
 
-public static SingleThrowSwitch rightAutoSwitch = new SingleThrowSwitch(21);
+public static SingleThrowSwitch rightAutoSwitch = new SingleThrowSwitch(
+        21);
 
 public static DoubleThrowSwitch disableAutonomousSwitch = new DoubleThrowSwitch(
         leftAutoSwitch, rightAutoSwitch);
@@ -237,6 +238,7 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // ------------------------------------
 
 public static DriverStation driverStation = DriverStation.getInstance();
+
 
 // ------------------------------------
 // Joystick classes

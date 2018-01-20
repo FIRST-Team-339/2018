@@ -290,10 +290,10 @@ public static boolean autolinePathToScale ()
  */
 public static boolean driveBackAcrossAutoline ()
 {
-    // if (Hardware.autoDrive.driveStraightInches(
-    // DISTANCE_TO_CROSS_AUTOLINE,
-    // -DRIVE_SPEED) == true)
-    // return true;
+    if (Hardware.autoDrive.driveStraightInches(
+            DISTANCE_TO_CROSS_AUTOLINE,
+            -DRIVE_SPEED) == true)
+        return true;
     return false;
 }
 
