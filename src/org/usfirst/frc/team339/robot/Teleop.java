@@ -66,7 +66,6 @@ public static void init ()
  */
 public static void periodic ()
 {
-
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
@@ -120,6 +119,7 @@ public static void periodic ()
         Hardware.cubeManipulator
                 .moveForkliftWithController(Hardware.rightOperator);
         }
+
 
     if (Hardware.rightOperator.getRawButton(11) == true)
         {

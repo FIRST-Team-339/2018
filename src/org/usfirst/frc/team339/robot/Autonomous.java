@@ -493,6 +493,10 @@ public static boolean rightAutoLineExchangePath ()
 /**
  * Crosses the auto line and returns to the exchange zone to setup for teleop.
  * Starts in the left corner.
+ *
+ * Left Plan: Drive ten inches, brake, turn 90 degrees to left, drive 73 inches,
+ * turn 90 degrees to right, drive 54 inhes with camera, drive 24 inches with
+ * ultrasonic
  * 
  * @return
  *         Whether or not the robot has finished the action
@@ -501,8 +505,8 @@ public static boolean centerSwitchPath ()
 {
     switch (visionAuto)
         {
-        case DRIVE_SIX_INCHES:
-            if (Hardware.autoDrive.driveStraightInches(6,
+        case DRIVE_TEN_INCHES:
+            if (Hardware.autoDrive.driveStraightInches(10,
                     AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_1;
@@ -512,6 +516,21 @@ public static boolean centerSwitchPath ()
             if (Hardware.autoDrive.brake() == true)
                 {
                 visionAuto = centerState.GRAB_DATA;
+                }
+            break;
+        case GRAB_DATA:
+            if (grabData(GameDataType.SWITCH) == Position.LEFT)
+                {
+                visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
+                }
+            else if (grabData(
+                    GameDataType.SWITCH) == Position.RIGHT)
+                {
+                visionAuto = centerState.TURN_TOWARDS_RIGHT_SIDE;
+                }
+            else
+                {
+                visionAuto = centerState.DONE;
                 }
             break;
         case TURN_TOWARDS_LEFT_SIDE:
@@ -558,7 +577,7 @@ public static boolean centerSwitchPath ()
     return false;
 }
 
-public static centerState visionAuto = centerState.DRIVE_SIX_INCHES;
+public static centerState visionAuto = centerState.DRIVE_TEN_INCHES;
 
 /**
  * Possible states for center vision autonomous
@@ -568,11 +587,7 @@ public static centerState visionAuto = centerState.DRIVE_SIX_INCHES;
  */
 public static enum centerState
     {
-DRIVE_SIX_INCHES, BRAKE_1,
-/**
- * 
- */
-GRAB_DATA, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, BRAKE_2_L, BRAKE_2_R, DRIVE_STRAIGHT_TO_SWITCH_LEFT, DRIVE_STRAIGHT_TO_SWITCH_RIGHT, DONE
+DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, BRAKE_2_L, BRAKE_2_R, DRIVE_STRAIGHT_TO_SWITCH_LEFT, DRIVE_STRAIGHT_TO_SWITCH_RIGHT, DONE
     }
 
 /**
