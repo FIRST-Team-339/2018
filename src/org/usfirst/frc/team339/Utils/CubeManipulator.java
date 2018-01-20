@@ -3,6 +3,7 @@ package org.usfirst.frc.team339.Utils;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 
 /**
@@ -12,7 +13,7 @@ import edu.wpi.first.wpilibj.Victor;
  * @author Becky Button
  *
  */
-public class Forklift
+public class CubeManipulator
 {
 private Victor forkliftMotor = null;
 
@@ -26,6 +27,15 @@ private LightSensor intakeSwitch = null;
 
 private Encoder forkliftEncoder = null;
 
+private Timer switchTimer = null;
+
+private double forkliftHeight = 0;
+
+private double forkliftSpeed = 0;
+
+private boolean finishedForkliftMove = false;
+
+
 /**
  * @param forkliftMotor
  * @param intakeMotor
@@ -33,10 +43,11 @@ private Encoder forkliftEncoder = null;
  * @param forkliftEncoder
  * @param intakeDeploy
  * @param intakeDeployEncoder
+ * @param timer
  */
-public Forklift (Victor forkliftMotor, Victor intakeMotor,
+public CubeManipulator (Victor forkliftMotor, Victor intakeMotor,
         LightSensor intakeSwitch, Encoder forkliftEncoder,
-        Victor intakeDeploy, Encoder intakeDeployEncoder)
+        Victor intakeDeploy, Encoder intakeDeployEncoder, Timer timer)
 {
     this.forkliftMotor = forkliftMotor;
     this.intakeMotor = intakeMotor;
@@ -44,7 +55,7 @@ public Forklift (Victor forkliftMotor, Victor intakeMotor,
     this.forkliftEncoder = forkliftEncoder;
     this.intakeDeployMotor = intakeDeploy;
     this.intakeDeployEncoder = intakeDeployEncoder;
-
+    this.switchTimer = timer;
 }
 
 /**
@@ -67,15 +78,19 @@ public double getForkliftHeight ()
  */
 public void moveForkliftWithController (Joystick operatorJoystick)
 {
-    if (getForkliftHeight() < FORKLIFT_MAX_HEIGHT
-            || getForkliftHeight() > FORKLIFT_MIN_HEIGHT)
+    if (operatorJoystick.getY() >= JOYSTICK_DEADBAND)
         {
-        this.forkliftMotor.set(
-                (operatorJoystick.getY()) * FORKLIFT_SPEED_COEFFICIENT);
+        this.forkliftHeight = FORKLIFT_MAX_HEIGHT;
+        liftState = forkliftState.MOVING_UP;
+        }
+    else if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND)
+        {
+        this.forkliftHeight = FORKLIFT_MIN_HEIGHT;
+        liftState = forkliftState.MOVING_DOWN;
         }
     else
         {
-        this.forkliftMotor.set(0);
+        liftState = forkliftState.STAY_AT_POSITION;
         }
 }
 
@@ -98,22 +113,44 @@ public boolean intakeCube ()
 }
 
 /**
- * Runs intake in reverse of intakeCube()
- * 
  * NEWBIES USE ON A BUTTON!!!!
  * 
- * @return true if the light sensor equals true
+ * @return true if the complete
  */
 public boolean pushOutCube ()
 {
-    if (this.intakeSwitch.isOn() == true)
+    switch (pushState)
         {
-        this.intakeMotor.set(-this.INTAKE_SPEED);
-        return false;
+        case INIT:
+            switchTimer.reset();
+            switchTimer.start();
+            pushState = pushOutState.PUSH_OUT;
+            break;
+        case PUSH_OUT:
+            if (switchTimer.get() < EJECT_TIME)
+                {
+                this.intakeMotor.set(-this.INTAKE_SPEED);
+                }
+            else
+                {
+                switchTimer.stop();
+                pushState = pushOutState.DONE;
+                }
+            break;
+        case DONE:
+            this.intakeMotor.set(0);
+            pushState = pushOutState.INIT;
+            return true;
         }
-    this.intakeMotor.set(0);
-    return true;
+    return false;
 }
+
+private pushOutState pushState = pushOutState.INIT;
+
+private static enum pushOutState
+    {
+INIT, PUSH_OUT, DONE
+    }
 
 /**
  * Method for moving deploy arm to the down position
@@ -131,8 +168,10 @@ public boolean deployCubeIntake ()
     else
         {
         this.intakeDeployMotor.set(0);
+        return true;
         }
-    return true;
+    return false;
+
 }
 
 /**
@@ -168,28 +207,19 @@ public void moveIntake (double speed)
  */
 public boolean moveLiftDistance (double distance, double forkliftSpeed)
 {
+    // finishedForkliftMove = false;
     double direction = distance - getForkliftHeight();
     boolean mustGoUp = direction > 1;
-
+    this.forkliftHeight = distance;
+    this.forkliftSpeed = forkliftSpeed;
     if (mustGoUp == true)
         {
-        this.forkliftMotor.set(forkliftSpeed);
-        if (this.forkliftEncoder.getDistance() >= distance)
-            {
-            this.forkliftMotor.set(0);
-            return true;
-            }
-        this.forkliftMotor.set(forkliftSpeed);
-        return false;
+        liftState = forkliftState.MOVING_UP;
+        return this.finishedForkliftMove;
         }
-    this.forkliftMotor.set(-forkliftSpeed);
-    if (this.forkliftEncoder.getDistance() <= distance)
-        {
-        this.forkliftMotor.set(0);
-        return true;
-        }
-    this.forkliftMotor.set(-forkliftSpeed);
-    return false;
+    liftState = forkliftState.MOVING_DOWN;
+    return this.finishedForkliftMove;
+
 }
 
 /**
@@ -199,7 +229,6 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
  */
 public boolean scoreSwitch ()
 {
-    scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
     switch (switchState)
         {
         case MOVE_LIFT:
@@ -215,16 +244,20 @@ public boolean scoreSwitch ()
                 }
             break;
         case SPIT_OUT_CUBE:
-            if (pushOutCube() == true)
-                {
-                switchState = scoreSwitchState.FINISHED;
-                }
+            pushOutCube();
+            switchState = scoreSwitchState.FINISHED;
+
             break;
         case FINISHED:
+            stopEverything();
+            switchState = scoreSwitchState.MOVE_LIFT;
             return true;
         }
+
     return false;
 }
+
+scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
 
 private enum scoreSwitchState
     {
@@ -237,16 +270,16 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
 // STOP STUFF
 public void stopEverything ()
 {
-    this.forkliftMotor.set(0);
+    liftState = forkliftState.STAY_AT_POSITION;
     this.intakeMotor.set(0);
 }
 
 /**
- * Stops the forklift
+ * Keeps the forklift in the same position, stopping it from moving anymore
  */
 public void stopForklift ()
 {
-    this.forkliftMotor.set(0);
+    liftState = forkliftState.STAY_AT_POSITION;
 }
 
 /**
@@ -257,6 +290,54 @@ public void stopIntake ()
     this.intakeMotor.set(0);
 }
 
+/**
+ * NEWBIES -- Call this in periodic.
+ * State machine for the forklift
+ */
+public void forkliftUpdate ()
+{
+    switch (liftState)
+        {
+        case MOVING_UP:
+            this.forkliftMotor.set(this.forkliftSpeed);
+            finishedForkliftMove = false;
+            if (this.forkliftEncoder
+                    .getDistance() >= this.forkliftHeight)
+                {
+                liftState = forkliftState.STAY_AT_POSITION;
+                finishedForkliftMove = true;
+                }
+            break;
+        case MOVING_DOWN:
+            this.forkliftMotor.set(-this.forkliftSpeed);
+            finishedForkliftMove = false;
+            if (this.forkliftEncoder
+                    .getDistance() <= this.forkliftHeight)
+                {
+                finishedForkliftMove = true;
+                }
+            this.forkliftMotor.set(-this.forkliftSpeed);
+            break;
+        case STAY_AT_POSITION:
+            this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
+            break;
+        case AT_STARTING_POSITION:
+            break;
+        }
+}
+
+private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
+
+/**
+ * @author Becky Button
+ *
+ */
+public enum forkliftState
+    {
+MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION
+
+    }
+
 private final double FORKLIFT_MAX_HEIGHT = 100;
 
 private final double FORKLIFT_MIN_HEIGHT = 2;
@@ -264,6 +345,8 @@ private final double FORKLIFT_MIN_HEIGHT = 2;
 private final double FORKLIFT_SPEED = .9;
 
 private final double FORKLIFT_SPEED_COEFFICIENT = .9;
+
+private final double FORKLIFT_STAY_UP_SPEED = .1;
 
 private final double INTAKE_SPEED = .5;
 
@@ -274,4 +357,6 @@ private final double INTAKE_ANGLE = 90;
 private final double INTAKE_DEPLOY_SPEED = .9;
 
 private final double JOYSTICK_DEADBAND = .2;
+
+private final double EJECT_TIME = 2;
 }

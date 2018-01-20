@@ -22,7 +22,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
-import org.usfirst.frc.team339.Utils.Forklift;
+import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -229,6 +229,9 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // USB camera it serves
 // -------------------------------------
 
+
+
+
 // **********************************************************
 // DRIVER STATION CLASSES
 // **********************************************************
@@ -264,6 +267,12 @@ public static Joystick leftOperator = new Joystick(3);
 // -------------------------------------
 
 // ------------------------------------
+// Utility classes
+// ------------------------------------
+
+public static final Timer autoTimer = new Timer();
+
+// ------------------------------------
 // Transmission class
 // ------------------------------------
 public static TractionTransmission tractionDrive = new TractionTransmission(
@@ -279,14 +288,11 @@ public static Drive autoDrive = new Drive(tractionDrive,
 // Assembly classes (e.g. forklift)
 // -------------------
 
-public static Forklift cubeManipulator = new Forklift(liftingMotor,
+public static CubeManipulator cubeManipulator = new CubeManipulator(
+        liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
-        intakeDeployArm, intakeDeployEncoder);
+        intakeDeployArm, intakeDeployEncoder, autoTimer);
 
-// ------------------------------------
-// Utility classes
-// ------------------------------------
 
-public static final Timer autoTimer = new Timer();
 
 } // end class
