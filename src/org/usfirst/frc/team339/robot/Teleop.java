@@ -69,62 +69,6 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
-    if (Hardware.rightOperator.getRawButton(6) == true)
-        {
-        Hardware.cubeManipulator.intakeCube();
-        }
-
-    if (Hardware.rightOperator.getRawButton(5) == true)
-        {
-        Hardware.cubeManipulator.moveLiftDistance(55.0, 0.8);
-        }
-
-    if (Hardware.rightOperator.getRawButton(4) == true)
-        {
-        Hardware.cubeManipulator.scoreSwitch();
-        }
-
-    if (Hardware.rightOperator.getRawButton(3) == true)
-        {
-        Hardware.cubeManipulator.stopEverything();
-        }
-
-    if (Hardware.rightOperator.getRawButton(2) == true)
-        {
-        Hardware.cubeManipulator.stopForklift();
-        }
-
-    if (Hardware.rightOperator.getRawButton(1) == true)
-        {
-        Hardware.cubeManipulator.stopIntake();
-        }
-
-    if (Hardware.rightOperator.getRawButton(7) == true)
-        {
-        Hardware.cubeManipulator.moveIntake(0.7);
-        }
-
-    if (Hardware.rightOperator.getRawButton(8) == true)
-        {
-        Hardware.cubeManipulator.deployCubeIntake();
-        }
-
-    if (Hardware.rightOperator.getRawButton(9) == true)
-        {
-        Hardware.cubeManipulator.pushOutCube();
-        }
-
-    if (Hardware.rightOperator.getRawButton(10) == true)
-        {
-        Hardware.cubeManipulator
-                .moveForkliftWithController(Hardware.rightOperator);
-        }
-
-
-    if (Hardware.rightOperator.getRawButton(11) == true)
-        {
-        Hardware.cubeManipulator.getForkliftHeight();
-        }
     // =================================================================
     // CAMERA CODE
     // =================================================================
@@ -133,9 +77,9 @@ public static void periodic ()
     // Driving code
     // =================================================================
 
-    // if (isTestingDrive == false)
-    // Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
-    // Hardware.rightDriver.getY());
+    if (isTestingDrive == false)
+        Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
+                Hardware.rightDriver.getY());
     //
     // if (Hardware.leftDriver.getRawButton(9))
     // isTestingDrive = true;
@@ -246,9 +190,9 @@ public static void printStatements ()
     // System.out.println(
     // "Right = on");
     //
-
-    System.out.println("6 pos = "
-            + Hardware.autoSixPosSwitch.getPosition());
+    //
+    // System.out.println("6 pos = "
+    // + Hardware.autoSixPosSwitch.getPosition());
     //
     // ---------------------------------
     // Encoders
@@ -366,14 +310,14 @@ public static void printStatements ()
     // Joysticks
     // information about the joysticks
     // ---------------------------------
+    System.out.println(
+            "RDriver Joystick " + Hardware.rightDriver.getY());
+    System.out.println(
+            "LDriver Joystick " + Hardware.leftDriver.getY());
     // System.out.println(
-    // "Right Driver Joystick " + Hardware.rightDriver.getY());
+    // "ROp Joystick " + Hardware.rightOperator.getY());
     // System.out.println(
-    // "Left Driver Joystick " + Hardware.leftDriver.getY());
-    // System.out.println(
-    // "Right Operator Joystick " + Hardware.rightOperator.getY());
-    // System.out.println(
-    // "Left Operator Joystick " + Hardware.leftOperator.getY());
+    // "LOp Joystick " + Hardware.leftOperator.getY());
     // =================================
     // Kilroy ancillary items
     // =================================
