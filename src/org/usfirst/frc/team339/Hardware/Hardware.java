@@ -15,10 +15,11 @@
 package org.usfirst.frc.team339.Hardware;
 
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
+import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
+import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
-import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
@@ -104,9 +105,14 @@ public static Relay ringLightRelay = new Relay(0);
 // ------------------------------------
 // Single and double throw switches
 // ------------------------------------
+public static SingleThrowSwitch leftAutoSwitch = new SingleThrowSwitch(
+        20);
 
-public static DoubleThrowSwitch leftRightDisableAutoSwitch = new DoubleThrowSwitch(
-        20, 21);
+public static SingleThrowSwitch rightAutoSwitch = new SingleThrowSwitch(
+        21);
+
+public static DoubleThrowSwitch disableAutonomousSwitch = new DoubleThrowSwitch(
+        leftAutoSwitch, rightAutoSwitch);
 
 public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(
         1, 2, 3, 4, 5, 6);
@@ -207,9 +213,9 @@ public static RobotPotentiometer delayPot = new RobotPotentiometer(2,
 // Sonar/Ultrasonic
 // -------------------------------------
 
-public static UltraSonic frontUltraSonic = new UltraSonic(0);
+public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(0);
 
-public static UltraSonic rearUltraSonic = new UltraSonic(1);
+public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
@@ -223,6 +229,9 @@ public static UltraSonic rearUltraSonic = new UltraSonic(1);
 // USB camera it serves
 // -------------------------------------
 
+
+
+
 // **********************************************************
 // DRIVER STATION CLASSES
 // **********************************************************
@@ -232,6 +241,7 @@ public static UltraSonic rearUltraSonic = new UltraSonic(1);
 // ------------------------------------
 
 public static DriverStation driverStation = DriverStation.getInstance();
+
 
 // ------------------------------------
 // Joystick classes
@@ -278,7 +288,8 @@ public static Drive autoDrive = new Drive(tractionDrive,
 // Assembly classes (e.g. forklift)
 // -------------------
 
-public static CubeManipulator cubeManipulator = new CubeManipulator(liftingMotor,
+public static CubeManipulator cubeManipulator = new CubeManipulator(
+        liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
         intakeDeployArm, intakeDeployEncoder, autoTimer);
 

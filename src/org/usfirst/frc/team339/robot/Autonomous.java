@@ -33,7 +33,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * An Autonomous class.
@@ -63,7 +62,7 @@ public class Autonomous
 public static void init ()
 {
     // Disable auto
-    if (Hardware.leftRightDisableAutoSwitch.getPosition() == Value.kOff)
+    if (Hardware.disableAutonomousSwitch.isOn())
         autoState = State.FINISH;
 } // end Init
 
@@ -71,7 +70,7 @@ public static void init ()
 // State of autonomous
 public static enum State
     {
-INIT, DELAY, GRAB_DATA, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE_L, AUTOLINE_EXCHANGE_R, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
+INIT, DELAY, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE_L, AUTOLINE_EXCHANGE_R, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
     }
 
 public static enum Position
@@ -90,6 +89,7 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
+    System.out.println("Main State: " + autoState);
     switch (autoState)
         {
         case INIT:
@@ -98,7 +98,6 @@ public static void periodic ()
             Hardware.autoTimer.start();
             autoState = State.DELAY;
             break;
-
         case DELAY:
             // Delay using the potentiometer, from 0 to 5 seconds
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
@@ -107,7 +106,6 @@ public static void periodic ()
                 autoState = State.CHOOSE_PATH;
                 break;
                 }
-
             break;
 
         case CHOOSE_PATH:
@@ -131,8 +129,7 @@ public static void periodic ()
                     break;
                 case 2:
                     // Depends on whether left or right is selected
-                    if (Hardware.leftRightDisableAutoSwitch
-                            .getPosition() == Value.kForward)
+                    if (Hardware.leftAutoSwitch.isOn())
                         autoState = State.AUTOLINE_EXCHANGE_L;
                     else
                         autoState = State.AUTOLINE_EXCHANGE_R;
@@ -142,8 +139,7 @@ public static void periodic ()
                     break;
                 case 4:
                     // Depends on whether left or right is selected
-                    if (Hardware.leftRightDisableAutoSwitch
-                            .getPosition() == Value.kForward)
+                    if (Hardware.leftAutoSwitch.isOn())
                         autoState = State.SWITCH_OR_SCALE_L;
                     else
                         autoState = State.SWITCH_OR_SCALE_R;
@@ -693,7 +689,7 @@ public static boolean switchOrScalePath (Position robotPosition)
         case DRIVE_WITH_ULTRSNC:
             // Drive to the switch until the ultrasonic tells us to stop
             if (Hardware.frontUltraSonic
-                    .getDistanceFromNearestBumper() < SWITCH_OR_SCALE_ULTRSNC_DISTANCE)
+                    .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
                 currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_ULTRSNC;
 
             break;
@@ -701,7 +697,6 @@ public static boolean switchOrScalePath (Position robotPosition)
             // Brake after driving using the ultrasonic
             if (Hardware.autoDrive.brake())
                 {
-                Hardware.autoTimer.stop();
                 Hardware.autoTimer.reset();
                 Hardware.autoTimer.start();
                 currentSwitchOrScaleState = SwitchOrScaleStates.EJECT_CUBE;
@@ -854,9 +849,177 @@ INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE
  */
 public static boolean offsetSwitchPath ()
 {
+    System.out.println("Current State: " + currentOffsetSwitchState);
 
+    switch (currentOffsetSwitchState)
+        {
+        case INIT:
+            currentOffsetSwitchState = OffsetSwitchPath.DEPLOY_INTAKE;
+            break;
+        case DEPLOY_INTAKE:
+            // Deploy the intake before moving
+            if (Hardware.cubeManipulator.deployCubeIntake())
+                currentOffsetSwitchState = OffsetSwitchPath.DRIVE1;
+            break;
+        case DRIVE1:
+            // Drive forward a little to allow turning.
+            if (Hardware.autoDrive.driveStraightInches(OFFSET_SWITCH[0],
+                    DRIVE_SPEED))
+                currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE1;
+            break;
+        case BRAKE_DRIVE1:
+            // Brake after driving forwards
+            if (Hardware.autoDrive.brake())
+                currentOffsetSwitchState = OffsetSwitchPath.TURN1;
+
+            break;
+        case TURN1:
+            // Turn either left or right based on the game data provided
+            if (grabData(GameDataType.SWITCH) == Position.LEFT)
+                {
+                // If the switch is on the left side, then turn left
+                if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                    currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN1;
+                }
+            else
+                {
+                // If the switch is on the right side, then turn right
+                if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
+                    currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN1;
+                }
+            break;
+        case BRAKE_TURN1:
+            // Brake after the first turn
+            if (Hardware.autoDrive.brake())
+                {
+                if (grabData(GameDataType.SWITCH) == Position.LEFT)
+                    // If the switch is on the left side, then drive the left
+                    // path
+                    currentOffsetSwitchState = OffsetSwitchPath.DRIVE2L;
+                else
+                    // If not, drive the right path.
+                    currentOffsetSwitchState = OffsetSwitchPath.DRIVE2R;
+                }
+            break;
+        case DRIVE2L:
+            // Drive if during turn 1, we turned left
+            if (Hardware.autoDrive.driveStraightInches(OFFSET_SWITCH[1],
+                    DRIVE_SPEED))
+                currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE2;
+            break;
+        case DRIVE2R:
+            // Drive if during turn 1, we turned right.
+            if (Hardware.autoDrive.driveStraightInches(OFFSET_SWITCH[2],
+                    DRIVE_SPEED))
+                currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE2;
+            break;
+        case BRAKE_DRIVE2:
+            // Brake after the 2nd drive function
+            if (Hardware.autoDrive.brake())
+                currentOffsetSwitchState = OffsetSwitchPath.TURN2;
+            break;
+        case TURN2:
+            // Turn after driving parallel to the driver station wall
+            if (grabData(GameDataType.SWITCH) == Position.LEFT)
+                {
+                // switch is on the left side? turn right
+                if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
+                    currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN2;
+                }
+            else
+                {
+                // Switch is on the right side? turn left
+                if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                    currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN2;
+                }
+            break;
+        case BRAKE_TURN2:
+            // Brake after turning towards the opposing alliance
+            if (Hardware.autoDrive.brake())
+                currentOffsetSwitchState = OffsetSwitchPath.DRIVE3;
+            break;
+        case DRIVE3:
+            // Drive to the middle of the end of the switch
+            if (Hardware.autoDrive.driveStraightInches(OFFSET_SWITCH[3],
+                    TURN_SPEED))
+                currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE3;
+            break;
+        case BRAKE_DRIVE3:
+            // Brake after driving to the center of the switch
+            if (Hardware.autoDrive.brake())
+                currentOffsetSwitchState = OffsetSwitchPath.TURN3;
+            break;
+        case TURN3:
+            // Turn towards the switch
+            if (grabData(GameDataType.SWITCH) == Position.LEFT)
+                {
+                // Switch is on the left side? turn right.
+                if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
+                    currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN3;
+                }
+            else
+                {
+                // Switch is on the right side? turn left.
+                if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                    currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN3;
+                }
+            break;
+        case BRAKE_TURN3:
+            // Brake after turning towards the switch
+            if (Hardware.autoDrive.brake())
+                currentOffsetSwitchState = OffsetSwitchPath.RAISE_ARM;
+            break;
+        case RAISE_ARM:
+            // Raises the arm to the level of the switch
+            if (Hardware.cubeManipulator.moveLiftDistance(
+                    SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED))
+                currentOffsetSwitchState = OffsetSwitchPath.DRIVE_WITH_ULTRSNC;
+            break;
+        case DRIVE_WITH_ULTRSNC:
+            // Drive towards the switch using the ultrasonic
+            Hardware.autoDrive.driveStraight(DRIVE_SPEED);
+            if (Hardware.frontUltraSonic
+                    .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
+                {
+                Hardware.tractionDrive.stop();
+                currentOffsetSwitchState = OffsetSwitchPath.BRAKE_B4_EJECT;
+                }
+            break;
+        case BRAKE_B4_EJECT:
+            // Brake after driving with the ultrasonic, before we eject the cube
+            if (Hardware.autoDrive.brake())
+                {
+                Hardware.autoTimer.reset();
+                Hardware.autoTimer.start();
+                currentOffsetSwitchState = OffsetSwitchPath.EJECT;
+                }
+            break;
+        case EJECT:
+            // Eject the cube we currently have into the switch :)
+            Hardware.cubeIntakeMotor.set(-INTAKE_SPEED);
+            if (Hardware.autoTimer.get() > INTAKE_EJECT_TIME)
+                {
+                Hardware.autoTimer.stop();
+                Hardware.cubeIntakeMotor.stopMotor();
+                currentOffsetSwitchState = OffsetSwitchPath.FINISH;
+                }
+            break;
+        case FINISH:
+            // Finished with the offset path!
+            Hardware.tractionDrive.stop();
+            Hardware.cubeIntakeMotor.stopMotor();
+            break;
+
+        }
     return false;
 }
+
+private static OffsetSwitchPath currentOffsetSwitchState = OffsetSwitchPath.INIT;
+
+private enum OffsetSwitchPath
+    {
+INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRIVE2R, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, BRAKE_TURN3, RAISE_ARM, DRIVE_WITH_ULTRSNC, BRAKE_B4_EJECT, EJECT, FINISH
+    }
 
 
 /*
@@ -864,6 +1027,8 @@ public static boolean offsetSwitchPath ()
  * Constants
  * ================================
  */
+
+private static final double AUTO_TEST_SCALAR = 1.0;
 
 private static final double DRIVE_SPEED = .6;
 
@@ -874,6 +1039,8 @@ private static final double INTAKE_EJECT_TIME = 1;// Seconds
 private static final int SWITCH_LIFT_HEIGHT = 24;// Inches
 
 private static final int SCALE_LIFT_HEIGHT = 78;// Inches
+
+private static final int MIN_ULTRSNC_DISTANCE = 4;// Inches
 
 private static final double FORKLIFT_SPEED = .5;
 
@@ -916,13 +1083,18 @@ private final static double AUTO_SPEED_VISION = .5;
 
 // SWITCH_OR_SCALE
 private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
-    {133, 67, 31, 169};
-
-private static final int SWITCH_OR_SCALE_ULTRSNC_DISTANCE = 4;// Inches
+    {(int) (AUTO_TEST_SCALAR * 133), (int) (AUTO_TEST_SCALAR * 67),
+            (int) (AUTO_TEST_SCALAR * 31),
+            (int) (AUTO_TEST_SCALAR * 169)};
 
 
 
 // OFFSET_SWITCH
+// DRIVE1, DRIVE2L, DRIVE2R, DRIVE3
+private static final int[] OFFSET_SWITCH = new int[]
+    {6, 180, 59, 127};
+
+
 
 
 // FINISH

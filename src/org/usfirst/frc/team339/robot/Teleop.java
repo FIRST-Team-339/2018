@@ -66,7 +66,6 @@ public static void init ()
  */
 public static void periodic ()
 {
-
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
@@ -114,8 +113,13 @@ public static void periodic ()
         {
         Hardware.cubeManipulator.pushOutCube();
         }
-    Hardware.cubeManipulator
-            .moveForkliftWithController(Hardware.rightOperator);
+
+    if (Hardware.rightOperator.getRawButton(10) == true)
+        {
+        Hardware.cubeManipulator
+                .moveForkliftWithController(Hardware.rightOperator);
+        }
+
 
     if (Hardware.rightOperator.getRawButton(11) == true)
         {
@@ -129,35 +133,35 @@ public static void periodic ()
     // Driving code
     // =================================================================
 
-    if (isTestingDrive == false)
-        Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
-                Hardware.rightDriver.getY());
-
-    if (Hardware.leftDriver.getRawButton(9))
-        isTestingDrive = true;
-
-    if (isTestingDrive == true)
-        {
-
-        if (testingDriveState == 0)
-            if (Hardware.autoDrive.driveInches(36, .6))
-                testingDriveState++;
-        if (testingDriveState == 1)
-            if (Hardware.autoDrive.brake())
-                {
-                testingDriveState = 0;
-                isTestingDrive = false;
-                }
-
-        if (Hardware.leftDriver.getRawButton(10))
-            {
-            testingDriveState = 0;
-            isTestingDrive = false;
-            }
-
-        }
-
-
+    // if (isTestingDrive == false)
+    // Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
+    // Hardware.rightDriver.getY());
+    //
+    // if (Hardware.leftDriver.getRawButton(9))
+    // isTestingDrive = true;
+    //
+    // if (isTestingDrive == true)
+    // {
+    //
+    // if (testingDriveState == 0)
+    // if (Hardware.autoDrive.driveInches(36, .6))
+    // testingDriveState++;
+    // if (testingDriveState == 1)
+    // if (Hardware.autoDrive.brake())
+    // {
+    // testingDriveState = 0;
+    // isTestingDrive = false;
+    // }
+    //
+    // if (Hardware.leftDriver.getRawButton(10))
+    // {
+    // testingDriveState = 0;
+    // isTestingDrive = false;
+    // }
+    //
+    // }
+    //
+    //
     printStatements();
 }
 // end
@@ -191,75 +195,92 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    /*
-     * System.out.println(
-     * "Right Drive Motor " + Hardware.rightDriveMotor.get());
-     * System.out.println(
-     * "Left Drive Motor " + Hardware.leftDriveMotor.get());
-     * System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-     * System.out.println(
-     * "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-     * System.out.println(
-     * "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-     * 
-     * // =================================
-     * // CAN items
-     * // prints value of the CAN controllers
-     * // =================================
-     * 
-     * // =================================
-     * // Relay
-     * // =================================
-     * System.out.println(
-     * "Ring Light Relay " + Hardware.ringLightRelay.get());
-     * 
-     * // =================================
-     * // Digital Inputs
-     * // =================================
-     * 
-     * // ---------------------------------
-     * // Switches
-     * // prints state of switches
-     * // ---------------------------------
-     * System.out.println(
-     * "Disable Auto Switch " + Hardware.disableAutoSwitch.isOn());
-     * System.out.println("Auto State Switch "
-     * + Hardware.autoStateSwitch.getPosition());
-     */
+    //
+    // System.out.println(
+    // "R Drive Motor " + Hardware.rightDriveMotor.get());
+    // System.out.println(
+    // "L Drive Motor " + Hardware.leftDriveMotor.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println(
+    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+    // System.out.println(
+    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+    //
+    // =================================
+    // CAN items
+    // prints value of the CAN controllers
+    // =================================
+    //
+    // =================================
+    // Relay
+    // =================================
+    // System.out.println(
+    // "Relay " + Hardware.ringLightRelay.get());
+    //
+    // =================================
+    // // Digital Inputs
+    // =================================
+    //
+    // ---------------------------------
+    // Switches
+    // prints state of switches
+    // ---------------------------------
+    // if (Hardware.disableAutonomousSwitch.isOn() == false)
+    // System.out.println(
+    // "Disable = off");
+    // else
+    // System.out.println(
+    // "Disable = on");
+    //
+    // if (Hardware.leftAutoSwitch.isOn() == false)
+    // System.out.println(
+    // "Left = off");
+    // else
+    // System.out.println(
+    // "Left = on");
+    //
+    // if (Hardware.rightAutoSwitch.isOn() == false)
+    // System.out.println(
+    // "Right = off");
+    // else
+    // System.out.println(
+    // "Right = on");
+    //
+    //
     // ---------------------------------
     // Encoders
 
-    // System.out.println("Left Front Drive Encoder Distance "
+    // System.out.println("LF In = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
 
-    // System.out.println("Left Front Encoder Ticks "
+    // System.out.println("LF Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
 
-    // System.out.println("Right Front Drive Encoder Distance "
+    // System.out.println("RF In = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
 
-    // System.out.println("Right Front Drive Encoder Ticks "
+    // System.out.println("RF Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
 
-    // System.out.println("Left Rear Drive Encoder Distance "
+    // System.out.println("LR In = "
     // + Hardware.leftRearDriveEncoder.getDistance());
 
-    // System.out.println("Left Rear Drive Encoder Ticks "
+    // System.out.println("LR Ticks "
     // + Hardware.leftRearDriveEncoder.get());
 
-    // System.out.println("Right Rear Drive Encoder Distance "
+    // System.out.println("RR In = "
     // + Hardware.rightRearDriveEncoder.getDistance());
 
-    System.out.println("Right Rear Drive Encoder Ticks"
-            + Hardware.rightRearDriveEncoder.get());
+    // System.out.println("RR Ticks "
+    // + Hardware.rightRearDriveEncoder.get());
 
 
     // System.out.println(
-    // "Lifting Encoder Distance "
+    // "Lift In = "
     // + Hardware.liftingEncoder.getDistance());
 
-    System.out.println(
-            "Lifting Encoder Ticks" + Hardware.liftingEncoder.get());
+    // System.out.println(
+    // "Lift Ticks " + Hardware.liftingEncoder.get());
 
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
@@ -274,13 +295,13 @@ public static void printStatements ()
     // prints the state of the sensor
     // ---------------------------------
 
-    /*
-     * System.out
-     * .println("Right Red Light " + Hardware.rightRedLight.get());
-     * System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-     * System.out.println(
-     * "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
-     */
+    //
+    // System.out
+    // .println("R Light " + Hardware.rightRedLight.get());
+    // System.out.println("L Light " + Hardware.leftRedLight.get());
+    // System.out.println(
+    // "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
+    //
     // =================================
     // Pneumatics
     // =================================
@@ -303,19 +324,19 @@ public static void printStatements ()
     // pots
     // where the pot is turned to
     // ---------------------------------
-    /*
-     * System.out
-     * .println("Delay Potentiometer " + Hardware.delayPot.get());
-     * 
-     * // --------------------------
-     * // Sonar/UltraSonic
-     */ // --------------------------
-    System.out.println("Front UltraSonic "
-            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    System.out.println("Rear UltraSonic "
-            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
-    // =========================
+    // System.out
+    // .println("Delay Pot " + Hardware.delayPot.get(0, 5));
+
+    // --------------------------
+    // Sonar/UltraSonic
+    // --------------------------
+    // System.out.println("Front UltraSonic "
+    // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Rear UltraSonic "
+    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    //
+    // // =========================
     // Servos
     // =========================
     // System.out.println("Climbing Mechanism Servo" +
