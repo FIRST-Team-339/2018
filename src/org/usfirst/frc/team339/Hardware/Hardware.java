@@ -230,8 +230,6 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // -------------------------------------
 
 
-
-
 // **********************************************************
 // DRIVER STATION CLASSES
 // **********************************************************
@@ -253,6 +251,10 @@ public static Joystick leftDriver = new Joystick(1);
 public static Joystick rightOperator = new Joystick(2);
 
 public static Joystick leftOperator = new Joystick(3);
+
+// ------------------------------------
+// Momentary Switches
+// ------------------------------------
 
 // **********************************************************
 // Kilroy's Ancillary classes
