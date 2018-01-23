@@ -154,7 +154,9 @@ public static void periodic ()
                 }
             break;
         case AUTOLINE:
-            if (autolinePath() == true)
+            if (Hardware.autoDrive.driveStraightInches(
+                    DISTANCE_TO_CROSS_AUTOLINE,
+                    DRIVE_SPEED) == true)
                 {
                 autoState = State.FINISH;
                 }
@@ -249,116 +251,6 @@ private enum GameDataType
 SWITCH, SCALE
     }
 
-/**
- * crosses the autoline and stops
- * 
- * @return
- *         Whether or not the robot has finished the path
- */
-public static boolean autolinePath ()
-{
-    if (Hardware.autoDrive.driveStraightInches(
-            DISTANCE_TO_CROSS_AUTOLINE,
-            DRIVE_SPEED) == true)
-        return true;
-    return false;
-}
-
-/**
- * crosses the autoline and drives near to scale and stops
- * 
- * @return
- *         Whether or not the robot has finished the path
- */
-public static boolean autolinePathToScale ()
-{
-    if (Hardware.autoDrive.driveStraightInches(
-            DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE,
-            DRIVE_SPEED) == true)
-        {
-        return true;
-        }
-    return false;
-}
-
-/**
- * crosses the autoline and stops
- * 
- * @return
- *         Whether or not the robot has finished the path
- */
-public static boolean driveBackAcrossAutoline ()
-{
-    if (Hardware.autoDrive.driveStraightInches(
-            DISTANCE_BACK_ACROSS_AUTOLINE,
-            -DRIVE_SPEED) == true)
-        return true;
-    return false;
-}
-
-/**
- * drives to the exchange zone
- * 
- * @return
- *         boolean Whether or not the robot has finished the path
- */
-public static boolean leftDriveToExchange ()
-{
-
-    if (Hardware.autoDrive.driveStraightInches(
-            LEFT_DISTANCE_TO_EXCHANGE,
-            DRIVE_SPEED) == true)
-        return true;
-    return false;
-}
-
-/**
- * drives to the exchange zone
- * 
- * @return
- *         boolean Whether or not the robot has finished the path
- */
-public static boolean rightDriveToExchange ()
-{
-
-    if (Hardware.autoDrive.driveStraightInches(
-            RIGHT_DISTANCE_TO_EXCHANGE,
-            DRIVE_SPEED) == true)
-        return true;
-    return false;
-}
-
-/**
- * turns 90 degrees to the right
- * 
- * @return
- *         boolean Whether or not the robot has finished the path
- */
-public static boolean turn90DegreesRight ()
-{
-
-    if (Hardware.autoDrive.turnDegrees(LEFT_SIDE_TURN_TOWARDS_EXCHANGE,
-            TURN_SPEED) == true)
-        return true;
-    return false;
-}
-
-/**
- * turns 90 degrees to the left
- * 
- * @return
- *         boolean Whether or not the robot has finished the path
- */
-public static boolean turn90DegreesLeft ()
-{
-
-    if (Hardware.autoDrive.turnDegrees(RIGHT_SIDE_TURN_TOWARDS_EXCHANGE,
-            TURN_SPEED) == true)
-        return true;
-    return false;
-}
-
-
 public static leftExchangeState leftExchangeAuto = leftExchangeState.DONE;
 
 /**
@@ -386,28 +278,36 @@ public static boolean leftAutoLineExchangePath ()
     switch (leftExchangeAuto)
         {
         case DRIVE_ACROSS_AUTOLINE:
-            if (autolinePath() == true)
+            if (Hardware.autoDrive.driveStraightInches(
+                    DISTANCE_TO_CROSS_AUTOLINE,
+                    DRIVE_SPEED) == true)
                 {
                 leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
                 }
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
-            if (driveBackAcrossAutoline() == true)
+            if (Hardware.autoDrive.driveStraightInches(
+                    DISTANCE_BACK_ACROSS_AUTOLINE,
+                    -DRIVE_SPEED) == true)
                 {
                 leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
                 }
             break;
 
         case TURN_90_DEGREES_RIGHT:
-            if (turn90DegreesRight() == true)
+            if (Hardware.autoDrive.turnDegrees(
+                    LEFT_SIDE_TURN_TOWARDS_EXCHANGE,
+                    TURN_SPEED) == true)
                 {
                 leftExchangeAuto = leftExchangeState.DRIVE_TO_EXCHANGE;
                 }
             break;
 
         case DRIVE_TO_EXCHANGE:
-            if (leftDriveToExchange() == true)
+            if (Hardware.autoDrive.driveStraightInches(
+                    LEFT_DISTANCE_TO_EXCHANGE,
+                    DRIVE_SPEED) == true)
                 {
                 leftExchangeAuto = leftExchangeState.DONE;
                 }
@@ -451,28 +351,36 @@ public static boolean rightAutoLineExchangePath ()
     switch (rightExchangeAuto)
         {
         case DRIVE_ACROSS_AUTOLINE:
-            if (autolinePath() == true)
+            if (Hardware.autoDrive.driveStraightInches(
+                    DISTANCE_TO_CROSS_AUTOLINE,
+                    DRIVE_SPEED) == true)
                 {
                 rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
                 }
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
-            if (driveBackAcrossAutoline() == true)
+            if (Hardware.autoDrive.driveStraightInches(
+                    DISTANCE_BACK_ACROSS_AUTOLINE,
+                    -DRIVE_SPEED) == true)
                 {
                 rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
                 }
             break;
 
         case TURN_90_DEGREES_LEFT:
-            if (turn90DegreesLeft() == true)
+            if (Hardware.autoDrive.turnDegrees(
+                    RIGHT_SIDE_TURN_TOWARDS_EXCHANGE,
+                    TURN_SPEED) == true)
                 {
                 rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
                 }
             break;
 
         case DRIVE_TO_EXCHANGE:
-            if (rightDriveToExchange() == true)
+            if (Hardware.autoDrive.driveStraightInches(
+                    RIGHT_DISTANCE_TO_EXCHANGE,
+                    DRIVE_SPEED) == true)
                 {
                 rightExchangeAuto = rightExchangeState.DONE;
                 }
