@@ -575,8 +575,16 @@ public static boolean centerSwitchPath ()
             if (Hardware.autoDrive.driveStraightInches(
                     DRIVE_NO_CAMERA_RIGHT, AUTO_SPEED_VISION))
                 {
+                visionAuto = centerState.TURN_AGAIN_RIGHT;
                 }
             break;
+        case TURN_AGAIN_RIGHT:
+            if (Hardware.autoDrive.turnDegrees(90, AUTO_SPEED_VISION))
+                {
+
+                }
+            break;
+
         // case TURN_AGAIN_LEFT:
         // if (Hardware.autoDrive.turnDegrees(90, AUTO_SPEED_VISION))
         // {
