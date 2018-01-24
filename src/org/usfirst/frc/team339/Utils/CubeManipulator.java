@@ -291,7 +291,7 @@ public void stopIntake ()
 }
 
 /**
- * NEWBIES -- Call this in periodic.
+ * Call this in periodic.
  * State machine for the forklift
  */
 public void forkliftUpdate ()

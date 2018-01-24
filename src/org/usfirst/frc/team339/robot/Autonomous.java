@@ -162,8 +162,9 @@ public static void periodic ()
                 }
             break;
         case AUTOLINE_SCALE:
-            if (Hardware.autoDrive.driveStraightInches(207,
-                    .7) == false)
+            if (Hardware.autoDrive.driveStraightInches(
+                    DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE,
+                    DRIVE_SPEED) == false)
                 {
                 autoState = State.FINISH;
                 }
@@ -278,6 +279,8 @@ public static boolean leftAutoLineExchangePath ()
     switch (leftExchangeAuto)
         {
         case DRIVE_ACROSS_AUTOLINE:
+            // drives the necessary distance across the autoline then
+            // changes the state to DRIVE_BACK_ACROSS_AUTOLINE
             if (Hardware.autoDrive.driveStraightInches(
                     DISTANCE_TO_CROSS_AUTOLINE,
                     DRIVE_SPEED) == true)
@@ -287,6 +290,8 @@ public static boolean leftAutoLineExchangePath ()
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
+            // drives backwards across the autoline and sets the state
+            // to TURN_90_DEGREES_RIGHT
             if (Hardware.autoDrive.driveStraightInches(
                     DISTANCE_BACK_ACROSS_AUTOLINE,
                     -DRIVE_SPEED) == true)
@@ -296,6 +301,8 @@ public static boolean leftAutoLineExchangePath ()
             break;
 
         case TURN_90_DEGREES_RIGHT:
+            // turns 90 degrees towards the exchange and sets the state
+            // to DRIVE_TO_EXCHANGE
             if (Hardware.autoDrive.turnDegrees(
                     LEFT_SIDE_TURN_TOWARDS_EXCHANGE,
                     TURN_SPEED) == true)
@@ -305,6 +312,7 @@ public static boolean leftAutoLineExchangePath ()
             break;
 
         case DRIVE_TO_EXCHANGE:
+            // drives distance to the exchange and sets state to DONE
             if (Hardware.autoDrive.driveStraightInches(
                     LEFT_DISTANCE_TO_EXCHANGE,
                     DRIVE_SPEED) == true)
@@ -314,7 +322,7 @@ public static boolean leftAutoLineExchangePath ()
             break;
 
         case DONE:
-
+            // robot does nothing til teleop
             break;
 
         }
@@ -351,6 +359,8 @@ public static boolean rightAutoLineExchangePath ()
     switch (rightExchangeAuto)
         {
         case DRIVE_ACROSS_AUTOLINE:
+            // drives the necessary distance across the autoline then
+            // changes the state to DRIVE_BACK_ACROSS_AUTOLINE
             if (Hardware.autoDrive.driveStraightInches(
                     DISTANCE_TO_CROSS_AUTOLINE,
                     DRIVE_SPEED) == true)
@@ -360,6 +370,8 @@ public static boolean rightAutoLineExchangePath ()
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
+            // drives backwards across the autoline and sets the state
+            // to TURN_90_DEGREES_LEFT
             if (Hardware.autoDrive.driveStraightInches(
                     DISTANCE_BACK_ACROSS_AUTOLINE,
                     -DRIVE_SPEED) == true)
@@ -369,6 +381,8 @@ public static boolean rightAutoLineExchangePath ()
             break;
 
         case TURN_90_DEGREES_LEFT:
+            // turns 90 degrees towards the exchange and sets the state
+            // to DRIVE_TO_EXCHANGE
             if (Hardware.autoDrive.turnDegrees(
                     RIGHT_SIDE_TURN_TOWARDS_EXCHANGE,
                     TURN_SPEED) == true)
@@ -378,6 +392,7 @@ public static boolean rightAutoLineExchangePath ()
             break;
 
         case DRIVE_TO_EXCHANGE:
+            // drives distance to the exchange and sets state to DONE
             if (Hardware.autoDrive.driveStraightInches(
                     RIGHT_DISTANCE_TO_EXCHANGE,
                     DRIVE_SPEED) == true)
@@ -387,7 +402,7 @@ public static boolean rightAutoLineExchangePath ()
             break;
 
         case DONE:
-
+            // robot does nothing til teleop
             break;
 
         }
