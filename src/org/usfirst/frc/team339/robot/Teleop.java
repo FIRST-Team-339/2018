@@ -71,7 +71,19 @@ public static void periodic ()
     // =================================================================
     Hardware.cubeManipulator.forkliftUpdate();
 
+    // Forklift controls
+    Hardware.cubeManipulator
+            .moveForkliftWithController(Hardware.rightOperator);
+    // intake controls
+    if (Hardware.rightOperator.getRawButton(2) == true)
+        {
+        Hardware.cubeManipulator.intakeCube();
+        }
 
+    if (Hardware.rightOperator.getRawButton(3) == true)
+        {
+        Hardware.cubeManipulator.pushOutCube();
+        }
     // =================================================================
     // CAMERA CODE
     // =================================================================
