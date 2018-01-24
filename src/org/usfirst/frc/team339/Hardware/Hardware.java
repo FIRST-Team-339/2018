@@ -207,7 +207,7 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // -------------------------------------
 
 public static RobotPotentiometer delayPot = new RobotPotentiometer(2,
-        270);
+        300);
 
 // -------------------------------------
 // Sonar/Ultrasonic
