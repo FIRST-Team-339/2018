@@ -499,7 +499,7 @@ public boolean driveStraightInches (int distance, double speed)
         }
 
     // Drive straight if we have not reached the distance
-    this.driveStraight(speed);
+    this.driveStraight(speed, true);
 
     return false;
 }
@@ -568,65 +568,88 @@ public void setStrafeStraightScalar (double scalar)
 }
 
 /**
+ * Accelerates the robot to a certain speed, then continue at the speed input
+ * into the method. Allows for accelerate and driving straight directly
+ * afterwards.
+ * 
+ * The equation is: deltaTime * percentPerSecond * positiveOrNegative
+ * The positiveOrNegative will determine if the robot will be going backwards or
+ * turning.
+ * 
+ * During the acceleration period, driving straight will not work.
  * 
  * @param leftSpeed
  *            The target speed for the left drive motors
  * @param rightSpeed
  *            The target speed for the right drive motors
+ * @param acceleration
+ *            Will accelerate the percentage added to the motors. Give in
+ *            "percent added per second".
+ * 
+ * @return True if we are done accelerating. It WILL continue driving after
+ *         acceleration is done, at the input speed.
  */
-private boolean accelerateTo (double leftSpeed, double rightSpeed)
+public boolean accelerateTo (double leftSpeed, double rightSpeed,
+        double acceleration)
 {
-    if (initAccelerateTo)
+    // If we timeout, then reset all the accelerate
+    if (System.currentTimeMillis() - lastAccelerateTime > accelTimeout)
         {
-        lastAccelTime = System.currentTimeMillis();
-        currentAccelPower[0] = 0;
-        currentAccelPower[1] = 0;
-        initAccelerateTo = false;
-        }
-    
-    long deltaTime = System.currentTimeMillis() - lastAccelTime;
-    
-    if (Math.abs(currentAccelPower[0]) < Math.abs(leftSpeed))
-        {
-        if (leftSpeed < 0)
-            {
-            currentAccelPower[0] -= (deltaTime / 1000.0)
-                    * accelPowerPerSecond;
-            }
-        else
-            {
-            currentAccelPower[0] += (deltaTime / 1000.0)
-                    * accelPowerPerSecond;
-            }
+        lastAccelerateTime = System.currentTimeMillis();
+        accelMotorPower[0] = 0;
+        accelMotorPower[1] = 0;
         }
 
-    if (Math.abs(currentAccelPower[0]) < Math.abs(rightSpeed))
+    // Accelerate the left side of the robot, then continue at the speed input.
+    if (Math.abs(accelMotorPower[0]) < Math.abs(leftSpeed))
         {
-        if (rightSpeed < 0)
-            {
-            currentAccelPower[1] -= (deltaTime / 1000.0)
-                    * accelPowerPerSecond;
-            }
-        else
-            {
-            currentAccelPower[1] += (deltaTime / 1000.0)
-                    * accelPowerPerSecond;
-            }
+        accelMotorPower[0] += (System.currentTimeMillis()
+                - lastAccelerateTime) * (acceleration / 1000.0)
+                * Math.signum(leftSpeed);
         }
-    
-    getTransmission().driveRaw(currentAccelPower[0], currentAccelPower[1]);
+    else
+        {
+        accelMotorPower[0] = leftSpeed;
+        }
 
+    // Accelerate the right side of the robot, then continue at the speed input.
+    if (Math.abs(accelMotorPower[1]) < Math.abs(rightSpeed))
+        {
+        accelMotorPower[1] += (System.currentTimeMillis()
+                - lastAccelerateTime) * (acceleration / 1000.0)
+                * Math.signum(rightSpeed);
+        }
+    else
+        {
+        accelMotorPower[1] = rightSpeed;
+        }
+
+    // Reset the "timer"
+    lastAccelerateTime = System.currentTimeMillis();
+
+    this.getTransmission().driveRaw(accelMotorPower[0],
+            accelMotorPower[1]);
+
+    // Return true if we are done accelerating. It WILL continue driving after
+    // acceleration is done, at the input speed.
+    if (Math.abs(accelMotorPower[0]) >= Math.abs(leftSpeed)
+            && Math.abs(accelMotorPower[1]) >= Math.abs(rightSpeed))
+        {
+        return true;
+        }
+
+    // We are not done accelerating
     return false;
 }
 
-private double[] currentAccelPower = new double[]
-    {0, 0};
+private double[] accelMotorPower = new double[]
+    {0, 0};// Power sent to each motor: [Left, Right]
 
-private long lastAccelTime = 0;
+private long lastAccelerateTime = 0; // Milliseconds
 
-private boolean initAccelerateTo = true;
+private double defaultAcceleration = .6;// percent per second
 
-private double accelPowerPerSecond = .2;
+private int accelTimeout = 300;// Milliseconds
 
 /**
  * Drives the robot in a straight line based on encoders.
@@ -644,8 +667,10 @@ private double accelPowerPerSecond = .2;
  * @param speed
  *            How fast the robot will be moving. Correction will be better with
  *            lower percentages.
+ * @param accelerate
+ *            TODO
  */
-public void driveStraight (double speed)
+public void driveStraight (double speed, boolean accelerate)
 {
     // Only check encoders if the right amount of time has elapsed
     // (collectionTime).
@@ -683,9 +708,14 @@ public void driveStraight (double speed)
         }
     // Changes how much the robot corrects by how off course it is. The
     // more off course, the more it will attempt to correct.
-    this.getTransmission().driveRaw(
-            speed * ((double) rightChange / leftChange),
-            speed * ((double) leftChange / rightChange));
+    if (accelerate == false)
+        this.getTransmission().driveRaw(
+                speed * ((double) rightChange / leftChange),
+                speed * ((double) leftChange / rightChange));
+    else
+        this.accelerateTo(speed * ((double) rightChange / leftChange),
+                speed * ((double) leftChange / rightChange),
+                defaultAcceleration);
 
 }
 
@@ -842,7 +872,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
         if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
                 && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
-            driveStraight(speed);
+            driveStraight(speed, false);
             }
         else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
@@ -864,7 +894,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             {
             this.brake();
             }
-        this.driveStraight(speed);
+        this.driveStraight(speed,false);
         return true;
         }
     return false;

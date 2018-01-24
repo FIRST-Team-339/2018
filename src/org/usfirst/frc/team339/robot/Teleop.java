@@ -105,6 +105,20 @@ public static void periodic ()
     if (isTestingDrive == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
                 Hardware.rightDriver.getY());
+
+    if (Hardware.leftDriver.getRawButton(9))
+        Hardware.autoDrive.driveStraight(.6, true);
+
+    if (Hardware.leftDriver.getRawButton(10))
+        Hardware.autoDrive.accelerateTo(.5, -.5, .25);
+
+    if (Hardware.leftDriver.getRawButton(11))
+        Hardware.autoDrive.accelerateTo(-.5, -.5, .25);
+
+    isTestingDrive = Hardware.leftDriver.getRawButton(9)
+            || Hardware.leftDriver.getRawButton(10)
+            || Hardware.leftDriver.getRawButton(11);
+
     printStatements();
 } // end Periodic
 
