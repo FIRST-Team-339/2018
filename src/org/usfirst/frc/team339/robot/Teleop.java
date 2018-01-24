@@ -217,11 +217,11 @@ public static void printStatements ()
     // ---------------------------------
 
     //
-    System.out
-            .println("R Light " + Hardware.rightRedLight.get());
-    System.out.println("L Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
+    //System.out
+    //        .println("R Light " + Hardware.rightRedLight.get());
+    //System.out.println("L Light " + Hardware.leftRedLight.get());
+    //System.out.println(
+    //        "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
     //
     // =================================
     // Pneumatics
