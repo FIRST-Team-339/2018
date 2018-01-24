@@ -89,6 +89,7 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
+    Hardware.cubeManipulator.forkliftUpdate();
     System.out.println("Main State: " + autoState);
     switch (autoState)
         {
@@ -498,23 +499,52 @@ public static boolean centerSwitchPath ()
             if (Hardware.autoDrive.driveStraightInches(
                     DRIVE_NO_CAMERA_RIGHT, AUTO_SPEED_VISION))
                 {
+                visionAuto = centerState.TURN_AGAIN_RIGHT;
                 }
             break;
-        // case TURN_AGAIN_LEFT:
-        // if (Hardware.autoDrive.turnDegrees(90, AUTO_SPEED_VISION))
-        // {
-        // visionAuto = centerState.DRIVE_WITH_CAMERA;
-        // }
-        // break;
-        // case DRIVE_WITH_CAMERA:
-        // visionAuto = centerState.DEPLOY_ARM;
-        // break;
-        // case DEPLOY_ARM:
-        // visionAuto = centerState.DRIVE_ULTRASONIC;
-        // break;
-        // case DRIVE_ULTRASONIC:
-        // visionAuto = centerState.MAKE_DEPOSIT;
-        // break;
+        case TURN_AGAIN_RIGHT:
+            if (Hardware.autoDrive.turnDegrees(90, AUTO_SPEED_VISION))
+                {
+                visionAuto = centerState.DRIVE_WITH_CAMERA;
+                }
+            break;
+
+        case TURN_AGAIN_LEFT:
+            if (Hardware.autoDrive.turnDegrees(90, AUTO_SPEED_VISION))
+                {
+                visionAuto = centerState.DRIVE_WITH_CAMERA;
+                }
+            break;
+        case DRIVE_WITH_CAMERA:
+            if (Hardware.autoDrive.driveToSwitch(
+                    AUTO_COMPENSATION_VISION,
+                    AUTO_SPEED_VISION))
+                {
+                visionAuto = centerState.LIFT;
+                }
+            break;
+        case LIFT:
+            if (Hardware.cubeManipulator.moveLiftDistance(
+                    SCALE_LIFT_HEIGHT, FORKLIFT_SPEED))
+                {
+                visionAuto = centerState.DEPLOY_ARM;
+                }
+            break;
+        case DEPLOY_ARM:
+            if (Hardware.cubeManipulator.deployCubeIntake())
+                {
+                visionAuto = centerState.MAKE_DEPOSIT;
+                }
+            break;
+        case MAKE_DEPOSIT:
+            if (Hardware.cubeManipulator.scoreSwitch())
+                {
+                visionAuto = centerState.DONE;
+                }
+            break;
+        case DONE:
+            Hardware.autoDrive.driveStraight(0);
+            break;
 
         }
     return false;
@@ -530,7 +560,59 @@ public static centerState visionAuto = centerState.DRIVE_TEN_INCHES;
  */
 public static enum centerState
     {
-DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA, TURN_TOWARDS_LEFT_SIDE, TURN_TOWARDS_RIGHT_SIDE, BRAKE_2_L, BRAKE_2_R, DRIVE_STRAIGHT_TO_SWITCH_LEFT, DRIVE_STRAIGHT_TO_SWITCH_RIGHT, TURN_AGAIN_LEFT, TURN_AGAIN_RIGHT, DRIVE_WITH_CAMERA, DEPLOY_ARM, DRIVE_ULTRASONIC, MAKE_DEPOSIT, DONE
+DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA,
+/**
+ * Left side auto, turns 90 degrees to the left
+ */
+TURN_TOWARDS_LEFT_SIDE,
+/**
+ * Right side auto, turns 90 degrees to the right
+ */
+TURN_TOWARDS_RIGHT_SIDE,
+/**
+ * Left side auto, brakes
+ */
+BRAKE_2_L,
+/**
+ * Right side auto, brakes
+ */
+BRAKE_2_R,
+/**
+ * Left side auto, Drive the left side distance of 73 inches
+ */
+DRIVE_STRAIGHT_TO_SWITCH_LEFT,
+/**
+ * Right side auto, Drive the right side distance of (yet to be calculated)
+ */
+DRIVE_STRAIGHT_TO_SWITCH_RIGHT,
+/**
+ * Left side auto, turn 90 degrees to the right
+ */
+TURN_AGAIN_LEFT,
+/**
+ * Right side auto, turn 90 degrees to the left
+ */
+TURN_AGAIN_RIGHT,
+/**
+ * Drives with camera, then stops see driveToSwitch() in drive.
+ */
+DRIVE_WITH_CAMERA,
+/**
+ * Raises the lift SWITCH_LIFT_HEIGHT
+ */
+LIFT,
+/**
+ * Sets intake out
+ */
+DEPLOY_ARM,
+/**
+ * Spits the power cube into the switch
+ */
+MAKE_DEPOSIT,
+/**
+ * Sets everything to zero;
+ */
+DONE
     }
 
 /**
@@ -1002,6 +1084,8 @@ private final static int DRIVE_NO_CAMERA_RIGHT = 116;
 
 // TODO change for actual auto speed
 private final static double AUTO_SPEED_VISION = .5;
+
+private final static double AUTO_COMPENSATION_VISION = 1.2;
 
 
 // SWITCH_OR_SCALE

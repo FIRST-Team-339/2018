@@ -69,6 +69,7 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+
     Hardware.cubeManipulator.forkliftUpdate();
 
     // Forklift controls
@@ -88,6 +89,15 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
+    // test from 1/23/18
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.ringLightRelay.set(Value.kOn);
+    // Hardware.autoDrive.driveToSwitch(1.5, .3);
+    // }
+
+    // Hardware.ringLightRelay.set(Value.kForward);
+
     // =================================================================
     // Driving code
     // =================================================================
@@ -95,32 +105,6 @@ public static void periodic ()
     if (isTestingDrive == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
                 Hardware.rightDriver.getY());
-    //
-    // if (Hardware.leftDriver.getRawButton(9))
-    // isTestingDrive = true;
-    //
-    // if (isTestingDrive == true)
-    // {
-    //
-    // if (testingDriveState == 0)
-    // if (Hardware.autoDrive.driveInches(36, .6))
-    // testingDriveState++;
-    // if (testingDriveState == 1)
-    // if (Hardware.autoDrive.brake())
-    // {
-    // testingDriveState = 0;
-    // isTestingDrive = false;
-    // }
-    //
-    // if (Hardware.leftDriver.getRawButton(10))
-    // {
-    // testingDriveState = 0;
-    // isTestingDrive = false;
-    // }
-    //
-    // }
-    //
-    //
     printStatements();
 }
 // end
@@ -258,11 +242,11 @@ public static void printStatements ()
     // ---------------------------------
 
     //
-    // System.out
-    // .println("R Light " + Hardware.rightRedLight.get());
-    // System.out.println("L Light " + Hardware.leftRedLight.get());
-    // System.out.println(
-    // "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
+    //System.out
+    //        .println("R Light " + Hardware.rightRedLight.get());
+    //System.out.println("L Light " + Hardware.leftRedLight.get());
+    //System.out.println(
+    //        "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
     //
     // =================================
     // Pneumatics
@@ -293,9 +277,9 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    // System.out.println("Front UltraSonic "
+    // System.out.println("F USonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("Rear UltraSonic "
+    // System.out.println("R USonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // // =========================
@@ -325,10 +309,10 @@ public static void printStatements ()
     // Joysticks
     // information about the joysticks
     // ---------------------------------
-    System.out.println(
-            "RDriver Joystick " + Hardware.rightDriver.getY());
-    System.out.println(
-            "LDriver Joystick " + Hardware.leftDriver.getY());
+    // System.out.println(
+    // "RDriver Joystick " + Hardware.rightDriver.getY());
+    // System.out.println(
+    // "LDriver Joystick " + Hardware.leftDriver.getY());
     // System.out.println(
     // "ROp Joystick " + Hardware.rightOperator.getY());
     // System.out.println(

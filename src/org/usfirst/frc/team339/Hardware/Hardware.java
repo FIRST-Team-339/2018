@@ -17,6 +17,7 @@ package org.usfirst.frc.team339.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
+import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
@@ -207,7 +208,7 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // -------------------------------------
 
 public static RobotPotentiometer delayPot = new RobotPotentiometer(2,
-        270);
+        300);
 
 // -------------------------------------
 // Sonar/Ultrasonic
@@ -228,8 +229,6 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // declare the USB camera server and the
 // USB camera it serves
 // -------------------------------------
-
-
 
 
 // **********************************************************
@@ -253,6 +252,13 @@ public static Joystick leftDriver = new Joystick(0);
 public static Joystick rightOperator = new Joystick(3);
 
 public static Joystick leftOperator = new Joystick(2);
+
+// ------------------------------------
+// Momentary Switches
+// ------------------------------------
+
+public static MomentarySwitch visionTestButton = new MomentarySwitch(
+        rightOperator, 2, false);
 
 // **********************************************************
 // Kilroy's Ancillary classes
