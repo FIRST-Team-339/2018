@@ -106,9 +106,7 @@ public static void periodic ()
         Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
                 Hardware.rightDriver.getY());
     printStatements();
-}
-// end
-// Periodic
+} // end Periodic
 
 
 private static boolean isTestingDrive = false;
@@ -242,11 +240,11 @@ public static void printStatements ()
     // ---------------------------------
 
     //
-    //System.out
-    //        .println("R Light " + Hardware.rightRedLight.get());
-    //System.out.println("L Light " + Hardware.leftRedLight.get());
-    //System.out.println(
-    //        "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
+    // System.out
+    // .println("R Light " + Hardware.rightRedLight.get());
+    // System.out.println("L Light " + Hardware.leftRedLight.get());
+    // System.out.println(
+    // "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
     //
     // =================================
     // Pneumatics
@@ -328,10 +326,10 @@ public static void printStatements ()
 
 } // end printStatements
 
-/*
- * ================================
- * Constants
- * ================================
- */
+//
+// ================================
+// Constants
+// ================================
+//
 
 } // end class
