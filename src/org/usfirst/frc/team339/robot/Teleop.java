@@ -69,9 +69,22 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+
+    Hardware.cubeManipulator.forkliftUpdate();
+
+
     // =================================================================
     // CAMERA CODE
     // =================================================================
+
+    // test from 1/23/18
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.ringLightRelay.set(Value.kOn);
+    // Hardware.autoDrive.driveToSwitch(1.5, .3);
+    // }
+
+    // Hardware.ringLightRelay.set(Value.kForward);
 
     // =================================================================
     // Driving code
@@ -252,9 +265,9 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    // System.out.println("FUSonic "
+    // System.out.println("F USonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("RUSonic "
+    // System.out.println("R USonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // // =========================
