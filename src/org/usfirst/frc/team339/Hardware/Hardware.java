@@ -245,13 +245,13 @@ public static DriverStation driverStation = DriverStation.getInstance();
 // ------------------------------------
 // Joystick classes
 // ------------------------------------
-public static Joystick rightDriver = new Joystick(0);
+public static Joystick rightDriver = new Joystick(1);
 
-public static Joystick leftDriver = new Joystick(1);
+public static Joystick leftDriver = new Joystick(0);
 
-public static Joystick rightOperator = new Joystick(2);
+public static Joystick rightOperator = new Joystick(3);
 
-public static Joystick leftOperator = new Joystick(3);
+public static Joystick leftOperator = new Joystick(2);
 
 // ------------------------------------
 // Momentary Switches

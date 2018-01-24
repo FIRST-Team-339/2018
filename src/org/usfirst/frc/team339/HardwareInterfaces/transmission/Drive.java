@@ -568,6 +568,67 @@ public void setStrafeStraightScalar (double scalar)
 }
 
 /**
+ * 
+ * @param leftSpeed
+ *            The target speed for the left drive motors
+ * @param rightSpeed
+ *            The target speed for the right drive motors
+ */
+private boolean accelerateTo (double leftSpeed, double rightSpeed)
+{
+    if (initAccelerateTo)
+        {
+        lastAccelTime = System.currentTimeMillis();
+        currentAccelPower[0] = 0;
+        currentAccelPower[1] = 0;
+        initAccelerateTo = false;
+        }
+    
+    long deltaTime = System.currentTimeMillis() - lastAccelTime;
+    
+    if (Math.abs(currentAccelPower[0]) < Math.abs(leftSpeed))
+        {
+        if (leftSpeed < 0)
+            {
+            currentAccelPower[0] -= (deltaTime / 1000.0)
+                    * accelPowerPerSecond;
+            }
+        else
+            {
+            currentAccelPower[0] += (deltaTime / 1000.0)
+                    * accelPowerPerSecond;
+            }
+        }
+
+    if (Math.abs(currentAccelPower[0]) < Math.abs(rightSpeed))
+        {
+        if (rightSpeed < 0)
+            {
+            currentAccelPower[1] -= (deltaTime / 1000.0)
+                    * accelPowerPerSecond;
+            }
+        else
+            {
+            currentAccelPower[1] += (deltaTime / 1000.0)
+                    * accelPowerPerSecond;
+            }
+        }
+    
+    getTransmission().driveRaw(currentAccelPower[0], currentAccelPower[1]);
+
+    return false;
+}
+
+private double[] currentAccelPower = new double[]
+    {0, 0};
+
+private long lastAccelTime = 0;
+
+private boolean initAccelerateTo = true;
+
+private double accelPowerPerSecond = .2;
+
+/**
  * Drives the robot in a straight line based on encoders.
  * 
  * This works by polling the encoders every (COLLECTION_TIME) milliseconds

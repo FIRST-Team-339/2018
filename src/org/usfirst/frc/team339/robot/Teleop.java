@@ -31,6 +31,8 @@
 // ====================================================================
 package org.usfirst.frc.team339.robot;
 
+import org.usfirst.frc.team339.Hardware.Hardware;
+
 /**
  * This class contains all of the user code for the Autonomous part of the
  * match, namely, the Init and Periodic code
@@ -67,6 +69,9 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+
+    Hardware.cubeManipulator.forkliftUpdate();
+
 
     // =================================================================
     // CAMERA CODE
@@ -198,6 +203,9 @@ public static void printStatements ()
     // System.out.println(
     // "Right = on");
     //
+    //
+    // System.out.println("6 pos = "
+    // + Hardware.autoSixPosSwitch.getPosition());
     //
     // ---------------------------------
     // Encoders
