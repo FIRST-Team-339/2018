@@ -69,9 +69,34 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+
+    Hardware.cubeManipulator.forkliftUpdate();
+
+    // Forklift controls
+    Hardware.cubeManipulator
+            .moveForkliftWithController(Hardware.rightOperator);
+    // intake controls
+    if (Hardware.rightOperator.getRawButton(2) == true)
+        {
+        Hardware.cubeManipulator.intakeCube();
+        }
+
+    if (Hardware.rightOperator.getRawButton(3) == true)
+        {
+        Hardware.cubeManipulator.pushOutCube();
+        }
     // =================================================================
     // CAMERA CODE
     // =================================================================
+
+    // test from 1/23/18
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.ringLightRelay.set(Value.kOn);
+    // Hardware.autoDrive.driveToSwitch(1.5, .3);
+    // }
+
+    // Hardware.ringLightRelay.set(Value.kForward);
 
     // =================================================================
     // Driving code
@@ -93,29 +118,6 @@ public static void periodic ()
     isTestingDrive = Hardware.leftDriver.getRawButton(9)
             || Hardware.leftDriver.getRawButton(10)
             || Hardware.leftDriver.getRawButton(11);
-
-    //
-    // if (isTestingDrive == true)
-    // {
-    //
-    // if (testingDriveState == 0)
-    // if (Hardware.autoDrive.driveInches(36, .6))
-    // testingDriveState++;
-    // if (testingDriveState == 1)
-    // if (Hardware.autoDrive.brake())
-    // {
-    // testingDriveState = 0;
-    // isTestingDrive = false;
-    // }
-    //
-    // if (Hardware.leftDriver.getRawButton(10))
-    // {
-    // testingDriveState = 0;
-    // isTestingDrive = false;
-    // }
-    //
-    // }
-
 
     printStatements();
 }
@@ -254,11 +256,11 @@ public static void printStatements ()
     // ---------------------------------
 
     //
-    // System.out
-    // .println("R Light " + Hardware.rightRedLight.get());
-    // System.out.println("L Light " + Hardware.leftRedLight.get());
-    // System.out.println(
-    // "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
+    //System.out
+    //        .println("R Light " + Hardware.rightRedLight.get());
+    //System.out.println("L Light " + Hardware.leftRedLight.get());
+    //System.out.println(
+    //        "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
     //
     // =================================
     // Pneumatics
@@ -289,9 +291,9 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    // System.out.println("Front UltraSonic "
+    // System.out.println("F USonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("Rear UltraSonic "
+    // System.out.println("R USonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // // =========================

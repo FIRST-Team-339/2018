@@ -231,13 +231,32 @@ public void robotInit ()
     Hardware.intakeDeployEncoder.reset();
     Hardware.liftingEncoder.reset();
 
-    Hardware.frontUltraSonic.setScalingFactor(UltraSonicScalingFactor);
-    Hardware.rearUltraSonic.setScalingFactor(UltraSonicScalingFactor);
+    // Hardware.frontUltraSonic.setScalingFactor(UltraSonicScalingFactor);
+    // Hardware.rearUltraSonic.setScalingFactor(UltraSonicScalingFactor);
     Hardware.leftDriveMotor.setInverted(false);
     Hardware.rightDriveMotor.setInverted(true);
 
-    Hardware.autoDrive.setEncoderDistancePerPulse(KILROY_XV_ENCODER_DPP,
+    // This sets the gear speed percentage for the traction drive
+    Hardware.tractionDrive.setGearPercentage(0, GEAR_1_SPEED);
+    Hardware.tractionDrive.setGearPercentage(1, GEAR_2_SPEED);
+    Hardware.tractionDrive.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
+
+    // Sets all encoders Distance per pulse
+    Hardware.autoDrive.setEncoderDistancePerPulse(
+            KILROY_XIX_ENCODER_DPP,
             MotorPosition.ALL);
+
+    // Manually sets encoders Distance per Pulse
+    Hardware.leftFrontDriveEncoder
+            .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+    Hardware.rightFrontDriveEncoder
+            .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+    Hardware.leftRearDriveEncoder
+            .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+    Hardware.rightRearDriveEncoder
+            .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+
+
 
     // User code goes above here
     // =========================================================
@@ -247,8 +266,7 @@ public void robotInit ()
     // ---------------------------------------
     System.out.println(
             "Kilroy XIX is started.  All hardware items created.");
-} // end
-  // robotInit
+} // end robotInit
 
 // -------------------------------------------------------
 /**
@@ -276,6 +294,9 @@ public void teleopInit ()
     Hardware.leftRearDriveEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     Teleop.init();
+
+    Hardware.rightDriveMotor.set(0);
+    Hardware.leftDriveMotor.set(0);
 
 
     // User code goes above here
@@ -363,7 +384,14 @@ public void testPeriodic ()
 // TUNEABLES
 // ==========================================
 
-private static final double KILROY_XV_ENCODER_DPP = .0014784;
+private static final double KILROY_XIX_ENCODER_DPP = .0174;
+
+private static final double GEAR_1_SPEED = .5;
+
+private static final double GEAR_2_SPEED = .7;
+
+private static final double JOYSTICK_DEADBAND_RANGE = .2;
+
 
 } // end class
 

@@ -838,14 +838,30 @@ private boolean turnDegreesGyroInit = true;
 // variable to determine if it is the first time running a method
 private boolean turnDegreesInit = true;
 
+
 // ================GAME SPECIFIC FUNCTIONS================
 /*
  * Driving functions that change from game to game, such as using the camera
  * to score, etc.
  */
 
-public boolean driveToSwitch ()
+/**
+ * Drives using the camera until it hits CAMERA_NO_LONGER_WORKS inches, where it
+ * then drives using the ultrasonic
+ * 
+ * Multiply the compensationFactor by speed to determine what values we are
+ * sending to the motor controller
+ * 
+ * @param compensationFactor
+ *            have the compensation factor greater than 1 and less than 1.8
+ * @param speed
+ *            have the speed greater than 0 and less than 1
+ * @return true if the robot has driven all the way to the front of the scale,
+ *         and false if it hasn't
+ */
+public boolean driveToSwitch (double compensationFactor, double speed)
 {
+
     if (this.frontUltrasonic
             .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
         {
@@ -856,17 +872,30 @@ public boolean driveToSwitch ()
         if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
                 && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
-            driveStraight(ALIGN_TO_SWITCH_SPEED, true);
+            driveStraight(speed, false);
             }
         else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
             // center is too far right, drive faster on the left
+            this.getTransmission().driveRaw(speed * compensationFactor,
+                    speed);
             }
         else
             {
             // center is too far left, drive faster on the right
+            this.getTransmission().driveRaw(speed,
+                    speed * compensationFactor);
             }
-
+        }
+    else
+        {
+        if (this.frontUltrasonic
+                .getDistanceFromNearestBumper() <= STOP_ROBOT)
+            {
+            this.brake();
+            }
+        this.driveStraight(speed,false);
+        return true;
         }
     return false;
 }
@@ -876,10 +905,10 @@ private final double CAMERA_NO_LONGER_WORKS = 24;
 
 private final double CAMERA_DEADBAND = 2;
 
+private final double STOP_ROBOT = 6;
+
 // TODO TEST TO FIND ACTUAL VALUE
 private final double SWITCH_CAMERA_CENTER = 45;
-
-private final double ALIGN_TO_SWITCH_SPEED = .7;
 
 // ================TUNABLES================
 
