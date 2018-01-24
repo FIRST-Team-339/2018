@@ -277,6 +277,9 @@ public void teleopInit ()
     Hardware.intakeDeployEncoder.reset();
     Teleop.init();
 
+    Hardware.rightDriveMotor.set(0);
+    Hardware.leftDriveMotor.set(0);
+
 
     // User code goes above here
     // =========================================================

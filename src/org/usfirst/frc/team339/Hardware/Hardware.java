@@ -17,6 +17,7 @@ package org.usfirst.frc.team339.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
+import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
@@ -255,6 +256,9 @@ public static Joystick leftOperator = new Joystick(3);
 // ------------------------------------
 // Momentary Switches
 // ------------------------------------
+
+public static MomentarySwitch visionTestButton = new MomentarySwitch(
+        rightOperator, 2, false);
 
 // **********************************************************
 // Kilroy's Ancillary classes

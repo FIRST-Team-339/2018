@@ -31,8 +31,6 @@
 // ====================================================================
 package org.usfirst.frc.team339.robot;
 
-import org.usfirst.frc.team339.Hardware.Hardware;
-
 /**
  * This class contains all of the user code for the Autonomous part of the
  * match, namely, the Init and Periodic code
@@ -69,10 +67,19 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
-  
+
     // =================================================================
     // CAMERA CODE
     // =================================================================
+
+    // test from 1/23/18
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.ringLightRelay.set(Value.kOn);
+    // Hardware.autoDrive.driveToSwitch(1.5, .3);
+    // }
+
+    // Hardware.ringLightRelay.set(Value.kForward);
 
     // =================================================================
     // Driving code
