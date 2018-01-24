@@ -977,7 +977,7 @@ public static boolean offsetSwitchPath ()
             break;
         case DRIVE_WITH_ULTRSNC:
             // Drive towards the switch using the ultrasonic
-            Hardware.autoDrive.driveStraight(DRIVE_SPEED);
+            Hardware.autoDrive.driveStraight(DRIVE_SPEED, true);
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
                 {

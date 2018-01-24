@@ -80,9 +80,20 @@ public static void periodic ()
     if (isTestingDrive == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
                 Hardware.rightDriver.getY());
-    //
-    // if (Hardware.leftDriver.getRawButton(9))
-    // isTestingDrive = true;
+
+    if (Hardware.leftDriver.getRawButton(9))
+        Hardware.autoDrive.driveStraight(.6, true);
+
+    if (Hardware.leftDriver.getRawButton(10))
+        Hardware.autoDrive.accelerateTo(.5, -.5, .25);
+
+    if (Hardware.leftDriver.getRawButton(11))
+        Hardware.autoDrive.accelerateTo(-.5, -.5, .25);
+
+    isTestingDrive = Hardware.leftDriver.getRawButton(9)
+            || Hardware.leftDriver.getRawButton(10)
+            || Hardware.leftDriver.getRawButton(11);
+
     //
     // if (isTestingDrive == true)
     // {
@@ -104,8 +115,8 @@ public static void periodic ()
     // }
     //
     // }
-    //
-    //
+
+
     printStatements();
 }
 // end
@@ -310,10 +321,10 @@ public static void printStatements ()
     // Joysticks
     // information about the joysticks
     // ---------------------------------
-    System.out.println(
-            "RDriver Joystick " + Hardware.rightDriver.getY());
-    System.out.println(
-            "LDriver Joystick " + Hardware.leftDriver.getY());
+    // System.out.println(
+    // "RDriver Joystick " + Hardware.rightDriver.getY());
+    // System.out.println(
+    // "LDriver Joystick " + Hardware.leftDriver.getY());
     // System.out.println(
     // "ROp Joystick " + Hardware.rightOperator.getY());
     // System.out.println(
