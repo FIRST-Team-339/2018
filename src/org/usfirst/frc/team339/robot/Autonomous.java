@@ -543,7 +543,7 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case DONE:
-            Hardware.autoDrive.driveStraight(0);
+            Hardware.autoDrive.driveStraight(0, false);
             break;
 
         }
