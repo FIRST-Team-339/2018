@@ -106,8 +106,6 @@ public static void periodic ()
         Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
                 Hardware.rightDriver.getY());
 
-
-
     if (Hardware.leftDriver.getRawButton(8))
         Hardware.autoDrive.resetEncoders();
 
@@ -218,21 +216,21 @@ public static void printStatements ()
 
     // System.out.println("LF Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
-
+    //
     // System.out.println("RF In = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("RF Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
 
-    // System.out.println("LR In = "
-    // + Hardware.leftRearDriveEncoder.getDistance());
+    System.out.println("LR In = "
+            + Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("LR Ticks "
     // + Hardware.leftRearDriveEncoder.get());
 
-    // System.out.println("RR In = "
-    // + Hardware.rightRearDriveEncoder.getDistance());
+    System.out.println("RR In = "
+            + Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("RR Ticks "
     // + Hardware.rightRearDriveEncoder.get());
