@@ -237,8 +237,7 @@ public void robotInit ()
     Hardware.rightDriveMotor.setInverted(true);
 
     // This sets the gear speed percentage for the traction drive
-    Hardware.tractionDrive.setGearPercentage(0, GEAR_1_SPEED);
-    Hardware.tractionDrive.setGearPercentage(1, GEAR_2_SPEED);
+    Hardware.tractionDrive.setAllGearRatios(GEAR_1_SPEED, GEAR_2_SPEED);
     Hardware.tractionDrive.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
 
     // Sets all encoders Distance per pulse
