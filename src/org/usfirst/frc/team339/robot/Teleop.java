@@ -70,21 +70,21 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-    Hardware.cubeManipulator.forkliftUpdate();
-
-    // Forklift controls
-    Hardware.cubeManipulator
-            .moveForkliftWithController(Hardware.rightOperator);
-    // intake controls
-    if (Hardware.rightOperator.getRawButton(2) == true)
-        {
-        Hardware.cubeManipulator.intakeCube();
-        }
-
-    if (Hardware.rightOperator.getRawButton(3) == true)
-        {
-        Hardware.cubeManipulator.pushOutCube();
-        }
+    // Hardware.cubeManipulator.forkliftUpdate();
+    //
+    // // Forklift controls
+    // Hardware.cubeManipulator
+    // .moveForkliftWithController(Hardware.rightOperator);
+    // // intake controls
+    // if (Hardware.rightOperator.getRawButton(2) == true)
+    // {
+    // Hardware.cubeManipulator.intakeCube();
+    // }
+    //
+    // if (Hardware.rightOperator.getRawButton(3) == true)
+    // {
+    // Hardware.cubeManipulator.pushOutCube();
+    // }
     // =================================================================
     // CAMERA CODE
     // =================================================================
@@ -105,7 +105,7 @@ public static void periodic ()
     if (isTestingDrive == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
                 Hardware.rightDriver.getY());
-    
+
     if (Hardware.leftDriver.getRawButton(8))
         Hardware.autoDrive.resetEncoders();
 
@@ -113,7 +113,7 @@ public static void periodic ()
         Hardware.autoDrive.driveStraight(.5, true);
 
     if (Hardware.leftDriver.getRawButton(10))
-        Hardware.autoDrive.driveStraight(.5,false);
+        Hardware.autoDrive.driveStraight(.5, false);
 
     if (Hardware.leftDriver.getRawButton(11))
         Hardware.autoDrive.accelerateTo(-.5, -.5, 2);
@@ -216,21 +216,21 @@ public static void printStatements ()
 
     // System.out.println("LF Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
-
+    //
     // System.out.println("RF In = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("RF Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
 
-    // System.out.println("LR In = "
-    // + Hardware.leftRearDriveEncoder.getDistance());
+     System.out.println("LR In = "
+     + Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("LR Ticks "
     // + Hardware.leftRearDriveEncoder.get());
 
-    // System.out.println("RR In = "
-    // + Hardware.rightRearDriveEncoder.getDistance());
+     System.out.println("RR In = "
+     + Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("RR Ticks "
     // + Hardware.rightRearDriveEncoder.get());
