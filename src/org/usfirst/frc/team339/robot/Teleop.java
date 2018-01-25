@@ -297,8 +297,8 @@ public static void printStatements ()
     // // =========================
     // Servos
     // =========================
-    // System.out.println("Climbing Mechanism Servo" +
-    // Hardware.climbingMechanismServo.get());
+    // System.out.println("ClimbMechServo" +
+    // Hardware.climbingMechanismServo.getAngle());
     //
     // ================
     // GYRO

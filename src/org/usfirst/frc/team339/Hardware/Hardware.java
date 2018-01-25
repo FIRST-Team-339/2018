@@ -24,6 +24,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -47,7 +48,8 @@ import edu.wpi.first.wpilibj.Victor;
 
 public class Hardware
 {
-public static Servo climbingMechanismServo = new Servo(5); // 5 is not set
+public static Servo climbingMechanismServo = new Servo(5); // Documentation says
+                                                           // 200* servo
 
 // ------------------------------------
 // Public Constants
@@ -224,6 +226,8 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // -------------------------------------
 // Axis/USB Camera class
 // -------------------------------------
+
+public static UsbCamera USBCam = new UsbCamera("USBCam", 0);
 
 // -------------------------------------
 // declare the USB camera server and the
