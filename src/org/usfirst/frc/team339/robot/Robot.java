@@ -255,7 +255,14 @@ public void robotInit ()
     Hardware.rightRearDriveEncoder
             .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
 
+    Hardware.liftingEncoder
+            .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
 
+    // Sets the angle of the servo to 100
+    Hardware.climbingMechanismServo.setAngle(100);
+
+    // This starts operation of the camera
+    // CameraServer.getInstance().startAutomaticCapture();
 
     // User code goes above here
     // =========================================================
@@ -390,6 +397,8 @@ private static final double GEAR_1_SPEED = .5;
 private static final double GEAR_2_SPEED = .7;
 
 private static final double JOYSTICK_DEADBAND_RANGE = .2;
+
+private static final double KILROY_XIX_LIFT_ENCODER_DPP = .1;
 
 
 } // end class
