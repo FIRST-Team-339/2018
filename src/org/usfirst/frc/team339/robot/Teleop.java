@@ -93,11 +93,10 @@ public static void periodic ()
     // test from 1/23/18
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
-    // Hardware.ringLightRelay.set(Value.kOn);
-    // Hardware.autoDrive.driveToSwitch(1.5, .3);
+    // Hardware.autoDrive.visionTest(1.5, .3);
     // }
-
-    Hardware.ringLightRelay.set(Value.kForward);
+    //
+    // Hardware.ringLightRelay.set(Value.kForward);
 
     // =================================================================
     // Driving code
@@ -212,26 +211,26 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
 
-     System.out.println("LF In = "
-     + Hardware.leftFrontDriveEncoder.getDistance());
+    // System.out.println("LF In = "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("LF Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
     //
-     System.out.println("RF In = "
-     + Hardware.rightFrontDriveEncoder.getDistance());
+    // System.out.println("RF In = "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("RF Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
 
-//    System.out.println("LR In = "
-//            + Hardware.leftRearDriveEncoder.getDistance());
+    // System.out.println("LR In = "
+    // + Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("LR Ticks "
     // + Hardware.leftRearDriveEncoder.get());
 
-//    System.out.println("RR In = "
-//            + Hardware.rightRearDriveEncoder.getDistance());
+    // System.out.println("RR In = "
+    // + Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("RR Ticks "
     // + Hardware.rightRearDriveEncoder.get());
