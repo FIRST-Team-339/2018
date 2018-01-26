@@ -115,6 +115,8 @@ public void autonomousInit ()
     // =========================================================
     // User code goes above here
     // =========================================================
+
+
     // ---------------------------------------
     // done setup - tell the user we are complete
     // setup
@@ -261,8 +263,6 @@ public void robotInit ()
     // Sets the angle of the servo to 100
     Hardware.climbingMechanismServo.setAngle(100);
 
-    // This starts operation of the camera
-    // CameraServer.getInstance().startAutomaticCapture();
 
     // User code goes above here
     // =========================================================
@@ -303,6 +303,7 @@ public void teleopInit ()
 
     Hardware.rightDriveMotor.set(0);
     Hardware.leftDriveMotor.set(0);
+
 
 
     // User code goes above here
