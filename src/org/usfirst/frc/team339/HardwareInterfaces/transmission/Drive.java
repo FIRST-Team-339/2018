@@ -100,7 +100,7 @@ public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
  */
 public Drive (TransmissionBase transmission, Encoder leftEncoder,
         Encoder rightEncoder, UltraSonic frontUltrasonic,
-        UltraSonic rearUltrasonic, KilroyGyro gyro)
+        UltraSonic rearUltrasonic, KilroyGyro gyro, VisionProcessor visionProcessor)
 {
     this.transmissionType = transmission.getType();
     this.leftRearEncoder = leftEncoder;
@@ -109,6 +109,7 @@ public Drive (TransmissionBase transmission, Encoder leftEncoder,
     this.frontUltrasonic = frontUltrasonic;
     this.rearUltrasonic = rearUltrasonic;
     this.gyro = gyro;
+    this.visionProcessor = visionProcessor;
 
     init(transmission);
 }
@@ -602,14 +603,14 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
             - lastAccelerateTime) / 1000.0;
     accelMotorPower += deltaSeconds / time;
 
-    //Drive the robot based on the times and speeds
+    // Drive the robot based on the times and speeds
     this.getTransmission().driveRaw(
             leftSpeed * inRange(accelMotorPower),
             rightSpeed * inRange(accelMotorPower));
 
-    //Reset the "timer"
+    // Reset the "timer"
     lastAccelerateTime = System.currentTimeMillis();
-    
+
     if (accelMotorPower > 1.0)
         return true;
     // We are not done accelerating
@@ -620,7 +621,7 @@ private double accelMotorPower = 0;// Power sent to each motor: [Left, Right]
 
 private long lastAccelerateTime = 0; // Milliseconds
 
-private double defaultAcceleration = .5;//Seconds
+private double defaultAcceleration = .5;// Seconds
 
 private int accelTimeout = 300;// Milliseconds
 
@@ -658,9 +659,11 @@ public void driveStraight (double speed, boolean accelerate)
             // Calculate how much has changed between the last collection
             // time and now
             leftChange = (leftFrontEncoder.getDistance()
-                    + leftRearEncoder.getDistance()) - prevEncoderValues[0];
+                    + leftRearEncoder.getDistance())
+                    - prevEncoderValues[0];
             rightChange = (rightFrontEncoder.getDistance()
-                    + rightRearEncoder.getDistance()) - prevEncoderValues[1];
+                    + rightRearEncoder.getDistance())
+                    - prevEncoderValues[1];
             // Setup the previous values for the next collection run
             prevEncoderValues[0] = leftFrontEncoder.getDistance()
                     + leftRearEncoder.get();
@@ -671,21 +674,26 @@ public void driveStraight (double speed, boolean accelerate)
             {
             // Calculate how much has changed between the last collection
             // time and now
-            leftChange = leftRearEncoder.getDistance() - prevEncoderValues[0];
-            rightChange = rightRearEncoder.getDistance() - prevEncoderValues[1];
+            leftChange = leftRearEncoder.getDistance()
+                    - prevEncoderValues[0];
+            rightChange = rightRearEncoder.getDistance()
+                    - prevEncoderValues[1];
             // Setup the previous values for the next collection run
             prevEncoderValues[0] = leftRearEncoder.getDistance();
             prevEncoderValues[1] = rightRearEncoder.getDistance();
             }
         }
-    double leftMotorVal = speed + (driveStraightScalingFactor * inRange(rightChange - leftChange));
-    double rightMotorVal = speed + (driveStraightScalingFactor * inRange(leftChange - rightChange));
+    double leftMotorVal = speed + (driveStraightScalingFactor
+            * inRange(rightChange - leftChange));
+    double rightMotorVal = speed + (driveStraightScalingFactor
+            * inRange(leftChange - rightChange));
     // Changes how much the robot corrects by how off course it is. The
     // more off course, the more it will attempt to correct.
     if (accelerate == false)
-        this.getTransmission().driveRaw(leftMotorVal,rightMotorVal);
+        this.getTransmission().driveRaw(leftMotorVal, rightMotorVal);
     else
-        this.accelerateTo(leftMotorVal, rightMotorVal, defaultAcceleration);
+        this.accelerateTo(leftMotorVal, rightMotorVal,
+                defaultAcceleration);
 
 }
 
@@ -693,7 +701,7 @@ private double driveStraightScalingFactor = .15;
 
 private double leftChange = 1, rightChange = 1;
 
-private double [] prevEncoderValues =
+private double[] prevEncoderValues =
     {1, 1};
 // Preset to 100 to avoid divide by zero errors.
 
@@ -702,10 +710,11 @@ private long driveStraightOldTime = 0;
 
 /**
  * Sets how much the robot should correct while driving straight.
+ * 
  * @param value
- *          The scaling factor, in decimal percent form (0.0 - 1.0)
+ *            The scaling factor, in decimal percent form (0.0 - 1.0)
  */
-public void setDriveStraightScalingFactor(double value)
+public void setDriveStraightScalingFactor (double value)
 {
     this.driveStraightScalingFactor = value;
 }
@@ -882,6 +891,37 @@ public boolean driveToSwitch (double compensationFactor, double speed)
     return false;
 }
 
+/**
+ * Method to test the vision code without the ultrasonic
+ * @param speed
+ * @param compensationFactor
+ */
+public void visionTest (double compensationFactor, double speed)
+{
+    visionProcessor.processImage();
+    double center = (visionProcessor.getNthSizeBlob(0).center.x
+            + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+
+    if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
+            && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+        {
+        driveStraight(speed, false);
+        }
+    else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+        {
+        // center is too far right, drive faster on the left
+        this.getTransmission().driveRaw(speed * compensationFactor,
+                speed);
+        }
+    else
+        {
+        // center is too far left, drive faster on the right
+        this.getTransmission().driveRaw(speed,
+                speed * compensationFactor);
+        }
+
+}
+
 // ================VISION TUNABLES================
 private final double CAMERA_NO_LONGER_WORKS = 24;
 
@@ -890,7 +930,7 @@ private final double CAMERA_DEADBAND = 2;
 private final double STOP_ROBOT = 6;
 
 // TODO TEST TO FIND ACTUAL VALUE
-private final double SWITCH_CAMERA_CENTER = 45;
+private final double SWITCH_CAMERA_CENTER = 80;
 
 // ================TUNABLES================
 

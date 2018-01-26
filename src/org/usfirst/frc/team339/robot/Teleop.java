@@ -32,7 +32,6 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
-import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * This class contains all of the user code for the Autonomous part of the
@@ -93,15 +92,18 @@ public static void periodic ()
     // test from 1/23/18
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
-    // Hardware.ringLightRelay.set(Value.kOn);
-    // Hardware.autoDrive.driveToSwitch(1.5, .3);
+    // Hardware.autoDrive.visionTest(1.5, .3);
     // }
-
-    Hardware.ringLightRelay.set(Value.kForward);
+    //
+    // Hardware.ringLightRelay.set(Value.kForward);
 
     // =================================================================
     // Driving code
     // =================================================================
+
+    Hardware.tractionDrive.shiftGears(
+            Hardware.rightDriver.getRawButton(3),
+            Hardware.leftDriver.getRawButton(3));
 
     if (isTestingDrive == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
@@ -122,6 +124,7 @@ public static void periodic ()
     isTestingDrive = Hardware.leftDriver.getRawButton(9)
             || Hardware.leftDriver.getRawButton(10)
             || Hardware.leftDriver.getRawButton(11);
+
 
     printStatements();
 } // end Periodic
@@ -156,15 +159,16 @@ public static void printStatements ()
 
     //
     // System.out.println(
-    // "R Drive Motor " + Hardware.rightDriveMotor.get());
+    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
-    // "L Drive Motor " + Hardware.leftDriveMotor.get());
+    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(
     // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-    //
+
+
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -212,37 +216,43 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
 
-     System.out.println("LF In = "
-     + Hardware.leftFrontDriveEncoder.getDistance());
+    // System.out.println("Left Front Encoder Inches = "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
 
+    //
     // System.out.println("LF Ticks "
+
     // + Hardware.leftFrontDriveEncoder.get());
     //
-     System.out.println("RF In = "
-     + Hardware.rightFrontDriveEncoder.getDistance());
 
+    // System.out.println("RF In = "
+
+    // + Hardware.rightFrontDriveEncoder.getDistance());
+
+    //
     // System.out.println("RF Ticks "
+
     // + Hardware.rightFrontDriveEncoder.get());
-
-//    System.out.println("LR In = "
-//            + Hardware.leftRearDriveEncoder.getDistance());
-
+    //
+    // System.out.println("LR In = "
+    // + Hardware.leftRearDriveEncoder.getDistance());
+    //
     // System.out.println("LR Ticks "
     // + Hardware.leftRearDriveEncoder.get());
-
-//    System.out.println("RR In = "
-//            + Hardware.rightRearDriveEncoder.getDistance());
-
+    //
+    // System.out.println("RR In = "
+    // + Hardware.rightRearDriveEncoder.getDistance());
+    //
     // System.out.println("RR Ticks "
     // + Hardware.rightRearDriveEncoder.get());
 
 
     // System.out.println(
-    // "Lift In = "
+    // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
-    // "Lift Ticks " + Hardware.liftingEncoder.get());
+    // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
 
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
@@ -259,10 +269,10 @@ public static void printStatements ()
 
     //
     // System.out
-    // .println("R Light " + Hardware.rightRedLight.get());
-    // System.out.println("L Light " + Hardware.leftRedLight.get());
-    // System.out.println(
-    // "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
+    // .println("Right Red Light " + Hardware.rightRedLight.get());
+    // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
+    System.out.println(
+            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
     // Pneumatics
@@ -293,15 +303,15 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    // System.out.println("F USonic "
+    // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("R USonic "
+    // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
-    // // =========================
+    // =========================
     // Servos
     // =========================
-    // System.out.println("ClimbMechServo" +
+    // System.out.println("Climbing Mechanism Servo" +
     // Hardware.climbingMechanismServo.getAngle());
     //
     // ================
@@ -326,13 +336,13 @@ public static void printStatements ()
     // information about the joysticks
     // ---------------------------------
     // System.out.println(
-    // "RDriver Joystick " + Hardware.rightDriver.getY());
+    // "Right Driver Joystick " + Hardware.rightDriver.getY());
     // System.out.println(
-    // "LDriver Joystick " + Hardware.leftDriver.getY());
+    // "Left Driver Joystick " + Hardware.leftDriver.getY());
     // System.out.println(
-    // "ROp Joystick " + Hardware.rightOperator.getY());
+    // "Right Operator Joystick " + Hardware.rightOperator.getY());
     // System.out.println(
-    // "LOp Joystick " + Hardware.leftOperator.getY());
+    // "Left Operator Joystick " + Hardware.leftOperator.getY());
     // =================================
     // Kilroy ancillary items
     // =================================
