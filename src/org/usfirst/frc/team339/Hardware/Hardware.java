@@ -51,6 +51,8 @@ public class Hardware
 public static Servo climbingMechanismServo = new Servo(5); // Documentation says
                                                            // 200* servo
 
+public static final boolean isTestingAutonomous = true;
+
 // ------------------------------------
 // Public Constants
 // ------------------------------------
@@ -294,7 +296,7 @@ public static TractionTransmission tractionDrive = new TractionTransmission(
 public static Drive autoDrive = new Drive(tractionDrive,
         leftFrontDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
         rearUltraSonic, null);
-//TODO CHANGE TO FRONT WHEEL ENCODERS WHEN WE GET NEW ROBOT!
+// TODO CHANGE TO FRONT WHEEL ENCODERS WHEN WE GET NEW ROBOT!
 // -------------------
 // Assembly classes (e.g. forklift)
 // -------------------

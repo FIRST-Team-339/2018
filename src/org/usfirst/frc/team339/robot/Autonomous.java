@@ -64,6 +64,9 @@ public static void init ()
     // Disable auto
     if (Hardware.disableAutonomousSwitch.isOn())
         autoState = State.FINISH;
+
+    if (Hardware.isTestingAutonomous)
+        Hardware.autoDrive.setDriveStraightScalingFactor(0.0);
 } // end Init
 
 
@@ -222,18 +225,19 @@ public static Position grabData (GameDataType dataType)
     // Stay in this state if there are not 3 letters in the game data
     // provided
     if (gameData.length() < 3)
-        // return
+        return Position.NULL;
+    // return
 
-        if (dataType == GameDataType.SWITCH
-                && gameData.charAt(0) == 'L')
-            {
-            return Position.LEFT;
-            }
-        else if (dataType == GameDataType.SWITCH
-                && gameData.charAt(0) == 'R')
-            {
-            return Position.RIGHT;
-            }
+    if (dataType == GameDataType.SWITCH
+            && gameData.charAt(0) == 'L')
+        {
+        return Position.LEFT;
+        }
+    else if (dataType == GameDataType.SWITCH
+            && gameData.charAt(0) == 'R')
+        {
+        return Position.RIGHT;
+        }
 
     if (dataType == GameDataType.SCALE && gameData.charAt(1) == 'L')
         {
@@ -628,7 +632,7 @@ public static boolean switchOrScalePath (Position robotPosition)
     System.out.println("Current State: " + currentSwitchOrScaleState);
     switch (currentSwitchOrScaleState)
         {
-        case INIT:
+        case PATH_INIT:
             currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE1;
             Hardware.cubeManipulator.deployCubeIntake();
         case DRIVE1:
@@ -682,11 +686,16 @@ public static boolean switchOrScalePath (Position robotPosition)
         case RAISE_ARM1:
             // Raise the arm for the switch after turning towards it, but before
             // driving to the wall.
-            if (Hardware.cubeManipulator.moveLiftDistance(
-                    SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED))
+            Hardware.liftingMotor.set(FORKLIFT_SPEED);
+            if (Math.abs(Hardware.liftingEncoder
+                    .getDistance()) > SWITCH_LIFT_HEIGHT)
+                {
+                Hardware.liftingMotor.set(0.0);
                 currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_WITH_ULTRSNC;
+                }
             break;
         case DRIVE_WITH_ULTRSNC:
+            Hardware.autoDrive.driveStraight(DRIVE_SPEED, true);
             // Drive to the switch until the ultrasonic tells us to stop
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
@@ -833,11 +842,11 @@ public static boolean switchOrScalePath (Position robotPosition)
 }
 
 
-private static SwitchOrScaleStates currentSwitchOrScaleState = SwitchOrScaleStates.INIT;
+private static SwitchOrScaleStates currentSwitchOrScaleState = SwitchOrScaleStates.PATH_INIT;
 
 private static enum SwitchOrScaleStates
     {
-INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE, DRIVE2, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, DRIVE4, BRAKE_DRIVE4, TURN4, BRAKE_B4_RAISE_ARM2, RAISE_ARM2, FINISH
+PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE, DRIVE2, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, DRIVE4, BRAKE_DRIVE4, TURN4, BRAKE_B4_RAISE_ARM2, RAISE_ARM2, FINISH
     }
 
 /**
@@ -853,13 +862,9 @@ public static boolean offsetSwitchPath ()
 
     switch (currentOffsetSwitchState)
         {
-        case INIT:
-            currentOffsetSwitchState = OffsetSwitchPath.DEPLOY_INTAKE;
-            break;
-        case DEPLOY_INTAKE:
-            // Deploy the intake before moving
-            if (Hardware.cubeManipulator.deployCubeIntake())
-                currentOffsetSwitchState = OffsetSwitchPath.DRIVE1;
+        case PATH_INIT:
+            currentOffsetSwitchState = OffsetSwitchPath.DRIVE1;
+            Hardware.cubeManipulator.deployCubeIntake();
             break;
         case DRIVE1:
             // Drive forward a little to allow turning.
@@ -1014,11 +1019,11 @@ public static boolean offsetSwitchPath ()
     return false;
 }
 
-private static OffsetSwitchPath currentOffsetSwitchState = OffsetSwitchPath.INIT;
+private static OffsetSwitchPath currentOffsetSwitchState = OffsetSwitchPath.PATH_INIT;
 
 private enum OffsetSwitchPath
     {
-INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRIVE2R, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, BRAKE_TURN3, RAISE_ARM, DRIVE_WITH_ULTRSNC, BRAKE_B4_EJECT, EJECT, FINISH
+PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRIVE2R, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, BRAKE_TURN3, RAISE_ARM, DRIVE_WITH_ULTRSNC, BRAKE_B4_EJECT, EJECT, FINISH
     }
 
 
@@ -1030,9 +1035,9 @@ INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRIVE2R,
 
 private static final double AUTO_TEST_SCALAR = 1.0;
 
-private static final double DRIVE_SPEED = .6;
+private static final double DRIVE_SPEED = .5;
 
-private static final double TURN_SPEED = .5;
+private static final double TURN_SPEED = .4;
 
 private static final double INTAKE_EJECT_TIME = 1;// Seconds
 
@@ -1040,7 +1045,7 @@ private static final int SWITCH_LIFT_HEIGHT = 24;// Inches
 
 private static final int SCALE_LIFT_HEIGHT = 78;// Inches
 
-private static final int MIN_ULTRSNC_DISTANCE = 4;// Inches
+private static final int MIN_ULTRSNC_DISTANCE = 8;// Inches
 
 private static final double FORKLIFT_SPEED = .5;
 

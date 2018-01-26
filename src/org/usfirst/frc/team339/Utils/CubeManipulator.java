@@ -301,8 +301,8 @@ public void forkliftUpdate ()
         case MOVING_UP:
             this.forkliftMotor.set(this.forkliftSpeed);
             finishedForkliftMove = false;
-            if (this.forkliftEncoder
-                    .getDistance() >= this.forkliftHeight)
+            if (Math.abs(this.forkliftEncoder
+                    .getDistance()) >= this.forkliftHeight)
                 {
                 liftState = forkliftState.STAY_AT_POSITION;
                 finishedForkliftMove = true;
@@ -311,8 +311,8 @@ public void forkliftUpdate ()
         case MOVING_DOWN:
             this.forkliftMotor.set(-this.forkliftSpeed);
             finishedForkliftMove = false;
-            if (this.forkliftEncoder
-                    .getDistance() <= this.forkliftHeight)
+            if (Math.abs(this.forkliftEncoder
+                    .getDistance()) <= this.forkliftHeight)
                 {
                 finishedForkliftMove = true;
                 }
