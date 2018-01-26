@@ -24,6 +24,10 @@ import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.vision.VisionProcessor;
+import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -47,7 +51,8 @@ import edu.wpi.first.wpilibj.Victor;
 
 public class Hardware
 {
-public static Servo climbingMechanismServo = new Servo(5); // 5 is not set
+public static Servo climbingMechanismServo = new Servo(5); // Documentation says
+                                                           // 200* servo
 
 // ------------------------------------
 // Public Constants
@@ -163,7 +168,7 @@ public static LightSensor rightRedLight = new LightSensor(7);
 
 public static LightSensor leftRedLight = new LightSensor(8);
 
-public static LightSensor cubePhotoSwitch = new LightSensor(22);
+public static LightSensor cubePhotoSwitch = new LightSensor(0);
 
 // ====================================
 // I2C Classes
@@ -224,6 +229,11 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // -------------------------------------
 // Axis/USB Camera class
 // -------------------------------------
+public static VisionProcessor axisCamera = new VisionProcessor("10.13.39.11", CameraModel.AXIS_M1013);
+
+public static UsbCamera USBCam = CameraServer.getInstance()
+        .startAutomaticCapture(0);
+
 
 // -------------------------------------
 // declare the USB camera server and the
@@ -289,7 +299,8 @@ public static TractionTransmission tractionDrive = new TractionTransmission(
 // ------------------------------------
 public static Drive autoDrive = new Drive(tractionDrive,
         leftFrontDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
-        rearUltraSonic, null);
+        rearUltraSonic, null, axisCamera);
+//TODO CHANGE TO FRONT WHEEL ENCODERS WHEN WE GET NEW ROBOT!
 // -------------------
 // Assembly classes (e.g. forklift)
 // -------------------

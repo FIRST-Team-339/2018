@@ -100,7 +100,7 @@ public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
  */
 public Drive (TransmissionBase transmission, Encoder leftEncoder,
         Encoder rightEncoder, UltraSonic frontUltrasonic,
-        UltraSonic rearUltrasonic, KilroyGyro gyro)
+        UltraSonic rearUltrasonic, KilroyGyro gyro, VisionProcessor visionProcessor)
 {
     this.transmissionType = transmission.getType();
     this.leftRearEncoder = leftEncoder;
@@ -109,6 +109,7 @@ public Drive (TransmissionBase transmission, Encoder leftEncoder,
     this.frontUltrasonic = frontUltrasonic;
     this.rearUltrasonic = rearUltrasonic;
     this.gyro = gyro;
+    this.visionProcessor = visionProcessor;
 
     init(transmission);
 }
@@ -572,82 +573,55 @@ public void setStrafeStraightScalar (double scalar)
  * into the method. Allows for accelerate and driving straight directly
  * afterwards.
  * 
- * The equation is: deltaTime * percentPerSecond * positiveOrNegative
- * The positiveOrNegative will determine if the robot will be going backwards or
- * turning.
- * 
- * During the acceleration period, driving straight will not work.
+ * The equation is: deltaTime / (timeRequested) * speed. The code will make sure
+ * that deltaTime / timeRequested does not return outside -1 to 1.
  * 
  * @param leftSpeed
  *            The target speed for the left drive motors
  * @param rightSpeed
  *            The target speed for the right drive motors
- * @param acceleration
- *            Will accelerate the percentage added to the motors. Give in
- *            "percent added per second".
+ * @param time
+ *            The time period accelerated over, in seconds. When the time
+ *            reaches this
+ *            number, it will be running full speed.
  * 
  * @return True if we are done accelerating. It WILL continue driving after
  *         acceleration is done, at the input speed.
  */
 public boolean accelerateTo (double leftSpeed, double rightSpeed,
-        double acceleration)
+        double time)
 {
     // If we timeout, then reset all the accelerate
     if (System.currentTimeMillis() - lastAccelerateTime > accelTimeout)
         {
         lastAccelerateTime = System.currentTimeMillis();
-        accelMotorPower[0] = 0;
-        accelMotorPower[1] = 0;
+        accelMotorPower = 0;
         }
 
-    // Accelerate the left side of the robot, then continue at the speed input.
-    if (Math.abs(accelMotorPower[0]) < Math.abs(leftSpeed))
-        {
-        accelMotorPower[0] += (System.currentTimeMillis()
-                - lastAccelerateTime) * (acceleration / 1000.0)
-                * Math.signum(leftSpeed);
-        }
-    else
-        {
-        accelMotorPower[0] = leftSpeed;
-        }
+    // main acceleration maths
+    double deltaSeconds = (System.currentTimeMillis()
+            - lastAccelerateTime) / 1000.0;
+    accelMotorPower += deltaSeconds / time;
 
-    // Accelerate the right side of the robot, then continue at the speed input.
-    if (Math.abs(accelMotorPower[1]) < Math.abs(rightSpeed))
-        {
-        accelMotorPower[1] += (System.currentTimeMillis()
-                - lastAccelerateTime) * (acceleration / 1000.0)
-                * Math.signum(rightSpeed);
-        }
-    else
-        {
-        accelMotorPower[1] = rightSpeed;
-        }
+    // Drive the robot based on the times and speeds
+    this.getTransmission().driveRaw(
+            leftSpeed * inRange(accelMotorPower),
+            rightSpeed * inRange(accelMotorPower));
 
     // Reset the "timer"
     lastAccelerateTime = System.currentTimeMillis();
 
-    this.getTransmission().driveRaw(accelMotorPower[0],
-            accelMotorPower[1]);
-
-    // Return true if we are done accelerating. It WILL continue driving after
-    // acceleration is done, at the input speed.
-    if (Math.abs(accelMotorPower[0]) >= Math.abs(leftSpeed)
-            && Math.abs(accelMotorPower[1]) >= Math.abs(rightSpeed))
-        {
+    if (accelMotorPower > 1.0)
         return true;
-        }
-
     // We are not done accelerating
     return false;
 }
 
-private double[] accelMotorPower = new double[]
-    {0, 0};// Power sent to each motor: [Left, Right]
+private double accelMotorPower = 0;// Power sent to each motor: [Left, Right]
 
 private long lastAccelerateTime = 0; // Milliseconds
 
-private double defaultAcceleration = .6;// percent per second
+private double defaultAcceleration = .5;// Seconds
 
 private int accelTimeout = 300;// Milliseconds
 
@@ -659,8 +633,7 @@ private int accelTimeout = 300;// Milliseconds
  * ratio to multiply times the speed.
  * 
  * This approach allows a more dynamic correction, as it only corrects as much
- * as
- * it needs to.
+ * as it needs to.
  * 
  * Remember: reset the encoders before running this method.
  * 
@@ -685,48 +658,66 @@ public void driveStraight (double speed, boolean accelerate)
             {
             // Calculate how much has changed between the last collection
             // time and now
-            leftChange = (leftFrontEncoder.get()
-                    + leftRearEncoder.get()) - prevEncoderValues[0];
-            rightChange = (rightFrontEncoder.get()
-                    + rightRearEncoder.get()) - prevEncoderValues[1];
+            leftChange = (leftFrontEncoder.getDistance()
+                    + leftRearEncoder.getDistance())
+                    - prevEncoderValues[0];
+            rightChange = (rightFrontEncoder.getDistance()
+                    + rightRearEncoder.getDistance())
+                    - prevEncoderValues[1];
             // Setup the previous values for the next collection run
-            prevEncoderValues[0] = leftFrontEncoder.get()
+            prevEncoderValues[0] = leftFrontEncoder.getDistance()
                     + leftRearEncoder.get();
-            prevEncoderValues[1] = rightFrontEncoder.get()
+            prevEncoderValues[1] = rightFrontEncoder.getDistance()
                     + rightRearEncoder.get();
             }
         else
             {
             // Calculate how much has changed between the last collection
             // time and now
-            leftChange = leftRearEncoder.get() - prevEncoderValues[0];
-            rightChange = rightRearEncoder.get() - prevEncoderValues[1];
+            leftChange = leftRearEncoder.getDistance()
+                    - prevEncoderValues[0];
+            rightChange = rightRearEncoder.getDistance()
+                    - prevEncoderValues[1];
             // Setup the previous values for the next collection run
-            prevEncoderValues[0] = leftRearEncoder.get();
-            prevEncoderValues[1] = rightRearEncoder.get();
+            prevEncoderValues[0] = leftRearEncoder.getDistance();
+            prevEncoderValues[1] = rightRearEncoder.getDistance();
             }
         }
+    double leftMotorVal = speed + (driveStraightScalingFactor
+            * inRange(rightChange - leftChange));
+    double rightMotorVal = speed + (driveStraightScalingFactor
+            * inRange(leftChange - rightChange));
     // Changes how much the robot corrects by how off course it is. The
     // more off course, the more it will attempt to correct.
     if (accelerate == false)
-        this.getTransmission().driveRaw(
-                speed * ((double) rightChange / leftChange),
-                speed * ((double) leftChange / rightChange));
+        this.getTransmission().driveRaw(leftMotorVal, rightMotorVal);
     else
-        this.accelerateTo(speed * ((double) rightChange / leftChange),
-                speed * ((double) leftChange / rightChange),
+        this.accelerateTo(leftMotorVal, rightMotorVal,
                 defaultAcceleration);
 
 }
 
-private int leftChange = 1, rightChange = 1;
+private double driveStraightScalingFactor = .15;
 
-private int[] prevEncoderValues =
+private double leftChange = 1, rightChange = 1;
+
+private double[] prevEncoderValues =
     {1, 1};
-// Preset to 1 to avoid divide by zero errors.
+// Preset to 100 to avoid divide by zero errors.
 
 // Used for calculating how much time has passed for driveStraight
 private long driveStraightOldTime = 0;
+
+/**
+ * Sets how much the robot should correct while driving straight.
+ * 
+ * @param value
+ *            The scaling factor, in decimal percent form (0.0 - 1.0)
+ */
+public void setDriveStraightScalingFactor (double value)
+{
+    this.driveStraightScalingFactor = value;
+}
 
 /**
  * Turns the robot to a certain angle using the robot's turning circle to find
@@ -894,10 +885,41 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             {
             this.brake();
             }
-        this.driveStraight(speed,false);
+        this.driveStraight(speed, false);
         return true;
         }
     return false;
+}
+
+/**
+ * Method to test the vision code without the ultrasonic
+ * @param speed
+ * @param compensationFactor
+ */
+public void visionTest (double compensationFactor, double speed)
+{
+    visionProcessor.processImage();
+    double center = (visionProcessor.getNthSizeBlob(0).center.x
+            + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+
+    if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
+            && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+        {
+        driveStraight(speed, false);
+        }
+    else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+        {
+        // center is too far right, drive faster on the left
+        this.getTransmission().driveRaw(speed * compensationFactor,
+                speed);
+        }
+    else
+        {
+        // center is too far left, drive faster on the right
+        this.getTransmission().driveRaw(speed,
+                speed * compensationFactor);
+        }
+
 }
 
 // ================VISION TUNABLES================
@@ -908,13 +930,13 @@ private final double CAMERA_DEADBAND = 2;
 private final double STOP_ROBOT = 6;
 
 // TODO TEST TO FIND ACTUAL VALUE
-private final double SWITCH_CAMERA_CENTER = 45;
+private final double SWITCH_CAMERA_CENTER = 80;
 
 // ================TUNABLES================
 
 // Number of milliseconds that will pass before collecting data on encoders
 // for driveStraight and brake
-private static final int COLLECTION_TIME = 10;
+private static final int COLLECTION_TIME = 100;
 
 // The change in inches per [COLLECTION_TIME] where the robot is considered
 // "stopped".

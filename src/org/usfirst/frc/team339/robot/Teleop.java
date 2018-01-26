@@ -70,21 +70,21 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-    Hardware.cubeManipulator.forkliftUpdate();
-
-    // Forklift controls
-    Hardware.cubeManipulator
-            .moveForkliftWithController(Hardware.rightOperator);
-    // intake controls
-    if (Hardware.rightOperator.getRawButton(2) == true)
-        {
-        Hardware.cubeManipulator.intakeCube();
-        }
-
-    if (Hardware.rightOperator.getRawButton(3) == true)
-        {
-        Hardware.cubeManipulator.pushOutCube();
-        }
+    // Hardware.cubeManipulator.forkliftUpdate();
+    //
+    // // Forklift controls
+    // Hardware.cubeManipulator
+    // .moveForkliftWithController(Hardware.rightOperator);
+    // // intake controls
+    // if (Hardware.rightOperator.getRawButton(2) == true)
+    // {
+    // Hardware.cubeManipulator.intakeCube();
+    // }
+    //
+    // if (Hardware.rightOperator.getRawButton(3) == true)
+    // {
+    // Hardware.cubeManipulator.pushOutCube();
+    // }
     // =================================================================
     // CAMERA CODE
     // =================================================================
@@ -92,32 +92,39 @@ public static void periodic ()
     // test from 1/23/18
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
-    // Hardware.ringLightRelay.set(Value.kOn);
-    // Hardware.autoDrive.driveToSwitch(1.5, .3);
+    // Hardware.autoDrive.visionTest(1.5, .3);
     // }
-
+    //
     // Hardware.ringLightRelay.set(Value.kForward);
 
     // =================================================================
     // Driving code
     // =================================================================
 
+    Hardware.tractionDrive.shiftGears(
+            Hardware.rightDriver.getRawButton(3),
+            Hardware.leftDriver.getRawButton(3));
+
     if (isTestingDrive == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
                 Hardware.rightDriver.getY());
 
+    if (Hardware.leftDriver.getRawButton(8))
+        Hardware.autoDrive.resetEncoders();
+
     if (Hardware.leftDriver.getRawButton(9))
-        Hardware.autoDrive.driveStraight(.6, true);
+        Hardware.autoDrive.driveStraight(.5, true);
 
     if (Hardware.leftDriver.getRawButton(10))
-        Hardware.autoDrive.accelerateTo(.5, -.5, .25);
+        Hardware.autoDrive.driveStraight(.5, false);
 
     if (Hardware.leftDriver.getRawButton(11))
-        Hardware.autoDrive.accelerateTo(-.5, -.5, .25);
+        Hardware.autoDrive.accelerateTo(-.5, -.5, 2);
 
     isTestingDrive = Hardware.leftDriver.getRawButton(9)
             || Hardware.leftDriver.getRawButton(10)
             || Hardware.leftDriver.getRawButton(11);
+
 
     printStatements();
 } // end Periodic
@@ -152,9 +159,9 @@ public static void printStatements ()
 
     //
     // System.out.println(
-    // "R Drive Motor " + Hardware.rightDriveMotor.get());
+    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
-    // "L Drive Motor " + Hardware.leftDriveMotor.get());
+    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
@@ -209,16 +216,22 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
 
-    // System.out.println("LF In = "
+    // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
+
     //
     // System.out.println("LF Ticks "
+
     // + Hardware.leftFrontDriveEncoder.get());
     //
+
     // System.out.println("RF In = "
+
     // + Hardware.rightFrontDriveEncoder.getDistance());
+
     //
     // System.out.println("RF Ticks "
+
     // + Hardware.rightFrontDriveEncoder.get());
     //
     // System.out.println("LR In = "
@@ -235,11 +248,11 @@ public static void printStatements ()
 
 
     // System.out.println(
-    // "Lift In = "
+    // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
-    // "Lift Ticks " + Hardware.liftingEncoder.get());
+    // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
 
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
@@ -256,10 +269,10 @@ public static void printStatements ()
 
     //
     // System.out
-    // .println("R Light " + Hardware.rightRedLight.get());
-    // System.out.println("L Light " + Hardware.leftRedLight.get());
-    // System.out.println(
-    // "Cube Photo Switch " + Hardware.cubePhotoSwitch.get());
+    // .println("Right Red Light " + Hardware.rightRedLight.get());
+    // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
+    System.out.println(
+            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
     // Pneumatics
@@ -290,16 +303,16 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    // System.out.println("F USonic "
+    // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("R USonic "
+    // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // =========================
     // Servos
     // =========================
     // System.out.println("Climbing Mechanism Servo" +
-    // Hardware.climbingMechanismServo.get());
+    // Hardware.climbingMechanismServo.getAngle());
     //
     // ================
     // GYRO
@@ -323,13 +336,13 @@ public static void printStatements ()
     // information about the joysticks
     // ---------------------------------
     // System.out.println(
-    // "RDriver Joystick " + Hardware.rightDriver.getY());
+    // "Right Driver Joystick " + Hardware.rightDriver.getY());
     // System.out.println(
-    // "LDriver Joystick " + Hardware.leftDriver.getY());
+    // "Left Driver Joystick " + Hardware.leftDriver.getY());
     // System.out.println(
-    // "ROp Joystick " + Hardware.rightOperator.getY());
+    // "Right Operator Joystick " + Hardware.rightOperator.getY());
     // System.out.println(
-    // "LOp Joystick " + Hardware.leftOperator.getY());
+    // "Left Operator Joystick " + Hardware.leftOperator.getY());
     // =================================
     // Kilroy ancillary items
     // =================================
