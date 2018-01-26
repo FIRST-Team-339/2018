@@ -620,7 +620,7 @@ private double accelMotorPower = 0;// Power sent to each motor: [Left, Right]
 
 private long lastAccelerateTime = 0; // Milliseconds
 
-private double defaultAcceleration = 1;//Seconds
+private double defaultAcceleration = .5;//Seconds
 
 private int accelTimeout = 300;// Milliseconds
 
@@ -678,8 +678,8 @@ public void driveStraight (double speed, boolean accelerate)
             prevEncoderValues[1] = rightRearEncoder.getDistance();
             }
         }
-    double leftMotorVal = speed + (.15 * inRange(rightChange - leftChange));
-    double rightMotorVal = speed + (.15 * inRange(leftChange - rightChange));
+    double leftMotorVal = speed + (driveStraightScalingFactor * inRange(rightChange - leftChange));
+    double rightMotorVal = speed + (driveStraightScalingFactor * inRange(leftChange - rightChange));
     // Changes how much the robot corrects by how off course it is. The
     // more off course, the more it will attempt to correct.
     if (accelerate == false)
@@ -689,14 +689,26 @@ public void driveStraight (double speed, boolean accelerate)
 
 }
 
+private double driveStraightScalingFactor = .15;
+
 private double leftChange = 1, rightChange = 1;
 
 private double [] prevEncoderValues =
-    {100, 100};
-// Preset to 1 to avoid divide by zero errors.
+    {1, 1};
+// Preset to 100 to avoid divide by zero errors.
 
 // Used for calculating how much time has passed for driveStraight
 private long driveStraightOldTime = 0;
+
+/**
+ * Sets how much the robot should correct while driving straight.
+ * @param value
+ *          The scaling factor, in decimal percent form (0.0 - 1.0)
+ */
+public void setDriveStraightScalingFactor(double value)
+{
+    this.driveStraightScalingFactor = value;
+}
 
 /**
  * Turns the robot to a certain angle using the robot's turning circle to find

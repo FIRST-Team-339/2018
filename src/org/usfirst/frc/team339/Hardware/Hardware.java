@@ -292,7 +292,7 @@ public static TractionTransmission tractionDrive = new TractionTransmission(
 // Drive system
 // ------------------------------------
 public static Drive autoDrive = new Drive(tractionDrive,
-        leftRearDriveEncoder, rightRearDriveEncoder, frontUltraSonic,
+        leftFrontDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
         rearUltraSonic, null);
 //TODO CHANGE TO FRONT WHEEL ENCODERS WHEN WE GET NEW ROBOT!
 // -------------------

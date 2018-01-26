@@ -211,26 +211,26 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
 
-    // System.out.println("LF In = "
-    // + Hardware.leftFrontDriveEncoder.getDistance());
+     System.out.println("LF In = "
+     + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("LF Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
     //
-    // System.out.println("RF In = "
-    // + Hardware.rightFrontDriveEncoder.getDistance());
+     System.out.println("RF In = "
+     + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("RF Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
 
-    System.out.println("LR In = "
-            + Hardware.leftRearDriveEncoder.getDistance());
+//    System.out.println("LR In = "
+//            + Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("LR Ticks "
     // + Hardware.leftRearDriveEncoder.get());
 
-    System.out.println("RR In = "
-            + Hardware.rightRearDriveEncoder.getDistance());
+//    System.out.println("RR In = "
+//            + Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("RR Ticks "
     // + Hardware.rightRearDriveEncoder.get());
