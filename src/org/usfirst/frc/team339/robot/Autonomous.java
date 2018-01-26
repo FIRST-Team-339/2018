@@ -629,13 +629,8 @@ public static boolean switchOrScalePath (Position robotPosition)
     switch (currentSwitchOrScaleState)
         {
         case INIT:
-            currentSwitchOrScaleState = SwitchOrScaleStates.DEPLOY_INTAKE;
-            break;
-        case DEPLOY_INTAKE:
-            // Deploy the intake before we start the program
-            if (Hardware.cubeManipulator.deployCubeIntake())
-                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE1;
-            break;
+            currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE1;
+            Hardware.cubeManipulator.deployCubeIntake();
         case DRIVE1:
             // FIRST driveInches: drive forward to switch
             if (Hardware.autoDrive.driveStraightInches(
@@ -842,7 +837,7 @@ private static SwitchOrScaleStates currentSwitchOrScaleState = SwitchOrScaleStat
 
 private static enum SwitchOrScaleStates
     {
-INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE, DRIVE2, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, DRIVE4, BRAKE_DRIVE4, TURN4, BRAKE_B4_RAISE_ARM2, RAISE_ARM2, FINISH
+INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE, DRIVE2, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, DRIVE4, BRAKE_DRIVE4, TURN4, BRAKE_B4_RAISE_ARM2, RAISE_ARM2, FINISH
     }
 
 /**
