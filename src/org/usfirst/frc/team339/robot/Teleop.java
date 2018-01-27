@@ -33,8 +33,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import edu.wpi.first.wpilibj.Timer;
-import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
-import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * This class contains all of the user code for the Autonomous part of the
@@ -55,8 +53,10 @@ public class Teleop
 
 public static void init ()
 {
-    // teleopLoopTimer.reset();
-    // teleopLoopTimer.start();
+    totalLoopTime = 0.0;
+    numOfLoops = 1;
+    teleopLoopTimer.reset();
+    teleopLoopTimer.start();
 
 } // end Init
 
@@ -126,13 +126,10 @@ public static void periodic ()
             || Hardware.leftDriver.getRawButton(11);
 
     printStatements();
-
-    // printStatements();
-    // printStatements();
-    // totalLoopTime += teleopLoopTimer.get();
-    // teleopLoopTimer.reset();
-    // averageLoopTime = totalLoopTime / numOfLoops;
-    // numOfLoops++;
+    totalLoopTime += teleopLoopTimer.get();
+    teleopLoopTimer.reset();
+    averageLoopTime = totalLoopTime / numOfLoops;
+    numOfLoops++;
 
 } // end Periodic
 
@@ -176,16 +173,16 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    //
-    System.out.println(
-            "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    System.out.println(
-            "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    System.out.println(
-            "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    System.out.println(
-            "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+
+    // System.out.println(
+    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    // System.out.println(
+    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println(
+    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+    // System.out.println(
+    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
 
 
     // =================================
@@ -235,29 +232,29 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
 
-    System.out.println("Left Front Encoder Inches = "
-            + Hardware.leftFrontDriveEncoder.getDistance());
-
-    System.out.println("Left Front Encoder Ticks "
-            + Hardware.leftFrontDriveEncoder.get());
-
-    System.out.println("Right Front Inches = "
-            + Hardware.rightFrontDriveEncoder.getDistance());
-
-    System.out.println("Right Front Ticks "
-            + Hardware.rightFrontDriveEncoder.get());
-
-    System.out.println("Left Rear Encoder Inches = "
-            + Hardware.leftRearDriveEncoder.getDistance());
-
-    System.out.println("Left Rear Encoder Ticks "
-            + Hardware.leftRearDriveEncoder.get());
-
-    System.out.println("Right Rear Inches = "
-            + Hardware.rightRearDriveEncoder.getDistance());
-
-    System.out.println("Right Rear Ticks "
-            + Hardware.rightRearDriveEncoder.get());
+    // System.out.println("Left Front Encoder Inches = "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
+    //
+    // System.out.println("Left Front Encoder Ticks "
+    // + Hardware.leftFrontDriveEncoder.get());
+    //
+    // System.out.println("Right Front Inches = "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
+    //
+    // System.out.println("Right Front Ticks "
+    // + Hardware.rightFrontDriveEncoder.get());
+    //
+    // System.out.println("Left Rear Encoder Inches = "
+    // + Hardware.leftRearDriveEncoder.getDistance());
+    //
+    // System.out.println("Left Rear Encoder Ticks "
+    // + Hardware.leftRearDriveEncoder.get());
+    //
+    // System.out.println("Right Rear Inches = "
+    // + Hardware.rightRearDriveEncoder.getDistance());
+    //
+    // System.out.println("Right Rear Ticks "
+    // + Hardware.rightRearDriveEncoder.get());
     // System.out.println(
     // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
@@ -311,10 +308,10 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    System.out.println("Front UltraSonic "
-            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    System.out.println("Rear UltraSonic "
-            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Front UltraSonic "
+    // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Rear UltraSonic "
+    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // =========================
     // Servos
