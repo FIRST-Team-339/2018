@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * This class contains all of the user code for the Autonomous part of the
@@ -52,7 +53,8 @@ public class Teleop
 
 public static void init ()
 {
-
+    // teleopLoopTimer.reset();
+    // teleopLoopTimer.start();
 
 } // end Init
 
@@ -125,12 +127,31 @@ public static void periodic ()
             || Hardware.leftDriver.getRawButton(10)
             || Hardware.leftDriver.getRawButton(11);
 
-
     printStatements();
+
+    // printStatements();
+    // printStatements();
+    // totalLoopTime += teleopLoopTimer.get();
+    // teleopLoopTimer.reset();
+    // averageLoopTime = totalLoopTime / numOfLoops;
+    // numOfLoops++;
+
 } // end Periodic
 
-
 private static boolean isTestingDrive = false;
+
+// timer to keep track of how long it spent to get through this loop of teleop
+private static Timer teleopLoopTimer = new Timer();
+
+// average time it has taken to loop through teleop (or more accurately, robot
+// as a whole)
+private static double averageLoopTime = 0.0;
+
+// total time since beginning of teleop init
+private static double totalLoopTime = 0.0;
+
+// number of times we'll started through teleop periodic (starts at 1)
+private static int numOfLoops = 1;
 
 private static int testingDriveState = 0;
 
@@ -158,15 +179,15 @@ public static void printStatements ()
     // =================================
 
     //
-    // System.out.println(
-    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    // System.out.println(
-    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    // System.out.println(
-    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    // System.out.println(
-    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+    System.out.println(
+            "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    System.out.println(
+            "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    System.out.println(
+            "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+    System.out.println(
+            "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
 
 
     // =================================
@@ -216,47 +237,36 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
 
-    // System.out.println("Left Front Encoder Inches = "
-    // + Hardware.leftFrontDriveEncoder.getDistance());
+    System.out.println("Left Front Encoder Inches = "
+            + Hardware.leftFrontDriveEncoder.getDistance());
 
-    //
-    // System.out.println("LF Ticks "
+    System.out.println("Left Front Encoder Ticks "
+            + Hardware.leftFrontDriveEncoder.get());
 
-    // + Hardware.leftFrontDriveEncoder.get());
-    //
+    System.out.println("Right Front Inches = "
+            + Hardware.rightFrontDriveEncoder.getDistance());
 
-    // System.out.println("RF In = "
+    System.out.println("Right Front Ticks "
+            + Hardware.rightFrontDriveEncoder.get());
 
-    // + Hardware.rightFrontDriveEncoder.getDistance());
+    System.out.println("Left Rear Encoder Inches = "
+            + Hardware.leftRearDriveEncoder.getDistance());
 
-    //
-    // System.out.println("RF Ticks "
+    System.out.println("Left Rear Encoder Ticks "
+            + Hardware.leftRearDriveEncoder.get());
 
-    // + Hardware.rightFrontDriveEncoder.get());
-    //
-    // System.out.println("LR In = "
-    // + Hardware.leftRearDriveEncoder.getDistance());
-    //
-    // System.out.println("LR Ticks "
-    // + Hardware.leftRearDriveEncoder.get());
-    //
-    // System.out.println("RR In = "
-    // + Hardware.rightRearDriveEncoder.getDistance());
-    //
-    // System.out.println("RR Ticks "
-    // + Hardware.rightRearDriveEncoder.get());
+    System.out.println("Right Rear Inches = "
+            + Hardware.rightRearDriveEncoder.getDistance());
 
-
+    System.out.println("Right Rear Ticks "
+            + Hardware.rightRearDriveEncoder.get());
     // System.out.println(
     // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
-
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
-
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
-
     // System.out.println("Intake Deploy Encoder Ticks "
     // + Hardware.intakeDeployEncoder.get());
 
@@ -271,8 +281,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    // System.out.println(
+    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
     // Pneumatics
@@ -303,10 +313,10 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    // System.out.println("Front UltraSonic "
-    // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("Rear UltraSonic "
-    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Front UltraSonic "
+            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Rear UltraSonic "
+            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // =========================
     // Servos
@@ -351,6 +361,11 @@ public static void printStatements ()
     // timers
     // what time does the timer have now
     // ---------------------------------
+
+    System.out.println(
+            "\n" + "LOOP TIMER: " + teleopLoopTimer.get() + ";    "
+                    + "avg: " +
+                    averageLoopTime + "\n");
 
 } // end printStatements
 
