@@ -231,9 +231,11 @@ public void robotInit ()
     Hardware.leftRearDriveEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     Hardware.liftingEncoder.reset();
+    Hardware.liftingEncoder.setReverseDirection(false);
 
     Hardware.leftDriveMotor.setInverted(false);
     Hardware.rightDriveMotor.setInverted(true);
+
 
     // This sets the gear speed percentage for the traction drive
     Hardware.tractionDrive.setAllGearRatios(GEAR_1_SPEED, GEAR_2_SPEED);
