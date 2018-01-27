@@ -357,10 +357,10 @@ public static void printStatements ()
     // what time does the timer have now
     // ---------------------------------
 
-    System.out.println(
-            "\n" + "LOOP TIMER: " + teleopLoopTimer.get() + ";    "
-                    + "avg: " +
-                    averageLoopTime + "\n");
+    // System.out.println(
+    // "\n" + "LOOP TIMER: " + teleopLoopTimer.get() + "; "
+    // + "avg: " +
+    // averageLoopTime + "\n");
 
 } // end printStatements
 
