@@ -217,7 +217,6 @@ public void disabledPeriodic ()
 @Override
 public void robotInit ()
 {
-    double UltraSonicScalingFactor = .223;
     // ---------------------------------------
     // start setup - tell the user we are beginning
     // setup
@@ -233,8 +232,6 @@ public void robotInit ()
     Hardware.intakeDeployEncoder.reset();
     Hardware.liftingEncoder.reset();
 
-    // Hardware.frontUltraSonic.setScalingFactor(UltraSonicScalingFactor);
-    // Hardware.rearUltraSonic.setScalingFactor(UltraSonicScalingFactor);
     Hardware.leftDriveMotor.setInverted(false);
     Hardware.rightDriveMotor.setInverted(true);
 
