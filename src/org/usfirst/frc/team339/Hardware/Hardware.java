@@ -170,7 +170,7 @@ public static LightSensor rightRedLight = new LightSensor(7);
 
 public static LightSensor leftRedLight = new LightSensor(8);
 
-public static LightSensor cubePhotoSwitch = new LightSensor(0);
+public static LightSensor cubePhotoSwitch = new LightSensor(22);
 
 // ====================================
 // I2C Classes
