@@ -100,7 +100,8 @@ public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
  */
 public Drive (TransmissionBase transmission, Encoder leftEncoder,
         Encoder rightEncoder, UltraSonic frontUltrasonic,
-        UltraSonic rearUltrasonic, KilroyGyro gyro, VisionProcessor visionProcessor)
+        UltraSonic rearUltrasonic, KilroyGyro gyro,
+        VisionProcessor visionProcessor)
 {
     this.transmissionType = transmission.getType();
     this.leftRearEncoder = leftEncoder;
@@ -893,6 +894,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
 
 /**
  * Method to test the vision code without the ultrasonic
+ * 
  * @param speed
  * @param compensationFactor
  */
@@ -905,32 +907,34 @@ public void visionTest (double compensationFactor, double speed)
     if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
             && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
         {
-        driveStraight(speed, false);
+        // driveStraight(speed, false);
+        System.out.println("We are aligned in the center");
         }
     else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
         {
         // center is too far right, drive faster on the left
-        this.getTransmission().driveRaw(speed * compensationFactor,
-                speed);
+        // this.getTransmission().driveRaw(speed * compensationFactor,
+        // speed);
+        // System.out.println("We're too left");
         }
     else
         {
         // center is too far left, drive faster on the right
-        this.getTransmission().driveRaw(speed,
-                speed * compensationFactor);
+        // this.getTransmission().driveRaw(speed,
+        // speed * compensationFactor);
+        // System.out.println("We're too right");
         }
-
 }
 
 // ================VISION TUNABLES================
 private final double CAMERA_NO_LONGER_WORKS = 24;
 
-private final double CAMERA_DEADBAND = 2;
+private final double CAMERA_DEADBAND = 6;
 
 private final double STOP_ROBOT = 6;
 
 // TODO TEST TO FIND ACTUAL VALUE
-private final double SWITCH_CAMERA_CENTER = 80;
+private final double SWITCH_CAMERA_CENTER = 111;
 
 // ================TUNABLES================
 

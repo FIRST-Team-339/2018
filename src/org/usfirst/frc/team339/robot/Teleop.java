@@ -32,6 +32,8 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
+import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * This class contains all of the user code for the Autonomous part of the
@@ -92,10 +94,27 @@ public static void periodic ()
     // test from 1/23/18
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
-    // Hardware.autoDrive.visionTest(1.5, .3);
+    // Hardware.autoDrive.visionTest(1.3, .6);
     // }
-    //
+
     // Hardware.ringLightRelay.set(Value.kForward);
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.axisCamera.processImage();
+    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+    // for (int i = 0; i < Hardware.axisCamera
+    // .getParticleReports().length; i++)
+    // {
+    // System.out.println("The center of " + i + " is: "
+    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+    // }
+    // Hardware.autoDrive.visionTest(1.3, .6);
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // }
+
+
 
     // =================================================================
     // Driving code
@@ -130,7 +149,7 @@ public static void periodic ()
 } // end Periodic
 
 
-private static boolean isTestingDrive = false;
+private static boolean isTestingDrive = true;
 
 private static int testingDriveState = 0;
 
@@ -271,8 +290,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    // System.out.println(
+    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
     // Pneumatics
