@@ -92,15 +92,16 @@ public static void periodic ()
     // =================================================================
 
     // test from 1/23/18
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-    // Hardware.autoDrive.visionTest(1.3, .6);
-    // }
+    if (Hardware.visionTestButton.isOnCheckNow())
+        {
+        Hardware.autoDrive.visionTest(1.3, .6);
+        }
 
-    // Hardware.ringLightRelay.set(Value.kForward);
+    Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
+    // Hardware.autoDrive.visionTest(1.3, .6);
     // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
     // for (int i = 0; i < Hardware.axisCamera
     // .getParticleReports().length; i++)
@@ -108,7 +109,6 @@ public static void periodic ()
     // System.out.println("The center of " + i + " is: "
     // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
     // }
-    // Hardware.autoDrive.visionTest(1.3, .6);
     // System.out.println("The center is : " + (Hardware.axisCamera
     // .getNthSizeBlob(0).center.x
     // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
@@ -241,17 +241,17 @@ public static void printStatements ()
     // + Hardware.leftFrontDriveEncoder.get());
     //
 
-    System.out.println("RF In = "
-
-            + Hardware.rightFrontDriveEncoder.getDistance());
+    // System.out.println("RF In = "
+    //
+    // + Hardware.rightFrontDriveEncoder.getDistance());
 
     //
     // System.out.println("RF Ticks "
 
     // + Hardware.rightFrontDriveEncoder.get());
     //
-    System.out.println("LR In = "
-            + Hardware.leftRearDriveEncoder.getDistance());
+    // System.out.println("LR In = "
+    // + Hardware.leftRearDriveEncoder.getDistance());
     //
     // System.out.println("LR Ticks "
     // + Hardware.leftRearDriveEncoder.get());
