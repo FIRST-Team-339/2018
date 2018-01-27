@@ -159,17 +159,13 @@ public static void periodic ()
                 }
             break;
         case AUTOLINE:
-            if (Hardware.autoDrive.driveStraightInches(
-                    DISTANCE_TO_CROSS_AUTOLINE,
-                    DRIVE_SPEED) == true)
+            if (autolinePath())
                 {
                 autoState = State.FINISH;
                 }
             break;
         case AUTOLINE_SCALE:
-            if (Hardware.autoDrive.driveStraightInches(
-                    DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE,
-                    DRIVE_SPEED) == true)
+            if (autoLineScalePath())
                 {
                 autoState = State.FINISH;
                 }
@@ -257,6 +253,83 @@ private enum GameDataType
     {
 SWITCH, SCALE
     }
+
+/**
+ * Drive across the auto line
+ * 
+ * @return
+ *         Whether or not the path has finished.
+ */
+public static boolean autolinePath ()
+{
+    switch (currentAutolineState)
+        {
+        // Initialize anything necessary
+        case PATH_INIT:
+            currentAutolineState = AutolinePathStates.DRIVE1;
+            break;
+        case DRIVE1:
+            // Drive across the line
+            if (Hardware.autoDrive.driveStraightInches(
+                    DISTANCE_TO_CROSS_AUTOLINE, DRIVE_SPEED))
+                currentAutolineState = AutolinePathStates.BRAKE1;
+            break;
+        case BRAKE1:
+            // Brake after driving across the line
+            if (Hardware.autoDrive.brake())
+                currentAutolineState = AutolinePathStates.FINISH;
+            break;
+        default:
+        case FINISH:
+            // Stop drive motors and end auto
+            Hardware.tractionDrive.stop();
+            return true;
+        }
+
+    return false;
+}
+
+private static enum AutolinePathStates
+    {
+PATH_INIT, DRIVE1, BRAKE1, FINISH
+    }
+
+/**
+ * Drive across the auto line, and farther for the scale in teleop.
+ * 
+ * @return
+ *         whether or not the path has finished
+ */
+public static boolean autoLineScalePath ()
+{
+    switch (currentAutolineState)
+        {
+        // Initialize anything necessary
+        case PATH_INIT:
+            currentAutolineState = AutolinePathStates.DRIVE1;
+            break;
+        case DRIVE1:
+            // Drive across the line
+            if (Hardware.autoDrive.driveStraightInches(
+                    DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE,
+                    DRIVE_SPEED))
+                currentAutolineState = AutolinePathStates.BRAKE1;
+            break;
+        case BRAKE1:
+            // Brake after driving across the line
+            if (Hardware.autoDrive.brake())
+                currentAutolineState = AutolinePathStates.FINISH;
+            break;
+        default:
+        case FINISH:
+            // Stop drive motors and end auto
+            Hardware.tractionDrive.stop();
+            return true;
+        }
+    return false;
+}
+
+private static AutolinePathStates currentAutolineState = AutolinePathStates.PATH_INIT;
 
 public static leftExchangeState leftExchangeAuto = leftExchangeState.DONE;
 
@@ -548,7 +621,7 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case DONE:
-            Hardware.autoDrive.driveStraight(0, false);
+            Hardware.tractionDrive.stop();
             break;
 
         }
@@ -700,7 +773,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                 }
             break;
         case DRIVE_WITH_ULTRSNC:
-            Hardware.autoDrive.driveStraight(DRIVE_SPEED, true);
+            Hardware.autoDrive.driveStraight(DRIVE_SPEED, ACCELERATION);
             // Drive to the switch until the ultrasonic tells us to stop
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
@@ -990,7 +1063,7 @@ public static boolean offsetSwitchPath ()
             break;
         case DRIVE_WITH_ULTRSNC:
             // Drive towards the switch using the ultrasonic
-            Hardware.autoDrive.driveStraight(DRIVE_SPEED, true);
+            Hardware.autoDrive.driveStraight(DRIVE_SPEED, ACCELERATION);
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
                 {
@@ -1041,23 +1114,34 @@ PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRI
  * ================================
  */
 
-private static final double AUTO_TEST_SCALAR = 1.0;
+// DRIVING
+private static final double AUTO_TESTING_SCALAR = 1.0;
 
 private static final double DRIVE_SPEED = .5;
 
 private static final double TURN_SPEED = .4;
 
-private static final double INTAKE_EJECT_TIME = 1;// Seconds
+private static final double ACCELERATION = .3; // Seconds
+// ==========
 
-private static final int SWITCH_LIFT_HEIGHT = 24;// Inches
-
-private static final int SCALE_LIFT_HEIGHT = 78;// Inches
-
-private static final int MIN_ULTRSNC_DISTANCE = 12;// Inches
-
+// OPERATING
 private static final double FORKLIFT_SPEED = .5;
 
 private static final double INTAKE_SPEED = 1;
+
+private static final double INTAKE_EJECT_TIME = 1;// Seconds
+// ==========
+
+// LIFT HEIGHT
+private static final int SWITCH_LIFT_HEIGHT = 24;// Inches
+
+private static final int SCALE_LIFT_HEIGHT = 78;// Inches
+// ==========
+
+// ULTRASONIC
+private static final int MIN_ULTRSNC_DISTANCE = 12;// Inches
+// ==========
+
 
 // INIT
 
@@ -1098,9 +1182,10 @@ private final static double AUTO_COMPENSATION_VISION = 1.2;
 
 // SWITCH_OR_SCALE
 private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
-    {(int) (AUTO_TEST_SCALAR * 133), (int) (AUTO_TEST_SCALAR * 67),
-            (int) (AUTO_TEST_SCALAR * 31),
-            (int) (AUTO_TEST_SCALAR * 169)};
+    {(int) (AUTO_TESTING_SCALAR * 133),
+            (int) (AUTO_TESTING_SCALAR * 67),
+            (int) (AUTO_TESTING_SCALAR * 31),
+            (int) (AUTO_TESTING_SCALAR * 169)};
 
 
 

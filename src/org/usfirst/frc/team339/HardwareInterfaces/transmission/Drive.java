@@ -343,7 +343,6 @@ private boolean isAnyEncoderLargerThan (double length)
  */
 public void reset ()
 {
-    this.brakeInit = true;
     this.driveInchesInit = true;
     this.driveStraightInchesInit = true;
     this.turnDegreesInit = true;
@@ -358,76 +357,63 @@ public void reset ()
  */
 public boolean brake ()
 {
-    // Reset the encoders on the first startup
-    if (brakeInit)
+    // START INIT
+    if (System.currentTimeMillis() - brakeInitTime > INIT_TIMEOUT)
         {
-        this.resetEncoders();
-        this.brakeMotorPower = new double[]
-            {0, 0, 0, 0};
-        brakeInit = false;
-        return false;
+        // Get the current powers being sent to the robot, 2wheel
+        brakeMotorVals[0] = Math.abs(this.getTransmission()
+                .getSpeedController(MotorPosition.LEFT_REAR).get());
+        brakeMotorVals[1] = Math.abs(this.getTransmission()
+                .getSpeedController(MotorPosition.RIGHT_REAR).get());
+
+        // If four wheel, get the powers of the other wheels
+        if (this.transmissionType != TransmissionType.TRACTION)
+            {
+            brakeMotorVals[2] = Math.abs(this.getTransmission()
+                    .getSpeedController(MotorPosition.LEFT_FRONT)
+                    .get());
+            brakeMotorVals[3] = Math.abs(this.getTransmission()
+                    .getSpeedController(MotorPosition.RIGHT_FRONT)
+                    .get());
+            }
         }
-    // Use a proportional loop to set the powers of each motor
-    this.brakeMotorPower[0] = inRange(
-            leftRearEncoder.getRate() * brakeScalar);
-    this.brakeMotorPower[1] = inRange(
-            rightRearEncoder.getRate() * brakeScalar);
+    // END INIT
 
-    getTransmission().getSpeedController(MotorPosition.LEFT_REAR)
-            .set(-this.brakeMotorPower[0]);
+    for (int iteration = 0; iteration < brakeMotorVals.length; iteration++)
+        {
+        // TODO iteration testing
+        }
+
+    // START SET MOTORS
+    getTransmission().getSpeedController(MotorPosition.LEFT_REAR).set(
+            Math.signum(leftRearEncoder.getRate()) * brakeMotorVals[0]);
     getTransmission().getSpeedController(MotorPosition.RIGHT_REAR)
-            .set(-this.brakeMotorPower[1]);
+            .set(Math.signum(rightRearEncoder.getRate())
+                    * brakeMotorVals[1]);
 
-    // Only test the other encoders if it is a 4 wheel system
     if (transmissionType != TransmissionType.TRACTION)
         {
-        this.brakeMotorPower[2] = inRange(leftFrontEncoder.getRate()
-                * brakeScalar);
-        this.brakeMotorPower[3] = inRange(rightFrontEncoder.getRate()
-                * brakeScalar);
         getTransmission().getSpeedController(MotorPosition.LEFT_FRONT)
-                .set(-this.brakeMotorPower[2]);
+                .set(Math.signum(leftFrontEncoder.getRate())
+                        * brakeMotorVals[2]);
         getTransmission().getSpeedController(MotorPosition.RIGHT_FRONT)
-                .set(-this.brakeMotorPower[3]);
+                .set(Math.signum(rightFrontEncoder.getRate())
+                        * brakeMotorVals[3]);
         }
+    // END SET MOTORS
 
-    // Use boolean short circuiting to test the powers and transmission types
-    if (brakeMotorPower[0] < BRAKE_DEADBAND
-            && brakeMotorPower[1] < BRAKE_DEADBAND
-            && (transmissionType == TransmissionType.TRACTION
-                    || (brakeMotorPower[2] < BRAKE_DEADBAND
-                            && brakeMotorPower[3] < BRAKE_DEADBAND)))
-        {
-        this.getTransmission().stop();
-        this.brakeInit = true;
-        return true;
-        }
-
-    return false;
+    brakeInitTime = System.currentTimeMillis();
+    return true;
 }
 
-private boolean brakeInit = true;
+private long brakeInitTime = 0;
 
-private long previousBrakeTime = 1;
+private double[] brakeMotorVals = new double[4];
 
-private double[] brakeMotorPower =
-    {0, 0, 0, 0};
+private int[][] brakePrevEncoderVals = new int[3][4];
 
-private double[] prevBrakeVals =
-    {0, 0, 0, 0};
+private int currentBrakeIteration = 0;
 
-private double brakeScalar = 1;
-
-/**
- * Sets the constant that is multiplied by delta-encoder values when braking.
- * 
- * @param brakeScalar
- *            The value to be set. Must be higher than 0.
- */
-public void setBrakeScalingFactor (double brakeScalar)
-{
-    this.brakeScalar = brakeScalar;
-}
 
 /**
  * Drives the robot a certain distance without encoder correction.
@@ -509,7 +495,7 @@ public boolean driveStraightInches (int distance, double speed)
         }
 
     // Drive straight if we have not reached the distance
-    this.driveStraight(speed, true);
+    this.driveStraight(speed, this.defaultAcceleration);
 
     return false;
 }
@@ -601,7 +587,7 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
         double time)
 {
     // If we timeout, then reset all the accelerate
-    if (System.currentTimeMillis() - lastAccelerateTime > accelTimeout)
+    if (System.currentTimeMillis() - lastAccelerateTime > INIT_TIMEOUT)
         {
         lastAccelerateTime = System.currentTimeMillis();
         accelMotorPower = accelStartingSpeed;
@@ -628,11 +614,11 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
 
 private double accelMotorPower = 0;// Power sent to each motor
 
-private double accelStartingSpeed = .2;
+private double accelStartingSpeed = .1;
 
 private long lastAccelerateTime = 0; // Milliseconds
 
-private double defaultAcceleration = .4;// Seconds
+private double defaultAcceleration = .8;// Seconds
 
 private int accelTimeout = 300;// Milliseconds
 
@@ -645,6 +631,17 @@ private int accelTimeout = 300;// Milliseconds
 public void setAccelStartingSpeed (double value)
 {
     this.accelStartingSpeed = value;
+}
+
+/**
+ * Sets the default acceleration for driveStraight
+ * 
+ * @param value
+ *            The acceleration period, in seconds
+ */
+public void setDefaultAcceleration (double value)
+{
+    this.defaultAcceleration = .8;
 }
 
 /**
@@ -662,11 +659,10 @@ public void setAccelStartingSpeed (double value)
  * @param speed
  *            How fast the robot will be moving. Correction will be better with
  *            lower percentages.
- * @param accelerate
- *            Whether or not the robot should accelerate before driving
- *            straight.
+ * @param acceleration
+ *            TODO
  */
-public void driveStraight (double speed, boolean accelerate)
+public void driveStraight (double speed, double acceleration)
 {
     // Only check encoders if the right amount of time has elapsed
     // (collectionTime).
@@ -712,11 +708,11 @@ public void driveStraight (double speed, boolean accelerate)
             * inRange(leftChange - rightChange));
     // Changes how much the robot corrects by how off course it is. The
     // more off course, the more it will attempt to correct.
-    if (accelerate == false)
+    if (acceleration <= 0.0)
         this.getTransmission().driveRaw(leftMotorVal, rightMotorVal);
     else
         this.accelerateTo(leftMotorVal, rightMotorVal,
-                defaultAcceleration);
+                acceleration);
 
 }
 
@@ -886,7 +882,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
         if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
                 && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
-            driveStraight(speed, false);
+            driveStraight(speed, this.defaultAcceleration);
             }
         else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
@@ -908,7 +904,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             {
             this.brake();
             }
-        this.driveStraight(speed, false);
+        this.driveStraight(speed, this.defaultAcceleration);
         return true;
         }
     return false;
@@ -925,7 +921,7 @@ public void visionTest (double compensationFactor, double speed)
     visionProcessor.processImage();
     double center = (visionProcessor.getNthSizeBlob(0).center.x
             + visionProcessor.getNthSizeBlob(1).center.x) / 2;
-
+    System.out.println("Center for the vision : " + center);
     if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
             && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
         {
@@ -935,16 +931,16 @@ public void visionTest (double compensationFactor, double speed)
     else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
         {
         // center is too far right, drive faster on the left
-        // this.getTransmission().driveRaw(speed * compensationFactor,
-        // speed);
-        // System.out.println("We're too left");
+        this.getTransmission().driveRaw(speed * compensationFactor,
+                speed);
+        System.out.println("We're too left");
         }
     else
         {
         // center is too far left, drive faster on the right
-        // this.getTransmission().driveRaw(speed,
-        // speed * compensationFactor);
-        // System.out.println("We're too right");
+        this.getTransmission().driveRaw(speed,
+                speed * compensationFactor);
+        System.out.println("We're too right");
         }
 }
 
@@ -964,12 +960,11 @@ private final double SWITCH_CAMERA_CENTER = 111;
 // for driveStraight and brake
 private static final int COLLECTION_TIME = 100;
 
-// The change in inches per [COLLECTION_TIME] where the robot is considered
-// "stopped".
-private static final double BRAKE_DEADBAND = .2;
-
 // The distance from the left side wheel to the right-side wheel divided by
 // 2, in inches. Used in turnDegrees.
 // Nov 4 changed from 16 to 17
 private static final int TURNING_RADIUS = 16;
+
+private static final int INIT_TIMEOUT = 300;// Milliseconds until the
+                                            // initialization should reset.
 }

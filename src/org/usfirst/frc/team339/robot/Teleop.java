@@ -58,6 +58,7 @@ public static void init ()
     teleopLoopTimer.reset();
     teleopLoopTimer.start();
 
+
 } // end Init
 
 // tune pid loop
@@ -74,11 +75,13 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-    // Hardware.cubeManipulator.forkliftUpdate();
+    Hardware.cubeManipulator.forkliftUpdate();
     //
     // // Forklift controls
-    // Hardware.cubeManipulator
-    // .moveForkliftWithController(Hardware.rightOperator);
+    Hardware.cubeManipulator
+            .moveForkliftWithController(Hardware.rightOperator);
+
+
     // // intake controls
     // if (Hardware.rightOperator.getRawButton(2) == true)
     // {
@@ -100,40 +103,70 @@ public static void periodic ()
     // }
     //
     // Hardware.ringLightRelay.set(Value.kForward);
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.axisCamera.processImage();
+    // Hardware.autoDrive.visionTest(1.3, .6);
+    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+    // for (int i = 0; i < Hardware.axisCamera
+    // .getParticleReports().length; i++)
+    // {
+    // System.out.println("The center of " + i + " is: "
+    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+    // }
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // }
+
 
     // =================================================================
     // Driving code
     // =================================================================
 
+    if (!isTestingDrive && !Hardware.leftDriver.getTrigger())
+        Hardware.tractionDrive.drive(Hardware.leftDriver,
+                Hardware.rightDriver);
+
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
 
-    if (isTestingDrive == false)
-        Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
-                Hardware.rightDriver.getY());
+    // if (Hardware.leftDriver.getRawButton(9))
+    // isTestingDrive = true;
+    //
+    // if (isTestingDrive)
+    // {
+    // if (driveState == 0
+    // && Hardware.autoDrive.driveStraightInches(36, .5))
+    // driveState++;
+    // else if (driveState == 1 && Hardware.autoDrive.brake())
+    // driveState++;
+    //
+    // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+    // {
+    // Hardware.tractionDrive.stop();
+    // driveState = 0;
+    // isTestingDrive = false;
+    // }
+    //
+    // }
 
-    if (Hardware.leftDriver.getRawButton(8))
-        Hardware.autoDrive.resetEncoders();
-
-    if (Hardware.leftDriver.getRawButton(9))
-        Hardware.tractionDrive.driveRaw(
-                (Hardware.leftDriver.getThrottle() + 1) / 2.0,
-                (Hardware.leftDriver.getThrottle() + 1) / 2.0);
-
-    isTestingDrive = Hardware.leftDriver.getRawButton(9)
-            || Hardware.leftDriver.getRawButton(10)
-            || Hardware.leftDriver.getRawButton(11);
+    // if (Hardware.leftDriver.getTrigger())
+    // Hardware.autoDrive.brake();
 
     printStatements();
-    totalLoopTime += teleopLoopTimer.get();
-    teleopLoopTimer.reset();
-    averageLoopTime = totalLoopTime / numOfLoops;
-    numOfLoops++;
+
+    // totalLoopTime += teleopLoopTimer.get();
+    // teleopLoopTimer.reset();
+    // averageLoopTime = totalLoopTime / numOfLoops;
+    // numOfLoops++;
 
 } // end Periodic
 
 private static boolean isTestingDrive = false;
+
+private static int driveState = 0;
 
 // timer to keep track of how long it spent to get through this loop of teleop
 private static Timer teleopLoopTimer = new Timer();
@@ -172,7 +205,6 @@ public static void printStatements ()
     // Motor
     // Prints the value of motors
     // =================================
-
 
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
@@ -234,25 +266,25 @@ public static void printStatements ()
 
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
-    //
+
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
-    //
+
     // System.out.println("Right Front Inches = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
-    //
+
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
-    //
+
     // System.out.println("Left Rear Encoder Inches = "
     // + Hardware.leftRearDriveEncoder.getDistance());
-    //
+
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
-    //
+
     // System.out.println("Right Rear Inches = "
     // + Hardware.rightRearDriveEncoder.getDistance());
-    //
+
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
     // System.out.println(
@@ -344,8 +376,8 @@ public static void printStatements ()
     // "Right Driver Joystick " + Hardware.rightDriver.getY());
     // System.out.println(
     // "Left Driver Joystick " + Hardware.leftDriver.getY());
-    // System.out.println(
-    // "Right Operator Joystick " + Hardware.rightOperator.getY());
+    System.out.println(
+            "Right Operator Joystick " + Hardware.rightOperator.getY());
     // System.out.println(
     // "Left Operator Joystick " + Hardware.leftOperator.getY());
     // =================================

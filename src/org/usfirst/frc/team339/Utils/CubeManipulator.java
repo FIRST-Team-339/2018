@@ -31,7 +31,7 @@ private Timer switchTimer = null;
 
 private double forkliftHeight = 0;
 
-private double forkliftSpeed = 0;
+private double forkliftSpeed = -0.9; // ANE
 
 private boolean finishedForkliftMove = false;
 
@@ -80,15 +80,19 @@ public double getForkliftHeight ()
  */
 public void moveForkliftWithController (Joystick operatorJoystick)
 {
-    if (operatorJoystick.getY() >= JOYSTICK_DEADBAND)
+    if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND)
         {
         this.forkliftHeight = FORKLIFT_MAX_HEIGHT;
         liftState = forkliftState.MOVING_UP;
         }
-    else if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND)
+    else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND)
         {
         this.forkliftHeight = FORKLIFT_MIN_HEIGHT;
         liftState = forkliftState.MOVING_DOWN;
+        }
+    else if (this.forkliftHeight <= FORKLIFT_MIN_HEIGHT + 3)
+        {
+        liftState = forkliftState.AT_STARTING_POSITION;
         }
     else
         {
@@ -182,6 +186,7 @@ public boolean deployCubeIntake ()
 
 /**
  * Checks if the intake is deployed
+ * 
  * @return true if the arm is deployed, and false if it isn't
  */
 public boolean isIntakeDeployed ()
@@ -315,6 +320,7 @@ public void forkliftUpdate ()
     switch (liftState)
         {
         case MOVING_UP:
+            System.out.println("Trying to go up");
             this.forkliftMotor.set(this.forkliftSpeed);
             finishedForkliftMove = false;
             if (Math.abs(this.forkliftEncoder
@@ -325,6 +331,11 @@ public void forkliftUpdate ()
                 }
             break;
         case MOVING_DOWN:
+            System.out.println("TRYING TO GO DOWN");
+            if (this.forkliftHeight <= FORKLIFT_MIN_HEIGHT + 3)
+                {
+                liftState = forkliftState.AT_STARTING_POSITION;
+                }
             this.forkliftMotor.set(-this.forkliftSpeed);
             finishedForkliftMove = false;
             if (Math.abs(this.forkliftEncoder
@@ -336,9 +347,11 @@ public void forkliftUpdate ()
             this.forkliftMotor.set(-this.forkliftSpeed);
             break;
         case STAY_AT_POSITION:
+            System.out.println("WE ARE STAYING AT POSITION");
             this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
             break;
         case AT_STARTING_POSITION:
+            System.out.println("WE ARE AT STARTING POSITION");
             break;
         case INTAKE_IS_DEPLOYED:
             break;
@@ -365,7 +378,7 @@ private final double FORKLIFT_SPEED = .9;
 
 private final double FORKLIFT_SPEED_COEFFICIENT = .9;
 
-private final double FORKLIFT_STAY_UP_SPEED = .1;
+private final double FORKLIFT_STAY_UP_SPEED = -.2;
 
 private final double INTAKE_SPEED = .5;
 
