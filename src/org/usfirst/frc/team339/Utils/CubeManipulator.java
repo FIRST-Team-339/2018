@@ -35,6 +35,8 @@ private double forkliftSpeed = 0;
 
 private boolean finishedForkliftMove = false;
 
+private boolean deployedArm = false;
+
 
 /**
  * @param forkliftMotor
@@ -106,9 +108,11 @@ public boolean intakeCube ()
     if (this.intakeSwitch.isOn() == false)
         {
         this.intakeMotor.set(INTAKE_SPEED);
+        this.deployedArm = false;
         return false;
         }
     this.intakeMotor.set(0);
+    this.deployedArm = true;
     return true;
 }
 
@@ -164,15 +168,27 @@ public boolean deployCubeIntake ()
     if (this.intakeDeployEncoder.getDistance() <= INTAKE_ANGLE)
         {
         this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+        this.deployedArm = false;
         }
     else
         {
         this.intakeDeployMotor.set(0);
+        this.deployedArm = true;
+        liftState = forkliftState.INTAKE_IS_DEPLOYED;
         return true;
         }
     return false;
-
 }
+
+/**
+ * Checks if the intake is deployed
+ * @return true if the arm is deployed, and false if it isn't
+ */
+public boolean isIntakeDeployed ()
+{
+    return deployedArm;
+}
+
 
 /**
  * HEY NEWBIES -- USE THIS FOR THE THE INTAKE OVERRIDE
@@ -314,6 +330,7 @@ public void forkliftUpdate ()
             if (Math.abs(this.forkliftEncoder
                     .getDistance()) <= this.forkliftHeight)
                 {
+                liftState = forkliftState.STAY_AT_POSITION;
                 finishedForkliftMove = true;
                 }
             this.forkliftMotor.set(-this.forkliftSpeed);
@@ -322,6 +339,8 @@ public void forkliftUpdate ()
             this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
             break;
         case AT_STARTING_POSITION:
+            break;
+        case INTAKE_IS_DEPLOYED:
             break;
         }
 }
@@ -334,7 +353,7 @@ private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
  */
 public enum forkliftState
     {
-MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION
+MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION, INTAKE_IS_DEPLOYED
 
     }
 
