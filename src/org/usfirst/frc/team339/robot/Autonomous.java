@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.WheelGroups;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
@@ -168,7 +169,7 @@ public static void periodic ()
         case AUTOLINE_SCALE:
             if (Hardware.autoDrive.driveStraightInches(
                     DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE,
-                    DRIVE_SPEED) == false)
+                    DRIVE_SPEED) == true)
                 {
                 autoState = State.FINISH;
                 }
@@ -630,6 +631,10 @@ DONE
 public static boolean switchOrScalePath (Position robotPosition)
 {
     System.out.println("Current State: " + currentSwitchOrScaleState);
+    System.out.println("Distance: " + Hardware.autoDrive
+            .getEncoderDistanceAverage(WheelGroups.ALL));
+    System.out.println("Ultrsnc: "
+            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     switch (currentSwitchOrScaleState)
         {
         case PATH_INIT:
@@ -859,7 +864,10 @@ PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTR
 public static boolean offsetSwitchPath ()
 {
     System.out.println("Current State: " + currentOffsetSwitchState);
-
+    System.out.println("Distance: " + Hardware.autoDrive
+            .getEncoderDistanceAverage(WheelGroups.ALL));
+    System.out.println("Ultrsnc: "
+            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     switch (currentOffsetSwitchState)
         {
         case PATH_INIT:
@@ -1045,7 +1053,7 @@ private static final int SWITCH_LIFT_HEIGHT = 24;// Inches
 
 private static final int SCALE_LIFT_HEIGHT = 78;// Inches
 
-private static final int MIN_ULTRSNC_DISTANCE = 8;// Inches
+private static final int MIN_ULTRSNC_DISTANCE = 12;// Inches
 
 private static final double FORKLIFT_SPEED = .5;
 
