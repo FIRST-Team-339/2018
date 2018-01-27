@@ -921,7 +921,7 @@ public void visionTest (double compensationFactor, double speed)
     visionProcessor.processImage();
     double center = (visionProcessor.getNthSizeBlob(0).center.x
             + visionProcessor.getNthSizeBlob(1).center.x) / 2;
-
+    System.out.println("Center for the vision : " + center);
     if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
             && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
         {
@@ -931,16 +931,16 @@ public void visionTest (double compensationFactor, double speed)
     else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
         {
         // center is too far right, drive faster on the left
-        // this.getTransmission().driveRaw(speed * compensationFactor,
-        // speed);
-        // System.out.println("We're too left");
+        this.getTransmission().driveRaw(speed * compensationFactor,
+                speed);
+        System.out.println("We're too left");
         }
     else
         {
         // center is too far left, drive faster on the right
-        // this.getTransmission().driveRaw(speed,
-        // speed * compensationFactor);
-        // System.out.println("We're too right");
+        this.getTransmission().driveRaw(speed,
+                speed * compensationFactor);
+        System.out.println("We're too right");
         }
 }
 

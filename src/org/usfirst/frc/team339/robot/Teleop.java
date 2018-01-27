@@ -53,8 +53,11 @@ public class Teleop
 
 public static void init ()
 {
-    // teleopLoopTimer.reset();
-    // teleopLoopTimer.start();
+    totalLoopTime = 0.0;
+    numOfLoops = 1;
+    teleopLoopTimer.reset();
+    teleopLoopTimer.start();
+
 
 } // end Init
 
@@ -72,11 +75,13 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-    // Hardware.cubeManipulator.forkliftUpdate();
+    Hardware.cubeManipulator.forkliftUpdate();
     //
     // // Forklift controls
-    // Hardware.cubeManipulator
-    // .moveForkliftWithController(Hardware.rightOperator);
+    Hardware.cubeManipulator
+            .moveForkliftWithController(Hardware.rightOperator);
+
+
     // // intake controls
     // if (Hardware.rightOperator.getRawButton(2) == true)
     // {
@@ -98,6 +103,22 @@ public static void periodic ()
     // }
     //
     // Hardware.ringLightRelay.set(Value.kForward);
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.axisCamera.processImage();
+    // Hardware.autoDrive.visionTest(1.3, .6);
+    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+    // for (int i = 0; i < Hardware.axisCamera
+    // .getParticleReports().length; i++)
+    // {
+    // System.out.println("The center of " + i + " is: "
+    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+    // }
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // }
+
 
     // =================================================================
     // Driving code
@@ -111,34 +132,31 @@ public static void periodic ()
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
 
-    if (Hardware.leftDriver.getRawButton(9))
-        isTestingDrive = true;
+    // if (Hardware.leftDriver.getRawButton(9))
+    // isTestingDrive = true;
+    //
+    // if (isTestingDrive)
+    // {
+    // if (driveState == 0
+    // && Hardware.autoDrive.driveStraightInches(36, .5))
+    // driveState++;
+    // else if (driveState == 1 && Hardware.autoDrive.brake())
+    // driveState++;
+    //
+    // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+    // {
+    // Hardware.tractionDrive.stop();
+    // driveState = 0;
+    // isTestingDrive = false;
+    // }
+    //
+    // }
 
-    if (isTestingDrive)
-        {
-        if (driveState == 0
-                && Hardware.autoDrive.driveStraightInches(36, .5))
-            driveState++;
-        else if (driveState == 1 && Hardware.autoDrive.brake())
-            driveState++;
-
-        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-            {
-            Hardware.tractionDrive.stop();
-            driveState = 0;
-            isTestingDrive = false;
-            }
-
-        }
-
-    if (Hardware.leftDriver.getTrigger())
-        Hardware.autoDrive.brake();
-
+    // if (Hardware.leftDriver.getTrigger())
+    // Hardware.autoDrive.brake();
 
     printStatements();
 
-    // printStatements();
-    // printStatements();
     // totalLoopTime += teleopLoopTimer.get();
     // teleopLoopTimer.reset();
     // averageLoopTime = totalLoopTime / numOfLoops;
@@ -188,7 +206,6 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    //
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
@@ -359,8 +376,8 @@ public static void printStatements ()
     // "Right Driver Joystick " + Hardware.rightDriver.getY());
     // System.out.println(
     // "Left Driver Joystick " + Hardware.leftDriver.getY());
-    // System.out.println(
-    // "Right Operator Joystick " + Hardware.rightOperator.getY());
+    System.out.println(
+            "Right Operator Joystick " + Hardware.rightOperator.getY());
     // System.out.println(
     // "Left Operator Joystick " + Hardware.leftOperator.getY());
     // =================================
