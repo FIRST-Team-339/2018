@@ -33,6 +33,8 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import edu.wpi.first.wpilibj.Timer;
+import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
+import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * This class contains all of the user code for the Autonomous part of the
@@ -94,7 +96,7 @@ public static void periodic ()
     // test from 1/23/18
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
-    // Hardware.autoDrive.visionTest(1.5, .3);
+    // Hardware.autoDrive.visionTest(1.3, .6);
     // }
     //
     // Hardware.ringLightRelay.set(Value.kForward);
@@ -115,13 +117,9 @@ public static void periodic ()
         Hardware.autoDrive.resetEncoders();
 
     if (Hardware.leftDriver.getRawButton(9))
-        Hardware.autoDrive.driveStraight(.5, true);
-
-    if (Hardware.leftDriver.getRawButton(10))
-        Hardware.autoDrive.driveStraight(.5, false);
-
-    if (Hardware.leftDriver.getRawButton(11))
-        Hardware.autoDrive.accelerateTo(-.5, -.5, 2);
+        Hardware.tractionDrive.driveRaw(
+                (Hardware.leftDriver.getThrottle() + 1) / 2.0,
+                (Hardware.leftDriver.getThrottle() + 1) / 2.0);
 
     isTestingDrive = Hardware.leftDriver.getRawButton(9)
             || Hardware.leftDriver.getRawButton(10)
