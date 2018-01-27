@@ -132,13 +132,9 @@ public static void periodic ()
         Hardware.autoDrive.resetEncoders();
 
     if (Hardware.leftDriver.getRawButton(9))
-        Hardware.autoDrive.driveStraight(.5, true);
-
-    if (Hardware.leftDriver.getRawButton(10))
-        Hardware.autoDrive.driveStraight(.5, false);
-
-    if (Hardware.leftDriver.getRawButton(11))
-        Hardware.autoDrive.accelerateTo(-.5, -.5, 2);
+        Hardware.tractionDrive.driveRaw(
+                (Hardware.leftDriver.getThrottle() + 1) / 2.0,
+                (Hardware.leftDriver.getThrottle() + 1) / 2.0);
 
     isTestingDrive = Hardware.leftDriver.getRawButton(9)
             || Hardware.leftDriver.getRawButton(10)
@@ -146,6 +142,7 @@ public static void periodic ()
 
 
     printStatements();
+
 } // end Periodic
 
 
@@ -178,9 +175,9 @@ public static void printStatements ()
 
     //
     // System.out.println(
-    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    // "RMotorVal " + Hardware.rightDriveMotor.get());
     // System.out.println(
-    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    // "LMotorVal " + Hardware.leftDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
@@ -235,7 +232,7 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
 
-    // System.out.println("Left Front Encoder Inches = "
+    // System.out.println("LF In = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
 
     //
@@ -244,17 +241,17 @@ public static void printStatements ()
     // + Hardware.leftFrontDriveEncoder.get());
     //
 
-    // System.out.println("RF In = "
+    System.out.println("RF In = "
 
-    // + Hardware.rightFrontDriveEncoder.getDistance());
+            + Hardware.rightFrontDriveEncoder.getDistance());
 
     //
     // System.out.println("RF Ticks "
 
     // + Hardware.rightFrontDriveEncoder.get());
     //
-    // System.out.println("LR In = "
-    // + Hardware.leftRearDriveEncoder.getDistance());
+    System.out.println("LR In = "
+            + Hardware.leftRearDriveEncoder.getDistance());
     //
     // System.out.println("LR Ticks "
     // + Hardware.leftRearDriveEncoder.get());

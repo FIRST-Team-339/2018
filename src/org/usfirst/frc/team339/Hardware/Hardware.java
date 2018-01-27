@@ -54,7 +54,7 @@ public class Hardware
 public static Servo climbingMechanismServo = new Servo(5); // Documentation says
                                                            // 200* servo
 
-public static final boolean isTestingAutonomous = true;
+public static final boolean isTestingAutonomous = false;
 
 // ------------------------------------
 // Public Constants
@@ -170,7 +170,7 @@ public static LightSensor rightRedLight = new LightSensor(7);
 
 public static LightSensor leftRedLight = new LightSensor(8);
 
-public static LightSensor cubePhotoSwitch = new LightSensor(0);
+public static LightSensor cubePhotoSwitch = new LightSensor(22);
 
 // ====================================
 // I2C Classes
@@ -301,9 +301,9 @@ public static TractionTransmission tractionDrive = new TractionTransmission(
 // Drive system
 // ------------------------------------
 public static Drive autoDrive = new Drive(tractionDrive,
-        leftFrontDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
+        leftRearDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
         rearUltraSonic, null, axisCamera);
-// TODO CHANGE TO FRONT WHEEL ENCODERS WHEN WE GET NEW ROBOT!
+// TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 // -------------------
 // Assembly classes (e.g. forklift)
 // -------------------

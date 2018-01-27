@@ -285,25 +285,33 @@ public void resetEncoders ()
  */
 public double getEncoderDistanceAverage (WheelGroups encoderGroup)
 {
-    switch (encoderGroup)
-        {
-        case ALL:
-            return (Math.abs(leftFrontEncoder.getDistance())
-                    + Math.abs(rightFrontEncoder.getDistance())
-                    + Math.abs(leftRearEncoder.getDistance())
-                    + Math.abs(rightRearEncoder.getDistance())) / 4.0;
-        case LEFT_SIDE:
-            return (Math.abs(leftFrontEncoder.getDistance())
-                    + Math.abs(leftRearEncoder.getDistance())) / 2.0;
-        case RIGHT_SIDE:
-            return (Math.abs(rightFrontEncoder.getDistance())
-                    + Math.abs(rightRearEncoder.getDistance())) / 2.0;
-        case REAR:
-            return (Math.abs(leftRearEncoder.getDistance())
-                    + Math.abs(rightRearEncoder.getDistance())) / 2.0;
-        default:
-            return 0.0;
-        }
+    if (transmissionType != TransmissionType.TRACTION)
+        switch (encoderGroup)
+            {
+            case ALL:
+                return (Math.abs(leftFrontEncoder.getDistance())
+                        + Math.abs(rightFrontEncoder.getDistance())
+                        + Math.abs(leftRearEncoder.getDistance())
+                        + Math.abs(rightRearEncoder.getDistance()))
+                        / 4.0;
+            case LEFT_SIDE:
+                return (Math.abs(leftFrontEncoder.getDistance())
+                        + Math.abs(leftRearEncoder.getDistance()))
+                        / 2.0;
+            case RIGHT_SIDE:
+                return (Math.abs(rightFrontEncoder.getDistance())
+                        + Math.abs(rightRearEncoder.getDistance()))
+                        / 2.0;
+            case REAR:
+                return (Math.abs(leftRearEncoder.getDistance())
+                        + Math.abs(rightRearEncoder.getDistance()))
+                        / 2.0;
+            default:
+                return 0.0;
+            }
+    // If two wheel drive only
+    return (Math.abs(leftRearEncoder.getDistance())
+            + Math.abs(rightRearEncoder.getDistance())) / 2.0;
 }
 
 /**
@@ -596,7 +604,7 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
     if (System.currentTimeMillis() - lastAccelerateTime > accelTimeout)
         {
         lastAccelerateTime = System.currentTimeMillis();
-        accelMotorPower = 0;
+        accelMotorPower = accelStartingSpeed;
         }
 
     // main acceleration maths
@@ -618,13 +626,26 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
     return false;
 }
 
-private double accelMotorPower = 0;// Power sent to each motor: [Left, Right]
+private double accelMotorPower = 0;// Power sent to each motor
+
+private double accelStartingSpeed = .2;
 
 private long lastAccelerateTime = 0; // Milliseconds
 
-private double defaultAcceleration = .5;// Seconds
+private double defaultAcceleration = .4;// Seconds
 
 private int accelTimeout = 300;// Milliseconds
+
+/**
+ * Sets the initial speed of the accelerateTo motors
+ * 
+ * @param value
+ *            Positive percentage / motor value
+ */
+public void setAccelStartingSpeed (double value)
+{
+    this.accelStartingSpeed = value;
+}
 
 /**
  * Drives the robot in a straight line based on encoders.
@@ -642,7 +663,8 @@ private int accelTimeout = 300;// Milliseconds
  *            How fast the robot will be moving. Correction will be better with
  *            lower percentages.
  * @param accelerate
- *            TODO
+ *            Whether or not the robot should accelerate before driving
+ *            straight.
  */
 public void driveStraight (double speed, boolean accelerate)
 {
