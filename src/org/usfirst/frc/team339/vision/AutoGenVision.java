@@ -40,9 +40,9 @@ public class AutoGenVision {
 	public void process(Mat source0) {
 		// Step RGB_Threshold0:
 		Mat rgbThresholdInput = source0;
-		double[] rgbThresholdRed = {220.14388489208633, 255.0};
-		double[] rgbThresholdGreen = {194.9190647482014, 255.0};
-		double[] rgbThresholdBlue = {215.55755395683454, 255.0};
+		double[] rgbThresholdRed = {0.0, 0.0};
+		double[] rgbThresholdGreen = {0.0, 213.660409556314};
+		double[] rgbThresholdBlue = {61.915467625899275, 255.0};
 		rgbThreshold(rgbThresholdInput, rgbThresholdRed, rgbThresholdGreen, rgbThresholdBlue, rgbThresholdOutput);
 
 		// Step Find_Contours0:
@@ -52,13 +52,13 @@ public class AutoGenVision {
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 50.0;
+		double filterContoursMinArea = 80.0;
 		double filterContoursMinPerimeter = 0;
 		double filterContoursMinWidth = 0;
 		double filterContoursMaxWidth = 1000;
 		double filterContoursMinHeight = 0;
 		double filterContoursMaxHeight = 1000;
-		double[] filterContoursSolidity = {0, 100};
+		double[] filterContoursSolidity = {0.0, 100.0};
 		double filterContoursMaxVertices = 1000000;
 		double filterContoursMinVertices = 0;
 		double filterContoursMinRatio = 0;

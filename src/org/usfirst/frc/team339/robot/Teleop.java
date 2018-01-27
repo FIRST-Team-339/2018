@@ -53,8 +53,10 @@ public class Teleop
 
 public static void init ()
 {
-    // teleopLoopTimer.reset();
-    // teleopLoopTimer.start();
+    totalLoopTime = 0.0;
+    numOfLoops = 1;
+    teleopLoopTimer.reset();
+    teleopLoopTimer.start();
 
 
 } // end Init
@@ -101,6 +103,22 @@ public static void periodic ()
     // }
     //
     // Hardware.ringLightRelay.set(Value.kForward);
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.axisCamera.processImage();
+    // Hardware.autoDrive.visionTest(1.3, .6);
+    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+    // for (int i = 0; i < Hardware.axisCamera
+    // .getParticleReports().length; i++)
+    // {
+    // System.out.println("The center of " + i + " is: "
+    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+    // }
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // }
+
 
     // =================================================================
     // Driving code
@@ -128,9 +146,6 @@ public static void periodic ()
     // || Hardware.leftDriver.getRawButton(11);
 
     printStatements();
-
-    // printStatements();
-    // printStatements();
     // totalLoopTime += teleopLoopTimer.get();
     // teleopLoopTimer.reset();
     // averageLoopTime = totalLoopTime / numOfLoops;
@@ -178,7 +193,6 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    //
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
@@ -265,6 +279,7 @@ public static void printStatements ()
                     + Hardware.liftingEncoder.getDistance());
     System.out.println(
             "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
+
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
     // System.out.println("Intake Deploy Encoder Ticks "
