@@ -134,18 +134,6 @@ public static void periodic ()
     if (Hardware.leftDriver.getTrigger())
         Hardware.autoDrive.brake();
 
-    Hardware.autoDrive.setBrakeScalingFactor(
-            (Hardware.rightDriver.getThrottle() + 1) / 2.0);
-    System.out.println(
-            "Scaling: " +
-                    (Hardware.rightDriver.getThrottle() + 1) / 2.0);
-
-    Hardware.autoDrive.setBrakeDeadband(
-            (Hardware.leftDriver.getThrottle() + 1) / 2.0);
-    System.out.println("Deadband: "
-            + (Hardware.leftDriver.getThrottle() + 1) / 2.0);
-
-
 
     printStatements();
 
