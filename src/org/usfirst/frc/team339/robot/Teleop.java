@@ -33,8 +33,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import edu.wpi.first.wpilibj.Timer;
-import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
-import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * This class contains all of the user code for the Autonomous part of the
@@ -105,25 +103,49 @@ public static void periodic ()
     // Driving code
     // =================================================================
 
+    if (!isTestingDrive && !Hardware.leftDriver.getTrigger())
+        Hardware.tractionDrive.drive(Hardware.leftDriver,
+                Hardware.rightDriver);
+
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
 
-    if (isTestingDrive == false)
-        Hardware.tractionDrive.drive(Hardware.leftDriver.getY(),
-                Hardware.rightDriver.getY());
-
-    if (Hardware.leftDriver.getRawButton(8))
-        Hardware.autoDrive.resetEncoders();
-
     if (Hardware.leftDriver.getRawButton(9))
-        Hardware.tractionDrive.driveRaw(
-                (Hardware.leftDriver.getThrottle() + 1) / 2.0,
-                (Hardware.leftDriver.getThrottle() + 1) / 2.0);
+        isTestingDrive = true;
 
-    isTestingDrive = Hardware.leftDriver.getRawButton(9)
-            || Hardware.leftDriver.getRawButton(10)
-            || Hardware.leftDriver.getRawButton(11);
+    if (isTestingDrive)
+        {
+        if (driveState == 0
+                && Hardware.autoDrive.driveStraightInches(36, .5))
+            driveState++;
+        else if (driveState == 1 && Hardware.autoDrive.brake())
+            driveState++;
+
+        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+            {
+            Hardware.tractionDrive.stop();
+            driveState = 0;
+            isTestingDrive = false;
+            }
+
+        }
+
+    if (Hardware.leftDriver.getTrigger())
+        Hardware.autoDrive.brake();
+
+    Hardware.autoDrive.setBrakeScalingFactor(
+            (Hardware.rightDriver.getThrottle() + 1) / 2.0);
+    System.out.println(
+            "Scaling: " +
+                    (Hardware.rightDriver.getThrottle() + 1) / 2.0);
+
+    Hardware.autoDrive.setBrakeDeadband(
+            (Hardware.leftDriver.getThrottle() + 1) / 2.0);
+    System.out.println("Deadband: "
+            + (Hardware.leftDriver.getThrottle() + 1) / 2.0);
+
+
 
     printStatements();
 
@@ -137,6 +159,8 @@ public static void periodic ()
 } // end Periodic
 
 private static boolean isTestingDrive = false;
+
+private static int driveState = 0;
 
 // timer to keep track of how long it spent to get through this loop of teleop
 private static Timer teleopLoopTimer = new Timer();
@@ -177,15 +201,15 @@ public static void printStatements ()
     // =================================
 
     //
-    System.out.println(
-            "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    System.out.println(
-            "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    System.out.println(
-            "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    System.out.println(
-            "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+    // System.out.println(
+    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    // System.out.println(
+    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println(
+    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+    // System.out.println(
+    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
 
 
     // =================================
@@ -235,29 +259,29 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
 
-    System.out.println("Left Front Encoder Inches = "
-            + Hardware.leftFrontDriveEncoder.getDistance());
+    // System.out.println("Left Front Encoder Inches = "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
 
-    System.out.println("Left Front Encoder Ticks "
-            + Hardware.leftFrontDriveEncoder.get());
+    // System.out.println("Left Front Encoder Ticks "
+    // + Hardware.leftFrontDriveEncoder.get());
 
-    System.out.println("Right Front Inches = "
-            + Hardware.rightFrontDriveEncoder.getDistance());
+    // System.out.println("Right Front Inches = "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
 
-    System.out.println("Right Front Ticks "
-            + Hardware.rightFrontDriveEncoder.get());
+    // System.out.println("Right Front Ticks "
+    // + Hardware.rightFrontDriveEncoder.get());
 
-    System.out.println("Left Rear Encoder Inches = "
-            + Hardware.leftRearDriveEncoder.getDistance());
+    // System.out.println("Left Rear Encoder Inches = "
+    // + Hardware.leftRearDriveEncoder.getDistance());
 
-    System.out.println("Left Rear Encoder Ticks "
-            + Hardware.leftRearDriveEncoder.get());
+    // System.out.println("Left Rear Encoder Ticks "
+    // + Hardware.leftRearDriveEncoder.get());
 
-    System.out.println("Right Rear Inches = "
-            + Hardware.rightRearDriveEncoder.getDistance());
+    // System.out.println("Right Rear Inches = "
+    // + Hardware.rightRearDriveEncoder.getDistance());
 
-    System.out.println("Right Rear Ticks "
-            + Hardware.rightRearDriveEncoder.get());
+    // System.out.println("Right Rear Ticks "
+    // + Hardware.rightRearDriveEncoder.get());
     // System.out.println(
     // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
@@ -311,10 +335,10 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    System.out.println("Front UltraSonic "
-            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    System.out.println("Rear UltraSonic "
-            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Front UltraSonic "
+    // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Rear UltraSonic "
+    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // =========================
     // Servos
@@ -360,10 +384,10 @@ public static void printStatements ()
     // what time does the timer have now
     // ---------------------------------
 
-    System.out.println(
-            "\n" + "LOOP TIMER: " + teleopLoopTimer.get() + ";    "
-                    + "avg: " +
-                    averageLoopTime + "\n");
+    // System.out.println(
+    // "\n" + "LOOP TIMER: " + teleopLoopTimer.get() + "; "
+    // + "avg: " +
+    // averageLoopTime + "\n");
 
 } // end printStatements
 
