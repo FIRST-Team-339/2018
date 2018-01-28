@@ -75,7 +75,7 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-    Hardware.cubeManipulator.forkliftUpdate();
+    // Hardware.cubeManipulator.forkliftUpdate();
     //
     // // Forklift controls
     Hardware.cubeManipulator
@@ -132,29 +132,26 @@ public static void periodic ()
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
 
-    // if (Hardware.leftDriver.getRawButton(9))
-    // isTestingDrive = true;
-    //
-    // if (isTestingDrive)
-    // {
-    // if (driveState == 0
-    // && Hardware.autoDrive.driveStraightInches(36, .5))
-    // driveState++;
-    // else if (driveState == 1 && Hardware.autoDrive.brake())
-    // driveState++;
-    //
-    // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-    // {
-    // Hardware.tractionDrive.stop();
-    // driveState = 0;
-    // isTestingDrive = false;
-    // }
-    //
-    // }
+    if (Hardware.leftDriver.getRawButton(9))
+        isTestingDrive = true;
 
-    // if (Hardware.leftDriver.getTrigger())
-    // Hardware.autoDrive.brake();
+    if (isTestingDrive)
+        {
+        if (driveState == 0
+                && Hardware.autoDrive.driveStraightInches(36, .5))
+            driveState++;
+        else if (driveState == 1 && Hardware.autoDrive.brake())
+            driveState++;
 
+        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+            {
+            Hardware.tractionDrive.stop();
+            driveState = 0;
+            Hardware.autoDrive.resetEncoders();
+            isTestingDrive = false;
+            }
+
+        }
     printStatements();
 
     // totalLoopTime += teleopLoopTimer.get();
@@ -376,8 +373,8 @@ public static void printStatements ()
     // "Right Driver Joystick " + Hardware.rightDriver.getY());
     // System.out.println(
     // "Left Driver Joystick " + Hardware.leftDriver.getY());
-    System.out.println(
-            "Right Operator Joystick " + Hardware.rightOperator.getY());
+    // System.out.println(
+    // "Right Operator Joystick " + Hardware.rightOperator.getY());
     // System.out.println(
     // "Left Operator Joystick " + Hardware.leftOperator.getY());
     // =================================

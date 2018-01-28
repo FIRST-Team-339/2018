@@ -357,62 +357,127 @@ public void reset ()
  */
 public boolean brake ()
 {
-    // START INIT
-    if (System.currentTimeMillis() - brakeInitTime > INIT_TIMEOUT)
+    System.out.println("Calling Brake");
+    if (System.currentTimeMillis() - previousBrakeTime > INIT_TIMEOUT)
         {
-        // Get the current powers being sent to the robot, 2wheel
-        brakeMotorVals[0] = Math.abs(this.getTransmission()
-                .getSpeedController(MotorPosition.LEFT_REAR).get());
-        brakeMotorVals[1] = Math.abs(this.getTransmission()
-                .getSpeedController(MotorPosition.RIGHT_REAR).get());
-
-        // If four wheel, get the powers of the other wheels
-        if (this.transmissionType != TransmissionType.TRACTION)
+        // Get the direction of the motor values on the first start.
+        brakeMotorDirection[0] = (int) Math
+                .signum(leftRearEncoder.getRate());
+        brakeMotorDirection[1] = (int) Math
+                .signum(rightRearEncoder.getRate());
+        // If it's not a 2 wheel drive, get the direction of the other 2 wheels.
+        if (transmissionType != TransmissionType.TRACTION)
             {
-            brakeMotorVals[2] = Math.abs(this.getTransmission()
-                    .getSpeedController(MotorPosition.LEFT_FRONT)
-                    .get());
-            brakeMotorVals[3] = Math.abs(this.getTransmission()
-                    .getSpeedController(MotorPosition.RIGHT_FRONT)
-                    .get());
+            brakeMotorDirection[2] = (int) Math
+                    .signum(leftFrontEncoder.getRate());
+            brakeMotorDirection[3] = (int) Math
+                    .signum(rightFrontEncoder.getRate());
             }
         }
-    // END INIT
-
-    for (int iteration = 0; iteration < brakeMotorVals.length; iteration++)
+    // Store values for 2 wheel drive
+    brakePrevEncoderVals[currentBrakeIteration][0] = leftRearEncoder
+            .get();
+    brakePrevEncoderVals[currentBrakeIteration][1] = rightRearEncoder
+            .get();
+    // Store values for 4 wheel drive
+    if (transmissionType != TransmissionType.TRACTION)
         {
-        // TODO iteration testing
+        brakePrevEncoderVals[currentBrakeIteration][2] = leftFrontEncoder
+                .get();
+        brakePrevEncoderVals[currentBrakeIteration][3] = rightFrontEncoder
+                .get();
         }
 
-    // START SET MOTORS
-    getTransmission().getSpeedController(MotorPosition.LEFT_REAR).set(
-            Math.signum(leftRearEncoder.getRate()) * brakeMotorVals[0]);
-    getTransmission().getSpeedController(MotorPosition.RIGHT_REAR)
-            .set(Math.signum(rightRearEncoder.getRate())
-                    * brakeMotorVals[1]);
+    // Cycle through all 3 iterations and test if all have zero change. If yes,
+    // then we are done braking.
+    for (int i = 0; i < brakePrevEncoderVals.length + 1; i++)
+        {
+        // If we succesfully ran through all the iterations, then we have
+        // finished braking
+        if (i == brakePrevEncoderVals.length)
+            {
+            currentBrakeIteration = 0;
+            this.getTransmission().stop();
+            return true;
+            }
 
+        // Do any encoders in use return that there is a change since last run?
+        if (brakeMotorDirection[0]
+                * brakePrevEncoderVals[i][0] > brakeDeadband
+                || brakeMotorDirection[1]
+                        * brakePrevEncoderVals[i][1] > brakeDeadband
+                        && ((transmissionType == TransmissionType.TRACTION)
+                                || brakeMotorDirection[2]
+                                        * brakePrevEncoderVals[i][2] > brakeDeadband
+                                || brakeMotorDirection[3]
+                                        * brakePrevEncoderVals[i][3] > brakeDeadband))
+            {
+            break;
+            }
+        }
+
+    // reset the current iteration to make sure we don't have an
+    // arrayOutOfBounds exception.
+    if (currentBrakeIteration == brakeIterations - 1)
+        currentBrakeIteration = 0;
+    else
+        currentBrakeIteration++;
+
+    // START SET MOTORS
+
+    // Set the rear wheels
+    getTransmission().getSpeedController(MotorPosition.LEFT_REAR)
+            .set(-brakeMotorDirection[0]);
+    getTransmission().getSpeedController(MotorPosition.RIGHT_REAR)
+            .set(-brakeMotorDirection[1]);
+    // Set the front wheels if it's the right kind of drive
     if (transmissionType != TransmissionType.TRACTION)
         {
         getTransmission().getSpeedController(MotorPosition.LEFT_FRONT)
-                .set(Math.signum(leftFrontEncoder.getRate())
-                        * brakeMotorVals[2]);
+                .set(-brakeMotorDirection[2]);
         getTransmission().getSpeedController(MotorPosition.RIGHT_FRONT)
-                .set(Math.signum(rightFrontEncoder.getRate())
-                        * brakeMotorVals[3]);
+                .set(-brakeMotorDirection[3]);
         }
     // END SET MOTORS
-
-    brakeInitTime = System.currentTimeMillis();
-    return true;
+    this.resetEncoders();
+    this.previousBrakeTime = System.currentTimeMillis();
+    return false;
 }
 
-private long brakeInitTime = 0;
+private long previousBrakeTime = 0;
 
-private double[] brakeMotorVals = new double[4];
+private int brakeIterations = 3;
 
-private int[][] brakePrevEncoderVals = new int[3][4];
+private int[] brakeMotorDirection = new int[4];
+
+private int brakeDeadband = 0; // ticks
+
+private int[][] brakePrevEncoderVals = new int[brakeIterations][4];
 
 private int currentBrakeIteration = 0;
+
+/**
+ * Sets how many iterations there are for the brake method. More iterations
+ * means more braking
+ * 
+ * @param value
+ *            number of iterations
+ */
+public void setBrakeIterations (int value)
+{
+    brakeIterations = value;
+}
+
+/**
+ * Sets the deadband for brake()... how close to stopped we are.
+ * 
+ * @param ticks
+ *            Ticks on the encoder, not distance.
+ */
+public void setBrakeDeadband (int ticks)
+{
+    this.brakeDeadband = ticks;
+}
 
 
 /**
