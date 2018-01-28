@@ -308,8 +308,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    // System.out.println(
-    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    System.out.println(
+            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
     // Pneumatics
