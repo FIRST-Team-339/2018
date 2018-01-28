@@ -31,7 +31,9 @@ private Timer switchTimer = null;
 
 private double forkliftHeight = 0;
 
-private double forkliftSpeed = -0.9; // ANE
+private double forkliftSpeedForMoveDistance = 0.0;
+
+private double forkliftSpeed = .9;
 
 private boolean finishedForkliftMove = false;
 
@@ -82,15 +84,18 @@ public void moveForkliftWithController (Joystick operatorJoystick)
 {
     if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND)
         {
-        this.forkliftHeight = FORKLIFT_MAX_HEIGHT;
+        // this.forkliftHeight = FORKLIFT_MAX_HEIGHT;
+        this.forkliftSpeed = FORKLIFT_SPEED_UP;
         liftState = forkliftState.MOVING_UP;
+
         }
     else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND)
         {
-        this.forkliftHeight = FORKLIFT_MIN_HEIGHT;
+        // this.forkliftHeight = FORKLIFT_MIN_HEIGHT;
+        this.forkliftSpeed = FORKLIFT_SPEED_DOWN;
         liftState = forkliftState.MOVING_DOWN;
         }
-    else if (this.forkliftHeight <= FORKLIFT_MIN_HEIGHT + 3)
+    else if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT + 3)
         {
         liftState = forkliftState.AT_STARTING_POSITION;
         }
@@ -253,7 +258,7 @@ public boolean scoreSwitch ()
     switch (switchState)
         {
         case MOVE_LIFT:
-            if (moveLiftDistance(SWITCH_HEIGHT, FORKLIFT_SPEED) == true)
+            if (moveLiftDistance(SWITCH_HEIGHT, FORKLIFT_SPEED_UP) == true)
                 {
                 switchState = scoreSwitchState.DEPLOY_INTAKE;
                 }
@@ -324,27 +329,28 @@ public void forkliftUpdate ()
             this.forkliftMotor.set(this.forkliftSpeed);
             finishedForkliftMove = false;
             if (Math.abs(this.forkliftEncoder
-                    .getDistance()) >= this.forkliftHeight)
+                    .getDistance()) >= FORKLIFT_MAX_HEIGHT)
                 {
                 liftState = forkliftState.STAY_AT_POSITION;
                 finishedForkliftMove = true;
+                }
+            else
+                {
+                this.forkliftMotor.set(this.forkliftSpeed);
                 }
             break;
         case MOVING_DOWN:
             System.out.println("TRYING TO GO DOWN");
-            if (this.forkliftHeight <= FORKLIFT_MIN_HEIGHT + 3)
+            if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT + 3)
                 {
                 liftState = forkliftState.AT_STARTING_POSITION;
-                }
-            this.forkliftMotor.set(-this.forkliftSpeed);
-            finishedForkliftMove = false;
-            if (Math.abs(this.forkliftEncoder
-                    .getDistance()) <= this.forkliftHeight)
-                {
-                liftState = forkliftState.STAY_AT_POSITION;
                 finishedForkliftMove = true;
                 }
-            this.forkliftMotor.set(-this.forkliftSpeed);
+            else
+                {
+                this.forkliftMotor.set(this.forkliftSpeed);
+                }
+            finishedForkliftMove = false;
             break;
         case STAY_AT_POSITION:
             System.out.println("WE ARE STAYING AT POSITION");
@@ -352,6 +358,7 @@ public void forkliftUpdate ()
             break;
         case AT_STARTING_POSITION:
             System.out.println("WE ARE AT STARTING POSITION");
+            this.forkliftMotor.set(0.0);
             break;
         case INTAKE_IS_DEPLOYED:
             break;
@@ -374,7 +381,9 @@ private final double FORKLIFT_MAX_HEIGHT = 100;
 
 private final double FORKLIFT_MIN_HEIGHT = 2;
 
-private final double FORKLIFT_SPEED = .9;
+private final double FORKLIFT_SPEED_UP = -.9;
+
+private final double FORKLIFT_SPEED_DOWN = .4;
 
 private final double FORKLIFT_SPEED_COEFFICIENT = .9;
 

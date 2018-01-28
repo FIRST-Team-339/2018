@@ -32,7 +32,6 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -76,11 +75,11 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-    // Hardware.cubeManipulator.forkliftUpdate();
+    Hardware.cubeManipulator.forkliftUpdate();
     //
     // // Forklift controls
-    // Hardware.cubeManipulator
-    // .moveForkliftWithController(Hardware.rightOperator);
+    Hardware.cubeManipulator
+            .moveForkliftWithController(Hardware.rightOperator);
 
 
     // // intake controls
@@ -164,7 +163,7 @@ public static void periodic ()
 
 } // end Periodic
 
-private static boolean isTestingDrive = true;
+private static boolean isTestingDrive = false;
 
 private static int driveState = 0;
 
@@ -206,11 +205,11 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    System.out.println(
-            "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    System.out.println(
-            "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println(
+    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    // System.out.println(
+    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(
@@ -287,9 +286,9 @@ public static void printStatements ()
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
-    // System.out.println(
-    // "Lift Encoder Inches = "
-    // + Hardware.liftingEncoder.getDistance());
+    System.out.println(
+            "Lift Encoder Inches = "
+                    + Hardware.liftingEncoder.getDistance());
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
     // System.out.println("Intake Deploy Encoder "
