@@ -75,11 +75,11 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-    Hardware.cubeManipulator.forkliftUpdate();
+    // Hardware.cubeManipulator.forkliftUpdate();
     //
-    // // Forklift controls
-    Hardware.cubeManipulator
-            .moveForkliftWithController(Hardware.rightOperator);
+    // Forklift controls
+    // Hardware.cubeManipulator
+    // .moveForkliftWithController(Hardware.rightOperator);
 
 
     // // intake controls
@@ -286,9 +286,9 @@ public static void printStatements ()
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
-    System.out.println(
-            "Lift Encoder Inches = "
-                    + Hardware.liftingEncoder.getDistance());
+    // System.out.println(
+    // "Lift Encoder Inches = "
+    // + Hardware.liftingEncoder.getDistance());
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
     // System.out.println("Intake Deploy Encoder "
