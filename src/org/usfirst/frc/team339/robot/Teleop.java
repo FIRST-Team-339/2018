@@ -74,6 +74,10 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+    // if (Math.abs(Hardware.leftOperator.getY()) >= 0.2)
+    // Hardware.intakeDeployArm.set(Hardware.leftOperator.getY());
+    // if (Math.abs(Hardware.leftOperator.getY()) >= 0.2)
+    // Hardware.cubeIntakeMotor.set(Hardware.leftOperator.getY());
 
     // Hardware.cubeManipulator.forkliftUpdate();
     //
@@ -118,6 +122,7 @@ public static void periodic ()
     // .getNthSizeBlob(0).center.x
     // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
     // }
+
 
     // =================================================================
     // Driving code
@@ -209,7 +214,7 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    //System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(
@@ -311,7 +316,7 @@ public static void printStatements ()
     // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
-    // Pneumatics
+    // Pneumatics----------------------------------
     // =================================
 
     // ---------------------------------
