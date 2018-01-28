@@ -569,7 +569,10 @@ public static boolean centerSwitchPath ()
             if (Hardware.autoDrive.driveStraightInches(
                     DRIVE_NO_CAMERA_LEFT, AUTO_SPEED_VISION))
                 {
-                visionAuto = centerState.TURN_AGAIN_LEFT;
+                if (Hardware.autoDrive.brake())
+                    {
+                    visionAuto = centerState.TURN_AGAIN_LEFT;
+                    }
                 }
             break;
         case DRIVE_STRAIGHT_TO_SWITCH_RIGHT:
@@ -577,20 +580,29 @@ public static boolean centerSwitchPath ()
             if (Hardware.autoDrive.driveStraightInches(
                     DRIVE_NO_CAMERA_RIGHT, AUTO_SPEED_VISION))
                 {
-                visionAuto = centerState.TURN_AGAIN_RIGHT;
+                if (Hardware.autoDrive.brake())
+                    {
+                    visionAuto = centerState.TURN_AGAIN_RIGHT;
+                    }
                 }
             break;
         case TURN_AGAIN_RIGHT:
             if (Hardware.autoDrive.turnDegrees(90, AUTO_SPEED_VISION))
                 {
-                visionAuto = centerState.DRIVE_WITH_CAMERA;
+                if (Hardware.autoDrive.brake())
+                    {
+                    visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    }
                 }
             break;
 
         case TURN_AGAIN_LEFT:
             if (Hardware.autoDrive.turnDegrees(90, AUTO_SPEED_VISION))
                 {
-                visionAuto = centerState.DRIVE_WITH_CAMERA;
+                if (Hardware.autoDrive.brake())
+                    {
+                    visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    }
                 }
             break;
         case DRIVE_WITH_CAMERA:
