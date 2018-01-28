@@ -210,7 +210,7 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(
@@ -287,9 +287,9 @@ public static void printStatements ()
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
-    // System.out.println(
-    // "Lift Encoder Inches = "
-    // + Hardware.liftingEncoder.getDistance());
+    System.out.println(
+            "Lift Encoder Inches = "
+                    + Hardware.liftingEncoder.getDistance());
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
     // System.out.println("Intake Deploy Encoder "
@@ -376,8 +376,8 @@ public static void printStatements ()
     // "Right Driver Joystick " + Hardware.rightDriver.getY());
     // System.out.println(
     // "Left Driver Joystick " + Hardware.leftDriver.getY());
-    System.out.println(
-            "Right Operator Joystick " + Hardware.rightOperator.getY());
+    // System.out.println(
+    // "Right Operator Joystick " + Hardware.rightOperator.getY());
     // System.out.println(
     // "Left Operator Joystick " + Hardware.leftOperator.getY());
     // =================================

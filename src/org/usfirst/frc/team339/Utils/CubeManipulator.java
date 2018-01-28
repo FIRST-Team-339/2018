@@ -1,5 +1,6 @@
 package org.usfirst.frc.team339.Utils;
 
+import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -31,7 +32,11 @@ private Timer switchTimer = null;
 
 private double forkliftHeight = 0;
 
-private double forkliftSpeed = -0.9; // ANE
+private double forkliftSpeedForMoveDistance = 0.0;
+
+private double forkliftSpeedDown = 0.4;
+
+private double forkliftSpeedUp = -0.9;
 
 private boolean finishedForkliftMove = false;
 
@@ -82,15 +87,19 @@ public void moveForkliftWithController (Joystick operatorJoystick)
 {
     if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND)
         {
-        this.forkliftHeight = FORKLIFT_MAX_HEIGHT;
+        // this.forkliftHeight = FORKLIFT_MAX_HEIGHT;
+
         liftState = forkliftState.MOVING_UP;
+
         }
     else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND)
         {
-        this.forkliftHeight = FORKLIFT_MIN_HEIGHT;
-        liftState = forkliftState.MOVING_DOWN;
+        // this.forkliftHeight = FORKLIFT_MIN_HEIGHT;
+        // liftState = forkliftState.MOVING_DOWN;
+        Hardware.liftingMotor.set(0.0);
         }
-    else if (this.forkliftHeight <= FORKLIFT_MIN_HEIGHT + 3)
+    else if (Hardware.liftingEncoder
+            .getDistance() <= FORKLIFT_MIN_HEIGHT + 3)
         {
         liftState = forkliftState.AT_STARTING_POSITION;
         }
@@ -232,7 +241,7 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
     double direction = distance - getForkliftHeight();
     boolean mustGoUp = direction > 1;
     this.forkliftHeight = distance;
-    this.forkliftSpeed = forkliftSpeed;
+    this.forkliftSpeedForMoveDistance = forkliftSpeed;
     if (mustGoUp == true)
         {
         liftState = forkliftState.MOVING_UP;
@@ -320,31 +329,32 @@ public void forkliftUpdate ()
     switch (liftState)
         {
         case MOVING_UP:
-            System.out.println("Trying to go up");
-            this.forkliftMotor.set(this.forkliftSpeed);
+            System.out.println("TRYING TO GO UP");
             finishedForkliftMove = false;
             if (Math.abs(this.forkliftEncoder
-                    .getDistance()) >= this.forkliftHeight)
+                    .getDistance()) >= FORKLIFT_MAX_HEIGHT)
                 {
                 liftState = forkliftState.STAY_AT_POSITION;
                 finishedForkliftMove = true;
+                }
+            else
+                {
+                this.forkliftMotor.set(this.forkliftSpeedUp);
                 }
             break;
         case MOVING_DOWN:
             System.out.println("TRYING TO GO DOWN");
-            if (this.forkliftHeight <= FORKLIFT_MIN_HEIGHT + 3)
+            if (Hardware.liftingEncoder
+                    .getDistance() <= FORKLIFT_MIN_HEIGHT + 3)
                 {
                 liftState = forkliftState.AT_STARTING_POSITION;
-                }
-            this.forkliftMotor.set(-this.forkliftSpeed);
-            finishedForkliftMove = false;
-            if (Math.abs(this.forkliftEncoder
-                    .getDistance()) <= this.forkliftHeight)
-                {
-                liftState = forkliftState.STAY_AT_POSITION;
                 finishedForkliftMove = true;
                 }
-            this.forkliftMotor.set(-this.forkliftSpeed);
+            else
+                {
+                this.forkliftMotor.set(this.forkliftSpeedDown);
+                }
+            finishedForkliftMove = false;
             break;
         case STAY_AT_POSITION:
             System.out.println("WE ARE STAYING AT POSITION");
@@ -352,6 +362,7 @@ public void forkliftUpdate ()
             break;
         case AT_STARTING_POSITION:
             System.out.println("WE ARE AT STARTING POSITION");
+            this.forkliftMotor.set(0.0);
             break;
         case INTAKE_IS_DEPLOYED:
             break;
@@ -378,7 +389,7 @@ private final double FORKLIFT_SPEED = .9;
 
 private final double FORKLIFT_SPEED_COEFFICIENT = .9;
 
-private final double FORKLIFT_STAY_UP_SPEED = -.2;
+private final double FORKLIFT_STAY_UP_SPEED = -0.15;
 
 private final double INTAKE_SPEED = .5;
 
