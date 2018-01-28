@@ -378,7 +378,7 @@ private final double FORKLIFT_SPEED = .9;
 
 private final double FORKLIFT_SPEED_COEFFICIENT = .9;
 
-private final double FORKLIFT_STAY_UP_SPEED = -.2;
+private final double FORKLIFT_STAY_UP_SPEED = 0;
 
 private final double INTAKE_SPEED = .5;
 

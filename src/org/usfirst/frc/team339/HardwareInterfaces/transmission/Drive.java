@@ -876,7 +876,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
         {
         visionProcessor.processImage();
-        double center = (visionProcessor.getNthSizeBlob(0).center.x
+         center = (visionProcessor.getNthSizeBlob(0).center.x
                 + visionProcessor.getNthSizeBlob(1).center.x) / 2;
 
         if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
@@ -919,13 +919,25 @@ public boolean driveToSwitch (double compensationFactor, double speed)
 public void visionTest (double compensationFactor, double speed)
 {
     visionProcessor.processImage();
-    double center = (visionProcessor.getNthSizeBlob(0).center.x
-            + visionProcessor.getNthSizeBlob(1).center.x) / 2;
     System.out.println("Center for the vision : " + center);
+    if(visionProcessor.getParticleReports().length >= 2)
+        {
+      center = (visionProcessor.getNthSizeBlob(0).center.x
+                + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+        }
+    else if (visionProcessor.getParticleReports().length == 1)
+        {
+        center = visionProcessor.getNthSizeBlob(0).center.x;
+        }
+    else
+        {
+        center = SWITCH_CAMERA_CENTER;
+        }
+    
     if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
             && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
         {
-        // driveStraight(speed, false);
+         driveStraight(speed, 0);
         System.out.println("We are aligned in the center");
         }
     else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
@@ -941,7 +953,7 @@ public void visionTest (double compensationFactor, double speed)
         this.getTransmission().driveRaw(speed,
                 speed * compensationFactor);
         System.out.println("We're too right");
-        }
+        }     
 }
 
 // ================VISION TUNABLES================
@@ -952,9 +964,13 @@ private final double CAMERA_DEADBAND = 6;
 private final double STOP_ROBOT = 6;
 
 // TODO TEST TO FIND ACTUAL VALUE
-private final double SWITCH_CAMERA_CENTER = 111;
+private final double SWITCH_CAMERA_CENTER = 115;
+
+//================VISION VARIABLES================
+private double center = 0;
 
 // ================TUNABLES================
+
 
 // Number of milliseconds that will pass before collecting data on encoders
 // for driveStraight and brake
