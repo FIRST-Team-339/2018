@@ -74,10 +74,16 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+    // if (Math.abs(Hardware.leftOperator.getY()) >= 0.2)
+    // Hardware.intakeDeployArm.set(Hardware.leftOperator.getY());
+    // if (Math.abs(Hardware.leftOperator.getY()) >= 0.2)
+    // Hardware.cubeIntakeMotor.set(Hardware.leftOperator.getY());
+
 
     Hardware.cubeManipulator.forkliftUpdate();
-    //
-    // // Forklift controls
+
+
+    // Forklift controls
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
@@ -312,7 +318,7 @@ public static void printStatements ()
             "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
-    // Pneumatics
+    // Pneumatics----------------------------------
     // =================================
 
     // ---------------------------------
@@ -376,8 +382,8 @@ public static void printStatements ()
     // "Right Driver Joystick " + Hardware.rightDriver.getY());
     // System.out.println(
     // "Left Driver Joystick " + Hardware.leftDriver.getY());
-    System.out.println(
-            "Right Operator Joystick " + Hardware.rightOperator.getY());
+    // System.out.println(
+    // "Right Operator Joystick " + Hardware.rightOperator.getY());
     // System.out.println(
     // "Left Operator Joystick " + Hardware.leftOperator.getY());
     // =================================
