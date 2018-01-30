@@ -876,35 +876,55 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
         {
         visionProcessor.processImage();
-         center = (visionProcessor.getNthSizeBlob(0).center.x
-                + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+        System.out.println("Center for the vision : " + center);
+        if (visionProcessor.getParticleReports().length >= 2)
+            {
+            center = (visionProcessor.getNthSizeBlob(0).center.x
+                    + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+            }
+        else if (visionProcessor.getParticleReports().length == 1)
+            {
+            center = visionProcessor.getNthSizeBlob(0).center.x;
+            }
+        else
+            {
+            center = SWITCH_CAMERA_CENTER;
+            }
 
         if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
                 && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
-            driveStraight(speed, this.defaultAcceleration);
+            driveStraight(speed, 0);
+            System.out.println("We are aligned in the center");
             }
         else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
             // center is too far right, drive faster on the left
             this.getTransmission().driveRaw(speed * compensationFactor,
                     speed);
+            System.out.println("We're too left");
             }
         else
             {
             // center is too far left, drive faster on the right
             this.getTransmission().driveRaw(speed,
                     speed * compensationFactor);
+            System.out.println("We're too right");
             }
+        }
+    else if (this.frontUltrasonic
+            .getDistanceFromNearestBumper() <= CAMERA_NO_LONGER_WORKS
+            && this.frontUltrasonic
+                    .getDistanceFromNearestBumper() > STOP_ROBOT)
+        {
+        this.driveStraight(speed, 0);
+        System.out.println("Camera is no longer working");
         }
     else
         {
-        if (this.frontUltrasonic
-                .getDistanceFromNearestBumper() <= STOP_ROBOT)
-            {
-            this.brake();
-            }
-        this.driveStraight(speed, this.defaultAcceleration);
+        this.brake();
+        this.driveStraight(0, 0);
+        System.out.println("We are stopping");
         return true;
         }
     return false;
@@ -920,9 +940,9 @@ public void visionTest (double compensationFactor, double speed)
 {
     visionProcessor.processImage();
     System.out.println("Center for the vision : " + center);
-    if(visionProcessor.getParticleReports().length >= 2)
+    if (visionProcessor.getParticleReports().length >= 2)
         {
-      center = (visionProcessor.getNthSizeBlob(0).center.x
+        center = (visionProcessor.getNthSizeBlob(0).center.x
                 + visionProcessor.getNthSizeBlob(1).center.x) / 2;
         }
     else if (visionProcessor.getParticleReports().length == 1)
@@ -933,11 +953,11 @@ public void visionTest (double compensationFactor, double speed)
         {
         center = SWITCH_CAMERA_CENTER;
         }
-    
+
     if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
             && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
         {
-         driveStraight(speed, 0);
+        driveStraight(speed, 0);
         System.out.println("We are aligned in the center");
         }
     else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
@@ -953,20 +973,22 @@ public void visionTest (double compensationFactor, double speed)
         this.getTransmission().driveRaw(speed,
                 speed * compensationFactor);
         System.out.println("We're too right");
-        }     
+        }
 }
 
 // ================VISION TUNABLES================
-private final double CAMERA_NO_LONGER_WORKS = 24;
+private final double CAMERA_NO_LONGER_WORKS = 30;
+// 24
 
 private final double CAMERA_DEADBAND = 6;
 
-private final double STOP_ROBOT = 6;
+private final double STOP_ROBOT = 23;
+// 6
 
 // TODO TEST TO FIND ACTUAL VALUE
 private final double SWITCH_CAMERA_CENTER = 115;
 
-//================VISION VARIABLES================
+// ================VISION VARIABLES================
 private double center = 0;
 
 // ================TUNABLES================

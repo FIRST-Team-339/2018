@@ -225,6 +225,8 @@ public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(0);
 
 public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 
+//TODO Take out this is a ultrasonic for Nessie
+//public static HRLVMaxSonarEZ frontUltraSonic = new HRLVMaxSonarEZ(0);
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
 // **********************************************************

@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -103,10 +104,10 @@ public static void periodic ()
     // test from 1/23/18
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
-    // Hardware.autoDrive.visionTest(1.3, .6);
+    // Hardware.autoDrive.driveToSwitch(1.3, .6);
     // }
     //
-    // Hardware.ringLightRelay.set(Value.kForward);
+     Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
@@ -214,7 +215,7 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    //System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(

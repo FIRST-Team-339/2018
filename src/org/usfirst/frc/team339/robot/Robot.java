@@ -233,9 +233,13 @@ public void robotInit ()
     Hardware.liftingEncoder.reset();
     Hardware.liftingEncoder.setReverseDirection(false);
 
+    // Ball Bot Settings
     Hardware.leftDriveMotor.setInverted(false);
     Hardware.rightDriveMotor.setInverted(true);
 
+    // Nessie Settings
+    // Hardware.leftDriveMotor.setInverted(false);
+    // Hardware.rightDriveMotor.setInverted(false);
 
     // This sets the gear speed percentage for the traction drive
     Hardware.tractionDrive.setAllGearRatios(GEAR_1_SPEED, GEAR_2_SPEED);
