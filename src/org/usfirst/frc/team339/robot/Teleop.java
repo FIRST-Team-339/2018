@@ -75,16 +75,31 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
-    // if (Math.abs(Hardware.leftOperator.getY()) >= 0.2)
-    // Hardware.intakeDeployArm.set(Hardware.leftOperator.getY());
-    // if (Math.abs(Hardware.leftOperator.getY()) >= 0.2)
-    // Hardware.cubeIntakeMotor.set(Hardware.leftOperator.getY());
 
-    // Hardware.cubeManipulator.forkliftUpdate();
+    Hardware.cubeManipulator.forkliftUpdate();
     //
     // Forklift controls
     // Hardware.cubeManipulator
     // .moveForkliftWithController(Hardware.rightOperator);
+
+
+    // Hardware.cubeManipulator
+    // .intakeCube(Hardware.leftOperator.getRawButton(4));
+    //
+    // Hardware.cubeManipulator
+    // .intakeCubeOverride(Hardware.leftOperator.getRawButton(5));
+
+    // if (Hardware.leftOperator.getRawButton(2) == true
+    // && Hardware.cubeManipulator.moveLiftDistance(50,
+    // .3) == false)
+    // {
+    // Hardware.cubeManipulator.moveLiftDistance(50);
+    // System.out.println("WE DID THE THING");
+    // }
+    // else
+    // {
+    // Hardware.cubeManipulator.stopForklift();
+    // }
 
 
     // // intake controls
@@ -137,28 +152,33 @@ public static void periodic ()
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
 
-    // if (Hardware.leftDriver.getRawButton(9))
-    // isTestingDrive = true;
-    //
-    // if (isTestingDrive)
-    // {
-    // if (driveState == 0
-    // && Hardware.autoDrive.driveStraightInches(36, .5))
-    // driveState++;
-    // else if (driveState == 1 && Hardware.autoDrive.brake())
-    // driveState++;
-    //
-    // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-    // {
-    // Hardware.tractionDrive.stop();
-    // driveState = 0;
-    // isTestingDrive = false;
-    // }
-    //
-    // }
+    if (Hardware.leftDriver.getRawButton(9))
+        isTestingDrive = true;
 
-    // if (Hardware.leftDriver.getTrigger())
-    // Hardware.autoDrive.brake();
+    if (isTestingDrive)
+        {
+        if (driveState == 0
+                && Hardware.autoDrive.driveStraightInches(36, .5))
+            driveState++;
+        else if (driveState == 1 && Hardware.autoDrive.brake())
+            driveState++;
+
+        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+            {
+            Hardware.tractionDrive.stop();
+            driveState = 0;
+            Hardware.autoDrive.resetEncoders();
+            isTestingDrive = false;
+            }
+
+        }
+
+
+    // NOTE - CLAIRE TEST NEXT MEETING
+    if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
+        {
+        Hardware.climbingMechanismServo.setAngle(110);
+        }
 
     printStatements();
 
@@ -205,6 +225,13 @@ private static int testingDriveState = 0;
  */
 public static void printStatements ()
 {
+    // int Gear = Hardware.tractionDrive.getCurrentGear() + 1;
+
+
+    // Gear shift status
+    // System.out.println(
+    // "Gear = " + Gear);
+
 
     // =================================
     // Motor
@@ -247,7 +274,7 @@ public static void printStatements ()
     // else
     // System.out.println(
     // "Disable = on");
-    //
+
     // if (Hardware.leftAutoSwitch.isOn() == false)
     // System.out.println(
     // "Left = off");
@@ -268,6 +295,7 @@ public static void printStatements ()
     //
     // ---------------------------------
     // Encoders
+
 
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
@@ -292,13 +320,17 @@ public static void printStatements ()
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
+
     // System.out.println(
     // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
+
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
+
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
+
     // System.out.println("Intake Deploy Encoder Ticks "
     // + Hardware.intakeDeployEncoder.get());
 

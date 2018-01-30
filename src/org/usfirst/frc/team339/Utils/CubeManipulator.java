@@ -1,5 +1,6 @@
 package org.usfirst.frc.team339.Utils;
 
+import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -29,13 +30,27 @@ private Encoder forkliftEncoder = null;
 
 private Timer switchTimer = null;
 
-private double forkliftHeight = 0;
-
-private double forkliftSpeed = .9;
+private double forkliftHeightForMoveLiftDistance = 0;
 
 private boolean finishedForkliftMove = false;
 
 private boolean deployedArm = false;
+
+private double forkliftSpeedUp = 0;
+
+private double forkliftSpeedDown = 0;
+
+// determines whether or not the intake motor should be stopped
+
+private boolean stopIntake = false;
+
+
+// the following booleans are for determining functions are using the intake
+
+private boolean isRunningIntakeCube = false;
+
+private boolean isRunningIntakeCubeOverride = false;
+
 
 
 /**
@@ -73,7 +88,7 @@ public double getForkliftHeight ()
 }
 
 /**
- * YO NEWBIES-- USE THIS TO MOVE THE FORKLIFT
+ *
  * 
  * @param operatorJoystick
  *            Joystick object
@@ -83,26 +98,26 @@ public void moveForkliftWithController (Joystick operatorJoystick)
     if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT + LIFT_TOLERANCE
             && liftState == forkliftState.MOVING_DOWN)
         {
-        liftState = forkliftState.MOVING_UP;
+        liftState = forkliftState.AT_STARTING_POSITION;
         }
-    
+
     if (this.getForkliftHeight() >= FORKLIFT_MAX_HEIGHT
             && liftState == forkliftState.MOVING_UP)
         {
-        liftState = forkliftState.MOVING_DOWN;
+        liftState = forkliftState.STAY_AT_POSITION;
         }
 
-    if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND)
+
+    if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND
+            && this.getForkliftHeight() <= FORKLIFT_MAX_HEIGHT)
         {
-        this.forkliftHeight = FORKLIFT_MAX_HEIGHT;
-        this.forkliftSpeed = FORKLIFT_SPEED_UP;
+        this.forkliftSpeedUp = FORKLIFT_SPEED_UP;
         liftState = forkliftState.MOVING_UP;
-
         }
-    else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND)
+    else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND
+            && this.getForkliftHeight() >= FORKLIFT_MIN_HEIGHT)
         {
-        this.forkliftHeight = FORKLIFT_MIN_HEIGHT;
-        this.forkliftSpeed = FORKLIFT_SPEED_DOWN;
+        this.forkliftSpeedDown = FORKLIFT_SPEED_DOWN;
         liftState = forkliftState.MOVING_DOWN;
         }
     else if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
@@ -119,22 +134,60 @@ public void moveForkliftWithController (Joystick operatorJoystick)
 /**
  * Intake runs until the light switch is on
  * 
- * NEWBIES USE ON A BUTTON!!!!
+ * To use this, just pass in a button value; it will only do stuff if the button
+ * is pressed. DO NOT put this inside a statement like
+ * if(Hardware.joystick.getRawButton())) because this will cause problems
+ * with stopping the intake motor
+ * 
  * 
  * @return true if the the cube is in, the light switch is off
  */
-public boolean intakeCube ()
+public boolean intakeCube (boolean button)
 {
-    if (this.intakeSwitch.isOn() == false)
+    if (button)
         {
-        this.intakeMotor.set(INTAKE_SPEED);
-        this.deployedArm = false;
-        return false;
+        isRunningIntakeCube = true;
+
+        if (/* this.intakeSwitch.isOn() == false */Hardware.rightOperator
+                .getRawButton(4) == false /*
+                                           * delete the joystick b/c that's
+                                           * stupid
+                                           */)
+            {
+            this.intakeMotor.set(INTAKE_SPEED);
+            return false;
+            }
+        this.intakeMotor.set(0);
+        return true;
         }
-    this.intakeMotor.set(0);
-    this.deployedArm = true;
-    return true;
+    isRunningIntakeCube = false;
+    return false;
+
 }
+
+
+/**
+ * Intakes a cube and keeps going, even if the cube is already in there
+ * 
+ * To use this, just pass in a button value; it will only do stuff if the button
+ * is pressed. DO NOT put this inside a statement like
+ * if(Hardware.joystick.getRawButton())) because this will cause problems
+ * with stopping the intake motor
+ */
+public void intakeCubeOverride (boolean button)
+{
+    if (button)
+        {
+        isRunningIntakeCubeOverride = true;
+        this.intakeMotor.set(INTAKE_SPEED);
+        }
+    else
+        {
+        isRunningIntakeCubeOverride = false;
+        }
+}
+
+
 
 /**
  * NEWBIES USE ON A BUTTON!!!!
@@ -212,6 +265,17 @@ public boolean isIntakeDeployed ()
 
 
 /**
+ * Returns whether or not the cube intake mechanism is holding a cube
+ * 
+ * @return true if the photo switch is picking up a cube in our
+ *         cube intake mechanism, false if otherwise
+ */
+public boolean hasCube ()
+{
+    return this.intakeSwitch.isOn();
+}
+
+/**
  * HEY NEWBIES -- USE THIS FOR THE THE INTAKE OVERRIDE
  * This method sets the intake to a speed
  * 
@@ -232,29 +296,77 @@ public void moveIntake (double speed)
 /**
  * Moves the arm to the desired position, 0 is the bottom, X is the top
  * 
- * NEWBIES CAN IGNORE
  * 
  * @param distance
  *            the desired distance the forklift goes in inches.
  * @param forkliftSpeed
- *            the speed of the forklift
+ *            the speed of the forklift ALWAYS USE POSITIVE
  * @return true if the forklift is at or above the specified height, set the
  *         distance higher if you are going down from where the forklift was
  *         initially
  */
 public boolean moveLiftDistance (double distance, double forkliftSpeed)
 {
-    // finishedForkliftMove = false;
+    finishedForkliftMove = false;
     double direction = distance - getForkliftHeight();
     boolean mustGoUp = direction > 1;
-    this.forkliftHeight = distance;
-    this.forkliftSpeed = forkliftSpeed;
-    if (mustGoUp == true)
+    this.forkliftHeightForMoveLiftDistance = distance;
+    if (mustGoUp == true && this
+            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance)
         {
+        forkliftSpeedUp = forkliftSpeed;
         liftState = forkliftState.MOVING_UP;
         return this.finishedForkliftMove;
         }
-    liftState = forkliftState.MOVING_DOWN;
+    else if (mustGoUp == false && this
+            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
+                    + LIFT_TOLERANCE)
+        {
+        this.forkliftSpeedDown = -forkliftSpeed;
+        liftState = forkliftState.MOVING_DOWN;
+        }
+    else
+        {
+        this.finishedForkliftMove = true;
+        }
+    return this.finishedForkliftMove;
+
+}
+
+/**
+ * Moves the arm to the desired position, 0 is the bottom, X is the top
+ * 
+ * 
+ * @param distance
+ *            the desired distance the forklift goes in inches.
+ * @return true if the forklift is at or above the specified height, set the
+ *         distance higher if you are going down from where the forklift was
+ *         initially
+ */
+public boolean moveLiftDistance (double distance)
+{
+    finishedForkliftMove = false;
+    double direction = distance - getForkliftHeight();
+    boolean mustGoUp = direction > 1;
+    this.forkliftHeightForMoveLiftDistance = distance;
+    if (mustGoUp == true && this
+            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
+                    - LIFT_TOLERANCE)
+        {
+        this.forkliftSpeedUp = FORKLIFT_SPEED_UP;
+        liftState = forkliftState.MOVING_UP;
+        }
+    else if (mustGoUp == false && this
+            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
+                    + LIFT_TOLERANCE)
+        {
+        this.forkliftSpeedDown = FORKLIFT_SPEED_DOWN;
+        liftState = forkliftState.MOVING_DOWN;
+        }
+    else
+        {
+        this.finishedForkliftMove = true;
+        }
     return this.finishedForkliftMove;
 
 }
@@ -337,8 +449,7 @@ public void forkliftUpdate ()
     switch (liftState)
         {
         case MOVING_UP:
-            System.out.println("Trying to go up");
-            this.forkliftMotor.set(this.forkliftSpeed);
+            // System.out.println("TRYING TO GO UP");
             finishedForkliftMove = false;
             if (Math.abs(
                     this.getForkliftHeight()) >= FORKLIFT_MAX_HEIGHT)
@@ -348,33 +459,43 @@ public void forkliftUpdate ()
                 }
             else
                 {
-                this.forkliftMotor.set(this.forkliftSpeed);
+                this.forkliftMotor.set(this.forkliftSpeedUp);
                 }
             break;
         case MOVING_DOWN:
-            System.out.println("TRYING TO GO DOWN");
-            if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT + 3)
+            // System.out.println("TRYING TO GO DOWN");
+            if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
+                    + LIFT_TOLERANCE)
                 {
                 liftState = forkliftState.AT_STARTING_POSITION;
                 finishedForkliftMove = true;
                 }
             else
                 {
-                this.forkliftMotor.set(this.forkliftSpeed);
+                this.forkliftMotor.set(this.forkliftSpeedDown);
                 }
             finishedForkliftMove = false;
             break;
         case STAY_AT_POSITION:
-            System.out.println("WE ARE STAYING AT POSITION");
+            // System.out.println("WE ARE STAYING AT POSITION");
             this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
             break;
         case AT_STARTING_POSITION:
-            System.out.println("WE ARE AT STARTING POSITION");
-            this.forkliftMotor.set(0.0);
+            // System.out.println("WE ARE AT STARTING POSITION");
+            this.forkliftMotor.set(FORKLIFT_AT_STARTING_POSITION);
             break;
         case INTAKE_IS_DEPLOYED:
             this.intakeMotor.set(0);
             break;
+        }
+
+    // sets stopIntake to true if no function is currently moving the
+    // intake
+    stopIntake = !(isRunningIntakeCube || isRunningIntakeCubeOverride);
+
+    if (stopIntake == true)
+        {
+        this.stopIntake();
         }
 }
 
@@ -398,7 +519,9 @@ private final double FORKLIFT_SPEED_UP = -.9;
 
 private final double FORKLIFT_SPEED_DOWN = .4;
 
-private final double FORKLIFT_STAY_UP_SPEED = 0;
+private final double FORKLIFT_STAY_UP_SPEED = -.15;
+
+private final double FORKLIFT_AT_STARTING_POSITION = 0;
 
 private final double INTAKE_SPEED = .5;
 
@@ -412,5 +535,5 @@ private final double JOYSTICK_DEADBAND = .2;
 
 private final double EJECT_TIME = 2;
 
-private final double LIFT_TOLERANCE = 0;
+private final double LIFT_TOLERANCE = 3;
 }

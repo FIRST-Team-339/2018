@@ -159,13 +159,14 @@ public void downShift ()
  */
 public void shiftGears (boolean upShiftButton, boolean downShiftButton)
 {
-    if (upShiftButton && !upShiftButtonStatus)
-        {
-        upShift();
-        }
-    else if (downShiftButton && !downShiftButtonStatus)
+
+    if (downShiftButton && !downShiftButtonStatus)
         {
         downShift();
+        }
+    else if (upShiftButton && !upShiftButtonStatus)
+        {
+        upShift();
         }
 
     upShiftButtonStatus = upShiftButton;
