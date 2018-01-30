@@ -79,11 +79,18 @@ public static void periodic ()
     // if (Math.abs(Hardware.leftOperator.getY()) >= 0.2)
     // Hardware.cubeIntakeMotor.set(Hardware.leftOperator.getY());
 
-    // Hardware.cubeManipulator.forkliftUpdate();
+    Hardware.cubeManipulator.forkliftUpdate();
     //
     // Forklift controls
     // Hardware.cubeManipulator
     // .moveForkliftWithController(Hardware.rightOperator);
+
+    if (Hardware.leftOperator.getRawButton(2) == true
+            && Hardware.cubeManipulator.moveLiftDistance(50) == true)
+        {
+        Hardware.liftingMotor.set(0.0);
+        System.out.println("WE DID THE THING");
+        }
 
 
     // // intake controls
@@ -211,7 +218,7 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    //System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(
@@ -288,13 +295,17 @@ public static void printStatements ()
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
-    // System.out.println(
-    // "Lift Encoder Inches = "
-    // + Hardware.liftingEncoder.getDistance());
+
+    System.out.println(
+            "Lift Encoder Inches = "
+                    + Hardware.liftingEncoder.getDistance());
+
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
+
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
+
     // System.out.println("Intake Deploy Encoder Ticks "
     // + Hardware.intakeDeployEncoder.get());
 
