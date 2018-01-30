@@ -74,8 +74,6 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
-    // if (Math.abs(Hardware.leftOperator.getY()) >= 0.2)
-    // Hardware.intakeDeployArm.set(Hardware.leftOperator.getY());
 
     Hardware.cubeManipulator.forkliftUpdate();
     //
@@ -83,8 +81,22 @@ public static void periodic ()
     // Hardware.cubeManipulator
     // .moveForkliftWithController(Hardware.rightOperator);
 
+
+
+
+    // Hardware.cubeManipulator
+    // .intakeCube(Hardware.leftOperator.getRawButton(4));
+    //
+    // Hardware.cubeManipulator
+    // .intakeCubeOverride(Hardware.leftOperator.getRawButton(5));
+
+
+
+
+
     if (Hardware.leftOperator.getRawButton(2) == true
-            && Hardware.cubeManipulator.moveLiftDistance(50) == true)
+            && Hardware.cubeManipulator
+                    .moveLiftDistance(50) == true)
         {
         Hardware.liftingMotor.set(0.0);
         System.out.println("WE DID THE THING");

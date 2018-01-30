@@ -1,5 +1,6 @@
 package org.usfirst.frc.team339.Utils;
 
+import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -38,6 +39,18 @@ private boolean deployedArm = false;
 private double forkliftSpeedUp = 0;
 
 private double forkliftSpeedDown = 0;
+
+// determines whether or not the intake motor should be stopped
+
+private boolean stopIntake = false;
+
+
+// the following booleans are for determining functions are using the intake
+
+private boolean isRunningIntakeCube = false;
+
+private boolean isRunningIntakeCubeOverride = false;
+
 
 
 /**
@@ -121,22 +134,60 @@ public void moveForkliftWithController (Joystick operatorJoystick)
 /**
  * Intake runs until the light switch is on
  * 
- * NEWBIES USE ON A BUTTON!!!!
+ * To use this, just pass in a button value; it will only do stuff if the button
+ * is pressed. DO NOT put this inside a statement like
+ * if(Hardware.joystick.getRawButton())) because this will cause problems
+ * with stopping the intake motor
+ * 
  * 
  * @return true if the the cube is in, the light switch is off
  */
-public boolean intakeCube ()
+public boolean intakeCube (boolean button)
 {
-    if (this.intakeSwitch.isOn() == false)
+    if (button)
         {
-        this.intakeMotor.set(INTAKE_SPEED);
-        this.deployedArm = false;
-        return false;
+        isRunningIntakeCube = true;
+
+        if (/* this.intakeSwitch.isOn() == false */Hardware.rightOperator
+                .getRawButton(4) == false /*
+                                           * delete the joystick b/c that's
+                                           * stupid
+                                           */)
+            {
+            this.intakeMotor.set(INTAKE_SPEED);
+            return false;
+            }
+        this.intakeMotor.set(0);
+        return true;
         }
-    this.intakeMotor.set(0);
-    this.deployedArm = true;
-    return true;
+    isRunningIntakeCube = false;
+    return false;
+
 }
+
+
+/**
+ * Intakes a cube and keeps going, even if the cube is already in there
+ * 
+ * To use this, just pass in a button value; it will only do stuff if the button
+ * is pressed. DO NOT put this inside a statement like
+ * if(Hardware.joystick.getRawButton())) because this will cause problems
+ * with stopping the intake motor
+ */
+public void intakeCubeOverride (boolean button)
+{
+    if (button)
+        {
+        isRunningIntakeCubeOverride = true;
+        this.intakeMotor.set(INTAKE_SPEED);
+        }
+    else
+        {
+        isRunningIntakeCubeOverride = false;
+        }
+}
+
+
 
 /**
  * NEWBIES USE ON A BUTTON!!!!
@@ -212,6 +263,17 @@ public boolean isIntakeDeployed ()
     return deployedArm;
 }
 
+
+/**
+ * Returns whether or not the cube intake mechanism is holding a cube
+ * 
+ * @return true if the photo switch is picking up a cube in our
+ *         cube intake mechanism, false if otherwise
+ */
+public boolean hasCube ()
+{
+    return this.intakeSwitch.isOn();
+}
 
 /**
  * HEY NEWBIES -- USE THIS FOR THE THE INTAKE OVERRIDE
@@ -414,6 +476,15 @@ public void forkliftUpdate ()
         case INTAKE_IS_DEPLOYED:
             this.intakeMotor.set(0);
             break;
+        }
+
+    // sets stopIntake to true if no function is currently moving the
+    // intake
+    stopIntake = !(isRunningIntakeCube || isRunningIntakeCubeOverride);
+
+    if (stopIntake == true)
+        {
+        this.stopIntake();
         }
 }
 
