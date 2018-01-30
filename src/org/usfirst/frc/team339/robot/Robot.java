@@ -225,6 +225,8 @@ public void robotInit ()
 
     // =========================================================
     // User code goes below here
+
+    // Resets encoder values
     Hardware.rightFrontDriveEncoder.reset();
     Hardware.leftFrontDriveEncoder.reset();
     Hardware.rightRearDriveEncoder.reset();
@@ -236,10 +238,13 @@ public void robotInit ()
     Hardware.leftDriveMotor.setInverted(false);
     Hardware.rightDriveMotor.setInverted(true);
 
+    // Sets max gears on robot
+    Hardware.tractionDrive.setMaxGears(2);
 
     // This sets the gear speed percentage for the traction drive
     Hardware.tractionDrive.setAllGearRatios(GEAR_1_SPEED, GEAR_2_SPEED);
     Hardware.tractionDrive.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
+
 
     // Sets all encoders Distance per pulse
     Hardware.autoDrive.setEncoderDistancePerPulse(
@@ -260,7 +265,10 @@ public void robotInit ()
             .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
 
     // Sets the angle of the servo to 100
-    Hardware.climbingMechanismServo.setAngle(100);
+    Hardware.climbingMechanismServo.setAngle(200);
+
+
+
 
 
     // User code goes above here
