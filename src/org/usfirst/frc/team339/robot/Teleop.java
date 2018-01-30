@@ -83,13 +83,17 @@ public static void periodic ()
     // Hardware.cubeManipulator
     // .moveForkliftWithController(Hardware.rightOperator);
 
-    if (Hardware.leftOperator.getRawButton(2) == true
-            && Hardware.cubeManipulator.moveLiftDistance(50) == true)
-        {
-        Hardware.liftingMotor.set(0.0);
-        System.out.println("WE DID THE THING");
-        }
-
+    // if (Hardware.leftOperator.getRawButton(2) == true
+    // && Hardware.cubeManipulator.moveLiftDistance(50,
+    // .3) == false)
+    // {
+    // Hardware.cubeManipulator.moveLiftDistance(50);
+    // System.out.println("WE DID THE THING");
+    // }
+    // else
+    // {
+    // Hardware.cubeManipulator.stopForklift();
+    // }
 
     // // intake controls
     // if (Hardware.rightOperator.getRawButton(2) == true)
@@ -248,7 +252,7 @@ public static void printStatements ()
     // else
     // System.out.println(
     // "Disable = on");
-    //
+
     // if (Hardware.leftAutoSwitch.isOn() == false)
     // System.out.println(
     // "Left = off");
@@ -294,9 +298,9 @@ public static void printStatements ()
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
 
-    System.out.println(
-            "Lift Encoder Inches = "
-                    + Hardware.liftingEncoder.getDistance());
+    // System.out.println(
+    // "Lift Encoder Inches = "
+    // + Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
