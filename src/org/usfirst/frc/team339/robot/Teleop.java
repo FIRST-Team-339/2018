@@ -95,6 +95,7 @@ public static void periodic ()
     // Hardware.cubeManipulator.stopForklift();
     // }
 
+
     // // intake controls
     // if (Hardware.rightOperator.getRawButton(2) == true)
     // {
@@ -165,6 +166,14 @@ public static void periodic ()
             }
 
         }
+
+
+    // NOTE - CLAIRE TEST NEXT MEETING
+    if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
+        {
+        Hardware.climbingMechanismServo.setAngle(110);
+        }
+
     printStatements();
 
     // totalLoopTime += teleopLoopTimer.get();
@@ -210,6 +219,13 @@ private static int testingDriveState = 0;
  */
 public static void printStatements ()
 {
+    // int Gear = Hardware.tractionDrive.getCurrentGear() + 1;
+
+
+    // Gear shift status
+    // System.out.println(
+    // "Gear = " + Gear);
+
 
     // =================================
     // Motor
@@ -273,6 +289,7 @@ public static void printStatements ()
     //
     // ---------------------------------
     // Encoders
+
 
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
