@@ -29,13 +29,15 @@ private Encoder forkliftEncoder = null;
 
 private Timer switchTimer = null;
 
-private double forkliftHeight = 0;
-
-private double forkliftSpeed = .9;
+private double forkliftHeightForMoveLiftDistance = 0;
 
 private boolean finishedForkliftMove = false;
 
 private boolean deployedArm = false;
+
+private double forkliftSpeedUp = 0;
+
+private double forkliftSpeedDown = 0;
 
 
 /**
@@ -73,7 +75,7 @@ public double getForkliftHeight ()
 }
 
 /**
- * YO NEWBIES-- USE THIS TO MOVE THE FORKLIFT
+ *
  * 
  * @param operatorJoystick
  *            Joystick object
@@ -83,26 +85,26 @@ public void moveForkliftWithController (Joystick operatorJoystick)
     if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT + LIFT_TOLERANCE
             && liftState == forkliftState.MOVING_DOWN)
         {
-        liftState = forkliftState.MOVING_UP;
+        liftState = forkliftState.AT_STARTING_POSITION;
         }
-    
+
     if (this.getForkliftHeight() >= FORKLIFT_MAX_HEIGHT
             && liftState == forkliftState.MOVING_UP)
         {
-        liftState = forkliftState.MOVING_DOWN;
+        liftState = forkliftState.STAY_AT_POSITION;
         }
 
-    if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND)
+
+    if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND
+            && this.getForkliftHeight() <= FORKLIFT_MAX_HEIGHT)
         {
-        this.forkliftHeight = FORKLIFT_MAX_HEIGHT;
-        this.forkliftSpeed = FORKLIFT_SPEED_UP;
+        this.forkliftSpeedUp = FORKLIFT_SPEED_UP;
         liftState = forkliftState.MOVING_UP;
-
         }
-    else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND)
+    else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND
+            && this.getForkliftHeight() >= FORKLIFT_MIN_HEIGHT)
         {
-        this.forkliftHeight = FORKLIFT_MIN_HEIGHT;
-        this.forkliftSpeed = FORKLIFT_SPEED_DOWN;
+        this.forkliftSpeedDown = FORKLIFT_SPEED_DOWN;
         liftState = forkliftState.MOVING_DOWN;
         }
     else if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
@@ -232,7 +234,6 @@ public void moveIntake (double speed)
 /**
  * Moves the arm to the desired position, 0 is the bottom, X is the top
  * 
- * NEWBIES CAN IGNORE
  * 
  * @param distance
  *            the desired distance the forklift goes in inches.
@@ -244,17 +245,55 @@ public void moveIntake (double speed)
  */
 public boolean moveLiftDistance (double distance, double forkliftSpeed)
 {
-    // finishedForkliftMove = false;
+    finishedForkliftMove = false;
     double direction = distance - getForkliftHeight();
     boolean mustGoUp = direction > 1;
-    this.forkliftHeight = distance;
-    this.forkliftSpeed = forkliftSpeed;
-    if (mustGoUp == true)
+    this.forkliftHeightForMoveLiftDistance = distance;
+    if (mustGoUp == true && this
+            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance)
+        {
+        forkliftSpeedUp = forkliftSpeed;
+        liftState = forkliftState.MOVING_UP;
+        return this.finishedForkliftMove;
+        }
+    else if (this
+            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance)
+        {
+        forkliftSpeedDown = forkliftSpeed;
+        liftState = forkliftState.MOVING_DOWN;
+        }
+    finishedForkliftMove = true;
+    return this.finishedForkliftMove;
+
+}
+
+/**
+ * Moves the arm to the desired position, 0 is the bottom, X is the top
+ * 
+ * 
+ * @param distance
+ *            the desired distance the forklift goes in inches.
+ * @return true if the forklift is at or above the specified height, set the
+ *         distance higher if you are going down from where the forklift was
+ *         initially
+ */
+public boolean moveLiftDistance (double distance)
+{
+    finishedForkliftMove = false;
+    double direction = distance - getForkliftHeight();
+    boolean mustGoUp = direction > 1;
+    this.forkliftHeightForMoveLiftDistance = distance;
+    if (mustGoUp == true && this
+            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance)
         {
         liftState = forkliftState.MOVING_UP;
         return this.finishedForkliftMove;
         }
-    liftState = forkliftState.MOVING_DOWN;
+    else if (this
+            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance)
+        {
+        liftState = forkliftState.MOVING_DOWN;
+        }
     return this.finishedForkliftMove;
 
 }
@@ -338,7 +377,6 @@ public void forkliftUpdate ()
         {
         case MOVING_UP:
             System.out.println("Trying to go up");
-            this.forkliftMotor.set(this.forkliftSpeed);
             finishedForkliftMove = false;
             if (Math.abs(
                     this.getForkliftHeight()) >= FORKLIFT_MAX_HEIGHT)
@@ -348,19 +386,20 @@ public void forkliftUpdate ()
                 }
             else
                 {
-                this.forkliftMotor.set(this.forkliftSpeed);
+                this.forkliftMotor.set(this.forkliftSpeedUp);
                 }
             break;
         case MOVING_DOWN:
             System.out.println("TRYING TO GO DOWN");
-            if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT + 3)
+            if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
+                    + LIFT_TOLERANCE)
                 {
                 liftState = forkliftState.AT_STARTING_POSITION;
                 finishedForkliftMove = true;
                 }
             else
                 {
-                this.forkliftMotor.set(this.forkliftSpeed);
+                this.forkliftMotor.set(this.forkliftSpeedDown);
                 }
             finishedForkliftMove = false;
             break;
@@ -370,7 +409,7 @@ public void forkliftUpdate ()
             break;
         case AT_STARTING_POSITION:
             System.out.println("WE ARE AT STARTING POSITION");
-            this.forkliftMotor.set(0.0);
+            this.forkliftMotor.set(FORKLIFT_AT_STARTING_POSITION);
             break;
         case INTAKE_IS_DEPLOYED:
             this.intakeMotor.set(0);
@@ -398,7 +437,9 @@ private final double FORKLIFT_SPEED_UP = -.9;
 
 private final double FORKLIFT_SPEED_DOWN = .4;
 
-private final double FORKLIFT_STAY_UP_SPEED = 0;
+private final double FORKLIFT_STAY_UP_SPEED = -.15;
+
+private final double FORKLIFT_AT_STARTING_POSITION = 0;
 
 private final double INTAKE_SPEED = .5;
 
@@ -412,5 +453,5 @@ private final double JOYSTICK_DEADBAND = .2;
 
 private final double EJECT_TIME = 2;
 
-private final double LIFT_TOLERANCE = 0;
+private final double LIFT_TOLERANCE = 3;
 }
