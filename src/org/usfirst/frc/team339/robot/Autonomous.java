@@ -95,6 +95,15 @@ public static void periodic ()
 {
     Hardware.cubeManipulator.forkliftUpdate();
     System.out.println("Main State: " + autoState);
+    System.out.println("Left Front Encoder : "
+            + Hardware.leftFrontDriveEncoder.getDistance());
+    System.out.println("Right Front Encoder : "
+            + Hardware.rightFrontDriveEncoder.getDistance());
+
+    System.out.println("Left Rear Encoder : "
+            + Hardware.leftRearDriveEncoder.getDistance());
+    System.out.println("Right Rear Encoder : "
+            + Hardware.rightRearDriveEncoder.getDistance());
     switch (autoState)
         {
         case INIT:
@@ -159,7 +168,7 @@ public static void periodic ()
                 }
             break;
         case AUTOLINE:
-            if (autolinePath())
+            if (autolinePath() == true)
                 {
                 autoState = State.FINISH;
                 }
@@ -262,6 +271,7 @@ SWITCH, SCALE
  */
 public static boolean autolinePath ()
 {
+    // System.out.println("autoline path state : " + currentAutolineState);
     switch (currentAutolineState)
         {
         // Initialize anything necessary

@@ -300,7 +300,7 @@ public void moveIntake (double speed)
  * @param distance
  *            the desired distance the forklift goes in inches.
  * @param forkliftSpeed
- *            the speed of the forklift
+ *            the speed of the forklift ALWAYS USE POSITIVE
  * @return true if the forklift is at or above the specified height, set the
  *         distance higher if you are going down from where the forklift was
  *         initially
@@ -318,13 +318,17 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
         liftState = forkliftState.MOVING_UP;
         return this.finishedForkliftMove;
         }
-    else if (this
-            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance)
+    else if (mustGoUp == false && this
+            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
+                    + LIFT_TOLERANCE)
         {
-        forkliftSpeedDown = forkliftSpeed;
+        this.forkliftSpeedDown = -forkliftSpeed;
         liftState = forkliftState.MOVING_DOWN;
         }
-    finishedForkliftMove = true;
+    else
+        {
+        this.finishedForkliftMove = true;
+        }
     return this.finishedForkliftMove;
 
 }
@@ -346,15 +350,22 @@ public boolean moveLiftDistance (double distance)
     boolean mustGoUp = direction > 1;
     this.forkliftHeightForMoveLiftDistance = distance;
     if (mustGoUp == true && this
-            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance)
+            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
+                    - LIFT_TOLERANCE)
         {
+        this.forkliftSpeedUp = FORKLIFT_SPEED_UP;
         liftState = forkliftState.MOVING_UP;
-        return this.finishedForkliftMove;
         }
-    else if (this
-            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance)
+    else if (mustGoUp == false && this
+            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
+                    + LIFT_TOLERANCE)
         {
+        this.forkliftSpeedDown = FORKLIFT_SPEED_DOWN;
         liftState = forkliftState.MOVING_DOWN;
+        }
+    else
+        {
+        this.finishedForkliftMove = true;
         }
     return this.finishedForkliftMove;
 
@@ -438,7 +449,7 @@ public void forkliftUpdate ()
     switch (liftState)
         {
         case MOVING_UP:
-            System.out.println("Trying to go up");
+            // System.out.println("TRYING TO GO UP");
             finishedForkliftMove = false;
             if (Math.abs(
                     this.getForkliftHeight()) >= FORKLIFT_MAX_HEIGHT)
@@ -452,7 +463,7 @@ public void forkliftUpdate ()
                 }
             break;
         case MOVING_DOWN:
-            System.out.println("TRYING TO GO DOWN");
+            // System.out.println("TRYING TO GO DOWN");
             if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
                     + LIFT_TOLERANCE)
                 {
@@ -466,11 +477,11 @@ public void forkliftUpdate ()
             finishedForkliftMove = false;
             break;
         case STAY_AT_POSITION:
-            System.out.println("WE ARE STAYING AT POSITION");
+            // System.out.println("WE ARE STAYING AT POSITION");
             this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
             break;
         case AT_STARTING_POSITION:
-            System.out.println("WE ARE AT STARTING POSITION");
+            // System.out.println("WE ARE AT STARTING POSITION");
             this.forkliftMotor.set(FORKLIFT_AT_STARTING_POSITION);
             break;
         case INTAKE_IS_DEPLOYED:
