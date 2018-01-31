@@ -101,17 +101,22 @@ public static void periodic ()
     // Hardware.cubeManipulator.stopForklift();
     // }
 
+    Hardware.cubeManipulator
+            .moveForkliftWithController(Hardware.rightOperator);
 
     // // intake controls
-    // if (Hardware.rightOperator.getRawButton(2) == true)
-    // {
-    // Hardware.cubeManipulator.intakeCube();
-    // }
+    Hardware.cubeManipulator
+            .intakeCube(Hardware.rightOperator.getRawButton(2));
+
+
     //
-    // if (Hardware.rightOperator.getRawButton(3) == true)
-    // {
-    // Hardware.cubeManipulator.pushOutCube();
-    // }
+
+    Hardware.cubeManipulator
+            .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
+
+    //
+
+    //
     // =================================================================
     // CAMERA CODE
     // =================================================================
@@ -122,7 +127,7 @@ public static void periodic ()
     // Hardware.autoDrive.driveToSwitch(1.3, .6);
     // }
     //
-     Hardware.ringLightRelay.set(Value.kForward);
+    Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();

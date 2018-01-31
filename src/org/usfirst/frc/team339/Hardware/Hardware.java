@@ -225,8 +225,8 @@ public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(0);
 
 public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 
-//TODO Take out this is a ultrasonic for Nessie
-//public static HRLVMaxSonarEZ frontUltraSonic = new HRLVMaxSonarEZ(0);
+// TODO Take out this is a ultrasonic for Nessie
+// public static HRLVMaxSonarEZ frontUltraSonic = new HRLVMaxSonarEZ(0);
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
 // **********************************************************
@@ -314,6 +314,12 @@ public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
         intakeDeployArm, intakeDeployEncoder, autoTimer);
+
+public static boolean getRawButton (int i)
+{
+    // TODO Auto-generated method stub
+    return false;
+}
 
 
 
