@@ -77,17 +77,15 @@ public static void periodic ()
     // =================================================================
 
     Hardware.cubeManipulator.forkliftUpdate();
+
+
+
+
     //
     // Forklift controls
     // Hardware.cubeManipulator
     // .moveForkliftWithController(Hardware.rightOperator);
 
-
-    // Hardware.cubeManipulator
-    // .intakeCube(Hardware.leftOperator.getRawButton(4));
-    //
-    // Hardware.cubeManipulator
-    // .intakeCubeOverride(Hardware.leftOperator.getRawButton(5));
 
     // if (Hardware.leftOperator.getRawButton(2) == true
     // && Hardware.cubeManipulator.moveLiftDistance(50,
@@ -101,17 +99,22 @@ public static void periodic ()
     // Hardware.cubeManipulator.stopForklift();
     // }
 
+    Hardware.cubeManipulator
+            .moveForkliftWithController(Hardware.rightOperator);
 
-    // // intake controls
-    // if (Hardware.rightOperator.getRawButton(2) == true)
-    // {
-    // Hardware.cubeManipulator.intakeCube();
-    // }
+    // intake controls
+    Hardware.cubeManipulator
+            .intakeCube(Hardware.rightOperator.getRawButton(2));
+
+    Hardware.cubeManipulator
+            .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
+
+    // Push out the cube
+    Hardware.cubeManipulator
+            .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
+
+
     //
-    // if (Hardware.rightOperator.getRawButton(3) == true)
-    // {
-    // Hardware.cubeManipulator.pushOutCube();
-    // }
     // =================================================================
     // CAMERA CODE
     // =================================================================

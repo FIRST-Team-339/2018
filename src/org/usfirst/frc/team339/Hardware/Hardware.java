@@ -170,7 +170,7 @@ public static LightSensor rightRedLight = new LightSensor(7);
 
 public static LightSensor leftRedLight = new LightSensor(8);
 
-public static LightSensor cubePhotoSwitch = new LightSensor(0);
+public static LightSensor cubePhotoSwitch = new LightSensor(22);
 
 // ====================================
 // I2C Classes
@@ -314,6 +314,12 @@ public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
         intakeDeployArm, intakeDeployEncoder, autoTimer);
+
+public static boolean getRawButton (int i)
+{
+    // TODO Auto-generated method stub
+    return false;
+}
 
 
 
