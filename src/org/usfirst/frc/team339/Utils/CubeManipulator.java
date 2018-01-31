@@ -135,14 +135,17 @@ public void moveForkliftWithController (Joystick operatorJoystick)
 /**
  * Intake runs until the light switch is on
  * 
- * To use this, just pass in a button value; it will only do stuff if the button
- * is pressed. DO NOT put this inside a statement like
- * if(Hardware.joystick.getRawButton())) because this will cause problems
- * with stopping the intake motor
+ * To use this, just pass in a button value
  * 
  * Example of how to call this:
  * Hardware.cubeManipulator.intakeCube(Hardware.leftOperator.getRawButton(4));
  * 
+ * DO NOT DO:
+ * 
+ * if(Hardware.leftOperator.getRawButton(4))
+ * {
+ * Hardware.cubeManipulator.intakeCube(Hardware.leftOperator.getRawButton(4));
+ * }
  * 
  * @return true if the the cube is in, the light switch is off
  */
@@ -169,13 +172,17 @@ public boolean intakeCube (boolean button)
 /**
  * Intakes a cube and keeps going, even if the cube is already in there
  * 
- * To use this, just pass in a button value; it will only do stuff if the button
- * is pressed. DO NOT put this inside a statement like
- * if(Hardware.joystick.getRawButton())) because this will cause problems
- * with stopping the intake motor
+ * To use this, just pass in a button value
  * 
  * Example of how to call this:
  * Hardware.cubeManipulator.intakeCubeOverride(Hardware.leftOperator.getRawButton(4));
+ * 
+ * DO NOT DO:
+ * 
+ * if(Hardware.leftOperator.getRawButton(4))
+ * {
+ * Hardware.cubeManipulator.intakeCubeOverride(Hardware.leftOperator.getRawButton(4));
+ * }
  * 
  */
 public void intakeCubeOverride (boolean button)
