@@ -541,7 +541,7 @@ public boolean driveStraightInches (int distance, double speed)
             || this.transmissionType == TransmissionType.TANK)
         {
         // Check all encoders if it is a four wheel drive system.
-        if (this.getEncoderDistanceAverage(WheelGroups.ALL) > distance)
+        if (this.isAnyEncoderLargerThan(distance))
             {
             this.getTransmission().stop();
             driveStraightInchesInit = true;
@@ -551,7 +551,7 @@ public boolean driveStraightInches (int distance, double speed)
     else
         {
         // Only check the rear encoders if it is a two wheel drive system.
-        if (this.getEncoderDistanceAverage(WheelGroups.REAR) > distance)
+        if (this.isAnyEncoderLargerThan(distance))
             {
             this.getTransmission().stop();
             driveStraightInchesInit = true;

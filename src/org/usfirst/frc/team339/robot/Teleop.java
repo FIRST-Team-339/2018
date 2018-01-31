@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -74,14 +75,7 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
-
     Hardware.cubeManipulator.forkliftUpdate();
-
-
-    Hardware.cubeManipulator
-            .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
-
-
 
     //
     // Forklift controls
@@ -104,22 +98,22 @@ public static void periodic ()
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
-    // // intake controls
+    // intake controls
     Hardware.cubeManipulator
             .intakeCube(Hardware.rightOperator.getRawButton(2));
 
-
-    //
-
     Hardware.cubeManipulator
             .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
+
+    // Push out the cube
+    Hardware.cubeManipulator
+            .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
 
     if (Hardware.climbButton.isOnCheckNow() == true)
         {
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
         }
 
-    //
 
     //
     // =================================================================
@@ -132,8 +126,7 @@ public static void periodic ()
     // Hardware.autoDrive.driveToSwitch(1.3, .6);
     // }
     //
-
-    // Hardware.ringLightRelay.set(Value.kForward);
+    Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
@@ -310,26 +303,26 @@ public static void printStatements ()
     // Encoders
 
 
-    // System.out.println("Left Front Encoder Inches = "
-    // + Hardware.leftFrontDriveEncoder.getDistance());
+    System.out.println("Left Front Encoder Inches = "
+            + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
 
-    // System.out.println("Right Front Inches = "
-    // + Hardware.rightFrontDriveEncoder.getDistance());
+    System.out.println("Right Front Inches = "
+            + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
 
-    // System.out.println("Left Rear Encoder Inches = "
-    // + Hardware.leftRearDriveEncoder.getDistance());
+    System.out.println("Left Rear Encoder Inches = "
+            + Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
 
-    // System.out.println("Right Rear Inches = "
-    // + Hardware.rightRearDriveEncoder.getDistance());
+    System.out.println("Right Rear Inches = "
+            + Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());

@@ -135,14 +135,17 @@ public void moveForkliftWithController (Joystick operatorJoystick)
 /**
  * Intake runs until the light switch is on
  * 
- * To use this, just pass in a button value; it will only do stuff if the button
- * is pressed. DO NOT put this inside a statement like
- * if(Hardware.joystick.getRawButton())) because this will cause problems
- * with stopping the intake motor
+ * To use this, just pass in a button value
  * 
  * Example of how to call this:
  * Hardware.cubeManipulator.intakeCube(Hardware.leftOperator.getRawButton(4));
  * 
+ * DO NOT DO:
+ * 
+ * if(Hardware.leftOperator.getRawButton(4))
+ * {
+ * Hardware.cubeManipulator.intakeCube(Hardware.leftOperator.getRawButton(4));
+ * }
  * 
  * @return true if the the cube is in, the light switch is off
  */
@@ -169,13 +172,17 @@ public boolean intakeCube (boolean button)
 /**
  * Intakes a cube and keeps going, even if the cube is already in there
  * 
- * To use this, just pass in a button value; it will only do stuff if the button
- * is pressed. DO NOT put this inside a statement like
- * if(Hardware.joystick.getRawButton())) because this will cause problems
- * with stopping the intake motor
+ * To use this, just pass in a button value
  * 
  * Example of how to call this:
  * Hardware.cubeManipulator.intakeCubeOverride(Hardware.leftOperator.getRawButton(4));
+ * 
+ * DO NOT DO:
+ * 
+ * if(Hardware.leftOperator.getRawButton(4))
+ * {
+ * Hardware.cubeManipulator.intakeCubeOverride(Hardware.leftOperator.getRawButton(4));
+ * }
  * 
  */
 public void intakeCubeOverride (boolean button)
@@ -266,7 +273,11 @@ INIT, PUSH_OUT, DONE
  */
 public boolean deployCubeIntake ()
 {
-    if (this.intakeDeployEncoder.getDistance() <= INTAKE_ANGLE)
+    double degreesPerEncoderTick = 1.0;
+
+    // if (this.intakeDeployEncoder.getDistance() <= INTAKE_ANGLE)
+    if (this.intakeDeployEncoder.get()
+            * degreesPerEncoderTick <= INTAKE_ANGLE)
         {
         this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
         this.deployedArm = false;
@@ -275,7 +286,7 @@ public boolean deployCubeIntake ()
         {
         this.intakeDeployMotor.set(0);
         this.deployedArm = true;
-        liftState = forkliftState.INTAKE_IS_DEPLOYED;
+        // liftState = forkliftState.INTAKE_IS_DEPLOYED;
         return true;
         }
     return false;
@@ -523,16 +534,8 @@ public void forkliftUpdate ()
         // break;
         }
 
-    // sets stopIntake to true if no function is currently moving the
-    // intake
-    // switch (intakeState)
-    // {
-    //
-    // }
-
     stopIntake = !(isRunningIntakeCube || isRunningIntakeCubeOverride ||
             isRunningPushOutCubeAuto || isRunningPushOutCubeTeleop);
-
 
     if (stopIntake == true)
         {
@@ -570,7 +573,7 @@ private final double SWITCH_HEIGHT = 30;
 
 private final double INTAKE_ANGLE = 90;
 
-private final double INTAKE_DEPLOY_SPEED = .9;
+private final double INTAKE_DEPLOY_SPEED = .3;
 
 private final double JOYSTICK_DEADBAND = .2;
 
