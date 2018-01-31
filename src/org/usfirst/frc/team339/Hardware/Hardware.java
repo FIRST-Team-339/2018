@@ -315,6 +315,12 @@ public static CubeManipulator cubeManipulator = new CubeManipulator(
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
         intakeDeployArm, intakeDeployEncoder, autoTimer);
 
+public static boolean getRawButton (int i)
+{
+    // TODO Auto-generated method stub
+    return false;
+}
+
 
 
 } // end class
