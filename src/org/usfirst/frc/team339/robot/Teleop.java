@@ -32,7 +32,6 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -115,6 +114,11 @@ public static void periodic ()
     Hardware.cubeManipulator
             .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
 
+    if (Hardware.climbButton.isOnCheckNow() == true)
+        {
+        Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+        }
+
     //
 
     //
@@ -128,7 +132,8 @@ public static void periodic ()
     // Hardware.autoDrive.driveToSwitch(1.3, .6);
     // }
     //
-    Hardware.ringLightRelay.set(Value.kForward);
+
+    // Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
@@ -150,9 +155,11 @@ public static void periodic ()
     // Driving code
     // =================================================================
 
-    if (!isTestingDrive && !Hardware.leftDriver.getTrigger())
+    if (isTestingDrive == false
+            && Hardware.leftDriver.getTrigger() == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
+
 
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
@@ -444,5 +451,7 @@ public static void printStatements ()
 // Constants
 // ================================
 //
+
+public static final int CLIMBING_SERVO_ANGLE = 78;
 
 } // end class

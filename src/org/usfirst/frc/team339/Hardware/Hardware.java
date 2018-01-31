@@ -275,6 +275,9 @@ public static Joystick leftOperator = new Joystick(2);
 public static MomentarySwitch visionTestButton = new MomentarySwitch(
         rightOperator, 2, false);
 
+public static MomentarySwitch climbButton = new MomentarySwitch(
+        rightOperator, 5, false);
+
 // **********************************************************
 // Kilroy's Ancillary classes
 // **********************************************************
@@ -314,13 +317,5 @@ public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
         intakeDeployArm, intakeDeployEncoder, autoTimer);
-
-public static boolean getRawButton (int i)
-{
-    // TODO Auto-generated method stub
-    return false;
-}
-
-
 
 } // end class
