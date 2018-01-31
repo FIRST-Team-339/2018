@@ -225,8 +225,8 @@ public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(0);
 
 public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 
-//TODO Take out this is a ultrasonic for Nessie
-//public static HRLVMaxSonarEZ frontUltraSonic = new HRLVMaxSonarEZ(0);
+// TODO Take out this is a ultrasonic for Nessie
+// public static HRLVMaxSonarEZ frontUltraSonic = new HRLVMaxSonarEZ(0);
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
 // **********************************************************
@@ -303,7 +303,7 @@ public static TractionTransmission tractionDrive = new TractionTransmission(
 // Drive system
 // ------------------------------------
 public static Drive autoDrive = new Drive(tractionDrive,
-        leftRearDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
+        leftFrontDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
         rearUltraSonic, null, axisCamera);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 // -------------------

@@ -122,7 +122,7 @@ public static void periodic ()
     // Hardware.autoDrive.driveToSwitch(1.3, .6);
     // }
     //
-     Hardware.ringLightRelay.set(Value.kForward);
+    Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
@@ -297,26 +297,26 @@ public static void printStatements ()
     // Encoders
 
 
-    // System.out.println("Left Front Encoder Inches = "
-    // + Hardware.leftFrontDriveEncoder.getDistance());
+    System.out.println("Left Front Encoder Inches = "
+            + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
 
-    // System.out.println("Right Front Inches = "
-    // + Hardware.rightFrontDriveEncoder.getDistance());
+    System.out.println("Right Front Inches = "
+            + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
 
-    // System.out.println("Left Rear Encoder Inches = "
-    // + Hardware.leftRearDriveEncoder.getDistance());
+    System.out.println("Left Rear Encoder Inches = "
+            + Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
 
-    // System.out.println("Right Rear Inches = "
-    // + Hardware.rightRearDriveEncoder.getDistance());
+    System.out.println("Right Rear Inches = "
+            + Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());

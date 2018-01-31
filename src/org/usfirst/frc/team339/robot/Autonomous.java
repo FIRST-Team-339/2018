@@ -365,6 +365,7 @@ DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_RIGHT, DRIVE_
  */
 public static boolean leftAutoLineExchangePath ()
 {
+    // System.out.println(leftExchangeState);
     switch (leftExchangeAuto)
         {
         case DRIVE_ACROSS_AUTOLINE:
