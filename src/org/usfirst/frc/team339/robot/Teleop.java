@@ -79,9 +79,6 @@ public static void periodic ()
     Hardware.cubeManipulator.forkliftUpdate();
 
 
-    Hardware.cubeManipulator
-            .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
-
 
 
     //
@@ -105,17 +102,17 @@ public static void periodic ()
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
-    // // intake controls
+    // intake controls
     Hardware.cubeManipulator
             .intakeCube(Hardware.rightOperator.getRawButton(2));
-
-
-    //
 
     Hardware.cubeManipulator
             .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
 
-    //
+    // Push out the cube
+    Hardware.cubeManipulator
+            .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
+
 
     //
     // =================================================================
@@ -351,8 +348,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    // System.out.println(
+    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
     // Pneumatics----------------------------------

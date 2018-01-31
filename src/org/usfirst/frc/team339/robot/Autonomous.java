@@ -62,6 +62,8 @@ public class Autonomous
  */
 public static void init ()
 {
+
+    Hardware.intakeDeployEncoder.reset();
     // Disable auto
     if (Hardware.disableAutonomousSwitch.isOn())
         autoState = State.FINISH;

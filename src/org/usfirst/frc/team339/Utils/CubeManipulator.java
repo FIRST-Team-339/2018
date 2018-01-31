@@ -273,7 +273,11 @@ INIT, PUSH_OUT, DONE
  */
 public boolean deployCubeIntake ()
 {
-    if (this.intakeDeployEncoder.getDistance() <= INTAKE_ANGLE)
+    double degreesPerEncoderTick = 1.0;
+
+    // if (this.intakeDeployEncoder.getDistance() <= INTAKE_ANGLE)
+    if (this.intakeDeployEncoder.get()
+            * degreesPerEncoderTick <= INTAKE_ANGLE)
         {
         this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
         this.deployedArm = false;
@@ -282,7 +286,7 @@ public boolean deployCubeIntake ()
         {
         this.intakeDeployMotor.set(0);
         this.deployedArm = true;
-        liftState = forkliftState.INTAKE_IS_DEPLOYED;
+        // liftState = forkliftState.INTAKE_IS_DEPLOYED;
         return true;
         }
     return false;
@@ -530,16 +534,8 @@ public void forkliftUpdate ()
         // break;
         }
 
-    // sets stopIntake to true if no function is currently moving the
-    // intake
-    // switch (intakeState)
-    // {
-    //
-    // }
-
     stopIntake = !(isRunningIntakeCube || isRunningIntakeCubeOverride ||
             isRunningPushOutCubeAuto || isRunningPushOutCubeTeleop);
-
 
     if (stopIntake == true)
         {
@@ -577,7 +573,7 @@ private final double SWITCH_HEIGHT = 30;
 
 private final double INTAKE_ANGLE = 90;
 
-private final double INTAKE_DEPLOY_SPEED = .9;
+private final double INTAKE_DEPLOY_SPEED = .3;
 
 private final double JOYSTICK_DEADBAND = .2;
 
