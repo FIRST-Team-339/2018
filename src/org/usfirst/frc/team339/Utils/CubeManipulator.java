@@ -1,6 +1,5 @@
 package org.usfirst.frc.team339.Utils;
 
-import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -51,7 +50,9 @@ private boolean isRunningIntakeCube = false;
 
 private boolean isRunningIntakeCubeOverride = false;
 
+private boolean isRunningPushOutCubeAuto = false;
 
+private boolean isRunningPushOutCubeTeleop = false;
 
 /**
  * @param forkliftMotor
@@ -139,6 +140,9 @@ public void moveForkliftWithController (Joystick operatorJoystick)
  * if(Hardware.joystick.getRawButton())) because this will cause problems
  * with stopping the intake motor
  * 
+ * Example of how to call this:
+ * Hardware.cubeManipulator.intakeCube(Hardware.leftOperator.getRawButton(4));
+ * 
  * 
  * @return true if the the cube is in, the light switch is off
  */
@@ -148,11 +152,7 @@ public boolean intakeCube (boolean button)
         {
         isRunningIntakeCube = true;
 
-        if (/* this.intakeSwitch.isOn() == false */Hardware.rightOperator
-                .getRawButton(4) == false /*
-                                           * delete the joystick b/c that's
-                                           * stupid
-                                           */)
+        if (this.intakeSwitch.isOn() == false)
             {
             this.intakeMotor.set(INTAKE_SPEED);
             return false;
@@ -173,6 +173,10 @@ public boolean intakeCube (boolean button)
  * is pressed. DO NOT put this inside a statement like
  * if(Hardware.joystick.getRawButton())) because this will cause problems
  * with stopping the intake motor
+ * 
+ * Example of how to call this:
+ * Hardware.cubeManipulator.intakeCubeOverride(Hardware.leftOperator.getRawButton(4));
+ * 
  */
 public void intakeCubeOverride (boolean button)
 {
@@ -190,12 +194,35 @@ public void intakeCubeOverride (boolean button)
 
 
 /**
- * NEWBIES USE ON A BUTTON!!!!
+ * Pushes out the cube as long as a button is being held down
  * 
- * @return true if the complete
+ * @param button-
+ *            a button on a joystick
  */
-public boolean pushOutCube ()
+public void pushOutCubeTeleop (boolean button)
 {
+    if (button)
+        {
+        isRunningPushOutCubeTeleop = true;
+        this.intakeMotor.set(-INTAKE_SPEED);
+        }
+    else
+        {
+        isRunningPushOutCubeTeleop = false;
+        }
+
+}
+
+
+
+/**
+ * Pushes out the cube. For use in autonomous only
+ * 
+ * @return true if this function is complete, false if still going
+ */
+public boolean pushOutCubeAuto ()
+{
+    isRunningPushOutCubeAuto = true;
     switch (pushState)
         {
         case INIT:
@@ -217,6 +244,7 @@ public boolean pushOutCube ()
         case DONE:
             this.intakeMotor.set(0);
             pushState = pushOutState.INIT;
+            isRunningPushOutCubeAuto = false;
             return true;
         }
     return false;
@@ -394,9 +422,10 @@ public boolean scoreSwitch ()
                 }
             break;
         case SPIT_OUT_CUBE:
-            pushOutCube();
-            switchState = scoreSwitchState.FINISHED;
-
+            if (pushOutCubeAuto() == true)
+                {
+                switchState = scoreSwitchState.FINISHED;
+                }
             break;
         case FINISHED:
             stopEverything();
@@ -409,10 +438,13 @@ public boolean scoreSwitch ()
 
 scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
 
+
 private enum scoreSwitchState
     {
 MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
     }
+
+
 
 /**
  * Stops the forklift motor and the intake motor
@@ -484,19 +516,29 @@ public void forkliftUpdate ()
             // System.out.println("WE ARE AT STARTING POSITION");
             this.forkliftMotor.set(FORKLIFT_AT_STARTING_POSITION);
             break;
-        case INTAKE_IS_DEPLOYED:
-            this.intakeMotor.set(0);
-            break;
+        // this code isn't necessary because we made a seperate state
+        // machine for the intake
+        // case INTAKE_IS_DEPLOYED:
+        // this.intakeMotor.set(0);
+        // break;
         }
 
     // sets stopIntake to true if no function is currently moving the
     // intake
-    stopIntake = !(isRunningIntakeCube || isRunningIntakeCubeOverride);
+    // switch (intakeState)
+    // {
+    //
+    // }
+
+    stopIntake = !(isRunningIntakeCube || isRunningIntakeCubeOverride ||
+            isRunningPushOutCubeAuto || isRunningPushOutCubeTeleop);
+
 
     if (stopIntake == true)
         {
         this.stopIntake();
         }
+
 }
 
 private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
@@ -508,7 +550,6 @@ private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
 public enum forkliftState
     {
 MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION, INTAKE_IS_DEPLOYED
-
     }
 
 private final double FORKLIFT_MAX_HEIGHT = 100;
@@ -533,7 +574,7 @@ private final double INTAKE_DEPLOY_SPEED = .9;
 
 private final double JOYSTICK_DEADBAND = .2;
 
-private final double EJECT_TIME = 2;
+private final double EJECT_TIME = 2.0;
 
 private final double LIFT_TOLERANCE = 3;
 }

@@ -77,17 +77,18 @@ public static void periodic ()
     // =================================================================
 
     Hardware.cubeManipulator.forkliftUpdate();
+
+
+    Hardware.cubeManipulator
+            .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
+
+
+
     //
     // Forklift controls
     // Hardware.cubeManipulator
     // .moveForkliftWithController(Hardware.rightOperator);
 
-
-    // Hardware.cubeManipulator
-    // .intakeCube(Hardware.leftOperator.getRawButton(4));
-    //
-    // Hardware.cubeManipulator
-    // .intakeCubeOverride(Hardware.leftOperator.getRawButton(5));
 
     // if (Hardware.leftOperator.getRawButton(2) == true
     // && Hardware.cubeManipulator.moveLiftDistance(50,
@@ -122,7 +123,7 @@ public static void periodic ()
     // Hardware.autoDrive.driveToSwitch(1.3, .6);
     // }
     //
-     Hardware.ringLightRelay.set(Value.kForward);
+    Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
@@ -345,8 +346,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    // System.out.println(
-    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    System.out.println(
+            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
     // Pneumatics----------------------------------
