@@ -171,7 +171,7 @@ public static LightSensor rightRedLight = new LightSensor(7);
 
 public static LightSensor leftRedLight = new LightSensor(8);
 
-public static LightSensor cubePhotoSwitch = new LightSensor(0);
+public static LightSensor cubePhotoSwitch = new LightSensor(22);
 
 // ====================================
 // I2C Classes
@@ -226,8 +226,8 @@ public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(0);
 
 public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 
-//TODO Take out this is a ultrasonic for Nessie
-//public static HRLVMaxSonarEZ frontUltraSonic = new HRLVMaxSonarEZ(0);
+// TODO Take out this is a ultrasonic for Nessie
+// public static HRLVMaxSonarEZ frontUltraSonic = new HRLVMaxSonarEZ(0);
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
 // **********************************************************
@@ -276,6 +276,9 @@ public static Joystick leftOperator = new Joystick(2);
 public static MomentarySwitch visionTestButton = new MomentarySwitch(
         rightOperator, 8, false);
 
+public static MomentarySwitch climbButton = new MomentarySwitch(
+        rightOperator, 5, false);
+
 // **********************************************************
 // Kilroy's Ancillary classes
 // **********************************************************
@@ -304,7 +307,7 @@ public static TractionTransmission tractionDrive = new TractionTransmission(
 // Drive system
 // ------------------------------------
 public static Drive autoDrive = new Drive(tractionDrive,
-        leftRearDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
+        leftFrontDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
         rearUltraSonic, null, axisCamera);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 // -------------------
@@ -315,7 +318,5 @@ public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
         intakeDeployArm, intakeDeployEncoder, autoTimer);
-
-
 
 } // end class

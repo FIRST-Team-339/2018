@@ -75,19 +75,13 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
-
     Hardware.cubeManipulator.forkliftUpdate();
+
     //
     // Forklift controls
     // Hardware.cubeManipulator
     // .moveForkliftWithController(Hardware.rightOperator);
 
-
-    // Hardware.cubeManipulator
-    // .intakeCube(Hardware.leftOperator.getRawButton(4));
-    //
-    // Hardware.cubeManipulator
-    // .intakeCubeOverride(Hardware.leftOperator.getRawButton(5));
 
     // if (Hardware.leftOperator.getRawButton(2) == true
     // && Hardware.cubeManipulator.moveLiftDistance(50,
@@ -101,17 +95,27 @@ public static void periodic ()
     // Hardware.cubeManipulator.stopForklift();
     // }
 
+    Hardware.cubeManipulator
+            .moveForkliftWithController(Hardware.rightOperator);
 
-    // // intake controls
-    // if (Hardware.rightOperator.getRawButton(2) == true)
-    // {
-    // Hardware.cubeManipulator.intakeCube();
-    // }
+    // intake controls
+    Hardware.cubeManipulator
+            .intakeCube(Hardware.rightOperator.getRawButton(2));
+
+    Hardware.cubeManipulator
+            .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
+
+    // Push out the cube
+    Hardware.cubeManipulator
+            .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
+
+    if (Hardware.climbButton.isOnCheckNow() == true)
+        {
+        Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+        }
+
+
     //
-    // if (Hardware.rightOperator.getRawButton(3) == true)
-    // {
-    // Hardware.cubeManipulator.pushOutCube();
-    // }
     // =================================================================
     // CAMERA CODE
     // =================================================================
@@ -144,9 +148,11 @@ public static void periodic ()
     // Driving code
     // =================================================================
 
-    if (!isTestingDrive && !Hardware.leftDriver.getTrigger())
+    if (isTestingDrive == false
+            && Hardware.leftDriver.getTrigger() == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
+
 
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
@@ -297,26 +303,26 @@ public static void printStatements ()
     // Encoders
 
 
-    // System.out.println("Left Front Encoder Inches = "
-    // + Hardware.leftFrontDriveEncoder.getDistance());
+    System.out.println("Left Front Encoder Inches = "
+            + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
 
-    // System.out.println("Right Front Inches = "
-    // + Hardware.rightFrontDriveEncoder.getDistance());
+    System.out.println("Right Front Inches = "
+            + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
 
-    // System.out.println("Left Rear Encoder Inches = "
-    // + Hardware.leftRearDriveEncoder.getDistance());
+    System.out.println("Left Rear Encoder Inches = "
+            + Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
 
-    // System.out.println("Right Rear Inches = "
-    // + Hardware.rightRearDriveEncoder.getDistance());
+    System.out.println("Right Rear Inches = "
+            + Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
@@ -345,8 +351,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    // System.out.println(
-    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    System.out.println(
+            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
     // Pneumatics----------------------------------
@@ -440,5 +446,7 @@ public static void printStatements ()
 // Constants
 // ================================
 //
+
+public static final int CLIMBING_SERVO_ANGLE = 78;
 
 } // end class
