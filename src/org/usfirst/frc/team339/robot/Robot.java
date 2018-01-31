@@ -236,12 +236,12 @@ public void robotInit ()
     Hardware.liftingEncoder.setReverseDirection(false);
 
     // Ball Bot Settings
-    Hardware.leftDriveMotor.setInverted(false);
-    Hardware.rightDriveMotor.setInverted(true);
+    // Hardware.leftDriveMotor.setInverted(false);
+    // Hardware.rightDriveMotor.setInverted(true);
 
     // Nessie Settings
-    // Hardware.leftDriveMotor.setInverted(false);
-    // Hardware.rightDriveMotor.setInverted(false);
+     Hardware.leftDriveMotor.setInverted(false);
+     Hardware.rightDriveMotor.setInverted(false);
     
     // Sets max gears on robot
     Hardware.tractionDrive.setMaxGears(2);

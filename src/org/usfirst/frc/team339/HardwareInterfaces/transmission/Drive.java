@@ -1042,16 +1042,16 @@ public void visionTest (double compensationFactor, double speed)
 }
 
 // ================VISION TUNABLES================
-private final double CAMERA_NO_LONGER_WORKS = 30;
+private final double CAMERA_NO_LONGER_WORKS = 46;
 // 24
 
-private final double CAMERA_DEADBAND = 6;
+private final double CAMERA_DEADBAND = 8;
 
-private final double STOP_ROBOT = 23;
+private final double STOP_ROBOT = 30;
 // 6
 
 // TODO TEST TO FIND ACTUAL VALUE
-private final double SWITCH_CAMERA_CENTER = 115;
+private final double SWITCH_CAMERA_CENTER = 110;
 
 // ================VISION VARIABLES================
 private double center = 0;

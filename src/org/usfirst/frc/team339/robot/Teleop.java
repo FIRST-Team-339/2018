@@ -117,12 +117,12 @@ public static void periodic ()
     // =================================================================
 
     // test from 1/23/18
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-    // Hardware.autoDrive.driveToSwitch(1.3, .6);
-    // }
+    if (Hardware.visionTestButton.isOnCheckNow() == true)
+        {
+        Hardware.autoDrive.driveToSwitch(1.3, .5);
+        }
     //
-     Hardware.ringLightRelay.set(Value.kForward);
+    Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
@@ -189,7 +189,7 @@ public static void periodic ()
 
 } // end Periodic
 
-private static boolean isTestingDrive = false;
+private static boolean isTestingDrive = true;
 
 private static int driveState = 0;
 
@@ -377,8 +377,8 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    // System.out.println("Front UltraSonic "
-    // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Front UltraSonic "
+            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
@@ -400,7 +400,9 @@ public static void printStatements ()
     // Cameras
     // prints any camera information required
     // ---------------------------------
-
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
     // =================================
     // Driver station
     // =================================
