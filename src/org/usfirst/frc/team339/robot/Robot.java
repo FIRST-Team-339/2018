@@ -62,6 +62,7 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -242,7 +243,7 @@ public void robotInit ()
     // Nessie Settings
     // Hardware.leftDriveMotor.setInverted(false);
     // Hardware.rightDriveMotor.setInverted(false);
-    
+
     // Sets max gears on robot
     Hardware.tractionDrive.setMaxGears(2);
 
@@ -273,7 +274,8 @@ public void robotInit ()
     // Sets the angle of the servo to 100
     Hardware.climbingMechanismServo.setAngle(200);
 
-
+    // sets the ring light to off
+    Hardware.ringLightRelay.set(Value.kReverse);
 
 
 

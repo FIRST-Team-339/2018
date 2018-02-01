@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -58,6 +59,7 @@ public static void init ()
     numOfLoops = 1;
     teleopLoopTimer.reset();
     teleopLoopTimer.start();
+    Hardware.takePictureTimer.reset();
 
 
 } // end Init
@@ -114,6 +116,54 @@ public static void periodic ()
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
         }
 
+    // takes a picture with the axis camera when button 7 on the left Operator
+    // is pressed
+
+
+
+    if (Hardware.leftOperator.getRawButton(6)
+            && Hardware.leftOperator.getRawButton(7)
+            && pictureTakenByButton == false
+            && takePictureByButton == false)
+        {
+        takePictureByButton = true;
+        Hardware.takePictureTimer.start();
+        }
+
+    if (!(Hardware.leftOperator.getRawButton(6)
+            && Hardware.leftOperator.getRawButton(7))
+            && pictureTakenByButton == true)
+        {
+        takePictureByButton = false;
+        pictureTakenByButton = false;
+        }
+
+
+    if (takePictureByButton == true)
+        {
+        if (Hardware.takePictureTimer.get() <= TAKE_PICTURE_DELAY
+                / 2.0)
+            {
+            Hardware.ringLightRelay.set(Value.kForward);
+            }
+
+        if (Hardware.takePictureTimer.get() >= TAKE_PICTURE_DELAY)
+            {
+            Hardware.axisCamera.saveImageSafely(
+                    true,
+                    ImageType.RAW);
+
+            pictureTakenByButton = true;
+            takePictureByButton = false;
+
+            Hardware.ringLightRelay.set(Value.kReverse);
+
+            Hardware.takePictureTimer.stop();
+            Hardware.takePictureTimer.reset();
+            }
+        }
+
+
 
     //
     // =================================================================
@@ -126,7 +176,7 @@ public static void periodic ()
     // Hardware.autoDrive.driveToSwitch(1.3, .6);
     // }
     //
-    Hardware.ringLightRelay.set(Value.kForward);
+    // Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
@@ -196,6 +246,10 @@ public static void periodic ()
 } // end Periodic
 
 private static boolean isTestingDrive = false;
+
+private static boolean takePictureByButton = false;
+
+private static boolean pictureTakenByButton = false;
 
 private static int driveState = 0;
 
@@ -303,26 +357,26 @@ public static void printStatements ()
     // Encoders
 
 
-    System.out.println("Left Front Encoder Inches = "
-            + Hardware.leftFrontDriveEncoder.getDistance());
+    // System.out.println("Left Front Encoder Inches = "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
 
-    System.out.println("Right Front Inches = "
-            + Hardware.rightFrontDriveEncoder.getDistance());
+    // System.out.println("Right Front Inches = "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
 
-    System.out.println("Left Rear Encoder Inches = "
-            + Hardware.leftRearDriveEncoder.getDistance());
+    // System.out.println("Left Rear Encoder Inches = "
+    // + Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
 
-    System.out.println("Right Rear Inches = "
-            + Hardware.rightRearDriveEncoder.getDistance());
+    // System.out.println("Right Rear Inches = "
+    // + Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
@@ -351,8 +405,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    // System.out.println(
+    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
     // Pneumatics----------------------------------
@@ -444,6 +498,9 @@ public static void printStatements ()
 // Constants
 // ================================
 //
+
+// how many seconds we wait before taking a picture via buttons
+public static final double TAKE_PICTURE_DELAY = 0.1;
 
 public static final int CLIMBING_SERVO_ANGLE = 78;
 
