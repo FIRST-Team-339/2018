@@ -299,6 +299,10 @@ public static MomentarySwitch deployIntakeButton = new MomentarySwitch(
 
 public static final Timer autoTimer = new Timer();
 
+
+// timer for taking pictures via buttons in teleop
+public static final Timer takePictureTimer = new Timer();
+
 // ------------------------------------
 // Transmission class
 // ------------------------------------
