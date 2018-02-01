@@ -59,7 +59,6 @@ public static void init ()
     teleopLoopTimer.reset();
     teleopLoopTimer.start();
 
-
 } // end Init
 
 // tune pid loop
@@ -77,26 +76,21 @@ public static void periodic ()
     // =================================================================
     Hardware.cubeManipulator.forkliftUpdate();
 
-    //
     // Forklift controls
-    // Hardware.cubeManipulator
-    // .moveForkliftWithController(Hardware.rightOperator);
-
-
-    // if (Hardware.leftOperator.getRawButton(2) == true
-    // && Hardware.cubeManipulator.moveLiftDistance(50,
-    // .3) == false)
-    // {
-    // Hardware.cubeManipulator.moveLiftDistance(50);
-    // System.out.println("WE DID THE THING");
-    // }
-    // else
-    // {
-    // Hardware.cubeManipulator.stopForklift();
-    // }
-
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
+
+    if (Hardware.leftOperator.getRawButton(2) == true
+            && Hardware.cubeManipulator.moveLiftDistance(50,
+                    .3) == false)
+        {
+        Hardware.cubeManipulator.moveLiftDistance(50);
+        System.out.println("WE DID THE THING");
+        }
+    else
+        {
+        Hardware.cubeManipulator.stopForklift();
+        }
 
     // intake controls
     Hardware.cubeManipulator
@@ -123,10 +117,9 @@ public static void periodic ()
     // test from 1/23/18
     if (Hardware.visionTestButton.isOnCheckNow() == true)
         {
-        Hardware.autoDrive.driveToSwitch(1.3, .5);
+        Hardware.ringLightRelay.set(Value.kForward);
+        Hardware.autoDrive.driveToSwitch(1.3, .4);
         }
-    //
-    Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
@@ -147,12 +140,11 @@ public static void periodic ()
     // =================================================================
     // Driving code
     // =================================================================
-
+    //
     if (isTestingDrive == false
             && Hardware.leftDriver.getTrigger() == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
-
 
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
@@ -161,23 +153,23 @@ public static void periodic ()
     if (Hardware.leftDriver.getRawButton(9))
         isTestingDrive = true;
 
-    if (isTestingDrive)
-        {
-        if (driveState == 0
-                && Hardware.autoDrive.driveStraightInches(36, .5))
-            driveState++;
-        else if (driveState == 1 && Hardware.autoDrive.brake())
-            driveState++;
-
-        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-            {
-            Hardware.tractionDrive.stop();
-            driveState = 0;
-            Hardware.autoDrive.resetEncoders();
-            isTestingDrive = false;
-            }
-
-        }
+    // if (isTestingDrive)
+    // {
+    // if (driveState == 0
+    // && Hardware.autoDrive.driveStraightInches(36, .5))
+    // driveState++;
+    // else if (driveState == 1 && Hardware.autoDrive.brake())
+    // driveState++;
+    //
+    // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+    // {
+    // Hardware.tractionDrive.stop();
+    // driveState = 0;
+    // Hardware.autoDrive.resetEncoders();
+    // isTestingDrive = false;
+    // }
+    //
+    // }
 
 
     // NOTE - CLAIRE TEST NEXT MEETING
@@ -303,26 +295,26 @@ public static void printStatements ()
     // Encoders
 
 
-    System.out.println("Left Front Encoder Inches = "
-            + Hardware.leftFrontDriveEncoder.getDistance());
+    // System.out.println("Left Front Encoder Inches = "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
 
-    System.out.println("Right Front Inches = "
-            + Hardware.rightFrontDriveEncoder.getDistance());
+    // System.out.println("Right Front Inches = "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
 
-    System.out.println("Left Rear Encoder Inches = "
-            + Hardware.leftRearDriveEncoder.getDistance());
+    // System.out.println("Left Rear Encoder Inches = "
+    // + Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
 
-    System.out.println("Right Rear Inches = "
-            + Hardware.rightRearDriveEncoder.getDistance());
+    // System.out.println("Right Rear Inches = "
+    // + Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
@@ -351,8 +343,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    // System.out.println(
+    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     //
     // =================================
     // Pneumatics----------------------------------
@@ -383,8 +375,8 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    System.out.println("Front UltraSonic "
-            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Front UltraSonic "
+    // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //

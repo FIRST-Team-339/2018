@@ -956,6 +956,8 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             center = SWITCH_CAMERA_CENTER;
             }
 
+        System.out.println("The vision center: " + center);
+
         if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
                 && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
@@ -964,17 +966,17 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             }
         else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
-            // center is too far right, drive faster on the left
+            // center is too far left, drive faster on the right
             this.getTransmission().driveRaw(speed * compensationFactor,
                     speed);
-            System.out.println("We're too left");
+            System.out.println("We're too right");
             }
         else
             {
-            // center is too far left, drive faster on the right
+            // center is too far right, drive faster on the left
             this.getTransmission().driveRaw(speed,
                     speed * compensationFactor);
-            System.out.println("We're too right");
+            System.out.println("We're too left");
             }
         }
     else if (this.frontUltrasonic
@@ -1042,16 +1044,16 @@ public void visionTest (double compensationFactor, double speed)
 }
 
 // ================VISION TUNABLES================
-private final double CAMERA_NO_LONGER_WORKS = 46;
+private final double CAMERA_NO_LONGER_WORKS = 55;
 // 24
 
-private final double CAMERA_DEADBAND = 8;
+private final double CAMERA_DEADBAND = 15;
 
-private final double STOP_ROBOT = 30;
+private final double STOP_ROBOT = 45;
 // 6
 
 // TODO TEST TO FIND ACTUAL VALUE
-private final double SWITCH_CAMERA_CENTER = 110;
+private final double SWITCH_CAMERA_CENTER = 123;
 
 // ================VISION VARIABLES================
 private double center = 0;

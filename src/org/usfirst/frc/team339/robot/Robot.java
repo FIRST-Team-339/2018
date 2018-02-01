@@ -214,6 +214,7 @@ public void disabledPeriodic ()
  * @written Jan 2, 2011
  *          -------------------------------------------------------
  */
+@SuppressWarnings("unused")
 @Override
 public void robotInit ()
 {
@@ -235,14 +236,19 @@ public void robotInit ()
     Hardware.liftingEncoder.reset();
     Hardware.liftingEncoder.setReverseDirection(false);
 
-    // Ball Bot Settings
-    // Hardware.leftDriveMotor.setInverted(false);
-    // Hardware.rightDriveMotor.setInverted(true);
+    if (Hardware.onNessie == false)
+        {
+        // Nessie Settings
+        Hardware.leftDriveMotor.setInverted(false);
+        Hardware.rightDriveMotor.setInverted(false);
 
-    // Nessie Settings
-     Hardware.leftDriveMotor.setInverted(false);
-     Hardware.rightDriveMotor.setInverted(false);
-    
+        }
+    else
+        {
+        // Ball Bot Settings
+        Hardware.leftDriveMotor.setInverted(false);
+        Hardware.rightDriveMotor.setInverted(true);
+        }
     // Sets max gears on robot
     Hardware.tractionDrive.setMaxGears(2);
 
