@@ -94,9 +94,17 @@ public static void periodic ()
     Hardware.cubeManipulator
             .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
 
+
+    // Set Servo to position w/ Momentary Switch
     if (Hardware.climbButton.isOnCheckNow() == true)
         {
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+        }
+
+    // Set intake/deploy motor to position based on encoder switch
+    if (Hardware.deployIntakeButton.isOnCheckNow() == true)
+        {
+        Hardware.cubeManipulator.deployCubeIntake();
         }
 
     // takes a picture with the axis camera when button 7 on the left Operator
@@ -147,18 +155,19 @@ public static void periodic ()
         }
 
 
-
     //
     // =================================================================
     // CAMERA CODE
     // =================================================================
 
     // test from 1/23/18
-    if (Hardware.visionTestButton.isOnCheckNow() == true)
-        {
-        Hardware.ringLightRelay.set(Value.kForward);
-        Hardware.autoDrive.driveToSwitch(1.3, .4);
-        }
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+
+    // Hardware.autoDrive.driveToSwitch(1.3, .6);
+    // }
+    //
+    Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
