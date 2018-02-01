@@ -351,7 +351,8 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
     boolean mustGoUp = direction > 1;
     this.forkliftHeightForMoveLiftDistance = distance;
     if (mustGoUp == true && this
-            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance)
+            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
+                    + LIFT_TOLERANCE)
         {
         forkliftSpeedUp = forkliftSpeed;
         liftState = forkliftState.MOVING_UP;
@@ -367,6 +368,7 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
     else
         {
         this.finishedForkliftMove = true;
+        liftState = forkliftState.STAY_AT_POSITION;
         }
     return this.finishedForkliftMove;
 
