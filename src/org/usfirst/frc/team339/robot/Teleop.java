@@ -77,30 +77,18 @@ public static void periodic ()
     // =================================================================
     Hardware.cubeManipulator.forkliftUpdate();
 
-    //
     // Forklift controls
-    // Hardware.cubeManipulator
-    // .moveForkliftWithController(Hardware.rightOperator);
-
-
-    // if (Hardware.leftOperator.getRawButton(2) == true
-    // && Hardware.cubeManipulator.moveLiftDistance(50,
-    // .3) == false)
-    // {
-    // Hardware.cubeManipulator.moveLiftDistance(50);
-    // System.out.println("WE DID THE THING");
-    // }
-    // else
-    // {
-    // Hardware.cubeManipulator.stopForklift();
-    // }
-
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
+
     // intake controls
+
+
+
     Hardware.cubeManipulator
             .intakeCube(Hardware.rightOperator.getRawButton(2));
+
 
     Hardware.cubeManipulator
             .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
@@ -109,11 +97,18 @@ public static void periodic ()
     Hardware.cubeManipulator
             .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
 
+
+    // Set Servo to position w/ Momentary Switch
     if (Hardware.climbButton.isOnCheckNow() == true)
         {
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
         }
 
+    // Set intake/deploy motor to position based on encoder switch
+    if (Hardware.deployIntakeButton.isOnCheckNow() == true)
+        {
+        Hardware.cubeManipulator.deployCubeIntake();
+        }
 
     //
     // =================================================================
