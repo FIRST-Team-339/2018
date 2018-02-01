@@ -149,6 +149,7 @@ public static void periodic ()
 
         if (Hardware.takePictureTimer.get() >= TAKE_PICTURE_DELAY)
             {
+
             Hardware.axisCamera.saveImageSafely(
                     true,
                     ImageType.RAW);
@@ -156,10 +157,16 @@ public static void periodic ()
             pictureTakenByButton = true;
             takePictureByButton = false;
 
+            Hardware.axisCamera.saveImageSafely(
+                    false,
+                    ImageType.RAW);
+
+
             Hardware.ringLightRelay.set(Value.kReverse);
 
             Hardware.takePictureTimer.stop();
             Hardware.takePictureTimer.reset();
+
             }
         }
 
