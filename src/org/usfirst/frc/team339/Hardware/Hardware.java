@@ -15,7 +15,6 @@
 package org.usfirst.frc.team339.Hardware;
 
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
-import org.usfirst.frc.team339.HardwareInterfaces.HRLVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
@@ -298,6 +297,10 @@ public static MomentarySwitch climbButton = new MomentarySwitch(
 public static final Timer autoTimer = new Timer();
 
 public static boolean onNessie = false;
+
+
+// timer for taking pictures via buttons in teleop
+public static final Timer takePictureTimer = new Timer();
 
 // ------------------------------------
 // Transmission class

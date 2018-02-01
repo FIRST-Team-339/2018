@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -58,6 +59,7 @@ public static void init ()
     numOfLoops = 1;
     teleopLoopTimer.reset();
     teleopLoopTimer.start();
+    Hardware.takePictureTimer.reset();
 
 } // end Init
 
@@ -76,21 +78,10 @@ public static void periodic ()
     // =================================================================
     Hardware.cubeManipulator.forkliftUpdate();
 
+    //
     // Forklift controls
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
-
-    if (Hardware.leftOperator.getRawButton(2) == true
-            && Hardware.cubeManipulator.moveLiftDistance(50,
-                    .3) == false)
-        {
-        Hardware.cubeManipulator.moveLiftDistance(50);
-        System.out.println("WE DID THE THING");
-        }
-    else
-        {
-        Hardware.cubeManipulator.stopForklift();
-        }
 
     // intake controls
     Hardware.cubeManipulator
@@ -107,6 +98,54 @@ public static void periodic ()
         {
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
         }
+
+    // takes a picture with the axis camera when button 7 on the left Operator
+    // is pressed
+
+
+
+    if (Hardware.leftOperator.getRawButton(6)
+            && Hardware.leftOperator.getRawButton(7)
+            && pictureTakenByButton == false
+            && takePictureByButton == false)
+        {
+        takePictureByButton = true;
+        Hardware.takePictureTimer.start();
+        }
+
+    if (!(Hardware.leftOperator.getRawButton(6)
+            && Hardware.leftOperator.getRawButton(7))
+            && pictureTakenByButton == true)
+        {
+        takePictureByButton = false;
+        pictureTakenByButton = false;
+        }
+
+
+    if (takePictureByButton == true)
+        {
+        if (Hardware.takePictureTimer.get() <= TAKE_PICTURE_DELAY
+                / 2.0)
+            {
+            Hardware.ringLightRelay.set(Value.kForward);
+            }
+
+        if (Hardware.takePictureTimer.get() >= TAKE_PICTURE_DELAY)
+            {
+            Hardware.axisCamera.saveImageSafely(
+                    true,
+                    ImageType.RAW);
+
+            pictureTakenByButton = true;
+            takePictureByButton = false;
+
+            Hardware.ringLightRelay.set(Value.kReverse);
+
+            Hardware.takePictureTimer.stop();
+            Hardware.takePictureTimer.reset();
+            }
+        }
+
 
 
     //
@@ -140,11 +179,12 @@ public static void periodic ()
     // =================================================================
     // Driving code
     // =================================================================
-    //
+
     if (isTestingDrive == false
             && Hardware.leftDriver.getTrigger() == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
+
 
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
@@ -187,7 +227,11 @@ public static void periodic ()
 
 } // end Periodic
 
-private static boolean isTestingDrive = true;
+private static boolean isTestingDrive = false;
+
+private static boolean takePictureByButton = false;
+
+private static boolean pictureTakenByButton = false;
 
 private static int driveState = 0;
 
@@ -438,6 +482,9 @@ public static void printStatements ()
 // Constants
 // ================================
 //
+
+// how many seconds we wait before taking a picture via buttons
+public static final double TAKE_PICTURE_DELAY = 0.1;
 
 public static final int CLIMBING_SERVO_ANGLE = 78;
 
