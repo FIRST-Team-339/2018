@@ -541,7 +541,7 @@ public boolean driveStraightInches (int distance, double speed)
             || this.transmissionType == TransmissionType.TANK)
         {
         // Check all encoders if it is a four wheel drive system.
-        if (this.isAnyEncoderLargerThan(distance))
+        if (this.getEncoderDistanceAverage(WheelGroups.ALL) > distance)
             {
             this.getTransmission().stop();
             driveStraightInchesInit = true;
@@ -551,7 +551,7 @@ public boolean driveStraightInches (int distance, double speed)
     else
         {
         // Only check the rear encoders if it is a two wheel drive system.
-        if (this.isAnyEncoderLargerThan(distance))
+        if (this.getEncoderDistanceAverage(WheelGroups.REAR) > distance)
             {
             this.getTransmission().stop();
             driveStraightInchesInit = true;
@@ -941,55 +941,39 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
         {
         visionProcessor.processImage();
-        System.out.println("Center for the vision : " + center);
-        if (visionProcessor.getParticleReports().length >= 2)
-            {
-            center = (visionProcessor.getNthSizeBlob(0).center.x
-                    + visionProcessor.getNthSizeBlob(1).center.x) / 2;
-            }
-        else if (visionProcessor.getParticleReports().length == 1)
-            {
-            center = visionProcessor.getNthSizeBlob(0).center.x;
-            }
-        else
-            {
-            center = SWITCH_CAMERA_CENTER;
-            }
+        double center = (visionProcessor.getNthSizeBlob(0).center.x
+                + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+
+        System.out.println("The vision center: " + center);
 
         if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
                 && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
-            driveStraight(speed, 0);
-            System.out.println("We are aligned in the center");
+            driveStraight(speed, this.defaultAcceleration);
             }
         else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
-            // center is too far right, drive faster on the left
+            // center is too far left, drive faster on the right
             this.getTransmission().driveRaw(speed * compensationFactor,
                     speed);
-            System.out.println("We're too left");
+            System.out.println("We're too right");
             }
         else
             {
-            // center is too far left, drive faster on the right
+            // center is too far right, drive faster on the left
             this.getTransmission().driveRaw(speed,
                     speed * compensationFactor);
-            System.out.println("We're too right");
+            System.out.println("We're too left");
             }
-        }
-    else if (this.frontUltrasonic
-            .getDistanceFromNearestBumper() <= CAMERA_NO_LONGER_WORKS
-            && this.frontUltrasonic
-                    .getDistanceFromNearestBumper() > STOP_ROBOT)
-        {
-        this.driveStraight(speed, 0);
-        System.out.println("Camera is no longer working");
         }
     else
         {
-        this.brake();
-        this.driveStraight(0, 0);
-        System.out.println("We are stopping");
+        if (this.frontUltrasonic
+                .getDistanceFromNearestBumper() <= STOP_ROBOT)
+            {
+            this.brake();
+            }
+        this.driveStraight(speed, this.defaultAcceleration);
         return true;
         }
     return false;
@@ -1004,25 +988,13 @@ public boolean driveToSwitch (double compensationFactor, double speed)
 public void visionTest (double compensationFactor, double speed)
 {
     visionProcessor.processImage();
+    double center = (visionProcessor.getNthSizeBlob(0).center.x
+            + visionProcessor.getNthSizeBlob(1).center.x) / 2;
     System.out.println("Center for the vision : " + center);
-    if (visionProcessor.getParticleReports().length >= 2)
-        {
-        center = (visionProcessor.getNthSizeBlob(0).center.x
-                + visionProcessor.getNthSizeBlob(1).center.x) / 2;
-        }
-    else if (visionProcessor.getParticleReports().length == 1)
-        {
-        center = visionProcessor.getNthSizeBlob(0).center.x;
-        }
-    else
-        {
-        center = SWITCH_CAMERA_CENTER;
-        }
-
     if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
             && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
         {
-        driveStraight(speed, 0);
+        // driveStraight(speed, false);
         System.out.println("We are aligned in the center");
         }
     else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
@@ -1042,22 +1014,21 @@ public void visionTest (double compensationFactor, double speed)
 }
 
 // ================VISION TUNABLES================
-private final double CAMERA_NO_LONGER_WORKS = 30;
+private final double CAMERA_NO_LONGER_WORKS = 55;
 // 24
 
-private final double CAMERA_DEADBAND = 6;
+private final double CAMERA_DEADBAND = 15;
 
-private final double STOP_ROBOT = 23;
+private final double STOP_ROBOT = 45;
 // 6
 
 // TODO TEST TO FIND ACTUAL VALUE
-private final double SWITCH_CAMERA_CENTER = 115;
+private final double SWITCH_CAMERA_CENTER = 123;
 
 // ================VISION VARIABLES================
 private double center = 0;
 
 // ================TUNABLES================
-
 
 // Number of milliseconds that will pass before collecting data on encoders
 // for driveStraight and brake
@@ -1066,7 +1037,7 @@ private static final int COLLECTION_TIME = 100;
 // The distance from the left side wheel to the right-side wheel divided by
 // 2, in inches. Used in turnDegrees.
 // Nov 4 changed from 16 to 17
-private static final int TURNING_RADIUS = 16;
+private static final int TURNING_RADIUS = 11;
 
 private static final int INIT_TIMEOUT = 300;// Milliseconds until the
                                             // initialization should reset.

@@ -61,7 +61,6 @@ public static void init ()
     teleopLoopTimer.start();
     Hardware.takePictureTimer.reset();
 
-
 } // end Init
 
 // tune pid loop
@@ -81,22 +80,6 @@ public static void periodic ()
 
     //
     // Forklift controls
-    // Hardware.cubeManipulator
-    // .moveForkliftWithController(Hardware.rightOperator);
-
-
-    // if (Hardware.leftOperator.getRawButton(2) == true
-    // && Hardware.cubeManipulator.moveLiftDistance(50,
-    // .3) == false)
-    // {
-    // Hardware.cubeManipulator.moveLiftDistance(50);
-    // System.out.println("WE DID THE THING");
-    // }
-    // else
-    // {
-    // Hardware.cubeManipulator.stopForklift();
-    // }
-
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
@@ -111,9 +94,17 @@ public static void periodic ()
     Hardware.cubeManipulator
             .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
 
+
+    // Set Servo to position w/ Momentary Switch
     if (Hardware.climbButton.isOnCheckNow() == true)
         {
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+        }
+
+    // Set intake/deploy motor to position based on encoder switch
+    if (Hardware.deployIntakeButton.isOnCheckNow() == true)
+        {
+        Hardware.cubeManipulator.deployCubeIntake();
         }
 
     // takes a picture with the axis camera when button 7 on the left Operator
@@ -171,7 +162,6 @@ public static void periodic ()
         }
 
 
-
     //
     // =================================================================
     // CAMERA CODE
@@ -180,10 +170,11 @@ public static void periodic ()
     // test from 1/23/18
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
+
     // Hardware.autoDrive.driveToSwitch(1.3, .6);
     // }
     //
-    // Hardware.ringLightRelay.set(Value.kForward);
+    Hardware.ringLightRelay.set(Value.kForward);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
@@ -218,23 +209,23 @@ public static void periodic ()
     if (Hardware.leftDriver.getRawButton(9))
         isTestingDrive = true;
 
-    if (isTestingDrive)
-        {
-        if (driveState == 0
-                && Hardware.autoDrive.driveStraightInches(36, .5))
-            driveState++;
-        else if (driveState == 1 && Hardware.autoDrive.brake())
-            driveState++;
-
-        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-            {
-            Hardware.tractionDrive.stop();
-            driveState = 0;
-            Hardware.autoDrive.resetEncoders();
-            isTestingDrive = false;
-            }
-
-        }
+    // if (isTestingDrive)
+    // {
+    // if (driveState == 0
+    // && Hardware.autoDrive.driveStraightInches(36, .5))
+    // driveState++;
+    // else if (driveState == 1 && Hardware.autoDrive.brake())
+    // driveState++;
+    //
+    // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+    // {
+    // Hardware.tractionDrive.stop();
+    // driveState = 0;
+    // Hardware.autoDrive.resetEncoders();
+    // isTestingDrive = false;
+    // }
+    //
+    // }
 
 
     // NOTE - CLAIRE TEST NEXT MEETING
@@ -467,7 +458,9 @@ public static void printStatements ()
     // Cameras
     // prints any camera information required
     // ---------------------------------
-
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
     // =================================
     // Driver station
     // =================================

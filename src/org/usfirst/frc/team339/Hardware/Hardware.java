@@ -273,10 +273,13 @@ public static Joystick leftOperator = new Joystick(2);
 // ------------------------------------
 
 public static MomentarySwitch visionTestButton = new MomentarySwitch(
-        rightOperator, 2, false);
+        leftOperator, 2, false);
 
 public static MomentarySwitch climbButton = new MomentarySwitch(
         rightOperator, 5, false);
+
+public static MomentarySwitch deployIntakeButton = new MomentarySwitch(
+        leftOperator, 3, false);
 
 // **********************************************************
 // Kilroy's Ancillary classes
@@ -295,6 +298,8 @@ public static MomentarySwitch climbButton = new MomentarySwitch(
 // ------------------------------------
 
 public static final Timer autoTimer = new Timer();
+
+public static boolean onNessie = false;
 
 
 // timer for taking pictures via buttons in teleop
