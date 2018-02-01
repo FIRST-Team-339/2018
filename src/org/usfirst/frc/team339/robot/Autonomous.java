@@ -97,15 +97,15 @@ public static void periodic ()
 {
     Hardware.cubeManipulator.forkliftUpdate();
     System.out.println("Main State: " + autoState);
-    System.out.println("Left Front Encoder : "
-            + Hardware.leftFrontDriveEncoder.getDistance());
-    System.out.println("Right Front Encoder : "
-            + Hardware.rightFrontDriveEncoder.getDistance());
-
-    System.out.println("Left Rear Encoder : "
-            + Hardware.leftRearDriveEncoder.getDistance());
-    System.out.println("Right Rear Encoder : "
-            + Hardware.rightRearDriveEncoder.getDistance());
+    // System.out.println("Left Front Encoder : "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
+    // System.out.println("Right Front Encoder : "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
+    //
+    // System.out.println("Left Rear Encoder : "
+    // + Hardware.leftRearDriveEncoder.getDistance());
+    // System.out.println("Right Rear Encoder : "
+    // + Hardware.rightRearDriveEncoder.getDistance());
     switch (autoState)
         {
         case INIT:
@@ -343,7 +343,7 @@ public static boolean autoLineScalePath ()
 
 private static AutolinePathStates currentAutolineState = AutolinePathStates.PATH_INIT;
 
-public static leftExchangeState leftExchangeAuto = leftExchangeState.DONE;
+public static leftExchangeState leftExchangeAuto = leftExchangeState.DRIVE_ACROSS_AUTOLINE;
 
 /**
  * Possible states for left exchange autonomous
@@ -367,7 +367,8 @@ DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_RIGHT, DRIVE_
  */
 public static boolean leftAutoLineExchangePath ()
 {
-    // System.out.println(leftExchangeState);
+
+    System.out.println("LeftExchangeAuto" + leftExchangeAuto);
     switch (leftExchangeAuto)
         {
         case DRIVE_ACROSS_AUTOLINE:
@@ -423,7 +424,7 @@ public static boolean leftAutoLineExchangePath ()
     return false;
 }
 
-public static rightExchangeState rightExchangeAuto = rightExchangeState.DONE;
+public static rightExchangeState rightExchangeAuto = rightExchangeState.DRIVE_ACROSS_AUTOLINE;
 
 /**
  * Possible states for right exchange autonomous
@@ -962,10 +963,12 @@ PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTR
 public static boolean offsetSwitchPath ()
 {
     System.out.println("Current State: " + currentOffsetSwitchState);
-    System.out.println("Distance: " + Hardware.autoDrive
-            .getEncoderDistanceAverage(WheelGroups.ALL));
-    System.out.println("Ultrsnc: "
+    // System.out.println("Distance: " + Hardware.autoDrive
+    // .getEncoderDistanceAverage(WheelGroups.ALL));
+    System.out.println("Ultrsnc1: "
             + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Ultrsnc2: "
+            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     switch (currentOffsetSwitchState)
         {
         case PATH_INIT:
