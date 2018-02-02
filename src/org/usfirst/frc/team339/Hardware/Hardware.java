@@ -54,8 +54,6 @@ public class Hardware
 public static Servo climbingMechanismServo = new Servo(5);
 // Documentation says 200* servo
 
-public static final boolean isTestingAutonomous = false;
-
 // ------------------------------------
 // Public Constants
 // ------------------------------------

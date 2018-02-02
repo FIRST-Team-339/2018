@@ -13,14 +13,6 @@ import edu.wpi.first.wpilibj.SpeedController;
 public class MecanumTransmission extends TransmissionBase
 {
 
-private final SpeedController leftFrontMotor;
-
-private final SpeedController rightFrontMotor;
-
-private final SpeedController leftRearMotor;
-
-private final SpeedController rightRearMotor;
-
 private double strafeCushion = .2;
 
 private double directionalDeadband = Math.toRadians(0);// Disabled by default.
@@ -41,10 +33,8 @@ public MecanumTransmission (SpeedController leftFrontMotor,
         SpeedController rightFrontMotor,
         SpeedController leftRearMotor, SpeedController rightRearMotor)
 {
-    this.leftFrontMotor = leftFrontMotor;
-    this.rightFrontMotor = rightFrontMotor;
-    this.leftRearMotor = leftRearMotor;
-    this.rightRearMotor = rightRearMotor;
+    super(leftRearMotor, rightRearMotor, leftFrontMotor,
+            rightFrontMotor);
 
     super.type = TransmissionType.MECANUM;
 }
@@ -107,50 +97,19 @@ public void drive (double magnitude, double direction, double rotation)
         altMagnitude += this.strafeCushion;
         }
 
-    this.driveRaw(altMagnitude, altDirection, altRotation);
-
-}
-
-/**
- * Drives the robot without the use of deadbands and gear ratios. The value
- * input is the value that is passed to the motors (after going through the
- * formula for mecanum drive)
- * 
- * The equation for mecanum drive is:
- * y = m * (cos(d + (PI/4)) + z) where d is the direction, m is the magnitude,
- * and z is the rotation,
- * for the front left and back right wheels.
- * 
- * y = m * (cos(d - (PI/4)) + z)
- * for the front right and back left wheels.
- * 
- * values must be cut off at one, so a higher or lower z may push it over 1.0 or
- * under -1.0.
- * In this case, the function inRange makes those cutoffs.
- * 
- * @param magnitude
- *            How fast the robot moves (0 to 1.0)
- * @param direction
- *            which direction the robot will travel in radians. (0 is front, PI
- *            or -PI
- *            is back)
- * @param rotation
- *            How fast the robot should turn( -1.0 to 1.0, zero is straight)
- */
-public void driveRaw (double magnitude, double direction,
-        double rotation)
-{
-
     double leftFrontVal = Math.cos(direction - (Math.PI / 4.0));
     double rightFrontVal = Math.cos(direction + (Math.PI / 4.0));
     double rightRearVal = leftFrontVal;// The corner's equations are
     double leftRearVal = rightFrontVal;// equal to each other.
 
-    leftFrontMotor.set(inRange((magnitude * leftFrontVal) + rotation));
-    leftRearMotor.set(inRange((magnitude * leftRearVal) + rotation));
-    rightFrontMotor
+    super.getSpeedController(MotorPosition.LEFT_FRONT)
+            .set(inRange((magnitude * leftFrontVal) + rotation));
+    super.getSpeedController(MotorPosition.LEFT_REAR)
+            .set(inRange((magnitude * leftRearVal) + rotation));
+    super.getSpeedController(MotorPosition.RIGHT_FRONT)
             .set(inRange((magnitude * rightFrontVal) - rotation));
-    rightRearMotor.set(inRange((magnitude * rightRearVal) - rotation));
+    super.getSpeedController(MotorPosition.RIGHT_REAR)
+            .set(inRange((magnitude * rightRearVal) - rotation));
 
 }
 
@@ -194,42 +153,6 @@ private double inRange (double val)
         return -1;
 
     return val;
-}
-
-@Override
-public void driveRaw (double leftVal, double rightVal)
-{
-    this.leftFrontMotor.set(leftVal);
-    this.rightFrontMotor.set(rightVal);
-    this.leftRearMotor.set(leftVal);
-    this.rightRearMotor.set(rightVal);
-}
-
-@Override
-public void stop ()
-{
-    this.leftFrontMotor.set(0.0);
-    this.rightFrontMotor.set(0.0);
-    this.leftRearMotor.set(0.0);
-    this.rightRearMotor.set(0.0);
-}
-
-@Override
-public SpeedController getSpeedController (MotorPosition position)
-{
-    switch (position)
-        {
-        case LEFT_FRONT:
-            return this.leftFrontMotor;
-        case LEFT_REAR:
-            return this.leftRearMotor;
-        case RIGHT_FRONT:
-            return this.rightFrontMotor;
-        case RIGHT_REAR:
-            return this.rightRearMotor;
-        default:
-            return null;
-        }
 }
 
 }

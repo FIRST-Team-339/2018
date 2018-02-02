@@ -68,8 +68,9 @@ public static void init ()
     if (Hardware.disableAutonomousSwitch.isOn())
         autoState = State.FINISH;
 
-    if (Hardware.isTestingAutonomous)
-        Hardware.autoDrive.setDriveStraightScalingFactor(0.0);
+    Hardware.tractionDrive.setForAutonomous();
+    Hardware.autoDrive
+            .setDefaultAcceleration(DRIVE_STRAIGHT_ACCELERATION_TIME);
 } // end Init
 
 
@@ -816,8 +817,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                 }
             break;
         case DRIVE_WITH_ULTRSNC:
-            Hardware.autoDrive.driveStraight(DRIVE_SPEED,
-                    ULTRASONIC_DRIVE_ACCELERATION_TIME);
+            Hardware.autoDrive.driveStraight(DRIVE_SPEED);
             // Drive to the switch until the ultrasonic tells us to stop
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
@@ -1111,8 +1111,7 @@ public static boolean offsetSwitchPath ()
             break;
         case DRIVE_WITH_ULTRSNC:
             // Drive towards the switch using the ultrasonic
-            Hardware.autoDrive.driveStraight(DRIVE_SPEED,
-                    ULTRASONIC_DRIVE_ACCELERATION_TIME);
+            Hardware.autoDrive.driveStraight(DRIVE_SPEED);
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
                 {
@@ -1172,7 +1171,6 @@ private static final double DRIVE_SPEED = .4;
 
 private static final double TURN_SPEED = .4;
 
-private static final double ULTRASONIC_DRIVE_ACCELERATION_TIME = .3; // Seconds
 // ==========
 
 // OPERATING
