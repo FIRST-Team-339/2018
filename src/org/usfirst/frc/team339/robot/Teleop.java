@@ -296,10 +296,10 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    // System.out.println(
-    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    // System.out.println(
-    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    System.out.println(
+            "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    System.out.println(
+            "Left Drive Motor " + Hardware.leftDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
