@@ -1022,6 +1022,55 @@ public void visionTest (double compensationFactor, double speed)
         }
 }
 
+/**
+ * Hopefully will align to proper distance w. scale
+ * then raise fork lift and eject cube
+ * 
+ * 
+ * returns boolean
+ * 
+ */
+
+public boolean alignToScale ()
+{
+
+    // todo add deadband to distance(MAKE LESS THAN 72)
+
+    // checks if in proper distance
+    if (this.rearUltrasonic.getDistanceFromNearestBumper() > 72
+            - ROBOT_LENGTH
+            && this.rearUltrasonic.getDistanceFromNearestBumper() < 72
+                    + ROBOT_LENGTH)
+        {
+        System.out.println("Our distance to the scale is correct");
+        // raise forklift autonomously
+        // if(Forklift raise method) {
+        // eject cube method
+        // }else {
+        // raise forklift method
+        // }
+        }
+    // if to close to scale
+    else if (this.rearUltrasonic.getDistanceFromNearestBumper() > 72
+            - ROBOT_LENGTH)
+
+        {
+        System.out.println("We are to close to the scale");
+        this.getTransmission().driveRaw(-.3, -.3);
+        }
+    // if to close to scale
+    else if (this.rearUltrasonic.getDistanceFromNearestBumper() < 72
+            + ROBOT_LENGTH)
+        {
+        System.out.println("We are to far from the scale");
+        this.getTransmission().driveRaw(.3, .3);
+        }
+
+
+    return false;
+
+}
+
 // ================VISION TUNABLES================
 private final double CAMERA_NO_LONGER_WORKS = 55;
 // 24
@@ -1038,6 +1087,10 @@ private final double SWITCH_CAMERA_CENTER = 123;
 private double center = 0;
 
 // ================TUNABLES================
+
+
+private static final double ROBOT_LENGTH = 0;// TODO magic number
+
 
 // Number of milliseconds that will pass before collecting data on encoders
 // for driveStraight and brake
