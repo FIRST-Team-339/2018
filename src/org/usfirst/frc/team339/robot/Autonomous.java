@@ -68,8 +68,9 @@ public static void init ()
     if (Hardware.disableAutonomousSwitch.isOn())
         autoState = State.FINISH;
 
-    if (Hardware.isTestingAutonomous)
-        Hardware.autoDrive.setDriveStraightScalingFactor(0.0);
+    Hardware.tractionDrive.setForAutonomous();
+    Hardware.autoDrive
+            .setDefaultAcceleration(DRIVE_STRAIGHT_ACCELERATION_TIME);
 } // end Init
 
 
@@ -106,6 +107,7 @@ public static void periodic ()
     // + Hardware.leftRearDriveEncoder.getDistance());
     // System.out.println("Right Rear Encoder : "
     // + Hardware.rightRearDriveEncoder.getDistance());
+    Teleop.printStatements();
     switch (autoState)
         {
         case INIT:
@@ -278,6 +280,8 @@ public static boolean autolinePath ()
         {
         // Initialize anything necessary
         case PATH_INIT:
+            Hardware.autoDrive.setDefaultAcceleration(
+                    DRIVE_STRAIGHT_ACCELERATION_TIME);
             currentAutolineState = AutolinePathStates.DRIVE1;
             break;
         case DRIVE1:
@@ -318,6 +322,8 @@ public static boolean autoLineScalePath ()
         {
         // Initialize anything necessary
         case PATH_INIT:
+            Hardware.autoDrive.setDefaultAcceleration(
+                    DRIVE_STRAIGHT_ACCELERATION_TIME);
             currentAutolineState = AutolinePathStates.DRIVE1;
             break;
         case DRIVE1:
@@ -343,7 +349,7 @@ public static boolean autoLineScalePath ()
 
 private static AutolinePathStates currentAutolineState = AutolinePathStates.PATH_INIT;
 
-public static leftExchangeState leftExchangeAuto = leftExchangeState.DRIVE_ACROSS_AUTOLINE;
+public static leftExchangeState leftExchangeAuto = leftExchangeState.PATH_INIT;
 
 /**
  * Possible states for left exchange autonomous
@@ -353,7 +359,7 @@ public static leftExchangeState leftExchangeAuto = leftExchangeState.DRIVE_ACROS
  */
 public static enum leftExchangeState
     {
-DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_RIGHT, DRIVE_TO_EXCHANGE, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_RIGHT, DRIVE_TO_EXCHANGE, DONE
     }
 
 
@@ -371,6 +377,13 @@ public static boolean leftAutoLineExchangePath ()
     System.out.println("LeftExchangeAuto" + leftExchangeAuto);
     switch (leftExchangeAuto)
         {
+        case PATH_INIT:
+            Hardware.autoDrive.setDefaultAcceleration(
+                    DRIVE_STRAIGHT_ACCELERATION_TIME);
+            leftExchangeAuto = leftExchangeState.DRIVE_ACROSS_AUTOLINE;
+
+            break;
+
         case DRIVE_ACROSS_AUTOLINE:
             // drives the necessary distance across the autoline then
             // changes the state to DRIVE_BACK_ACROSS_AUTOLINE
@@ -434,7 +447,7 @@ public static rightExchangeState rightExchangeAuto = rightExchangeState.DRIVE_AC
  */
 public static enum rightExchangeState
     {
-DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_LEFT, DRIVE_TO_EXCHANGE, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_LEFT, DRIVE_TO_EXCHANGE, DONE
     }
 
 
@@ -451,6 +464,11 @@ public static boolean rightAutoLineExchangePath ()
 {
     switch (rightExchangeAuto)
         {
+        case PATH_INIT:
+            Hardware.autoDrive.setDefaultAcceleration(
+                    DRIVE_STRAIGHT_ACCELERATION_TIME);
+
+
         case DRIVE_ACROSS_AUTOLINE:
             // drives the necessary distance across the autoline then
             // changes the state to DRIVE_BACK_ACROSS_AUTOLINE
@@ -799,7 +817,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                 }
             break;
         case DRIVE_WITH_ULTRSNC:
-            Hardware.autoDrive.driveStraight(DRIVE_SPEED, ACCELERATION);
+            Hardware.autoDrive.driveStraight(DRIVE_SPEED);
             // Drive to the switch until the ultrasonic tells us to stop
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
@@ -972,6 +990,8 @@ public static boolean offsetSwitchPath ()
     switch (currentOffsetSwitchState)
         {
         case PATH_INIT:
+            Hardware.autoDrive.setDefaultAcceleration(
+                    DRIVE_STRAIGHT_ACCELERATION_TIME);
             currentOffsetSwitchState = OffsetSwitchPath.DRIVE1;
             Hardware.cubeManipulator.deployCubeIntake();
             break;
@@ -1091,7 +1111,7 @@ public static boolean offsetSwitchPath ()
             break;
         case DRIVE_WITH_ULTRSNC:
             // Drive towards the switch using the ultrasonic
-            Hardware.autoDrive.driveStraight(DRIVE_SPEED, ACCELERATION);
+            Hardware.autoDrive.driveStraight(DRIVE_SPEED);
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
                 {
@@ -1145,11 +1165,12 @@ PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRI
 // DRIVING
 private static final double AUTO_TESTING_SCALAR = 1.0;
 
-private static final double DRIVE_SPEED = .5;
+private static final double DRIVE_STRAIGHT_ACCELERATION_TIME = .6;
+
+private static final double DRIVE_SPEED = .4;
 
 private static final double TURN_SPEED = .4;
 
-private static final double ACCELERATION = .3; // Seconds
 // ==========
 
 // OPERATING

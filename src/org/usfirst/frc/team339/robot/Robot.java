@@ -237,7 +237,7 @@ public void robotInit ()
     Hardware.liftingEncoder.setReverseDirection(false);
     Hardware.intakeDeployEncoder.reset();
 
-    if (Hardware.onNessie == false)
+    if (Hardware.onNessie == true)
         {
         // Nessie Settings
         Hardware.leftDriveMotor.setInverted(false);
@@ -250,11 +250,19 @@ public void robotInit ()
         Hardware.leftDriveMotor.setInverted(false);
         Hardware.rightDriveMotor.setInverted(true);
         }
-    // Sets max gears on robot
-    Hardware.tractionDrive.setMaxGears(2);
 
     // This sets the gear speed percentage for the traction drive
-    Hardware.tractionDrive.setAllGearRatios(GEAR_1_SPEED, GEAR_2_SPEED);
+    if (Hardware.onNessie == true)
+        {
+        Hardware.tractionDrive.setAllGearRatios(GEAR_1_SPEED_NESSIE,
+                GEAR_2_SPEED_NESSIE);
+        }
+    else
+        {
+        Hardware.tractionDrive.setAllGearRatios(GEAR_1_SPEED,
+                GEAR_2_SPEED);
+        }
+
     Hardware.tractionDrive.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
 
     // Sets all encoders Distance per pulse
@@ -414,9 +422,13 @@ public void testPeriodic ()
 
 private static final double KILROY_XIX_ENCODER_DPP = .0174;
 
-private static final double GEAR_1_SPEED = .5;
+private static final double GEAR_1_SPEED = .4;
 
-private static final double GEAR_2_SPEED = .7;
+private static final double GEAR_1_SPEED_NESSIE = .5;
+
+public static final double GEAR_2_SPEED = .5;
+
+private static final double GEAR_2_SPEED_NESSIE = .5;
 
 private static final double JOYSTICK_DEADBAND_RANGE = .2;
 
