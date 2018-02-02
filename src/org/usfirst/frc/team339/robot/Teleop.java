@@ -96,16 +96,21 @@ public static void periodic ()
 
 
     // Set Servo to position w/ Momentary Switch
-    if (Hardware.climbButton.isOnCheckNow() == true)
-        {
-        Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
-        }
+    // if (Hardware.climbButton.isOnCheckNow() == true)
+    // {
+    // Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+    // }
 
-    // Set intake/deploy motor to position based on encoder switch
+
+    // Set intake/deploy motor to position based on encoder w/ Momentary Switch
     if (Hardware.deployIntakeButton.isOnCheckNow() == true)
         {
         Hardware.cubeManipulator.deployCubeIntake();
         }
+
+    System.out.println(Hardware.intakeDeployEncoder.getDistance());
+
+
 
     // takes a picture with the axis camera when button 7 on the left Operator
     // is pressed

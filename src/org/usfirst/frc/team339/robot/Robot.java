@@ -235,6 +235,7 @@ public void robotInit ()
     Hardware.intakeDeployEncoder.reset();
     Hardware.liftingEncoder.reset();
     Hardware.liftingEncoder.setReverseDirection(false);
+    Hardware.intakeDeployEncoder.reset();
 
     if (Hardware.onNessie == false)
         {
