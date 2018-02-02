@@ -1056,14 +1056,14 @@ public boolean alignToScale ()
 
         {
         System.out.println("We are to close to the scale");
-        this.getTransmission().driveRaw(-.3, -.3);
+        this.getTransmission().drive(-.3, -.3);
         }
     // if to close to scale
     else if (this.rearUltrasonic.getDistanceFromNearestBumper() < 72
             + ROBOT_LENGTH)
         {
         System.out.println("We are to far from the scale");
-        this.getTransmission().driveRaw(.3, .3);
+        this.getTransmission().drive(.3, .3);
         }
 
 
