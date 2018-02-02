@@ -388,6 +388,20 @@ public boolean brake ()
                 .get();
         }
 
+    int[] brakeDeltas = new int[4];
+    if (currentBrakeIteration == 0)
+        {
+        for (int i = 0; i < brakeDeltas.length; i++)
+            brakeDeltas[i] = brakePrevEncoderVals[0][i]
+                    - brakePrevEncoderVals[0][brakeIterations - 1];
+        }
+    else
+        {
+        for (int i = 0; i < brakeDeltas.length; i++)
+            brakeDeltas[i] = brakePrevEncoderVals[currentBrakeIteration][i]
+                    - brakePrevEncoderVals[currentBrakeIteration
+                            - 1][i];
+        }
     // Cycle through all 3 iterations and test if all have zero change. If yes,
     // then we are done braking.
     for (int i = 0; i < brakePrevEncoderVals.length + 1; i++)
@@ -403,14 +417,14 @@ public boolean brake ()
 
         // Do any encoders in use return that there is a change since last run?
         if (brakeMotorDirection[0]
-                * brakePrevEncoderVals[i][0] > brakeDeadband
+                * brakeDeltas[0] > brakeDeadband
                 || brakeMotorDirection[1]
-                        * brakePrevEncoderVals[i][1] > brakeDeadband
+                        * brakeDeltas[1] > brakeDeadband
                         && ((transmissionType == TransmissionType.TRACTION)
                                 || brakeMotorDirection[2]
-                                        * brakePrevEncoderVals[i][2] > brakeDeadband
+                                        * brakeDeltas[2] > brakeDeadband
                                 || brakeMotorDirection[3]
-                                        * brakePrevEncoderVals[i][3] > brakeDeadband))
+                                        * brakeDeltas[3] > brakeDeadband))
             {
             break;
             }
@@ -439,7 +453,6 @@ public boolean brake ()
                 .set(-brakeMotorDirection[3]);
         }
     // END SET MOTORS
-    this.resetEncoders();
     this.previousBrakeTime = System.currentTimeMillis();
     return false;
 }
@@ -509,7 +522,7 @@ public boolean driveInches (int distance, double speed)
         return true;
         }
 
-    this.getTransmission().driveRaw(speed, speed);
+    this.getTransmission().drive(speed, speed);
     return false;
 }
 
@@ -560,7 +573,7 @@ public boolean driveStraightInches (int distance, double speed)
         }
 
     // Drive straight if we have not reached the distance
-    this.driveStraight(speed, this.defaultAcceleration);
+    this.driveStraight(speed);
 
     return false;
 }
@@ -605,7 +618,7 @@ public boolean strafeStraightInches (int inches, double speed,
         return true;
         }
     // Run the rotation in a proportional loop based on the gyro.
-    this.mecanumTransmission.driveRaw(speed,
+    this.mecanumTransmission.drive(speed,
             Math.toRadians(directionDegrees),
             -(gyro.getAngle() * strafeStraightScalar));
 
@@ -664,7 +677,7 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
     accelMotorPower += deltaSeconds / time;
 
     // Drive the robot based on the times and speeds
-    this.getTransmission().driveRaw(
+    this.getTransmission().drive(
             leftSpeed * inRange(accelMotorPower),
             rightSpeed * inRange(accelMotorPower));
 
@@ -684,8 +697,6 @@ private double accelStartingSpeed = .1;
 private long lastAccelerateTime = 0; // Milliseconds
 
 private double defaultAcceleration = .8;// Seconds
-
-private int accelTimeout = 300;// Milliseconds
 
 /**
  * Sets the initial speed of the accelerateTo motors
@@ -727,7 +738,7 @@ public void setDefaultAcceleration (double value)
  * @param acceleration
  *            TODO
  */
-public void driveStraight (double speed, double acceleration)
+public void driveStraight (double speed)
 {
     // Only check encoders if the right amount of time has elapsed
     // (collectionTime).
@@ -773,11 +784,9 @@ public void driveStraight (double speed, double acceleration)
             * inRange(leftChange - rightChange));
     // Changes how much the robot corrects by how off course it is. The
     // more off course, the more it will attempt to correct.
-    if (acceleration <= 0.0)
-        this.getTransmission().driveRaw(leftMotorVal, rightMotorVal);
-    else
-        this.accelerateTo(leftMotorVal, rightMotorVal,
-                acceleration);
+
+    this.accelerateTo(leftMotorVal, rightMotorVal,
+            defaultAcceleration);
 
 }
 
@@ -857,11 +866,11 @@ public boolean turnDegrees (int angle, double speed)
     // positive or negative
     if (angle < 0)
         {
-        this.getTransmission().driveRaw(-speed, speed);
+        this.getTransmission().drive(-speed, speed);
         }
     else
         {
-        this.getTransmission().driveRaw(speed, -speed);
+        this.getTransmission().drive(speed, -speed);
         }
 
     return false;
@@ -898,11 +907,11 @@ public boolean turnDegreesGyro (int angle, double speed)
     // Turn the robot based on whether we are going left or right.
     if (angle < 0)
         {
-        this.getTransmission().driveRaw(-speed, speed);
+        this.getTransmission().drive(-speed, speed);
         }
     else
         {
-        this.getTransmission().driveRaw(speed, -speed);
+        this.getTransmission().drive(speed, -speed);
         }
 
     return false;
@@ -949,19 +958,19 @@ public boolean driveToSwitch (double compensationFactor, double speed)
         if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
                 && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
-            driveStraight(speed, this.defaultAcceleration);
+            driveStraight(speed);
             }
         else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
             {
             // center is too far left, drive faster on the right
-            this.getTransmission().driveRaw(speed * compensationFactor,
+            this.getTransmission().drive(speed * compensationFactor,
                     speed);
             System.out.println("We're too right");
             }
         else
             {
             // center is too far right, drive faster on the left
-            this.getTransmission().driveRaw(speed,
+            this.getTransmission().drive(speed,
                     speed * compensationFactor);
             System.out.println("We're too left");
             }
@@ -973,7 +982,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             {
             this.brake();
             }
-        this.driveStraight(speed, this.defaultAcceleration);
+        this.driveStraight(speed);
         return true;
         }
     return false;
@@ -1000,14 +1009,14 @@ public void visionTest (double compensationFactor, double speed)
     else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
         {
         // center is too far right, drive faster on the left
-        this.getTransmission().driveRaw(speed * compensationFactor,
+        this.getTransmission().drive(speed * compensationFactor,
                 speed);
         System.out.println("We're too left");
         }
     else
         {
         // center is too far left, drive faster on the right
-        this.getTransmission().driveRaw(speed,
+        this.getTransmission().drive(speed,
                 speed * compensationFactor);
         System.out.println("We're too right");
         }
