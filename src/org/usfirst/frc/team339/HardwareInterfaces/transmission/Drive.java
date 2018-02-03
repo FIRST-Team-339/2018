@@ -1,5 +1,6 @@
 package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
+import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
@@ -1094,6 +1095,10 @@ public void visionTest (double compensationFactor, double speed)
 }
 
 /**
+ * <<<<<<< HEAD
+ * Will align to proper distance w. scale
+ * =======
+ * 
  * @return the current center value
  */
 public double getCameraCenterValue ()
@@ -1120,51 +1125,72 @@ public double getCameraCenterValue ()
 
 /**
  * Hopefully will align to proper distance w. scale
+ * >>>>>>> branch 'master' of https://github.com/FIRST-Team-339/2018.git
  * then raise fork lift and eject cube
  * 
+ * <<<<<<< HEAD
+ * param speed
+ * Set to negative for too close ajustment
+ * 
+ * @return true when completed
+ *         =======
  * @return boolean
+ *         >>>>>>> branch 'master' of https://github.com/FIRST-Team-339/2018.git
  * 
  */
 
-public boolean alignToScale ()
+public boolean alignToScale (double speed, double deadband)
 {
 
-    // todo add deadband to distance(MAKE LESS THAN 72)
+
+    // Started align to scale
+    // todo optimize deadband to distance
 
     // checks if in proper distance
-    if (this.rearUltrasonic.getDistanceFromNearestBumper() > 72
-            - ROBOT_LENGTH
-            && this.rearUltrasonic.getDistanceFromNearestBumper() < 72
-                    + ROBOT_LENGTH)
+    // ROBOT_TO_SCALE_DISTANCE 68-36 =32
+    if (this.rearUltrasonic
+            .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
+
+            && this.rearUltrasonic
+                    .getDistanceFromNearestBumper() >= ROBOT_TO_SCALE_DISTANCE
+                            - deadband)
         {
         System.out.println("Our distance to the scale is correct");
-        // raise forklift autonomously
-        // if(Forklift raise method) {
-        // eject cube method
-        // }else {
-        // raise forklift method
-        // }
+        // moves forklift up and ejects cube
+        // this.brake();
+        Hardware.tractionDrive.drive(0, 0);
+        speed = 0;
+        aligned = true;
+        // start the move forklift switch
+        if (Hardware.cubeManipulator.scaleSwitch())
+            {
+            return true;
+            }
+        Hardware.cubeManipulator.scaleSwitch();
         }
-    // if to close to scale
-    else if (this.rearUltrasonic.getDistanceFromNearestBumper() > 72
-            - ROBOT_LENGTH)
-
+    // if to far from scale
+    else if (this.rearUltrasonic
+            .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
+                    - deadband
+            && aligned == false)
         {
-        System.out.println("We are to close to the scale");
-        this.getTransmission().drive(-.3, -.3);
+        System.out.println("We are too close to the scale");
+        Hardware.cubeManipulator.moveLiftDistance(0, 0);
+        Hardware.tractionDrive.drive(-speed, -speed);
         }
     // if to close to scale
-    else if (this.rearUltrasonic.getDistanceFromNearestBumper() < 72
-            + ROBOT_LENGTH)
+    else if (this.rearUltrasonic
+            .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
+            && aligned == false)
         {
         System.out.println("We are to far from the scale");
-        this.getTransmission().drive(.3, .3);
+        Hardware.cubeManipulator.moveLiftDistance(0, 0);
+        Hardware.tractionDrive.drive(speed, speed);
         }
-
-
     return false;
-
 }
+
+boolean aligned = false;
 
 // ================VISION TUNABLES================
 private final double CAMERA_NO_LONGER_WORKS = 38;
@@ -1182,10 +1208,13 @@ private final double SWITCH_CAMERA_CENTER = 115;
 private double center = 115;
 
 // ================TUNABLES================
+//
+private static final double SCALE_TO_WALL_DISTANCE = 68;
 
+private static final double ROBOT_LENGTH = 36;// TODO magic number
 
-private static final double ROBOT_LENGTH = 0;// TODO magic number
-
+private static final double ROBOT_TO_SCALE_DISTANCE = SCALE_TO_WALL_DISTANCE
+        - ROBOT_LENGTH;
 
 // Number of milliseconds that will pass before collecting data on encoders
 // for driveStraight and brake
