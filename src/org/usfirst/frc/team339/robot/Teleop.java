@@ -110,10 +110,6 @@ public static void periodic ()
         Hardware.cubeManipulator.deployCubeIntake();
         }
 
-    System.out.println(Hardware.intakeDeployEncoder.getDistance());
-
-
-
     // takes a picture with the axis camera when button 7 on the left Operator
     // is pressed
 
@@ -168,67 +164,26 @@ public static void periodic ()
             }
         }
 
-
-    //
     // =================================================================
     // CAMERA CODE
     // =================================================================
-
-    // test from 1/23/18
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-
-    // Hardware.autoDrive.driveToSwitch(1.3, .6);
-    // }
-    //
-    Hardware.ringLightRelay.set(Value.kForward);
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-    // Hardware.axisCamera.processImage();
-    // Hardware.autoDrive.visionTest(1.3, .6);
-    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-    // for (int i = 0; i < Hardware.axisCamera
-    // .getParticleReports().length; i++)
-    // {
-    // System.out.println("The center of " + i + " is: "
-    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
-    // }
-    // System.out.println("The center is : " + (Hardware.axisCamera
-    // .getNthSizeBlob(0).center.x
-    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
-    // }
-
 
     // =================================================================
     // Driving code
     // =================================================================
 
+    if (Hardware.leftDriver.getRawButton(4))
+        {
+        isTestingScale = true;
+        }
 
 
 
-
-
-
-
-
-
-
-
-
-
-    if (isTestingDrive == false)
-        Hardware.tractionDrive.drive(Hardware.leftDriver,
-                Hardware.rightDriver);
-
-
-    Hardware.tractionDrive.shiftGears(
-            Hardware.rightDriver.getRawButton(3),
-            Hardware.leftDriver.getRawButton(3));
 
     if (Hardware.leftDriver.getRawButton(9))
         isTestingDrive = true;
 
-    if (isTestingDrive)
+    if (isTestingScale)
         {
         Hardware.tractionDrive.setForAutonomous();
         Hardware.cubeManipulator.moveLiftDistance(
@@ -237,39 +192,69 @@ public static void periodic ()
             {
             System.out.println("Has aligned to scale?????");
             }
-        // if (driveState == 0
-        // && Hardware.autoDrive.driveInches(36, .5))
-        // driveState++;
-        // else if (driveState == 1 && Hardware.autoDrive.brake())
-        // driveState++;
-        //
-        // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-        // {
-        // Hardware.tractionDrive.stop();
-        // driveState = 0;
-        // Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
-        // isTestingDrive = false;
-        // }
 
+
+
+
+
+
+
+
+        if (isTestingDrive == false)
+            {
+            Hardware.tractionDrive.drive(Hardware.leftDriver,
+                    Hardware.rightDriver);
+            }
+        Hardware.tractionDrive.shiftGears(
+                Hardware.rightDriver.getRawButton(3),
+                Hardware.leftDriver.getRawButton(3));
+
+
+        if (Hardware.leftDriver.getRawButton(9))
+            isTestingDrive = true;
+
+        if (isTestingDrive)
+            {
+
+            if (driveState == 0
+                    && Hardware.autoDrive.driveInches(36, .5))
+                driveState++;
+            else if (driveState == 1 && Hardware.autoDrive.brake())
+                driveState++;
+
+            if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+                {
+                Hardware.tractionDrive.stop();
+                driveState = 0;
+                Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+                isTestingDrive = false;
+                }
+
+            }
+
+
+
+        // NOTE - CLAIRE TEST NEXT MEETING
+        if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
+            {
+            Hardware.climbingMechanismServo.setAngle(110);
+            }
+
+        printStatements();
+        beckyTest();
+
+        // testingDrive();
+
+        // totalLoopTime += teleopLoopTimer.get();
+        // teleopLoopTimer.reset();
+        // averageLoopTime = totalLoopTime / numOfLoops;
+        // numOfLoops++;
         }
-
-
-    // NOTE - CLAIRE TEST NEXT MEETING
-    if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
-        {
-        Hardware.climbingMechanismServo.setAngle(110);
-        }
-
-    printStatements();
-
-    // totalLoopTime += teleopLoopTimer.get();
-    // teleopLoopTimer.reset();
-    // averageLoopTime = totalLoopTime / numOfLoops;
-    // numOfLoops++;
-
 } // end Periodic
 
 private static boolean isTestingDrive = false;
+
+private static boolean isTestingScale = false;
 
 private static boolean takePictureByButton = false;
 
@@ -291,6 +276,44 @@ private static double totalLoopTime = 0.0;
 private static int numOfLoops = 1;
 
 private static int testingDriveState = 0;
+
+private static void testingDrive ()
+{
+
+
+    if (Hardware.leftDriver.getRawButton(9))
+        isTestingDrive = true;
+
+    if (isTestingDrive)
+        {
+        Hardware.tractionDrive.setForAutonomous();
+        Hardware.autoDrive.setDefaultAcceleration(.5);
+        if (driveState == 0
+                && Hardware.autoDrive.driveStraightInches(48, .6))
+            {
+            Hardware.autoDrive.resetEncoders();
+            driveState++;
+            }
+        else if (driveState == 1 && Hardware.autoDrive.brake())
+            driveState++;
+
+        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+            {
+            Hardware.tractionDrive.stop();
+            System.out.println("LDistance: "
+                    + Hardware.leftFrontDriveEncoder.getDistance());
+            System.out.println("RDistance: "
+                    + Hardware.rightFrontDriveEncoder.getDistance());
+            driveState = 0;
+            Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+            isTestingDrive = false;
+            }
+        }
+
+    if (Hardware.leftDriver.getRawButton(8))
+        Hardware.autoDrive.resetEncoders();
+
+}
 
 /**
  * stores print statements for future use in the print "bank", statements
@@ -324,8 +347,10 @@ public static void printStatements ()
     System.out.println("flork lift heigth"
             + Hardware.cubeManipulator.getForkliftHeight());
 
+
     System.out.println(
             "intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
+
 
 
 
@@ -491,9 +516,8 @@ public static void printStatements ()
     // Cameras
     // prints any camera information required
     // ---------------------------------
-    // System.out.println("The center is : " + (Hardware.axisCamera
-    // .getNthSizeBlob(0).center.x
-    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // System.out.println("The camera center is: " +
+    // Hardware.autoDrive.getCameraCenterValue());
     // =================================
     // Driver station
     // =================================
@@ -526,6 +550,36 @@ public static void printStatements ()
 
 } // end printStatements
 
+
+public static void beckyTest ()
+{
+    if (Hardware.visionTestButton.isOnCheckNow())
+        {
+        Hardware.tractionDrive.setForAutonomous();
+        if (Hardware.autoDrive.driveToSwitch(1.5, .5) == true)
+            {
+            Hardware.autoDrive.driveInches(0, 0);
+            }
+        }
+    Hardware.ringLightRelay.set(Value.kForward);
+
+    Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.axisCamera.processImage();
+    // Hardware.autoDrive.visionTest(1.3, .6);
+    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+    // for (int i = 0; i < Hardware.axisCamera
+    // .getParticleReports().length; i++)
+    // {
+    // System.out.println("The center of " + i + " is: "
+    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+    // }
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // }
+}
 //
 // ================================
 // Constants
