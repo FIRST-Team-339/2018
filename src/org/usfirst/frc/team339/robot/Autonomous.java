@@ -96,9 +96,13 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
+    // calls the forklift and allows us to use it
     Hardware.cubeManipulator.forkliftUpdate();
+    // prints the main state we're in
     System.out.println("Main State: " + autoState);
+    // calls the print statements in Teleop
     Teleop.printStatements();
+    // Main switch statement of auto
     switch (autoState)
         {
         case INIT:
@@ -131,9 +135,11 @@ public static void periodic ()
             switch (Hardware.autoSixPosSwitch.getPosition())
                 {
                 case 0:
+                    // drive across autoline
                     autoState = State.AUTOLINE;
                     break;
                 case 1:
+                    // drives and sets up at scale
                     autoState = State.AUTOLINE_SCALE;
                     break;
                 case 2:
@@ -1070,7 +1076,6 @@ public static boolean offsetSwitchPath ()
             currentOffsetSwitchState = OffsetSwitchPath.DRIVE3;
             break;
         case DRIVE3:
-            // needs to be modified @ANE
             // Drive to the middle of the end of the switch
             if (Hardware.autoDrive.driveStraightInches(
                     OFFSET_SWITCH[3],
