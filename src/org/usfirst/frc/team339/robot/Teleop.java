@@ -110,10 +110,6 @@ public static void periodic ()
         Hardware.cubeManipulator.deployCubeIntake();
         }
 
-    System.out.println(Hardware.intakeDeployEncoder.getDistance());
-
-
-
     // takes a picture with the axis camera when button 7 on the left Operator
     // is pressed
 
@@ -207,32 +203,10 @@ public static void periodic ()
         Hardware.tractionDrive.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
 
-
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
 
-    if (Hardware.leftDriver.getRawButton(9))
-        isTestingDrive = true;
-
-    if (isTestingDrive)
-        {
-        Hardware.tractionDrive.setForAutonomous();
-        if (driveState == 0
-                && Hardware.autoDrive.driveInches(36, .5))
-            driveState++;
-        else if (driveState == 1 && Hardware.autoDrive.brake())
-            driveState++;
-
-        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-            {
-            Hardware.tractionDrive.stop();
-            driveState = 0;
-            Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
-            isTestingDrive = false;
-            }
-
-        }
 
 
     // NOTE - CLAIRE TEST NEXT MEETING
@@ -242,6 +216,8 @@ public static void periodic ()
         }
 
     printStatements();
+
+    // testingDrive();
 
     // totalLoopTime += teleopLoopTimer.get();
     // teleopLoopTimer.reset();
@@ -273,6 +249,44 @@ private static int numOfLoops = 1;
 
 private static int testingDriveState = 0;
 
+private static void testingDrive ()
+{
+
+
+    if (Hardware.leftDriver.getRawButton(9))
+        isTestingDrive = true;
+
+    if (isTestingDrive)
+        {
+        Hardware.tractionDrive.setForAutonomous();
+        Hardware.autoDrive.setDefaultAcceleration(.5);
+        if (driveState == 0
+                && Hardware.autoDrive.driveStraightInches(48, .6))
+            {
+            Hardware.autoDrive.resetEncoders();
+            driveState++;
+            }
+        else if (driveState == 1 && Hardware.autoDrive.brake())
+            driveState++;
+
+        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+            {
+            Hardware.tractionDrive.stop();
+            System.out.println("LDistance: "
+                    + Hardware.leftFrontDriveEncoder.getDistance());
+            System.out.println("RDistance: "
+                    + Hardware.rightFrontDriveEncoder.getDistance());
+            driveState = 0;
+            Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+            isTestingDrive = false;
+            }
+        }
+
+    if (Hardware.leftDriver.getRawButton(8))
+        Hardware.autoDrive.resetEncoders();
+
+}
+
 /**
  * stores print statements for future use in the print "bank", statements
  * are commented out when not in use, when you write a new print statement,
@@ -303,10 +317,10 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    System.out.println(
-            "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    System.out.println(
-            "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    // System.out.println(
+    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    // System.out.println(
+    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
@@ -361,15 +375,15 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
 
-
-    System.out.println("Left Front Encoder Inches = "
-            + Hardware.leftFrontDriveEncoder.getDistance());
+    //
+    // System.out.println("Left Front Encoder Inches = "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
 
-    System.out.println("Right Front Inches = "
-            + Hardware.rightFrontDriveEncoder.getDistance());
+    // System.out.println("Right Front Inches = "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
