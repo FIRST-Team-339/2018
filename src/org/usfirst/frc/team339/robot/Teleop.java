@@ -231,8 +231,9 @@ public static void periodic ()
     if (isTestingDrive)
         {
         Hardware.tractionDrive.setForAutonomous();
-
-        if (Hardware.autoDrive.alignToScale(.7, 3))
+        Hardware.cubeManipulator.moveLiftDistance(
+                Hardware.cubeManipulator.SCALE_HEIGHT, -.9);
+        if (Hardware.autoDrive.alignToScale(.2, 3))
             {
             System.out.println("Has aligned to scale?????");
             }

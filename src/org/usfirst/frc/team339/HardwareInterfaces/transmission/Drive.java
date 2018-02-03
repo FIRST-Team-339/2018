@@ -1036,13 +1036,13 @@ public void visionTest (double compensationFactor, double speed)
 
 public boolean alignToScale (double speed, double deadband)
 {
+
+
     // Started align to scale
     // todo optimize deadband to distance
 
     // checks if in proper distance
     // ROBOT_TO_SCALE_DISTANCE 68-36 =32
-
-
     if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
 
@@ -1052,37 +1052,40 @@ public boolean alignToScale (double speed, double deadband)
         {
         System.out.println("Our distance to the scale is correct");
         // moves forklift up and ejects cube
+        // this.brake();
         Hardware.tractionDrive.drive(0, 0);
         speed = 0;
+        aligned = true;
+        // start the move forklift switch
         if (Hardware.cubeManipulator.scaleSwitch())
             {
             return true;
             }
         Hardware.cubeManipulator.scaleSwitch();
-
         }
     // if to far from scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
-                    - deadband)
-
+                    - deadband
+            && aligned == false)
         {
         System.out.println("We are too close to the scale");
-        Hardware.tractionDrive.drive(-speed, -speed);
+        Hardware.cubeManipulator.moveLiftDistance(0, 0);
+        Hardware.tractionDrive.drive(speed, speed);
         }
     // if to close to scale
     else if (this.rearUltrasonic
-            .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE)
+            .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
+            && aligned == false)
         {
         System.out.println("We are to far from the scale");
-        Hardware.tractionDrive.drive(speed, speed);
+        Hardware.cubeManipulator.moveLiftDistance(0, 0);
+        Hardware.tractionDrive.drive(-speed, -speed);
         }
-
-
     return false;
-
-
 }
+
+boolean aligned = false;
 
 // ================VISION TUNABLES================
 private final double CAMERA_NO_LONGER_WORKS = 55;

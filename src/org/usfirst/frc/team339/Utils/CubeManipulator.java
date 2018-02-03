@@ -425,18 +425,23 @@ public boolean scoreSwitch ()
             if (moveLiftDistance(SWITCH_HEIGHT,
                     FORKLIFT_SPEED_UP) == true)
                 {
+
                 switchState = scoreSwitchState.DEPLOY_INTAKE;
                 }
             break;
         case DEPLOY_INTAKE:
+            System.out.println("Deploying intake");
             if (deployCubeIntake() == true)
                 {
+                System.out.println("Deployed intake");
                 switchState = scoreSwitchState.SPIT_OUT_CUBE;
                 }
             break;
         case SPIT_OUT_CUBE:
+            System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
+                System.out.println("Spat out cube");
                 switchState = scoreSwitchState.FINISHED;
                 }
             break;
@@ -465,25 +470,23 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
  */
 public boolean scaleSwitch ()
 {
+    System.out.println("started scale switch");
     switch (scaleState)
         {
-        case MOVE_LIFT:
-            if (moveLiftDistance(SCALE_HEIGHT,
-                    FORKLIFT_SPEED_UP) == true
-                    && this.getForkliftHeight() <= 100)
-                {
-                scaleState = scoreScaleState.DEPLOY_INTAKE;
-                }
-            break;
+
         case DEPLOY_INTAKE:
+            System.out.println("Deploying intake");
             if (deployCubeIntake() == true)
                 {
+                System.out.println("Deployed intake");
                 scaleState = scoreScaleState.SPIT_OUT_CUBE;
                 }
             break;
         case SPIT_OUT_CUBE:
+            System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
+                System.out.println("Spat out cube");
                 scaleState = scoreScaleState.FINISHED;
                 }
             break;
@@ -494,14 +497,16 @@ public boolean scaleSwitch ()
         }
 
     return false;
+
+
 }
 
-scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
+scoreScaleState scaleState = scoreScaleState.DEPLOY_INTAKE;
 
 
 private enum scoreScaleState
     {
-MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
+DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
     }
 
 /**
@@ -610,7 +615,7 @@ private final double FORKLIFT_SPEED_UP = -.9;
 
 private final double FORKLIFT_SPEED_DOWN = .4;
 
-private final double FORKLIFT_STAY_UP_SPEED = -.15;
+private final double FORKLIFT_STAY_UP_SPEED = 0;
 
 private final double FORKLIFT_AT_STARTING_POSITION = 0;
 
@@ -618,7 +623,7 @@ private final double INTAKE_SPEED = .5;
 
 private final double SWITCH_HEIGHT = 30;
 
-private final double SCALE_HEIGHT = 100;
+public final double SCALE_HEIGHT = 72;
 
 private final double INTAKE_ANGLE = 90;
 
