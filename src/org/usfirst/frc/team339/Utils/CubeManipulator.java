@@ -370,7 +370,7 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
             .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
                     + LIFT_TOLERANCE)
         {
-        this.forkliftSpeedUp = forkliftSpeed;
+        this.forkliftSpeedUp = -forkliftSpeed;
         this.liftState = forkliftState.MOVING_UP;
         return this.finishedForkliftMove;
         }
@@ -378,7 +378,7 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
             .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
                     + LIFT_TOLERANCE)
         {
-        this.forkliftSpeedDown = -forkliftSpeed;
+        this.forkliftSpeedDown = forkliftSpeed;
         this.liftState = forkliftState.MOVING_DOWN;
         }
     else
@@ -494,6 +494,7 @@ public void stopIntake ()
  */
 public void forkliftUpdate ()
 {
+    System.out.println("liftstate :" + liftState);
     switch (liftState)
         {
         case MOVING_UP:
@@ -627,7 +628,7 @@ private final double FORKLIFT_SPEED_UP = -.9;
 
 private final double FORKLIFT_SPEED_DOWN = .4;
 
-private final double FORKLIFT_STAY_UP_SPEED = -.15;
+private final double FORKLIFT_STAY_UP_SPEED = 0.0;// -.15;
 
 private final double FORKLIFT_AT_STARTING_POSITION = 0;
 
