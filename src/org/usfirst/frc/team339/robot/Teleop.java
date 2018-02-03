@@ -80,27 +80,27 @@ public static void periodic ()
     // =================================================================
 
 
-    // --------- all tempoarary
+    // --------- all this is temporary testing code
 
-    if (Hardware.leftOperator.getRawButton(5))
-        {
-        System.out.println("Move to 10.0");
-        Hardware.cubeManipulator.moveLiftDistance(10.0);
-        }
+    // if (Hardware.leftOperator.getRawButton(5))
+    // {
+    // System.out.println("Move to 10.0");
+    // Hardware.cubeManipulator.moveLiftDistance(10.0);
+    // }
+    //
+    // if (Hardware.leftOperator.getRawButton(8))
+    // {
+    // System.out.println("Move to 20.0");
+    // Hardware.cubeManipulator.moveLiftDistance(20.0);
+    // }
+    //
+    // if (Hardware.leftOperator.getRawButton(9))
+    // {
+    // System.out.println("Move to 30.0");
+    // Hardware.cubeManipulator.moveLiftDistance(30.0);
+    // }
 
-    if (Hardware.leftOperator.getRawButton(8))
-        {
-        System.out.println("Move to 20.0");
-        Hardware.cubeManipulator.moveLiftDistance(20.0);
-        }
-
-    if (Hardware.leftOperator.getRawButton(9))
-        {
-        System.out.println("Move to 30.0");
-        Hardware.cubeManipulator.moveLiftDistance(30.0);
-        }
-
-    // ----------- all temporary
+    // ----------- end temporary testing code
 
 
     // -----------------------------------
