@@ -1095,9 +1095,10 @@ public void visionTest (double compensationFactor, double speed)
 }
 
 /**
-<<<<<<< HEAD
+ * <<<<<<< HEAD
  * Will align to proper distance w. scale
-=======
+ * =======
+ * 
  * @return the current center value
  */
 public double getCameraCenterValue ()
@@ -1124,17 +1125,17 @@ public double getCameraCenterValue ()
 
 /**
  * Hopefully will align to proper distance w. scale
->>>>>>> branch 'master' of https://github.com/FIRST-Team-339/2018.git
+ * >>>>>>> branch 'master' of https://github.com/FIRST-Team-339/2018.git
  * then raise fork lift and eject cube
  * 
-<<<<<<< HEAD
+ * <<<<<<< HEAD
  * param speed
  * Set to negative for too close ajustment
  * 
  * @return true when completed
-=======
+ *         =======
  * @return boolean
->>>>>>> branch 'master' of https://github.com/FIRST-Team-339/2018.git
+ *         >>>>>>> branch 'master' of https://github.com/FIRST-Team-339/2018.git
  * 
  */
 
@@ -1175,7 +1176,7 @@ public boolean alignToScale (double speed, double deadband)
         {
         System.out.println("We are too close to the scale");
         Hardware.cubeManipulator.moveLiftDistance(0, 0);
-        Hardware.tractionDrive.drive(speed, speed);
+        Hardware.tractionDrive.drive(-speed, -speed);
         }
     // if to close to scale
     else if (this.rearUltrasonic
@@ -1184,7 +1185,7 @@ public boolean alignToScale (double speed, double deadband)
         {
         System.out.println("We are to far from the scale");
         Hardware.cubeManipulator.moveLiftDistance(0, 0);
-        Hardware.tractionDrive.drive(-speed, -speed);
+        Hardware.tractionDrive.drive(speed, speed);
         }
     return false;
 }

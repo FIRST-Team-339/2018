@@ -85,28 +85,6 @@ public static void periodic ()
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
-    // --------- all tempoarary
-    if (Hardware.leftOperator.getRawButton(5))
-        {
-        System.out.println("Move to 10.0");
-        Hardware.cubeManipulator.moveLiftDistance(10.0, .5);
-        }
-
-    if (Hardware.leftOperator.getRawButton(8))
-        {
-        System.out.println("Move to 20.0");
-        Hardware.cubeManipulator.moveLiftDistance(20.0, .5);
-        }
-
-    if (Hardware.leftOperator.getRawButton(9))
-        {
-        System.out.println("Move to 30.0");
-        Hardware.cubeManipulator.moveLiftDistance(30.0, .5);
-        }
-
-    // ----------- all temporary
-
-
     // intake controls
     Hardware.cubeManipulator
             .intakeCube(Hardware.rightOperator.getRawButton(2));
@@ -117,8 +95,6 @@ public static void periodic ()
     // Push out the cube
     Hardware.cubeManipulator
             .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
-
-
 
 
     // Set Servo to position w/ Momentary Switch
@@ -134,7 +110,11 @@ public static void periodic ()
         Hardware.cubeManipulator.deployCubeIntake();
         }
 
-    // TODO finish with this
+    // takes a picture with the axis camera when button 7 on the left Operator
+    // is pressed
+
+
+
     if (Hardware.leftOperator.getRawButton(6)
             && Hardware.leftOperator.getRawButton(7)
             && pictureTakenByButton == false
@@ -206,8 +186,7 @@ public static void periodic ()
     if (isTestingScale)
         {
         Hardware.tractionDrive.setForAutonomous();
-        Hardware.cubeManipulator.moveLiftDistance(
-                Hardware.cubeManipulator.SCALE_HEIGHT, -.9);
+
         if (Hardware.autoDrive.alignToScale(.2, 3))
             {
             System.out.println("Has aligned to scale?????");
@@ -364,7 +343,7 @@ public static void printStatements ()
     // Motor
     // Prints the value of motors
     // =================================
-    System.out.println("flork lift heigth"
+    System.out.println("flok lift heigth"
             + Hardware.cubeManipulator.getForkliftHeight());
 
 
