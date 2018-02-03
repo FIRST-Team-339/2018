@@ -85,6 +85,8 @@ public static void periodic ()
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
+
+
     // intake controls
     Hardware.cubeManipulator
             .intakeCube(Hardware.rightOperator.getRawButton(2));
@@ -303,11 +305,11 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    System.out.println(
-            "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    System.out.println(
-            "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println(
+    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    // System.out.println(
+    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(
@@ -362,14 +364,14 @@ public static void printStatements ()
     // Encoders
 
 
-    System.out.println("Left Front Encoder Inches = "
-            + Hardware.leftFrontDriveEncoder.getDistance());
+    // System.out.println("Left Front Encoder Inches = "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
 
-    System.out.println("Right Front Inches = "
-            + Hardware.rightFrontDriveEncoder.getDistance());
+    // System.out.println("Right Front Inches = "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
@@ -386,9 +388,9 @@ public static void printStatements ()
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
 
-    // System.out.println(
-    // "Lift Encoder Inches = "
-    // + Hardware.liftingEncoder.getDistance());
+    System.out.println(
+            "Lift Encoder Inches = "
+                    + Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
