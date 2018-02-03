@@ -98,15 +98,6 @@ public static void periodic ()
 {
     Hardware.cubeManipulator.forkliftUpdate();
     System.out.println("Main State: " + autoState);
-    // System.out.println("Left Front Encoder : "
-    // + Hardware.leftFrontDriveEncoder.getDistance());
-    // System.out.println("Right Front Encoder : "
-    // + Hardware.rightFrontDriveEncoder.getDistance());
-    //
-    // System.out.println("Left Rear Encoder : "
-    // + Hardware.leftRearDriveEncoder.getDistance());
-    // System.out.println("Right Rear Encoder : "
-    // + Hardware.rightRearDriveEncoder.getDistance());
     Teleop.printStatements();
     switch (autoState)
         {

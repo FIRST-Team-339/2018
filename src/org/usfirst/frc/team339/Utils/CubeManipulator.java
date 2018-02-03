@@ -97,15 +97,15 @@ public double getForkliftHeight ()
 public void moveForkliftWithController (Joystick operatorJoystick)
 {
     if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT + LIFT_TOLERANCE
-            && liftState == forkliftState.MOVING_DOWN)
+            && this.liftState == forkliftState.MOVING_DOWN)
         {
-        liftState = forkliftState.AT_STARTING_POSITION;
+        this.liftState = forkliftState.AT_STARTING_POSITION;
         }
 
     if (this.getForkliftHeight() >= FORKLIFT_MAX_HEIGHT
-            && liftState == forkliftState.MOVING_UP)
+            && this.liftState == forkliftState.MOVING_UP)
         {
-        liftState = forkliftState.STAY_AT_POSITION;
+        this.liftState = forkliftState.STAY_AT_POSITION;
         }
 
 
@@ -113,22 +113,22 @@ public void moveForkliftWithController (Joystick operatorJoystick)
             && this.getForkliftHeight() <= FORKLIFT_MAX_HEIGHT)
         {
         this.forkliftSpeedUp = FORKLIFT_SPEED_UP;
-        liftState = forkliftState.MOVING_UP;
+        this.liftState = forkliftState.MOVING_UP;
         }
     else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND
             && this.getForkliftHeight() >= FORKLIFT_MIN_HEIGHT)
         {
         this.forkliftSpeedDown = FORKLIFT_SPEED_DOWN;
-        liftState = forkliftState.MOVING_DOWN;
+        this.liftState = forkliftState.MOVING_DOWN;
         }
     else if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
             + LIFT_TOLERANCE)
         {
-        liftState = forkliftState.AT_STARTING_POSITION;
+        this.liftState = forkliftState.AT_STARTING_POSITION;
         }
     else
         {
-        liftState = forkliftState.STAY_AT_POSITION;
+        this.liftState = forkliftState.STAY_AT_POSITION;
         }
 }
 
@@ -153,7 +153,7 @@ public boolean intakeCube (boolean button)
 {
     if (button)
         {
-        isRunningIntakeCube = true;
+        this.isRunningIntakeCube = true;
 
         if (this.intakeSwitch.isOn() == false)
             {
@@ -163,7 +163,7 @@ public boolean intakeCube (boolean button)
         this.intakeMotor.set(0);
         return true;
         }
-    isRunningIntakeCube = false;
+    this.isRunningIntakeCube = false;
     return false;
 
 }
@@ -189,12 +189,12 @@ public void intakeCubeOverride (boolean button)
 {
     if (button)
         {
-        isRunningIntakeCubeOverride = true;
+        this.isRunningIntakeCubeOverride = true;
         this.intakeMotor.set(INTAKE_SPEED);
         }
     else
         {
-        isRunningIntakeCubeOverride = false;
+        this.isRunningIntakeCubeOverride = false;
         }
 }
 
@@ -210,12 +210,12 @@ public void pushOutCubeTeleop (boolean button)
 {
     if (button)
         {
-        isRunningPushOutCubeTeleop = true;
+        this.isRunningPushOutCubeTeleop = true;
         this.intakeMotor.set(-INTAKE_SPEED);
         }
     else
         {
-        isRunningPushOutCubeTeleop = false;
+        this.isRunningPushOutCubeTeleop = false;
         }
 
 }
@@ -229,29 +229,29 @@ public void pushOutCubeTeleop (boolean button)
  */
 public boolean pushOutCubeAuto ()
 {
-    isRunningPushOutCubeAuto = true;
+    this.isRunningPushOutCubeAuto = true;
     switch (pushState)
         {
         case INIT:
-            switchTimer.reset();
-            switchTimer.start();
-            pushState = pushOutState.PUSH_OUT;
+            this.switchTimer.reset();
+            this.switchTimer.start();
+            this.pushState = pushOutState.PUSH_OUT;
             break;
         case PUSH_OUT:
-            if (switchTimer.get() < EJECT_TIME)
+            if (this.switchTimer.get() < EJECT_TIME)
                 {
                 this.intakeMotor.set(-this.INTAKE_SPEED);
                 }
             else
                 {
-                switchTimer.stop();
-                pushState = pushOutState.DONE;
+                this.switchTimer.stop();
+                this.pushState = pushOutState.DONE;
                 }
             break;
         case DONE:
             this.intakeMotor.set(0);
-            pushState = pushOutState.INIT;
-            isRunningPushOutCubeAuto = false;
+            this.pushState = pushOutState.INIT;
+            this.isRunningPushOutCubeAuto = false;
             return true;
         }
     return false;
@@ -346,16 +346,16 @@ public void moveIntake (double speed)
  */
 public boolean moveLiftDistance (double distance, double forkliftSpeed)
 {
-    finishedForkliftMove = false;
+    this.finishedForkliftMove = false;
     double direction = distance - getForkliftHeight();
-    boolean mustGoUp = direction > 1;
+    boolean mustGoUp = direction > 0;
     this.forkliftHeightForMoveLiftDistance = distance;
     if (mustGoUp == true && this
             .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
                     + LIFT_TOLERANCE)
         {
-        forkliftSpeedUp = forkliftSpeed;
-        liftState = forkliftState.MOVING_UP;
+        this.forkliftSpeedUp = forkliftSpeed;
+        this.liftState = forkliftState.MOVING_UP;
         return this.finishedForkliftMove;
         }
     else if (mustGoUp == false && this
@@ -363,7 +363,7 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
                     + LIFT_TOLERANCE)
         {
         this.forkliftSpeedDown = -forkliftSpeed;
-        liftState = forkliftState.MOVING_DOWN;
+        this.liftState = forkliftState.MOVING_DOWN;
         }
     else
         {
@@ -386,30 +386,10 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
  */
 public boolean moveLiftDistance (double distance)
 {
-    finishedForkliftMove = false;
-    double direction = distance - getForkliftHeight();
-    boolean mustGoUp = direction > 1;
-    this.forkliftHeightForMoveLiftDistance = distance;
-    if (mustGoUp == true && this
-            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
-                    - LIFT_TOLERANCE)
-        {
-        this.forkliftSpeedUp = FORKLIFT_SPEED_UP;
-        liftState = forkliftState.MOVING_UP;
-        }
-    else if (mustGoUp == false && this
-            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
-                    + LIFT_TOLERANCE)
-        {
-        this.forkliftSpeedDown = FORKLIFT_SPEED_DOWN;
-        liftState = forkliftState.MOVING_DOWN;
-        }
-    else
-        {
-        this.finishedForkliftMove = true;
-        }
+    // TODO change using mustGoUp and set speed to forklift speed up of forklift
+    // speed down constants
+    moveLiftDistance(distance, .5);
     return this.finishedForkliftMove;
-
 }
 
 /**
@@ -425,24 +405,24 @@ public boolean scoreSwitch ()
             if (moveLiftDistance(SWITCH_HEIGHT,
                     FORKLIFT_SPEED_UP) == true)
                 {
-                switchState = scoreSwitchState.DEPLOY_INTAKE;
+                this.switchState = scoreSwitchState.DEPLOY_INTAKE;
                 }
             break;
         case DEPLOY_INTAKE:
             if (deployCubeIntake() == true)
                 {
-                switchState = scoreSwitchState.SPIT_OUT_CUBE;
+                this.switchState = scoreSwitchState.SPIT_OUT_CUBE;
                 }
             break;
         case SPIT_OUT_CUBE:
             if (pushOutCubeAuto() == true)
                 {
-                switchState = scoreSwitchState.FINISHED;
+                this.switchState = scoreSwitchState.FINISHED;
                 }
             break;
         case FINISHED:
             stopEverything();
-            switchState = scoreSwitchState.MOVE_LIFT;
+            this.switchState = scoreSwitchState.MOVE_LIFT;
             return true;
         }
 
@@ -465,7 +445,7 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
 // STOP STUFF
 public void stopEverything ()
 {
-    liftState = forkliftState.STAY_AT_POSITION;
+    this.liftState = forkliftState.STAY_AT_POSITION;
     this.intakeMotor.set(0);
 }
 
@@ -474,7 +454,7 @@ public void stopEverything ()
  */
 public void stopForklift ()
 {
-    liftState = forkliftState.STAY_AT_POSITION;
+    this.liftState = forkliftState.STAY_AT_POSITION;
 }
 
 /**
@@ -495,12 +475,11 @@ public void forkliftUpdate ()
         {
         case MOVING_UP:
             // System.out.println("TRYING TO GO UP");
-            finishedForkliftMove = false;
+            this.finishedForkliftMove = false;
             if (Math.abs(
                     this.getForkliftHeight()) >= FORKLIFT_MAX_HEIGHT)
                 {
-                liftState = forkliftState.STAY_AT_POSITION;
-                finishedForkliftMove = true;
+                this.liftState = forkliftState.STAY_AT_POSITION;
                 }
             else
                 {
@@ -512,18 +491,19 @@ public void forkliftUpdate ()
             if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
                     + LIFT_TOLERANCE)
                 {
-                liftState = forkliftState.AT_STARTING_POSITION;
-                finishedForkliftMove = true;
+                this.liftState = forkliftState.AT_STARTING_POSITION;
+                this.finishedForkliftMove = true;
                 }
             else
                 {
                 this.forkliftMotor.set(this.forkliftSpeedDown);
                 }
-            finishedForkliftMove = false;
+            this.finishedForkliftMove = false;
             break;
         case STAY_AT_POSITION:
             // System.out.println("WE ARE STAYING AT POSITION");
             this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
+            this.finishedForkliftMove = true;
             break;
         case AT_STARTING_POSITION:
             // System.out.println("WE ARE AT STARTING POSITION");
@@ -536,7 +516,8 @@ public void forkliftUpdate ()
         // break;
         }
 
-    stopIntake = !(isRunningIntakeCube || isRunningIntakeCubeOverride ||
+    this.stopIntake = !(isRunningIntakeCube
+            || isRunningIntakeCubeOverride ||
             isRunningPushOutCubeAuto || isRunningPushOutCubeTeleop);
 
     if (stopIntake == true)
