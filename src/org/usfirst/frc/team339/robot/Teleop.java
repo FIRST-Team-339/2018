@@ -189,9 +189,9 @@ public static void periodic ()
         }
 
     printStatements();
-    beckyTest();
+    // beckyTest();
 
-    // testingDrive();
+    testingDrive();
 
     // totalLoopTime += teleopLoopTimer.get();
     // teleopLoopTimer.reset();
@@ -200,7 +200,7 @@ public static void periodic ()
 
 } // end Periodic
 
-private static boolean isTestingDrive = true;
+private static boolean isTestingDrive = false;
 
 private static boolean takePictureByButton = false;
 
@@ -226,16 +226,18 @@ private static int testingDriveState = 0;
 private static void testingDrive ()
 {
 
-
+    // Button 9 starts the drive test
     if (Hardware.leftDriver.getRawButton(9))
         isTestingDrive = true;
 
     if (isTestingDrive)
         {
+        // Setup the transmission for auto
         Hardware.tractionDrive.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
+        // First state do this, second state brake.
         if (driveState == 0
-                && Hardware.autoDrive.driveStraightInches(48, .6))
+                && Hardware.autoDrive.turnDegrees(90, .4))
             {
             Hardware.autoDrive.resetEncoders();
             driveState++;
@@ -243,6 +245,7 @@ private static void testingDrive ()
         else if (driveState == 1 && Hardware.autoDrive.brake())
             driveState++;
 
+        // Button 10 is an override to stop moving
         if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
             {
             Hardware.tractionDrive.stop();
