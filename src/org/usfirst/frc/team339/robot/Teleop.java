@@ -85,6 +85,8 @@ public static void periodic ()
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
+
+
     // intake controls
     Hardware.cubeManipulator
             .intakeCube(Hardware.rightOperator.getRawButton(2));
@@ -278,7 +280,9 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
+
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(
@@ -357,9 +361,9 @@ public static void printStatements ()
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
 
-    // System.out.println(
-    // "Lift Encoder Inches = "
-    // + Hardware.liftingEncoder.getDistance());
+    System.out.println(
+            "Lift Encoder Inches = "
+                    + Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
