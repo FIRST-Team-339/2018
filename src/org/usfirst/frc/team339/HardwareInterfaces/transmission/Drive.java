@@ -20,28 +20,6 @@ public class Drive
 // The transmission objects. Only one is used based on the transmission
 // object that is input.
 
-// The reason this is not one "TransmissionBase" object is that the drive
-// functions of each type require a different number of joysticks/input
-// values. Thus, inheritance is hard.
-private TankTransmission tankTransmission = null;
-
-private TractionTransmission tractionTransmission = null;
-
-private MecanumTransmission mecanumTransmission = null;
-
-private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
-        leftRearEncoder = null, rightRearEncoder = null;
-
-private UltraSonic frontUltrasonic = null;
-
-private UltraSonic rearUltrasonic = null;
-
-private KilroyGyro gyro = null;
-
-private VisionProcessor visionProcessor = null;
-
-private final TransmissionType transmissionType;
-
 /**
  * Creates the Drive object. If a sensor listed is not used (except for
  * encoders), set it to null.
@@ -406,6 +384,31 @@ public static enum BrakeType
     {
 AFTER_DRIVE, AFTER_TURN
     }
+
+/**
+ * Expected distance that it will take to stop during brake()
+ * 
+ * @return
+ *         expected distance during brake()
+ */
+public double getBrakeStoppingDistance ()
+{
+    return (this.distanceRequiredToBrake);
+} // end getBrakeStoppingDistance()
+
+/**
+ * Store the expected distance that it will take to stop during brake()
+ * 
+ * @param
+ *            brakeStoppingDistance
+ *            - new stopping distance during braking
+ * @return
+ *         new stored distance during brake()
+ */
+public double setBrakeStoppingDistance (double brakeStoppingDistance)
+{
+    return (this.distanceRequiredToBrake = brakeStoppingDistance);
+} // end setBrakeStoppingDistance()
 
 /**
  * Stops the robot suddenly, to prevent drifting during autonomous functions,
@@ -1197,41 +1200,73 @@ public boolean alignToScale (double speed, double deadband)
                             - deadband)
         {
         System.out.println("Our distance to the scale is correct");
-        // moves forklift up and ejects cube
-        // this.brake();
-        Hardware.tractionDrive.drive(0, 0);
+
+        // Hardware.tractionDrive.drive(0, 0);
         speed = 0;
         aligned = true;
         // start the move forklift switch
-        if (Hardware.cubeManipulator.scaleSwitch())
+
+        if (Hardware.cubeManipulator.scoreSwitch())
             {
             return true;
             }
-        Hardware.cubeManipulator.scaleSwitch();
+
+
+
         }
     // if to far from scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
                     - deadband
-            && aligned == false)
+    /* && aligned == false */)
         {
         System.out.println("We are too close to the scale");
         Hardware.cubeManipulator.moveLiftDistance(0, 0);
-        Hardware.tractionDrive.drive(-speed, -speed);
+        Hardware.tractionDrive.drive(speed, speed);
         }
     // if to close to scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
-            && aligned == false)
+    /* && aligned == false */)
         {
         System.out.println("We are to far from the scale");
         Hardware.cubeManipulator.moveLiftDistance(0, 0);
-        Hardware.tractionDrive.drive(speed, speed);
+        Hardware.tractionDrive.drive(-speed, -speed);
         }
     return false;
 }
 
 boolean aligned = false;
+
+// ----------------------------------------
+// The reason this is not one "TransmissionBase" object is that the drive
+// functions of each type require a different number of joysticks/input
+// values. Thus, inheritance is hard.
+// ----------------------------------------
+private TankTransmission tankTransmission = null;
+
+private TractionTransmission tractionTransmission = null;
+
+private MecanumTransmission mecanumTransmission = null;
+
+private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
+        leftRearEncoder = null, rightRearEncoder = null;
+
+private UltraSonic frontUltrasonic = null;
+
+private UltraSonic rearUltrasonic = null;
+
+private KilroyGyro gyro = null;
+
+private VisionProcessor visionProcessor = null;
+
+private final TransmissionType transmissionType;
+
+// ---------------------------------
+// THis is the distance we expect to move
+// during a brake call
+// ---------------------------------
+private double distanceRequiredToBrake = 3.0;
 
 // ================VISION TUNABLES================
 private final double CAMERA_NO_LONGER_WORKS = 38;

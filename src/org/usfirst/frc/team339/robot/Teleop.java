@@ -81,27 +81,27 @@ public static void periodic ()
     // =================================================================
 
 
-    // --------- all tempoarary
+    // --------- all this is temporary testing code
 
-    if (Hardware.leftOperator.getRawButton(5))
-        {
-        System.out.println("Move to 10.0");
-        Hardware.cubeManipulator.moveLiftDistance(10.0);
-        }
+    // if (Hardware.leftOperator.getRawButton(5))
+    // {
+    // System.out.println("Move to 10.0");
+    // Hardware.cubeManipulator.moveLiftDistance(10.0);
+    // }
+    //
+    // if (Hardware.leftOperator.getRawButton(8))
+    // {
+    // System.out.println("Move to 20.0");
+    // Hardware.cubeManipulator.moveLiftDistance(20.0);
+    // }
+    //
+    // if (Hardware.leftOperator.getRawButton(9))
+    // {
+    // System.out.println("Move to 30.0");
+    // Hardware.cubeManipulator.moveLiftDistance(30.0);
+    // }
 
-    if (Hardware.leftOperator.getRawButton(8))
-        {
-        System.out.println("Move to 20.0");
-        Hardware.cubeManipulator.moveLiftDistance(20.0);
-        }
-
-    if (Hardware.leftOperator.getRawButton(9))
-        {
-        System.out.println("Move to 30.0");
-        Hardware.cubeManipulator.moveLiftDistance(30.0);
-        }
-
-    // ----------- all temporary
+    // ----------- end temporary testing code
 
 
     // -----------------------------------
@@ -109,15 +109,15 @@ public static void periodic ()
     // to make sure that everything is updated on
     // all parts of the fork lift mechanism
     // -----------------------------------
-    Hardware.cubeManipulator.forkliftUpdate();
-    Hardware.cubeManipulator
-            .moveForkliftWithController(Hardware.rightOperator);
-    Hardware.cubeManipulator
-            .intakeCube(Hardware.rightOperator.getRawButton(2));
-    Hardware.cubeManipulator
-            .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
-    Hardware.cubeManipulator
-            .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
+    // Hardware.cubeManipulator.forkliftUpdate();
+    // Hardware.cubeManipulator
+    // .moveForkliftWithController(Hardware.rightOperator);
+    // Hardware.cubeManipulator
+    // .intakeCube(Hardware.rightOperator.getRawButton(2));
+    // Hardware.cubeManipulator
+    // .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
+    // Hardware.cubeManipulator
+    // .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
 
 
 
@@ -134,28 +134,22 @@ public static void periodic ()
         Hardware.cubeManipulator.deployCubeIntake();
 
 
-    // takes a picture with the axis camera when button 7 on the left Operator
-    // is pressed
 
 
 
-    if (Hardware.leftOperator.getRawButton(6)
-            && Hardware.leftOperator.getRawButton(7))
+    // ------------------------------------
+    // takes a picture with the axis camera when buttons 6 + 7 on the left
+    // Operator is pressed
+    // ------------------------------------
+    if (Hardware.leftOperator.getRawButton(6) == true
+            && Hardware.leftOperator.getRawButton(7) == true
 
-
-        // ------------------------------------
-        // takes a picture with the axis camera when buttons 6 + 7 on the left
-        // Operator is pressed
-        // ------------------------------------
-        if (Hardware.leftOperator.getRawButton(6) == true
-                && Hardware.leftOperator.getRawButton(7) == true
-
-                && pictureTakenByButton == false
-                && takePictureByButton == false)
-            {
-            takePictureByButton = true;
-            Hardware.takePictureTimer.start();
-            } // end if
+            && pictureTakenByButton == false
+            && takePictureByButton == false)
+        {
+        takePictureByButton = true;
+        Hardware.takePictureTimer.start();
+        } // end if
 
     if (!(Hardware.leftOperator.getRawButton(6) == true
             && Hardware.leftOperator.getRawButton(7)) == true
@@ -204,13 +198,13 @@ public static void periodic ()
     // =================================================================
 
     if (isTestingDrive == false)
+        {
         Hardware.tractionDrive.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
-
+        }
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
-
 
     if (isTestingScale)
         {
@@ -218,7 +212,7 @@ public static void periodic ()
 
         if (Hardware.autoDrive.alignToScale(.2, 3))
             {
-            System.out.println("Has aligned to scale?????");
+            System.out.println("aligned to scale");
             }
         }
 
@@ -240,12 +234,13 @@ public static void periodic ()
 
 } // end Periodic
 
+
 private static void testingDrive ()
 {
 
     // Button 9 starts the drive test
     if (Hardware.leftDriver.getRawButton(9))
-        isTestingDrive = true;
+        isTestingScale = true;
 
     if (isTestingDrive)
         {
@@ -312,9 +307,9 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    // System.out.println("flok lift heigth"
+    // System.out.println("fork lift heigth"
     // + Hardware.cubeManipulator.getForkliftHeight());
-
+    //
 
     // System.out.println(
     // "intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
@@ -470,8 +465,8 @@ public static void printStatements ()
     // --------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("Rear UltraSonic "
-    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Rear UltraSonic "
+            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // =========================
     // Servos

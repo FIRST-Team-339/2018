@@ -402,15 +402,13 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
  */
 public boolean moveLiftDistance (double distance)
 {
-    // TODO change using mustGoUp and set speed to forklift speed up of forklift
-    // speed down constants
     if (this.getForkliftHeight() < distance)
         {
-        moveLiftDistance(distance, FORKLIFT_SPEED_UP);
+        moveLiftDistance(distance, Math.abs(FORKLIFT_SPEED_UP));
         }
     else
         {
-        moveLiftDistance(distance, FORKLIFT_SPEED_DOWN);
+        moveLiftDistance(distance, Math.abs(FORKLIFT_SPEED_DOWN));
         }
     return this.finishedForkliftMove;
 }
@@ -485,18 +483,24 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
  */
 public boolean scaleSwitch ()
 {
-    System.out.println("started scale switch");
+
+    System.out.println(
+            "started scale switch????????????????????????????????????????????????????????????????????????");
     switch (scaleState)
         {
-
         case DEPLOY_INTAKE:
             System.out.println("Deploying intake");
             if (deployCubeIntake() == true)
                 {
+
                 System.out.println("Deployed intake");
-                scaleState = scoreScaleState.SPIT_OUT_CUBE;
+                switchState = scoreSwitchState.SPIT_OUT_CUBE;
+
+                this.switchState = scoreSwitchState.SPIT_OUT_CUBE;
+
                 }
             break;
+
         case SPIT_OUT_CUBE:
             System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
@@ -507,7 +511,7 @@ public boolean scaleSwitch ()
             break;
         case FINISHED:
             stopEverything();
-            // scaleState = scoreScaleState.MOVE_LIFT;
+            scaleState = scoreScaleState.SPIT_OUT_CUBE;
             return true;
         }
 
@@ -516,7 +520,7 @@ public boolean scaleSwitch ()
 
 }
 
-scoreScaleState scaleState = scoreScaleState.DEPLOY_INTAKE;
+scoreScaleState scaleState = scoreScaleState.SPIT_OUT_CUBE;
 
 
 private enum scoreScaleState
@@ -689,7 +693,6 @@ private final double FORKLIFT_MIN_HEIGHT = 2;
 private final double FORKLIFT_SPEED_UP = -.9;
 
 private final double FORKLIFT_SPEED_DOWN = .4;
-
 
 
 
