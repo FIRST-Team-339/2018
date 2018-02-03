@@ -1013,34 +1013,33 @@ private boolean turnDegreesInit = true;
  */
 public boolean driveToSwitch (double compensationFactor, double speed)
 {
-
+    this.setDefaultAcceleration(0);
     if (this.frontUltrasonic
             .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
         {
-        visionProcessor.processImage();
-        double center = (visionProcessor.getNthSizeBlob(0).center.x
-                + visionProcessor.getNthSizeBlob(1).center.x) / 2;
-
-        System.out.println("The vision center: " + center);
-
-        if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
-                && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+        this.getCameraCenterValue();
+        if (this.getCameraCenterValue() >= SWITCH_CAMERA_CENTER
+                - CAMERA_DEADBAND
+                && this.getCameraCenterValue() <= SWITCH_CAMERA_CENTER
+                        + CAMERA_DEADBAND)
             {
-            driveStraight(speed, true);
+            driveStraight(speed, false);
+            // System.out.println("We're center");
             }
-        else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+        else if (this.getCameraCenterValue() > SWITCH_CAMERA_CENTER
+                + CAMERA_DEADBAND)
             {
-            // center is too far left, drive faster on the right
+            // center is too far right, drive faster on the left
             this.getTransmission().drive(speed * compensationFactor,
                     speed);
-            System.out.println("We're too right");
+            // System.out.println("We're too right");
             }
         else
             {
-            // center is too far right, drive faster on the left
+            // center is too far left, drive faster on the right
             this.getTransmission().drive(speed,
                     speed * compensationFactor);
-            System.out.println("We're too left");
+            // System.out.println("We're too left");
             }
         }
     else
@@ -1049,8 +1048,11 @@ public boolean driveToSwitch (double compensationFactor, double speed)
                 .getDistanceFromNearestBumper() <= STOP_ROBOT)
             {
             this.brake();
+            this.getTransmission().drive(0, 0);
+            // System.out.println("We're stopped");
             }
-        this.driveStraight(speed, true);
+        this.driveStraight(speed, false);
+        // System.out.println("We're driving by ultrasonic");
         return true;
         }
     return false;
@@ -1064,17 +1066,18 @@ public boolean driveToSwitch (double compensationFactor, double speed)
  */
 public void visionTest (double compensationFactor, double speed)
 {
-    visionProcessor.processImage();
-    double center = (visionProcessor.getNthSizeBlob(0).center.x
-            + visionProcessor.getNthSizeBlob(1).center.x) / 2;
-    System.out.println("Center for the vision : " + center);
-    if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
-            && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+    this.getCameraCenterValue();
+    // System.out.println("Center for the vision : " + center);
+    if (this.getCameraCenterValue() >= SWITCH_CAMERA_CENTER
+            - CAMERA_DEADBAND
+            && this.getCameraCenterValue() <= SWITCH_CAMERA_CENTER
+                    + CAMERA_DEADBAND)
         {
         // driveStraight(speed, false);
         System.out.println("We are aligned in the center");
         }
-    else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+    else if (this.getCameraCenterValue() > SWITCH_CAMERA_CENTER
+            + CAMERA_DEADBAND)
         {
         // center is too far right, drive faster on the left
         this.getTransmission().drive(speed * compensationFactor,
@@ -1091,11 +1094,35 @@ public void visionTest (double compensationFactor, double speed)
 }
 
 /**
+ * @return the current center value
+ */
+public double getCameraCenterValue ()
+{
+    visionProcessor.processImage();
+    if (visionProcessor.getParticleReports().length >= 2)
+        {
+        center = (visionProcessor.getNthSizeBlob(0).center.x
+                + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+        // System.out.println("TWO BLOBS");
+        }
+    else if (visionProcessor.getParticleReports().length == 1)
+        {
+        center = visionProcessor.getNthSizeBlob(0).center.x;
+        // System.out.println("ONE BLOBS");
+        }
+    else
+        {
+        center = SWITCH_CAMERA_CENTER;
+        // System.out.println("NO BLOBS");
+        }
+    return center;
+}
+
+/**
  * Hopefully will align to proper distance w. scale
  * then raise fork lift and eject cube
  * 
- * 
- * returns boolean
+ * @return boolean
  * 
  */
 
@@ -1140,19 +1167,19 @@ public boolean alignToScale ()
 }
 
 // ================VISION TUNABLES================
-private final double CAMERA_NO_LONGER_WORKS = 55;
+private final double CAMERA_NO_LONGER_WORKS = 38;
 // 24
 
-private final double CAMERA_DEADBAND = 15;
+private final double CAMERA_DEADBAND = 10;
 
-private final double STOP_ROBOT = 45;
+private final double STOP_ROBOT = 20;
 // 6
 
 // TODO TEST TO FIND ACTUAL VALUE
-private final double SWITCH_CAMERA_CENTER = 123;
+private final double SWITCH_CAMERA_CENTER = 115;
 
 // ================VISION VARIABLES================
-private double center = 0;
+private double center = 115;
 
 // ================TUNABLES================
 
