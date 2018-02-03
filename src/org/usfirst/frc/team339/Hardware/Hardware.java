@@ -142,7 +142,6 @@ public static Encoder rightFrontDriveEncoder = new Encoder(16, 17);
 
 public static Encoder liftingEncoder = new Encoder(18, 19);
 
-
 public static Encoder intakeDeployEncoder = new Encoder(23, 24);
 
 // -----------------------
@@ -220,12 +219,13 @@ public static RobotPotentiometer delayPot = new RobotPotentiometer(2,
 // Sonar/Ultrasonic
 // -------------------------------------
 
-//public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(0);
+// public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(0);
 
 public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 
 // TODO Take out this is a ultrasonic for Nessie
 public static HRLVMaxSonarEZ frontUltraSonic = new HRLVMaxSonarEZ(0);
+
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
 // **********************************************************

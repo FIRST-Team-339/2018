@@ -404,7 +404,14 @@ public boolean moveLiftDistance (double distance)
 {
     // TODO change using mustGoUp and set speed to forklift speed up of forklift
     // speed down constants
-    moveLiftDistance(distance, .5);
+    if (this.getForkliftHeight() < distance)
+        {
+        moveLiftDistance(distance, FORKLIFT_SPEED_UP);
+        }
+    else
+        {
+        moveLiftDistance(distance, FORKLIFT_SPEED_DOWN);
+        }
     return this.finishedForkliftMove;
 }
 

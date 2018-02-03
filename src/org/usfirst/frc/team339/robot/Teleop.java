@@ -86,6 +86,26 @@ public static void periodic ()
             .moveForkliftWithController(Hardware.rightOperator);
 
 
+    // --------- all tempoarary
+    if (Hardware.leftOperator.getRawButton(5))
+        {
+        System.out.println("Move to 10.0");
+        Hardware.cubeManipulator.moveLiftDistance(10.0, .5);
+        }
+
+    if (Hardware.leftOperator.getRawButton(8))
+        {
+        System.out.println("Move to 20.0");
+        Hardware.cubeManipulator.moveLiftDistance(20.0, .5);
+        }
+
+    if (Hardware.leftOperator.getRawButton(9))
+        {
+        System.out.println("Move to 30.0");
+        Hardware.cubeManipulator.moveLiftDistance(30.0, .5);
+        }
+
+    // ----------- all temporary
 
     // intake controls
     Hardware.cubeManipulator
@@ -97,6 +117,8 @@ public static void periodic ()
     // Push out the cube
     Hardware.cubeManipulator
             .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
+
+
 
 
     // Set Servo to position w/ Momentary Switch
@@ -113,11 +135,9 @@ public static void periodic ()
         }
 
 
-    // takes a picture with the axis camera when button 7 on the left Operator
-    // is pressed
 
 
-
+    // TODO finish with this
     if (Hardware.leftOperator.getRawButton(6)
             && Hardware.leftOperator.getRawButton(7)
             && pictureTakenByButton == false
