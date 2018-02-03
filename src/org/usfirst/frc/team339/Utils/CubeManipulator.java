@@ -485,18 +485,24 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
  */
 public boolean scaleSwitch ()
 {
-    System.out.println("started scale switch");
+
+    System.out.println(
+            "started scale switch????????????????????????????????????????????????????????????????????????");
     switch (scaleState)
         {
-
         case DEPLOY_INTAKE:
             System.out.println("Deploying intake");
             if (deployCubeIntake() == true)
                 {
+
                 System.out.println("Deployed intake");
-                scaleState = scoreScaleState.SPIT_OUT_CUBE;
+                switchState = scoreSwitchState.SPIT_OUT_CUBE;
+
+                this.switchState = scoreSwitchState.SPIT_OUT_CUBE;
+
                 }
             break;
+
         case SPIT_OUT_CUBE:
             System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
@@ -507,7 +513,7 @@ public boolean scaleSwitch ()
             break;
         case FINISHED:
             stopEverything();
-            // scaleState = scoreScaleState.MOVE_LIFT;
+            scaleState = scoreScaleState.SPIT_OUT_CUBE;
             return true;
         }
 
@@ -516,7 +522,7 @@ public boolean scaleSwitch ()
 
 }
 
-scoreScaleState scaleState = scoreScaleState.DEPLOY_INTAKE;
+scoreScaleState scaleState = scoreScaleState.SPIT_OUT_CUBE;
 
 
 private enum scoreScaleState

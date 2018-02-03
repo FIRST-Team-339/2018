@@ -1156,23 +1156,25 @@ public boolean alignToScale (double speed, double deadband)
                             - deadband)
         {
         System.out.println("Our distance to the scale is correct");
-        // moves forklift up and ejects cube
-        // this.brake();
-        Hardware.tractionDrive.drive(0, 0);
+
+        // Hardware.tractionDrive.drive(0, 0);
         speed = 0;
         aligned = true;
         // start the move forklift switch
-        if (Hardware.cubeManipulator.scaleSwitch())
+
+        if (Hardware.cubeManipulator.scoreSwitch())
             {
             return true;
             }
-        Hardware.cubeManipulator.scaleSwitch();
+
+
+
         }
     // if to far from scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
                     - deadband
-            && aligned == false)
+    /* && aligned == false */)
         {
         System.out.println("We are too close to the scale");
         Hardware.cubeManipulator.moveLiftDistance(0, 0);
@@ -1181,7 +1183,7 @@ public boolean alignToScale (double speed, double deadband)
     // if to close to scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
-            && aligned == false)
+    /* && aligned == false */)
         {
         System.out.println("We are to far from the scale");
         Hardware.cubeManipulator.moveLiftDistance(0, 0);
