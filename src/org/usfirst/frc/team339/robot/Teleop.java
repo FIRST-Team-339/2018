@@ -111,6 +111,7 @@ public static void periodic ()
         Hardware.cubeManipulator.deployCubeIntake();
         }
 
+
     // takes a picture with the axis camera when button 7 on the left Operator
     // is pressed
 

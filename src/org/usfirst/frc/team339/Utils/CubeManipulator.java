@@ -33,7 +33,7 @@ private double forkliftHeightForMoveLiftDistance = 0;
 
 private boolean finishedForkliftMove = false;
 
-private boolean deployedArm = false;
+// private boolean deployedArm = false;
 
 private double forkliftSpeedUp = 0;
 
@@ -265,7 +265,8 @@ INIT, PUSH_OUT, DONE
     }
 
 /**
- * Method for moving deploy arm to the down position
+ * Method for moving deploy arm to the down position; starts the deploy
+ * arm
  * 
  * NEWBIES CAN IGNORE -- THIS ONLY APPLIES TO AUTO
  * 
@@ -273,23 +274,38 @@ INIT, PUSH_OUT, DONE
  */
 public boolean deployCubeIntake ()
 {
-    double degreesPerEncoderTick = 1.0;
-
-    // if (this.intakeDeployEncoder.getDistance() <= INTAKE_ANGLE)
-    if (this.intakeDeployEncoder.get()
-            * degreesPerEncoderTick <= INTAKE_ANGLE)
+    // advances the deploy intake state machine if it hasn't already been
+    // deployed/ is deploying
+    if (deployIntakeState == DeployState.INIT)
         {
-        this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-        this.deployedArm = false;
+        deployIntakeState = DeployState.DEPLOYING;
         }
-    else
+
+    // returns whether or not the intake has finished deploying
+    if (deployIntakeState == DeployState.FINISHED)
         {
-        this.intakeDeployMotor.set(0);
-        this.deployedArm = true;
-        // liftState = forkliftState.INTAKE_IS_DEPLOYED;
         return true;
         }
+
     return false;
+
+    // double degreesPerEncoderTick = 1.0;
+    //
+    // // if (this.intakeDeployEncoder.getDistance() <= INTAKE_ANGLE)
+    // if (this.intakeDeployEncoder.get()
+    // * degreesPerEncoderTick <= INTAKE_ANGLE)
+    // {
+    // this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+    // this.deployedArm = false;
+    // }
+    // else
+    // {
+    // this.intakeDeployMotor.set(0);
+    // this.deployedArm = true;
+    // // liftState = forkliftState.INTAKE_IS_DEPLOYED;
+    // return true;
+    // }
+    // return false;
 }
 
 /**
@@ -299,7 +315,7 @@ public boolean deployCubeIntake ()
  */
 public boolean isIntakeDeployed ()
 {
-    return deployedArm;
+    return deployIntakeState == DeployState.FINISHED;
 }
 
 
@@ -517,10 +533,55 @@ public void forkliftUpdate ()
         // break;
         }
 
+    // state machine for deploying the intake
+    switch (deployIntakeState)
+        {
+        // initial state of the intake deploy motor; just stays still
+        // until the deployCubeIntake() function is called
+        case INIT:
+            this.intakeDeployMotor.set(0.0);
+            break;
+
+
+        // moves the intake until the encoder reads that the arm has
+        // turned the specified angle, then stops the intake deploy motor and
+        // moves to the next state
+        case DEPLOYING:
+            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+            if (this.intakeDeployEncoder.get() >= INTAKE_DEPLOY_ANGLE
+                    - INTAKE_DEPLOY_COMPENSATION)
+                {
+
+                // stops the intake deploy motor if we've turned far enough;
+                // FINISHED does this as well, but doing it here helps
+                // keep the motor from overshooting too much
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.FINISHED;
+                }
+            break;
+
+        // final state in the state machine; stops the intake deploy
+        // motor
+        case FINISHED:
+            this.intakeDeployMotor.set(0.0);
+            break;
+
+        // we shouldn't ever get here, but in case we do, stop the intake
+        // deploy motor
+        default:
+            this.intakeDeployMotor.set(0.0);
+            break;
+        }
+
+
+    // checks if any of the specified functions wants to move the intake
+    // motor
     this.stopIntake = !(isRunningIntakeCube
             || isRunningIntakeCubeOverride ||
             isRunningPushOutCubeAuto || isRunningPushOutCubeTeleop);
 
+    // if none of the functions from above want to run the intake, then
+    // stop the intake motor
     if (stopIntake == true)
         {
         this.stopIntake();
@@ -530,6 +591,9 @@ public void forkliftUpdate ()
 
 private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
 
+// variable that controls the deploy intake state machine
+private DeployState deployIntakeState = DeployState.INIT;
+
 /**
  * @author Becky Button
  *
@@ -537,6 +601,16 @@ private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
 public enum forkliftState
     {
 MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION, INTAKE_IS_DEPLOYED
+    }
+
+/**
+ * Enum used for controlling the deploy intake state machine
+ * 
+ * @author Cole Ramos
+ */
+public static enum DeployState
+    {
+INIT, DEPLOYING, FINISHED
     }
 
 private final double FORKLIFT_MAX_HEIGHT = 100;
@@ -555,7 +629,13 @@ private final double INTAKE_SPEED = .5;
 
 private final double SWITCH_HEIGHT = 30;
 
-private final double INTAKE_ANGLE = 90;
+// how many degrees the intake deploy motor needs to turn for the intake
+// to be fully deployed
+private final double INTAKE_DEPLOY_ANGLE = 75;
+
+// constant subtracted from the INTAKE_DEPLOY_ANGLE to help keep us
+// from overshooting; needs to be tuned on the new robot
+private final double INTAKE_DEPLOY_COMPENSATION = 0.0;
 
 private final double INTAKE_DEPLOY_SPEED = .3;
 
