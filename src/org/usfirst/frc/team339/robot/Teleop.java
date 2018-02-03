@@ -281,7 +281,6 @@ public static void periodic ()
         // Becky's vision testing code
         // ---------------------------------------
         if (Hardware.onNessie == true)
-
             beckyTest();
         // --------------------------------------
         // all print statements for all hardware items
