@@ -80,27 +80,27 @@ public static void periodic ()
     // =================================================================
 
 
-    // --------- all tempoarary
+    // --------- all this is temporary testing code
 
-    if (Hardware.leftOperator.getRawButton(5))
-        {
-        System.out.println("Move to 10.0");
-        Hardware.cubeManipulator.moveLiftDistance(10.0);
-        }
+    // if (Hardware.leftOperator.getRawButton(5))
+    // {
+    // System.out.println("Move to 10.0");
+    // Hardware.cubeManipulator.moveLiftDistance(10.0);
+    // }
+    //
+    // if (Hardware.leftOperator.getRawButton(8))
+    // {
+    // System.out.println("Move to 20.0");
+    // Hardware.cubeManipulator.moveLiftDistance(20.0);
+    // }
+    //
+    // if (Hardware.leftOperator.getRawButton(9))
+    // {
+    // System.out.println("Move to 30.0");
+    // Hardware.cubeManipulator.moveLiftDistance(30.0);
+    // }
 
-    if (Hardware.leftOperator.getRawButton(8))
-        {
-        System.out.println("Move to 20.0");
-        Hardware.cubeManipulator.moveLiftDistance(20.0);
-        }
-
-    if (Hardware.leftOperator.getRawButton(9))
-        {
-        System.out.println("Move to 30.0");
-        Hardware.cubeManipulator.moveLiftDistance(30.0);
-        }
-
-    // ----------- all temporary
+    // ----------- end temporary testing code
 
 
     // -----------------------------------
@@ -133,28 +133,22 @@ public static void periodic ()
         Hardware.cubeManipulator.deployCubeIntake();
 
 
-    // takes a picture with the axis camera when button 7 on the left Operator
-    // is pressed
 
 
 
-    if (Hardware.leftOperator.getRawButton(6)
-            && Hardware.leftOperator.getRawButton(7))
+    // ------------------------------------
+    // takes a picture with the axis camera when buttons 6 + 7 on the left
+    // Operator is pressed
+    // ------------------------------------
+    if (Hardware.leftOperator.getRawButton(6) == true
+            && Hardware.leftOperator.getRawButton(7) == true
 
-
-        // ------------------------------------
-        // takes a picture with the axis camera when buttons 6 + 7 on the left
-        // Operator is pressed
-        // ------------------------------------
-        if (Hardware.leftOperator.getRawButton(6) == true
-                && Hardware.leftOperator.getRawButton(7) == true
-
-                && pictureTakenByButton == false
-                && takePictureByButton == false)
-            {
-            takePictureByButton = true;
-            Hardware.takePictureTimer.start();
-            } // end if
+            && pictureTakenByButton == false
+            && takePictureByButton == false)
+        {
+        takePictureByButton = true;
+        Hardware.takePictureTimer.start();
+        } // end if
 
     if (!(Hardware.leftOperator.getRawButton(6) == true
             && Hardware.leftOperator.getRawButton(7)) == true
