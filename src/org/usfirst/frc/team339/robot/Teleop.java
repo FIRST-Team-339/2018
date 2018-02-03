@@ -212,6 +212,8 @@ public static void periodic ()
         Hardware.climbingMechanismServo.setAngle(110);
         }
 
+
+
     printStatements();
     beckyTest();
 
@@ -280,7 +282,7 @@ public static void printStatements ()
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
 
-    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
 
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
@@ -416,10 +418,12 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    // System.out.println("Front UltraSonic "
-    // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("Rear UltraSonic "
-    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Front UltraSonic "
+            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Rear UltraSonic "
+            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Scaling factor : "
+            + Hardware.frontUltraSonic.getScalingFactor());
     //
     // =========================
     // Servos
