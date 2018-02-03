@@ -428,19 +428,36 @@ public boolean scoreSwitch ()
             if (moveLiftDistance(SWITCH_HEIGHT,
                     FORKLIFT_SPEED_UP) == true)
                 {
+
+
+                switchState = scoreSwitchState.DEPLOY_INTAKE;
+
                 this.switchState = scoreSwitchState.DEPLOY_INTAKE;
+
                 }
             break;
         case DEPLOY_INTAKE:
+            System.out.println("Deploying intake");
             if (deployCubeIntake() == true)
                 {
+
+                System.out.println("Deployed intake");
+                switchState = scoreSwitchState.SPIT_OUT_CUBE;
+
                 this.switchState = scoreSwitchState.SPIT_OUT_CUBE;
+
                 }
             break;
         case SPIT_OUT_CUBE:
+            System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
+
+                System.out.println("Spat out cube");
+                switchState = scoreSwitchState.FINISHED;
+
                 this.switchState = scoreSwitchState.FINISHED;
+
                 }
             break;
         case FINISHED:
@@ -461,6 +478,51 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
     }
 
 
+/**
+ * Scores a cube on a scale
+ * 
+ * @return true if a cube has been scored in the scale
+ */
+public boolean scaleSwitch ()
+{
+    System.out.println("started scale switch");
+    switch (scaleState)
+        {
+
+        case DEPLOY_INTAKE:
+            System.out.println("Deploying intake");
+            if (deployCubeIntake() == true)
+                {
+                System.out.println("Deployed intake");
+                scaleState = scoreScaleState.SPIT_OUT_CUBE;
+                }
+            break;
+        case SPIT_OUT_CUBE:
+            System.out.println("Spitting out cube");
+            if (pushOutCubeAuto() == true)
+                {
+                System.out.println("Spat out cube");
+                scaleState = scoreScaleState.FINISHED;
+                }
+            break;
+        case FINISHED:
+            stopEverything();
+            // scaleState = scoreScaleState.MOVE_LIFT;
+            return true;
+        }
+
+    return false;
+
+
+}
+
+scoreScaleState scaleState = scoreScaleState.DEPLOY_INTAKE;
+
+
+private enum scoreScaleState
+    {
+DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
+    }
 
 /**
  * Stops the forklift motor and the intake motor
@@ -628,13 +690,22 @@ private final double FORKLIFT_SPEED_UP = -.9;
 
 private final double FORKLIFT_SPEED_DOWN = .4;
 
+
+
+
 private final double FORKLIFT_STAY_UP_SPEED = 0.0;// -.15;
+
 
 private final double FORKLIFT_AT_STARTING_POSITION = 0;
 
 private final double INTAKE_SPEED = .5;
 
 private final double SWITCH_HEIGHT = 30;
+
+
+public final double SCALE_HEIGHT = 72;
+
+private final double INTAKE_ANGLE = 90;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
@@ -643,6 +714,7 @@ private final double INTAKE_DEPLOY_ANGLE = 75;
 // constant subtracted from the INTAKE_DEPLOY_ANGLE to help keep us
 // from overshooting; needs to be tuned on the new robot
 private final double INTAKE_DEPLOY_COMPENSATION = 0.0;
+
 
 private final double INTAKE_DEPLOY_SPEED = .3;
 

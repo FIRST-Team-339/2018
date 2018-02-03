@@ -192,35 +192,89 @@ public static void periodic ()
     // Driving code
     // =================================================================
 
-    if (isTestingDrive == false)
-        Hardware.tractionDrive.drive(Hardware.leftDriver,
-                Hardware.rightDriver);
-
-    Hardware.tractionDrive.shiftGears(
-            Hardware.rightDriver.getRawButton(3),
-            Hardware.leftDriver.getRawButton(3));
-
-
-
-    // NOTE - CLAIRE TEST NEXT MEETING
-    if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
+    if (Hardware.leftDriver.getRawButton(4))
         {
-        Hardware.climbingMechanismServo.setAngle(110);
+        isTestingScale = true;
         }
 
-    printStatements();
-    beckyTest();
 
-    // testingDrive();
 
-    // totalLoopTime += teleopLoopTimer.get();
-    // teleopLoopTimer.reset();
-    // averageLoopTime = totalLoopTime / numOfLoops;
-    // numOfLoops++;
 
+    if (Hardware.leftDriver.getRawButton(9))
+        isTestingDrive = true;
+
+    if (isTestingScale)
+        {
+        Hardware.tractionDrive.setForAutonomous();
+        Hardware.cubeManipulator.moveLiftDistance(
+                Hardware.cubeManipulator.SCALE_HEIGHT, -.9);
+        if (Hardware.autoDrive.alignToScale(.2, 3))
+            {
+            System.out.println("Has aligned to scale?????");
+            }
+
+
+
+
+
+
+
+
+        if (isTestingDrive == false)
+            {
+            Hardware.tractionDrive.drive(Hardware.leftDriver,
+                    Hardware.rightDriver);
+            }
+        Hardware.tractionDrive.shiftGears(
+                Hardware.rightDriver.getRawButton(3),
+                Hardware.leftDriver.getRawButton(3));
+
+
+        if (Hardware.leftDriver.getRawButton(9))
+            isTestingDrive = true;
+
+        if (isTestingDrive)
+            {
+
+            if (driveState == 0
+                    && Hardware.autoDrive.driveInches(36, .5))
+                driveState++;
+            else if (driveState == 1 && Hardware.autoDrive.brake())
+                driveState++;
+
+            if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+                {
+                Hardware.tractionDrive.stop();
+                driveState = 0;
+                Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+                isTestingDrive = false;
+                }
+
+            }
+
+
+
+        // NOTE - CLAIRE TEST NEXT MEETING
+        if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
+            {
+            Hardware.climbingMechanismServo.setAngle(110);
+            }
+
+        printStatements();
+        beckyTest();
+
+        // testingDrive();
+
+        // totalLoopTime += teleopLoopTimer.get();
+        // teleopLoopTimer.reset();
+        // averageLoopTime = totalLoopTime / numOfLoops;
+        // numOfLoops++;
+        }
 } // end Periodic
 
-private static boolean isTestingDrive = true;
+private static boolean isTestingDrive = false;
+
+private static boolean isTestingScale = false;
 
 private static boolean takePictureByButton = false;
 
@@ -310,6 +364,15 @@ public static void printStatements ()
     // Motor
     // Prints the value of motors
     // =================================
+    System.out.println("flork lift heigth"
+            + Hardware.cubeManipulator.getForkliftHeight());
+
+
+    System.out.println(
+            "intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
+
+
+
 
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
@@ -368,6 +431,7 @@ public static void printStatements ()
     //
     // ---------------------------------
     // Encoders
+
 
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
@@ -451,8 +515,8 @@ public static void printStatements ()
     // --------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("Rear UltraSonic "
-    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Rear UltraSonic "
+            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // =========================
     // Servos
