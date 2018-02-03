@@ -78,23 +78,25 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+
     // --------- all tempoarary
+
     if (Hardware.leftOperator.getRawButton(5))
         {
         System.out.println("Move to 10.0");
-        Hardware.cubeManipulator.moveLiftDistance(10.0, .5);
+        Hardware.cubeManipulator.moveLiftDistance(10.0);
         }
 
     if (Hardware.leftOperator.getRawButton(8))
         {
         System.out.println("Move to 20.0");
-        Hardware.cubeManipulator.moveLiftDistance(20.0, .5);
+        Hardware.cubeManipulator.moveLiftDistance(20.0);
         }
 
     if (Hardware.leftOperator.getRawButton(9))
         {
         System.out.println("Move to 30.0");
-        Hardware.cubeManipulator.moveLiftDistance(30.0, .5);
+        Hardware.cubeManipulator.moveLiftDistance(30.0);
         }
 
     // ----------- all temporary
@@ -267,6 +269,14 @@ public static void printStatements ()
     // Motor
     // Prints the value of motors
     // =================================
+    // System.out.println("fork lift height: "
+    // + Hardware.cubeManipulator.getForkliftHeight());
+    //
+    //
+    // System.out.println(
+    // "Intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
+
+
 
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
