@@ -78,6 +78,27 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+    // --------- all tempoarary
+    if (Hardware.leftOperator.getRawButton(5))
+        {
+        System.out.println("Move to 10.0");
+        Hardware.cubeManipulator.moveLiftDistance(10.0, .5);
+        }
+
+    if (Hardware.leftOperator.getRawButton(8))
+        {
+        System.out.println("Move to 20.0");
+        Hardware.cubeManipulator.moveLiftDistance(20.0, .5);
+        }
+
+    if (Hardware.leftOperator.getRawButton(9))
+        {
+        System.out.println("Move to 30.0");
+        Hardware.cubeManipulator.moveLiftDistance(30.0, .5);
+        }
+
+    // ----------- all temporary
+
 
     // -----------------------------------
     // forklift functionality - update every loop
