@@ -402,15 +402,13 @@ public boolean moveLiftDistance (double distance, double forkliftSpeed)
  */
 public boolean moveLiftDistance (double distance)
 {
-    // TODO change using mustGoUp and set speed to forklift speed up of forklift
-    // speed down constants
     if (this.getForkliftHeight() < distance)
         {
-        moveLiftDistance(distance, FORKLIFT_SPEED_UP);
+        moveLiftDistance(distance, Math.abs(FORKLIFT_SPEED_UP));
         }
     else
         {
-        moveLiftDistance(distance, FORKLIFT_SPEED_DOWN);
+        moveLiftDistance(distance, Math.abs(FORKLIFT_SPEED_DOWN));
         }
     return this.finishedForkliftMove;
 }
@@ -695,7 +693,6 @@ private final double FORKLIFT_MIN_HEIGHT = 2;
 private final double FORKLIFT_SPEED_UP = -.9;
 
 private final double FORKLIFT_SPEED_DOWN = .4;
-
 
 
 

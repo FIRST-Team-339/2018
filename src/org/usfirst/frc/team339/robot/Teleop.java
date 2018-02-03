@@ -80,27 +80,27 @@ public static void periodic ()
     // =================================================================
 
 
-    // --------- all tempoarary
+    // --------- all this is temporary testing code
 
-    if (Hardware.leftOperator.getRawButton(5))
-        {
-        System.out.println("Move to 10.0");
-        Hardware.cubeManipulator.moveLiftDistance(10.0);
-        }
+    // if (Hardware.leftOperator.getRawButton(5))
+    // {
+    // System.out.println("Move to 10.0");
+    // Hardware.cubeManipulator.moveLiftDistance(10.0);
+    // }
+    //
+    // if (Hardware.leftOperator.getRawButton(8))
+    // {
+    // System.out.println("Move to 20.0");
+    // Hardware.cubeManipulator.moveLiftDistance(20.0);
+    // }
+    //
+    // if (Hardware.leftOperator.getRawButton(9))
+    // {
+    // System.out.println("Move to 30.0");
+    // Hardware.cubeManipulator.moveLiftDistance(30.0);
+    // }
 
-    if (Hardware.leftOperator.getRawButton(8))
-        {
-        System.out.println("Move to 20.0");
-        Hardware.cubeManipulator.moveLiftDistance(20.0);
-        }
-
-    if (Hardware.leftOperator.getRawButton(9))
-        {
-        System.out.println("Move to 30.0");
-        Hardware.cubeManipulator.moveLiftDistance(30.0);
-        }
-
-    // ----------- all temporary
+    // ----------- end temporary testing code
 
 
     // -----------------------------------
@@ -133,28 +133,22 @@ public static void periodic ()
         Hardware.cubeManipulator.deployCubeIntake();
 
 
-    // takes a picture with the axis camera when button 7 on the left Operator
-    // is pressed
 
 
 
-    if (Hardware.leftOperator.getRawButton(6)
-            && Hardware.leftOperator.getRawButton(7))
+    // ------------------------------------
+    // takes a picture with the axis camera when buttons 6 + 7 on the left
+    // Operator is pressed
+    // ------------------------------------
+    if (Hardware.leftOperator.getRawButton(6) == true
+            && Hardware.leftOperator.getRawButton(7) == true
 
-
-        // ------------------------------------
-        // takes a picture with the axis camera when buttons 6 + 7 on the left
-        // Operator is pressed
-        // ------------------------------------
-        if (Hardware.leftOperator.getRawButton(6) == true
-                && Hardware.leftOperator.getRawButton(7) == true
-
-                && pictureTakenByButton == false
-                && takePictureByButton == false)
-            {
-            takePictureByButton = true;
-            Hardware.takePictureTimer.start();
-            } // end if
+            && pictureTakenByButton == false
+            && takePictureByButton == false)
+        {
+        takePictureByButton = true;
+        Hardware.takePictureTimer.start();
+        } // end if
 
     if (!(Hardware.leftOperator.getRawButton(6) == true
             && Hardware.leftOperator.getRawButton(7)) == true
@@ -217,17 +211,7 @@ public static void periodic ()
     if (Hardware.leftDriver.getRawButton(9))
         isTestingDrive = true;
 
-
-
-    Hardware.tractionDrive.shiftGears(
-            Hardware.rightDriver.getRawButton(3),
-            Hardware.leftDriver.getRawButton(3));
-
-
-    if (Hardware.leftDriver.getRawButton(9))
-        isTestingDrive = true;
-
-    if (isTestingDrive)
+    if (isTestingScale == true)
         {
         Hardware.tractionDrive.setForAutonomous();
 
@@ -236,29 +220,28 @@ public static void periodic ()
             System.out.println("aligned to scale");
             }
 
-        // if (driveState == 0
-        // && Hardware.autoDrive.driveInches(36, .5))
-        // driveState++;
-        // else if (driveState == 1 && Hardware.autoDrive.brake())
-        // driveState++;
-        //
-        // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-        // {
-        // Hardware.tractionDrive.stop();
-        // driveState = 0;
-        // Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
-        // isTestingDrive = false;
         }
 
-
-
-
-
-    // NOTE - CLAIRE TEST NEXT MEETING
-    if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
+    if (isTestingDrive == true)
         {
-        Hardware.climbingMechanismServo.setAngle(110);
+
+        if (driveState == 0
+                && Hardware.autoDrive.driveInches(36, .5))
+            driveState++;
+        else if (driveState == 1 && Hardware.autoDrive.brake())
+            driveState++;
+
+        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+            {
+            Hardware.tractionDrive.stop();
+            driveState = 0;
+            Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+            isTestingDrive = false;
+            }
+
         }
+
+
 
 
 
@@ -269,15 +252,12 @@ public static void periodic ()
     // Becky's vision testing code
     // ---------------------------------------
     if (Hardware.onNessie == true)
-        {
-
         beckyTest();
-        }
     // --------------------------------------
     // all print statements for all hardware items
     // --------------------------------------
-    printStatements();
 
+    printStatements();
 }
 // end Periodic
 
