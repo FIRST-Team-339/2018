@@ -168,8 +168,11 @@ public static void periodic ()
     // NOTE - CLAIRE TEST NEXT MEETING
     if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
         Hardware.climbingMechanismServo.setAngle(110);
-
-    beckyTest();
+    // ---------------------------------------
+    // Becky's vision testing code
+    // ---------------------------------------
+    if (Hardware.onNessie == true)
+        beckyTest();
     // --------------------------------------
     // all print statements for all hardware items
     // --------------------------------------
@@ -442,7 +445,7 @@ public static void printStatements ()
 
 public static void beckyTest ()
 {
-    if (Hardware.visionTestButton.isOnCheckNow())
+    if (Hardware.visionTestButton.isOnCheckNow() == true)
         {
         Hardware.tractionDrive.setForAutonomous();
         if (Hardware.autoDrive.driveToSwitch(1.5, .5) == true)
