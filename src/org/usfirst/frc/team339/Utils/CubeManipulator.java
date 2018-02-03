@@ -458,6 +458,51 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
     }
 
 
+/**
+ * Scores a cube on a scale
+ * 
+ * @return true if a cube has been scored in the scale
+ */
+public boolean scaleSwitch ()
+{
+    switch (scaleState)
+        {
+        case MOVE_LIFT:
+            if (moveLiftDistance(SCALE_HEIGHT,
+                    FORKLIFT_SPEED_UP) == true
+                    && this.getForkliftHeight() <= 100)
+                {
+                scaleState = scoreScaleState.DEPLOY_INTAKE;
+                }
+            break;
+        case DEPLOY_INTAKE:
+            if (deployCubeIntake() == true)
+                {
+                scaleState = scoreScaleState.SPIT_OUT_CUBE;
+                }
+            break;
+        case SPIT_OUT_CUBE:
+            if (pushOutCubeAuto() == true)
+                {
+                scaleState = scoreScaleState.FINISHED;
+                }
+            break;
+        case FINISHED:
+            stopEverything();
+            // scaleState = scoreScaleState.MOVE_LIFT;
+            return true;
+        }
+
+    return false;
+}
+
+scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
+
+
+private enum scoreScaleState
+    {
+MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
+    }
 
 /**
  * Stops the forklift motor and the intake motor
@@ -572,6 +617,8 @@ private final double FORKLIFT_AT_STARTING_POSITION = 0;
 private final double INTAKE_SPEED = .5;
 
 private final double SWITCH_HEIGHT = 30;
+
+private final double SCALE_HEIGHT = 100;
 
 private final double INTAKE_ANGLE = 90;
 

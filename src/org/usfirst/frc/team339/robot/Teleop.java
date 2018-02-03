@@ -203,6 +203,19 @@ public static void periodic ()
     // Driving code
     // =================================================================
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     if (isTestingDrive == false)
         Hardware.tractionDrive.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
@@ -218,19 +231,24 @@ public static void periodic ()
     if (isTestingDrive)
         {
         Hardware.tractionDrive.setForAutonomous();
-        if (driveState == 0
-                && Hardware.autoDrive.driveInches(36, .5))
-            driveState++;
-        else if (driveState == 1 && Hardware.autoDrive.brake())
-            driveState++;
 
-        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+        if (Hardware.autoDrive.alignToScale(.7, 3))
             {
-            Hardware.tractionDrive.stop();
-            driveState = 0;
-            Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
-            isTestingDrive = false;
+            System.out.println("Has aligned to scale?????");
             }
+        // if (driveState == 0
+        // && Hardware.autoDrive.driveInches(36, .5))
+        // driveState++;
+        // else if (driveState == 1 && Hardware.autoDrive.brake())
+        // driveState++;
+        //
+        // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+        // {
+        // Hardware.tractionDrive.stop();
+        // driveState = 0;
+        // Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+        // isTestingDrive = false;
+        // }
 
         }
 
@@ -302,11 +320,18 @@ public static void printStatements ()
     // Motor
     // Prints the value of motors
     // =================================
+    System.out.println("flork lift heigth"
+            + Hardware.cubeManipulator.getForkliftHeight());
 
     System.out.println(
-            "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    System.out.println(
-            "Left Drive Motor " + Hardware.leftDriveMotor.get());
+            "intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
+
+
+
+    // System.out.println(
+    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    // System.out.println(
+    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
@@ -362,14 +387,14 @@ public static void printStatements ()
     // Encoders
 
 
-    System.out.println("Left Front Encoder Inches = "
-            + Hardware.leftFrontDriveEncoder.getDistance());
+    // System.out.println("Left Front Encoder Inches = "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
 
-    System.out.println("Right Front Inches = "
-            + Hardware.rightFrontDriveEncoder.getDistance());
+    // System.out.println("Right Front Inches = "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
@@ -444,8 +469,8 @@ public static void printStatements ()
     // --------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("Rear UltraSonic "
-    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Rear UltraSonic "
+            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // =========================
     // Servos
