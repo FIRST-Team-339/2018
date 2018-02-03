@@ -110,6 +110,7 @@ public static void periodic ()
         Hardware.cubeManipulator.deployCubeIntake();
         }
 
+
     // takes a picture with the axis camera when button 7 on the left Operator
     // is pressed
 
@@ -478,7 +479,8 @@ public static void beckyTest ()
     // Hardware.autoDrive.driveToSwitch(1.3, .6);
     // }
     Hardware.ringLightRelay.set(Value.kForward);
-    System.out.println("The camera center is: " + Hardware.autoDrive.getCameraCenterValue());
+    System.out.println("The camera center is: "
+            + Hardware.autoDrive.getCameraCenterValue());
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
