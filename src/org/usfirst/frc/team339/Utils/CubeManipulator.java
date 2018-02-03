@@ -471,6 +471,7 @@ public void stopIntake ()
  */
 public void forkliftUpdate ()
 {
+    System.out.println("liftstate :" + liftState);
     switch (liftState)
         {
         case MOVING_UP:

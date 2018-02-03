@@ -86,7 +86,6 @@ public static void periodic ()
             .moveForkliftWithController(Hardware.rightOperator);
 
 
-
     // intake controls
     Hardware.cubeManipulator
             .intakeCube(Hardware.rightOperator.getRawButton(2));

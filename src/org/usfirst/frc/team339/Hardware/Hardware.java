@@ -15,7 +15,6 @@
 package org.usfirst.frc.team339.Hardware;
 
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
-import org.usfirst.frc.team339.HardwareInterfaces.HRLVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
@@ -225,7 +224,8 @@ public static RobotPotentiometer delayPot = new RobotPotentiometer(2,
 public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 
 // TODO Take out this is a ultrasonic for Nessie
-public static HRLVMaxSonarEZ frontUltraSonic = new HRLVMaxSonarEZ(0);
+public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(0);
+
 
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
