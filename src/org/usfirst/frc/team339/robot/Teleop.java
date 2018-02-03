@@ -85,23 +85,23 @@ public static void periodic ()
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
-    // --------- all tempoarary
+    // --------- all temporary
     if (Hardware.leftOperator.getRawButton(5))
         {
         System.out.println("Move to 10.0");
-        Hardware.cubeManipulator.moveLiftDistance(10.0, .5);
+        Hardware.cubeManipulator.moveLiftDistance(10.0);
         }
 
     if (Hardware.leftOperator.getRawButton(8))
         {
         System.out.println("Move to 20.0");
-        Hardware.cubeManipulator.moveLiftDistance(20.0, .5);
+        Hardware.cubeManipulator.moveLiftDistance(20.0);
         }
 
     if (Hardware.leftOperator.getRawButton(9))
         {
         System.out.println("Move to 30.0");
-        Hardware.cubeManipulator.moveLiftDistance(30.0, .5);
+        Hardware.cubeManipulator.moveLiftDistance(30.0);
         }
 
     // ----------- all temporary
@@ -364,12 +364,12 @@ public static void printStatements ()
     // Motor
     // Prints the value of motors
     // =================================
-    System.out.println("flork lift heigth"
-            + Hardware.cubeManipulator.getForkliftHeight());
-
-
-    System.out.println(
-            "intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
+    // System.out.println("flork lift heigth"
+    // + Hardware.cubeManipulator.getForkliftHeight());
+    //
+    //
+    // System.out.println(
+    // "intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
 
 
 
@@ -515,8 +515,8 @@ public static void printStatements ()
     // --------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    System.out.println("Rear UltraSonic "
-            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Rear UltraSonic "
+    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // =========================
     // Servos
