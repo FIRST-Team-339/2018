@@ -492,11 +492,11 @@ private long previousBrakeTime = 0;
 
 private int[] brakeMotorDirection = new int[4];
 
-private int brakeDeadband = 100; // ticks
+private int brakeDeadband = 55; // ticks
 
 private int[] brakePrevEncoderVals = new int[4];
 
-private double brakePower = .2;
+private double brakePower = .15;
 
 private int currentBrakeIteration = 0;
 

@@ -288,21 +288,24 @@ public static void periodic ()
         // --------------------------------------
         printStatements();
         }
+
 } // end Periodic
 
 private static void testingDrive ()
 {
 
-
+    // Button 9 starts the drive test
     if (Hardware.leftDriver.getRawButton(9))
         isTestingDrive = true;
 
     if (isTestingDrive)
         {
+        // Setup the transmission for auto
         Hardware.tractionDrive.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
+        // First state do this, second state brake.
         if (driveState == 0
-                && Hardware.autoDrive.driveStraightInches(48, .6))
+                && Hardware.autoDrive.turnDegrees(90, .4))
             {
             Hardware.autoDrive.resetEncoders();
             driveState++;
@@ -310,6 +313,7 @@ private static void testingDrive ()
         else if (driveState == 1 && Hardware.autoDrive.brake())
             driveState++;
 
+        // Button 10 is an override to stop moving
         if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
             {
             Hardware.tractionDrive.stop();
