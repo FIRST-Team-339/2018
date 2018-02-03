@@ -110,10 +110,6 @@ public static void periodic ()
         Hardware.cubeManipulator.deployCubeIntake();
         }
 
-    System.out.println(Hardware.intakeDeployEncoder.getDistance());
-
-
-
     // takes a picture with the axis camera when button 7 on the left Operator
     // is pressed
 
@@ -168,36 +164,9 @@ public static void periodic ()
             }
         }
 
-
-    //
     // =================================================================
     // CAMERA CODE
     // =================================================================
-
-    // test from 1/23/18
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-
-    // Hardware.autoDrive.driveToSwitch(1.3, .6);
-    // }
-    //
-    Hardware.ringLightRelay.set(Value.kForward);
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-    // Hardware.axisCamera.processImage();
-    // Hardware.autoDrive.visionTest(1.3, .6);
-    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-    // for (int i = 0; i < Hardware.axisCamera
-    // .getParticleReports().length; i++)
-    // {
-    // System.out.println("The center of " + i + " is: "
-    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
-    // }
-    // System.out.println("The center is : " + (Hardware.axisCamera
-    // .getNthSizeBlob(0).center.x
-    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
-    // }
-
 
     // =================================================================
     // Driving code
@@ -242,6 +211,7 @@ public static void periodic ()
         }
 
     printStatements();
+    beckyTest();
 
     // totalLoopTime += teleopLoopTimer.get();
     // teleopLoopTimer.reset();
@@ -303,10 +273,10 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    System.out.println(
-            "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    System.out.println(
-            "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    // System.out.println(
+    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
+    // System.out.println(
+    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
@@ -362,14 +332,14 @@ public static void printStatements ()
     // Encoders
 
 
-    System.out.println("Left Front Encoder Inches = "
-            + Hardware.leftFrontDriveEncoder.getDistance());
+    // System.out.println("Left Front Encoder Inches = "
+    // + Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
 
-    System.out.println("Right Front Inches = "
-            + Hardware.rightFrontDriveEncoder.getDistance());
+    // System.out.println("Right Front Inches = "
+    // + Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
@@ -500,6 +470,31 @@ public static void printStatements ()
 
 } // end printStatements
 
+public static void beckyTest ()
+{
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    //
+    // Hardware.autoDrive.driveToSwitch(1.3, .6);
+    // }
+    Hardware.ringLightRelay.set(Value.kForward);
+    System.out.println("The camera center is: " + Hardware.autoDrive.getCameraCenterValue());
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.axisCamera.processImage();
+    // Hardware.autoDrive.visionTest(1.3, .6);
+    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+    // for (int i = 0; i < Hardware.axisCamera
+    // .getParticleReports().length; i++)
+    // {
+    // System.out.println("The center of " + i + " is: "
+    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+    // }
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // }
+}
 //
 // ================================
 // Constants

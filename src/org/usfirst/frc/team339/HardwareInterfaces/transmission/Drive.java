@@ -950,10 +950,20 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
         {
         visionProcessor.processImage();
-        double center = (visionProcessor.getNthSizeBlob(0).center.x
-                + visionProcessor.getNthSizeBlob(1).center.x) / 2;
 
-        System.out.println("The vision center: " + center);
+        if (visionProcessor.getParticleReports().length >= 2)
+            {
+            center = (visionProcessor.getNthSizeBlob(0).center.x
+                    + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+            }
+        else if (visionProcessor.getParticleReports().length == 1)
+            {
+            center = visionProcessor.getNthSizeBlob(0).center.x;
+            }
+        else
+            {
+            center = SWITCH_CAMERA_CENTER;
+            }
 
         if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
                 && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
@@ -997,7 +1007,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
 public void visionTest (double compensationFactor, double speed)
 {
     visionProcessor.processImage();
-    double center = (visionProcessor.getNthSizeBlob(0).center.x
+    center = (visionProcessor.getNthSizeBlob(0).center.x
             + visionProcessor.getNthSizeBlob(1).center.x) / 2;
     System.out.println("Center for the vision : " + center);
     if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
@@ -1020,6 +1030,14 @@ public void visionTest (double compensationFactor, double speed)
                 speed * compensationFactor);
         System.out.println("We're too right");
         }
+}
+
+/**
+ * @return the current center value
+ */
+public double getCameraCenterValue()
+{
+    return center;
 }
 
 /**
@@ -1081,10 +1099,10 @@ private final double STOP_ROBOT = 45;
 // 6
 
 // TODO TEST TO FIND ACTUAL VALUE
-private final double SWITCH_CAMERA_CENTER = 123;
+private final static double SWITCH_CAMERA_CENTER = 123;
 
 // ================VISION VARIABLES================
-private double center = 0;
+private static double center = SWITCH_CAMERA_CENTER;
 
 // ================TUNABLES================
 
