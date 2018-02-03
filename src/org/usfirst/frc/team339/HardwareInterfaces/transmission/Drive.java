@@ -397,15 +397,45 @@ public void reset ()
 }
 
 /**
+ * Enum for deciding whether we're braking after driving, or turning.
+ * 
+ * @author Ryan McGee
+ *
+ */
+public static enum BrakeType
+    {
+AFTER_DRIVE, AFTER_TURN
+    }
+
+/**
  * Stops the robot suddenly, to prevent drifting during autonomous functions,
  * and increase the precision.
+ * 
+ * @param type
+ *            TODO
  * 
  * @return
  *         Whether or not the robot has stopped moving.
  */
-public boolean brake ()
+public boolean brake (BrakeType type)
 {
     System.out.println("Calling Brake");
+
+    int deadband = 0;
+    double power = 0;
+
+    if (type == BrakeType.AFTER_DRIVE)
+        {
+        deadband = brakeDriveDeadband;
+        power = brakeDrivePower;
+        }
+    else if (type == BrakeType.AFTER_TURN)
+        {
+        deadband = brakeTurnDeadband;
+        power = brakeTurnPower;
+        }
+
+
     if (System.currentTimeMillis() - previousBrakeTime > INIT_TIMEOUT)
         {
         prevEncoderValues = new double[4];
@@ -442,15 +472,22 @@ public boolean brake ()
     brakePrevEncoderVals[3] = getEncoderTicks(
             MotorPosition.RIGHT_FRONT);
 
+    for (int i = 0; i < brakeDeltas.length; i++)
+        System.out.println("Delta " + i + ": " + brakeDeltas[i]);
+
+    for (int i = 0; i < brakeMotorDirection.length; i++)
+        System.out.println("Power " + i + ": "
+                + brakeMotorDirection[i] * -brakeDrivePower);
+
     // See if the motors are past the deadband
-    if (brakeMotorDirection[0] * brakeDeltas[0] < brakeDeadband
+    if (brakeMotorDirection[0] * brakeDeltas[0] < deadband
             && brakeMotorDirection[1]
-                    * brakeDeltas[1] < brakeDeadband
+                    * brakeDeltas[1] < deadband
             && ((transmissionType == TransmissionType.TRACTION)
                     || brakeMotorDirection[2]
-                            * brakeDeltas[2] < brakeDeadband
+                            * brakeDeltas[2] < deadband
                     || brakeMotorDirection[3]
-                            * brakeDeltas[3] < brakeDeadband))
+                            * brakeDeltas[3] < deadband))
         {
         // Increase the iteration
         currentBrakeIteration++;
@@ -472,16 +509,16 @@ public boolean brake ()
     // Set the rear wheels
     getTransmission()
             .getSpeedController(MotorPosition.LEFT_REAR)
-            .set(-brakeMotorDirection[0] * brakePower);
+            .set(-brakeMotorDirection[0] * power);
     getTransmission().getSpeedController(MotorPosition.RIGHT_REAR)
-            .set(-brakeMotorDirection[1] * brakePower);
+            .set(-brakeMotorDirection[1] * power);
     // Set the front wheels if it's the right kind of drive
     if (transmissionType != TransmissionType.TRACTION)
         {
         getTransmission().getSpeedController(MotorPosition.LEFT_FRONT)
-                .set(-brakeMotorDirection[2] * brakePower);
+                .set(-brakeMotorDirection[2] * power);
         getTransmission().getSpeedController(MotorPosition.RIGHT_FRONT)
-                .set(-brakeMotorDirection[3] * brakePower);
+                .set(-brakeMotorDirection[3] * power);
         }
     // END SET MOTORS
     this.previousBrakeTime = System.currentTimeMillis();
@@ -492,11 +529,15 @@ private long previousBrakeTime = 0;
 
 private int[] brakeMotorDirection = new int[4];
 
-private int brakeDeadband = 55; // ticks
+private int brakeDriveDeadband = 55; // ticks
+
+private int brakeTurnDeadband = 14;
 
 private int[] brakePrevEncoderVals = new int[4];
 
-private double brakePower = .15;
+private double brakeDrivePower = .2;
+
+private double brakeTurnPower = 1.0;
 
 private int currentBrakeIteration = 0;
 
@@ -510,7 +551,7 @@ private int totalBrakeIterations = 3;
  */
 public void setBrakeDeadband (int ticks)
 {
-    this.brakeDeadband = ticks;
+    this.brakeDriveDeadband = ticks;
 }
 
 /**
@@ -521,7 +562,7 @@ public void setBrakeDeadband (int ticks)
  */
 public void setBrakePower (double power)
 {
-    this.brakePower = power;
+    this.brakeDrivePower = power;
 }
 
 /**
@@ -1048,7 +1089,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
         if (this.frontUltrasonic
                 .getDistanceFromNearestBumper() <= STOP_ROBOT)
             {
-            this.brake();
+            this.brake(BrakeType.AFTER_DRIVE);
             this.getTransmission().drive(0, 0);
             // System.out.println("We're stopped");
             }

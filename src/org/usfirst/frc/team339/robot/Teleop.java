@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
@@ -211,11 +212,6 @@ public static void periodic ()
             Hardware.leftDriver.getRawButton(3));
 
 
-
-
-    if (Hardware.leftDriver.getRawButton(9))
-        isTestingDrive = true;
-
     if (isTestingScale)
         {
         Hardware.tractionDrive.setForAutonomous();
@@ -224,70 +220,23 @@ public static void periodic ()
             {
             System.out.println("Has aligned to scale?????");
             }
-
-
-
-
-
-
-
-
-        if (isTestingDrive == false)
-            {
-            Hardware.tractionDrive.drive(Hardware.leftDriver,
-                    Hardware.rightDriver);
-            }
-        Hardware.tractionDrive.shiftGears(
-                Hardware.rightDriver.getRawButton(3),
-                Hardware.leftDriver.getRawButton(3));
-
-
-        if (Hardware.leftDriver.getRawButton(9))
-            isTestingDrive = true;
-
-        if (isTestingDrive)
-            {
-
-            if (driveState == 0
-                    && Hardware.autoDrive.driveInches(36, .5))
-                driveState++;
-            else if (driveState == 1 && Hardware.autoDrive.brake())
-                driveState++;
-
-            if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-                {
-                Hardware.tractionDrive.stop();
-                driveState = 0;
-                Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
-                isTestingDrive = false;
-                }
-
-            }
-
-
-
-        // NOTE - CLAIRE TEST NEXT MEETING
-        if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
-            {
-            Hardware.climbingMechanismServo.setAngle(110);
-            }
-
-
-
-        // NOTE - CLAIRE TEST NEXT MEETING
-        if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
-            Hardware.climbingMechanismServo.setAngle(110);
-        // ---------------------------------------
-        // Becky's vision testing code
-        // ---------------------------------------
-        if (Hardware.onNessie == true)
-
-            beckyTest();
-        // --------------------------------------
-        // all print statements for all hardware items
-        // --------------------------------------
-        printStatements();
         }
+
+    // NOTE - CLAIRE TEST NEXT MEETING
+    if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
+        Hardware.climbingMechanismServo.setAngle(110);
+
+    testingDrive();
+
+    // ---------------------------------------
+    // Becky's vision testing code
+    // ---------------------------------------
+    if (Hardware.onNessie == true)
+        beckyTest();
+    // --------------------------------------
+    // all print statements for all hardware items
+    // --------------------------------------
+    printStatements();
 
 } // end Periodic
 
@@ -305,12 +254,13 @@ private static void testingDrive ()
         Hardware.autoDrive.setDefaultAcceleration(.5);
         // First state do this, second state brake.
         if (driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .4))
+                && Hardware.autoDrive.turnDegrees(90, .3))
             {
             Hardware.autoDrive.resetEncoders();
             driveState++;
             }
-        else if (driveState == 1 && Hardware.autoDrive.brake())
+        else if (driveState == 1
+                && Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
             driveState++;
 
         // Button 10 is an override to stop moving
@@ -362,12 +312,12 @@ public static void printStatements ()
     // Prints the value of motors
     // =================================
 
-    System.out.println("flok lift heigth"
-            + Hardware.cubeManipulator.getForkliftHeight());
+    // System.out.println("flok lift heigth"
+    // + Hardware.cubeManipulator.getForkliftHeight());
 
 
-    System.out.println(
-            "intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
+    // System.out.println(
+    // "intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
 
 
     // System.out.println("fork lift height: "
