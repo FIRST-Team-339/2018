@@ -95,6 +95,10 @@ AXIS_M1013
     }
 
 /**
+ * @author Kilroy Programming
+ *
+ */
+/**
  * A list of the different kind of images, for accessing the images directly.
  * 
  * @author Ryan McGee
@@ -359,6 +363,8 @@ public void saveImage (ImageType type)
 private int rawImageNum = 0;
 
 private int processedImageNum = 0;
+
+private int contourImageNum = 0;
 
 /**
  * Saves an image once, no matter how long the button is pressed down on the

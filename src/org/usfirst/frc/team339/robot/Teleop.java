@@ -184,25 +184,23 @@ public static void periodic ()
     if (Hardware.leftDriver.getRawButton(9))
         isTestingDrive = true;
 
-    if (isTestingDrive)
-        {
-        Hardware.tractionDrive.setForAutonomous();
-        if (driveState == 0
-                && Hardware.autoDrive.driveInches(36, .5))
-            driveState++;
-        else if (driveState == 1 && Hardware.autoDrive.brake())
-            driveState++;
-
-        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-            {
-            Hardware.tractionDrive.stop();
-            driveState = 0;
-            Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
-            isTestingDrive = false;
-            }
-
-        }
-
+    // if (isTestingDrive)
+    // {
+    // Hardware.tractionDrive.setForAutonomous();
+    // if (driveState == 0
+    // && Hardware.autoDrive.driveInches(36, .5))
+    // driveState++;
+    // else if (driveState == 1 && Hardware.autoDrive.brake())
+    // driveState++;
+    //
+    // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+    // {
+    // Hardware.tractionDrive.stop();
+    // driveState = 0;
+    // Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+    // isTestingDrive = false;
+    // }
+    // }
 
     // NOTE - CLAIRE TEST NEXT MEETING
     if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
@@ -220,7 +218,7 @@ public static void periodic ()
 
 } // end Periodic
 
-private static boolean isTestingDrive = false;
+private static boolean isTestingDrive = true;
 
 private static boolean takePictureByButton = false;
 
@@ -435,9 +433,8 @@ public static void printStatements ()
     // Cameras
     // prints any camera information required
     // ---------------------------------
-    // System.out.println("The center is : " + (Hardware.axisCamera
-    // .getNthSizeBlob(0).center.x
-    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // System.out.println("The camera center is: " +
+    // Hardware.autoDrive.getCameraCenterValue());
     // =================================
     // Driver station
     // =================================
@@ -470,15 +467,20 @@ public static void printStatements ()
 
 } // end printStatements
 
+
 public static void beckyTest ()
 {
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-    //
-    // Hardware.autoDrive.driveToSwitch(1.3, .6);
-    // }
+    if (Hardware.visionTestButton.isOnCheckNow())
+        {
+        Hardware.tractionDrive.setForAutonomous();
+        if (Hardware.autoDrive.driveToSwitch(1.5, .5) == true)
+            {
+            Hardware.autoDrive.driveInches(0, 0);
+            }
+        }
     Hardware.ringLightRelay.set(Value.kForward);
-    System.out.println("The camera center is: " + Hardware.autoDrive.getCameraCenterValue());
+
+    Hardware.axisCamera.saveImage(ImageType.PROCESSED);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
