@@ -32,7 +32,6 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.WheelGroups;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
@@ -285,7 +284,7 @@ SWITCH, SCALE
  */
 public static boolean autolinePath ()
 {
-    // System.out.println("autoline path state : " + currentAutolineState);
+    System.out.println("autoline path state : " + currentAutolineState);
 
     // autoline switch statement
     switch (currentAutolineState)
@@ -781,11 +780,9 @@ DONE
  */
 public static boolean switchOrScalePath (Position robotPosition)
 {
+    // prints
     System.out.println("Current State: " + currentSwitchOrScaleState);
-    System.out.println("Distance: " + Hardware.autoDrive
-            .getEncoderDistanceAverage(WheelGroups.ALL));
-    System.out.println("Ultrsnc: "
-            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+
     switch (currentSwitchOrScaleState)
         {
         case PATH_INIT:
@@ -1016,12 +1013,7 @@ public static boolean offsetSwitchPath ()
 {
 
     System.out.println("Current State: " + currentOffsetSwitchState);
-    // System.out.println("Distance: " + Hardware.autoDrive
-    // .getEncoderDistanceAverage(WheelGroups.ALL));
-    System.out.println("Ultrsnc1: "
-            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    System.out.println("Ultrsnc2: "
-            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+
     switch (currentOffsetSwitchState)
         {
         case PATH_INIT:
