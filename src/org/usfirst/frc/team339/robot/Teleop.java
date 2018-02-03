@@ -184,23 +184,25 @@ public static void periodic ()
     if (Hardware.leftDriver.getRawButton(9))
         isTestingDrive = true;
 
-    // if (isTestingDrive)
-    // {
-    // Hardware.tractionDrive.setForAutonomous();
-    // if (driveState == 0
-    // && Hardware.autoDrive.driveInches(36, .5))
-    // driveState++;
-    // else if (driveState == 1 && Hardware.autoDrive.brake())
-    // driveState++;
-    //
-    // if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-    // {
-    // Hardware.tractionDrive.stop();
-    // driveState = 0;
-    // Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
-    // isTestingDrive = false;
-    // }
-    // }
+    if (isTestingDrive)
+        {
+        Hardware.tractionDrive.setForAutonomous();
+        if (driveState == 0
+                && Hardware.autoDrive.driveInches(36, .5))
+            driveState++;
+        else if (driveState == 1 && Hardware.autoDrive.brake())
+            driveState++;
+
+        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+            {
+            Hardware.tractionDrive.stop();
+            driveState = 0;
+            Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+            isTestingDrive = false;
+            }
+
+        }
+
 
     // NOTE - CLAIRE TEST NEXT MEETING
     if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder

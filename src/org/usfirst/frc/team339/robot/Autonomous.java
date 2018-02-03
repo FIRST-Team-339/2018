@@ -971,6 +971,7 @@ PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTR
  */
 public static boolean offsetSwitchPath ()
 {
+
     System.out.println("Current State: " + currentOffsetSwitchState);
     // System.out.println("Distance: " + Hardware.autoDrive
     // .getEncoderDistanceAverage(WheelGroups.ALL));
@@ -1061,12 +1062,19 @@ public static boolean offsetSwitchPath ()
         case BRAKE_TURN2:
             // Brake after turning towards the opposing alliance
             if (Hardware.autoDrive.brake())
-                currentOffsetSwitchState = OffsetSwitchPath.DRIVE3;
+                currentOffsetSwitchState = OffsetSwitchPath.RAISE_ARM;
+            break;
+        case RAISE_ARM:
+            Hardware.cubeManipulator.moveLiftDistance(
+                    SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED);
+            currentOffsetSwitchState = OffsetSwitchPath.DRIVE3;
             break;
         case DRIVE3:
+            // needs to be modified @ANE
             // Drive to the middle of the end of the switch
-            if (Hardware.autoDrive.driveStraightInches(OFFSET_SWITCH[3],
-                    TURN_SPEED))
+            if (Hardware.autoDrive.driveStraightInches(
+                    OFFSET_SWITCH[3],
+                    DRIVE_SPEED))
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE3;
             break;
         case BRAKE_DRIVE3:
@@ -1092,17 +1100,11 @@ public static boolean offsetSwitchPath ()
         case BRAKE_TURN3:
             // Brake after turning towards the switch
             if (Hardware.autoDrive.brake())
-                currentOffsetSwitchState = OffsetSwitchPath.RAISE_ARM;
-            break;
-        case RAISE_ARM:
-            // Raises the arm to the level of the switch
-            if (Hardware.cubeManipulator.moveLiftDistance(
-                    SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED))
                 currentOffsetSwitchState = OffsetSwitchPath.DRIVE_WITH_ULTRSNC;
             break;
         case DRIVE_WITH_ULTRSNC:
             // Drive towards the switch using the ultrasonic
-            Hardware.autoDrive.driveStraight(DRIVE_SPEED);
+            Hardware.autoDrive.driveStraight(.3);// DRIVE_SPEED);
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
                 {
@@ -1143,7 +1145,7 @@ private static OffsetSwitchPath currentOffsetSwitchState = OffsetSwitchPath.PATH
 
 private enum OffsetSwitchPath
     {
-PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRIVE2R, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, BRAKE_TURN3, RAISE_ARM, DRIVE_WITH_ULTRSNC, BRAKE_B4_EJECT, EJECT, FINISH
+PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRIVE2R, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, RAISE_ARM_AND_DRIVE3_2, BRAKE_DRIVE3, TURN3, BRAKE_TURN3, RAISE_ARM, DRIVE_WITH_ULTRSNC, BRAKE_B4_EJECT, EJECT, FINISH
     }
 
 
@@ -1179,7 +1181,7 @@ private static final int SCALE_LIFT_HEIGHT = 78;// Inches
 // ==========
 
 // ULTRASONIC
-private static final int MIN_ULTRSNC_DISTANCE = 12;// Inches
+private static final int MIN_ULTRSNC_DISTANCE = 15;// Inches
 // ==========
 
 
@@ -1234,6 +1236,7 @@ private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
 private static final int[] OFFSET_SWITCH = new int[]
     {6, 180, 59, 127};
 
+private static final int DISTANCE_TO_RAISE_ARM = 30;
 
 
 
