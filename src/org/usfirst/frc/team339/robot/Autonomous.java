@@ -814,7 +814,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                 }
             break;
         case DRIVE_WITH_ULTRSNC:
-            Hardware.autoDrive.driveStraight(DRIVE_SPEED);
+            Hardware.autoDrive.driveStraight(DRIVE_SPEED, true);
             // Drive to the switch until the ultrasonic tells us to stop
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
@@ -1078,8 +1078,7 @@ public static boolean offsetSwitchPath ()
         case DRIVE3:
             // Drive to the middle of the end of the switch
             if (Hardware.autoDrive.driveStraightInches(
-                    OFFSET_SWITCH[3],
-                    DRIVE_SPEED))
+                    OFFSET_SWITCH[3], DRIVE_SPEED))
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE3;
             break;
         case BRAKE_DRIVE3:
@@ -1109,7 +1108,7 @@ public static boolean offsetSwitchPath ()
             break;
         case DRIVE_WITH_ULTRSNC:
             // Drive towards the switch using the ultrasonic
-            Hardware.autoDrive.driveStraight(.3);// DRIVE_SPEED);
+            Hardware.autoDrive.driveStraight(.3, true);
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
                 {

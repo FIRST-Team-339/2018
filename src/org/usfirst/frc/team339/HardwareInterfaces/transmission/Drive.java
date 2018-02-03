@@ -315,6 +315,53 @@ public double getEncoderDistanceAverage (WheelGroups encoderGroup)
 }
 
 /**
+ * Gets how many ticks is on each motor controller.
+ * 
+ * @param encoder
+ *            Which encoder position to get.
+ * @return
+ *         Number of Ticks
+ */
+public int getEncoderTicks (TransmissionBase.MotorPosition encoder)
+{
+    // Get the ticks of either right or left side on the 2 wheel system.
+    if (transmissionType == TransmissionType.TRACTION)
+        {
+        switch (encoder)
+            {
+            case LEFT_FRONT:
+            case LEFT_REAR:
+            case LEFT:
+                return leftRearEncoder.get();
+            case RIGHT_FRONT:
+            case RIGHT_REAR:
+            case RIGHT:
+                return rightRearEncoder.get();
+            default:
+                return 0;
+            }
+        }
+    // Get encoder ticks on a 4 wheel drive system.
+    switch (encoder)
+        {
+        case LEFT:
+            return leftFrontEncoder.get() + leftRearEncoder.get();
+        case LEFT_FRONT:
+            return leftFrontEncoder.get();
+        case LEFT_REAR:
+            return leftRearEncoder.get();
+        case RIGHT:
+            return rightFrontEncoder.get() + rightRearEncoder.get();
+        case RIGHT_FRONT:
+            return rightFrontEncoder.get();
+        case RIGHT_REAR:
+            return rightRearEncoder.get();
+        default:
+            return 0;
+        }
+}
+
+/**
  * Tests whether any encoder reads larger than the input length. Useful for
  * knowing
  * when to stop the robot.
@@ -360,6 +407,8 @@ public boolean brake ()
     System.out.println("Calling Brake");
     if (System.currentTimeMillis() - previousBrakeTime > INIT_TIMEOUT)
         {
+        prevEncoderValues = new double[4];
+
         // Get the direction of the motor values on the first start.
         brakeMotorDirection[0] = (int) Math
                 .signum(leftRearEncoder.getRate());
@@ -374,83 +423,64 @@ public boolean brake ()
                     .signum(rightFrontEncoder.getRate());
             }
         }
-    // Store values for 2 wheel drive
-    brakePrevEncoderVals[currentBrakeIteration][0] = leftRearEncoder
-            .get();
-    brakePrevEncoderVals[currentBrakeIteration][1] = rightRearEncoder
-            .get();
-    // Store values for 4 wheel drive
-    if (transmissionType != TransmissionType.TRACTION)
-        {
-        brakePrevEncoderVals[currentBrakeIteration][2] = leftFrontEncoder
-                .get();
-        brakePrevEncoderVals[currentBrakeIteration][3] = rightFrontEncoder
-                .get();
-        }
 
     int[] brakeDeltas = new int[4];
-    if (currentBrakeIteration == 0)
-        {
-        for (int i = 0; i < brakeDeltas.length; i++)
-            brakeDeltas[i] = brakePrevEncoderVals[0][i]
-                    - brakePrevEncoderVals[0][brakeIterations - 1];
-        }
-    else
-        {
-        for (int i = 0; i < brakeDeltas.length; i++)
-            brakeDeltas[i] = brakePrevEncoderVals[currentBrakeIteration][i]
-                    - brakePrevEncoderVals[currentBrakeIteration
-                            - 1][i];
-        }
-    // Cycle through all 3 iterations and test if all have zero change. If yes,
-    // then we are done braking.
-    for (int i = 0; i < brakePrevEncoderVals.length + 1; i++)
-        {
-        // If we succesfully ran through all the iterations, then we have
-        // finished braking
-        if (i == brakePrevEncoderVals.length)
-            {
-            currentBrakeIteration = 0;
-            this.getTransmission().stop();
-            return true;
-            }
 
-        // Do any encoders in use return that there is a change since last run?
-        if (brakeMotorDirection[0]
-                * brakeDeltas[0] > brakeDeadband
-                || brakeMotorDirection[1]
-                        * brakeDeltas[1] > brakeDeadband
-                        && ((transmissionType == TransmissionType.TRACTION)
-                                || brakeMotorDirection[2]
-                                        * brakeDeltas[2] > brakeDeadband
-                                || brakeMotorDirection[3]
-                                        * brakeDeltas[3] > brakeDeadband))
-            {
-            break;
-            }
-        }
+    brakeDeltas[0] = getEncoderTicks(MotorPosition.LEFT_REAR)
+            - brakePrevEncoderVals[0];
+    brakeDeltas[1] = getEncoderTicks(MotorPosition.RIGHT_REAR)
+            - brakePrevEncoderVals[1];
+    brakeDeltas[2] = getEncoderTicks(MotorPosition.LEFT_FRONT)
+            - brakePrevEncoderVals[2];
+    brakeDeltas[3] = getEncoderTicks(MotorPosition.RIGHT_FRONT)
+            - brakePrevEncoderVals[3];
 
-    // reset the current iteration to make sure we don't have an
-    // arrayOutOfBounds exception.
-    if (currentBrakeIteration == brakeIterations - 1)
-        currentBrakeIteration = 0;
-    else
+    brakePrevEncoderVals[0] = getEncoderTicks(MotorPosition.LEFT_REAR);
+    brakePrevEncoderVals[1] = getEncoderTicks(MotorPosition.RIGHT_REAR);
+    brakePrevEncoderVals[2] = getEncoderTicks(MotorPosition.LEFT_FRONT);
+    brakePrevEncoderVals[3] = getEncoderTicks(
+            MotorPosition.RIGHT_FRONT);
+
+    // See if the motors are past the deadband
+    if (brakeMotorDirection[0] * brakeDeltas[0] < brakeDeadband
+            && brakeMotorDirection[1]
+                    * brakeDeltas[1] < brakeDeadband
+            && ((transmissionType == TransmissionType.TRACTION)
+                    || brakeMotorDirection[2]
+                            * brakeDeltas[2] < brakeDeadband
+                    || brakeMotorDirection[3]
+                            * brakeDeltas[3] < brakeDeadband))
+        {
+        // Increase the iteration
         currentBrakeIteration++;
+        }
+    else
+        {
+        // Reset the iteration. We want x times ~in a row~.
+        currentBrakeIteration = 0;
+        }
 
-    // START SET MOTORS
+    // If we have been within the deadband for x times, return true.
+    if (currentBrakeIteration >= totalBrakeIterations)
+        {
+        currentBrakeIteration = 0;
+        getTransmission().stop();
+        return true;
+        }
 
     // Set the rear wheels
-    getTransmission().getSpeedController(MotorPosition.LEFT_REAR)
-            .set(-brakeMotorDirection[0]);
+    getTransmission()
+            .getSpeedController(MotorPosition.LEFT_REAR)
+            .set(-brakeMotorDirection[0] * brakePower);
     getTransmission().getSpeedController(MotorPosition.RIGHT_REAR)
-            .set(-brakeMotorDirection[1]);
+            .set(-brakeMotorDirection[1] * brakePower);
     // Set the front wheels if it's the right kind of drive
     if (transmissionType != TransmissionType.TRACTION)
         {
         getTransmission().getSpeedController(MotorPosition.LEFT_FRONT)
-                .set(-brakeMotorDirection[2]);
+                .set(-brakeMotorDirection[2] * brakePower);
         getTransmission().getSpeedController(MotorPosition.RIGHT_FRONT)
-                .set(-brakeMotorDirection[3]);
+                .set(-brakeMotorDirection[3] * brakePower);
         }
     // END SET MOTORS
     this.previousBrakeTime = System.currentTimeMillis();
@@ -459,27 +489,17 @@ public boolean brake ()
 
 private long previousBrakeTime = 0;
 
-private int brakeIterations = 3;
-
 private int[] brakeMotorDirection = new int[4];
 
-private int brakeDeadband = 0; // ticks
+private int brakeDeadband = 100; // ticks
 
-private int[][] brakePrevEncoderVals = new int[brakeIterations][4];
+private int[] brakePrevEncoderVals = new int[4];
+
+private double brakePower = .2;
 
 private int currentBrakeIteration = 0;
 
-/**
- * Sets how many iterations there are for the brake method. More iterations
- * means more braking
- * 
- * @param value
- *            number of iterations
- */
-public void setBrakeIterations (int value)
-{
-    brakeIterations = value;
-}
+private int totalBrakeIterations = 3;
 
 /**
  * Sets the deadband for brake()... how close to stopped we are.
@@ -490,6 +510,26 @@ public void setBrakeIterations (int value)
 public void setBrakeDeadband (int ticks)
 {
     this.brakeDeadband = ticks;
+}
+
+/**
+ * Sets how much the robot should send to the motors while braking
+ * 
+ * @param power
+ *            percentage (0.0 to 1.0)
+ */
+public void setBrakePower (double power)
+{
+    this.brakePower = power;
+}
+
+/**
+ * 
+ * @param iterations
+ */
+public void setBrakeIterations (int iterations)
+{
+    this.totalBrakeIterations = iterations;
 }
 
 
@@ -573,7 +613,7 @@ public boolean driveStraightInches (int distance, double speed)
         }
 
     // Drive straight if we have not reached the distance
-    this.driveStraight(speed);
+    this.driveStraight(speed, true);
 
     return false;
 }
@@ -692,7 +732,7 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
 
 private double accelMotorPower = 0;// Power sent to each motor
 
-private double accelStartingSpeed = .1;
+private double accelStartingSpeed = .2;
 
 private long lastAccelerateTime = 0; // Milliseconds
 
@@ -735,81 +775,109 @@ public void setDefaultAcceleration (double value)
  * @param speed
  *            How fast the robot will be moving. Correction will be better with
  *            lower percentages.
+ * @param accelerate
+ *            TODO
  * @param acceleration
  *            TODO
  */
-public void driveStraight (double speed)
+public void driveStraight (double speed, boolean accelerate)
 {
-    // Only check encoders if the right amount of time has elapsed
-    // (collectionTime).
-    if (System.currentTimeMillis() > driveStraightOldTime
-            + COLLECTION_TIME)
+    // Only use the four encoders if the robot uses a four-wheel system
+    if (transmissionType == TransmissionType.MECANUM
+            || transmissionType == TransmissionType.TANK)
         {
-        // Reset the "timer"
-        driveStraightOldTime = System.currentTimeMillis();
-        // Only use the four encoders if the robot uses a four-wheel system
-        if (transmissionType == TransmissionType.MECANUM
-                || transmissionType == TransmissionType.TANK)
+        // Calculate how much has changed between the last collection
+        // time and now
+        leftChange = (leftFrontEncoder.getDistance()
+                + leftRearEncoder.getDistance())
+                - prevEncoderValues[0];
+        rightChange = (rightFrontEncoder.getDistance()
+                + rightRearEncoder.getDistance())
+                - prevEncoderValues[1];
+        // Setup the previous values for the next collection run
+        prevEncoderValues[0] = leftFrontEncoder.getDistance()
+                + leftRearEncoder.get();
+        prevEncoderValues[1] = rightFrontEncoder.getDistance()
+                + rightRearEncoder.get();
+        }
+    else
+        {
+        // Calculate how much has changed between the last collection
+        // time and now
+        leftChange = leftRearEncoder.getDistance()
+                - prevEncoderValues[0];
+        rightChange = rightRearEncoder.getDistance()
+                - prevEncoderValues[1];
+        // Setup the previous values for the next collection run
+        prevEncoderValues[0] = leftRearEncoder.getDistance();
+        prevEncoderValues[1] = rightRearEncoder.getDistance();
+        }
+
+    double delta = leftChange - rightChange;
+    double leftMotorVal = speed, rightMotorVal = speed;
+
+    // We are going forwards?
+    if (speed > 0)
+        {
+        // Left is more forwards than right?
+        if (leftChange > rightChange)
             {
-            // Calculate how much has changed between the last collection
-            // time and now
-            leftChange = (leftFrontEncoder.getDistance()
-                    + leftRearEncoder.getDistance())
-                    - prevEncoderValues[0];
-            rightChange = (rightFrontEncoder.getDistance()
-                    + rightRearEncoder.getDistance())
-                    - prevEncoderValues[1];
-            // Setup the previous values for the next collection run
-            prevEncoderValues[0] = leftFrontEncoder.getDistance()
-                    + leftRearEncoder.get();
-            prevEncoderValues[1] = rightFrontEncoder.getDistance()
-                    + rightRearEncoder.get();
+            leftMotorVal = speed - driveStraightConstant;
+            rightMotorVal = speed;
             }
-        else
+        // Right is more forwards than left?
+        else if (rightChange > leftChange)
             {
-            // Calculate how much has changed between the last collection
-            // time and now
-            leftChange = leftRearEncoder.getDistance()
-                    - prevEncoderValues[0];
-            rightChange = rightRearEncoder.getDistance()
-                    - prevEncoderValues[1];
-            // Setup the previous values for the next collection run
-            prevEncoderValues[0] = leftRearEncoder.getDistance();
-            prevEncoderValues[1] = rightRearEncoder.getDistance();
+            leftMotorVal = speed;
+            rightMotorVal = speed - driveStraightConstant;
             }
         }
-    double leftMotorVal = speed + (driveStraightScalingFactor
-            * inRange(rightChange - leftChange));
-    double rightMotorVal = speed + (driveStraightScalingFactor
-            * inRange(leftChange - rightChange));
+    else if (speed < 0)
+    // We are going backwards?
+        {
+        // Left is more backwards than right?
+        if (leftChange < rightChange)
+            {
+            leftMotorVal = speed + driveStraightConstant;
+            rightMotorVal = speed;
+            }
+        // Right is more backwards than left?
+        else if (rightChange < leftChange)
+            {
+            rightMotorVal = speed + driveStraightConstant;
+            leftMotorVal = speed;
+            }
+        }
+
     // Changes how much the robot corrects by how off course it is. The
     // more off course, the more it will attempt to correct.
 
-    this.accelerateTo(leftMotorVal, rightMotorVal,
-            defaultAcceleration);
+    if (accelerate)
+        this.accelerateTo(leftMotorVal, rightMotorVal,
+                defaultAcceleration);
+    else
+        this.getTransmission().drive(leftMotorVal, rightMotorVal);
 
 }
 
-private double driveStraightScalingFactor = .15;
+// How much should be subtracted from the left or right side while driving
+// straight
+private double driveStraightConstant = .1;
 
-private double leftChange = 1, rightChange = 1;
+private double leftChange = 0, rightChange = 0;
 
 private double[] prevEncoderValues =
-    {1, 1};
-// Preset to 100 to avoid divide by zero errors.
-
-// Used for calculating how much time has passed for driveStraight
-private long driveStraightOldTime = 0;
+    {0, 0};
 
 /**
  * Sets how much the robot should correct while driving straight.
  * 
  * @param value
- *            The scaling factor, in decimal percent form (0.0 - 1.0)
+ *            Percentage (0.0 to 1.0)
  */
-public void setDriveStraightScalingFactor (double value)
+public void setDriveStraightConstant (double value)
 {
-    this.driveStraightScalingFactor = value;
+    this.driveStraightConstant = value;
 }
 
 /**
@@ -945,44 +1013,33 @@ private boolean turnDegreesInit = true;
  */
 public boolean driveToSwitch (double compensationFactor, double speed)
 {
-
+    this.setDefaultAcceleration(0);
     if (this.frontUltrasonic
             .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
         {
-        visionProcessor.processImage();
-
-        if (visionProcessor.getParticleReports().length >= 2)
+        this.getCameraCenterValue();
+        if (this.getCameraCenterValue() >= SWITCH_CAMERA_CENTER
+                - CAMERA_DEADBAND
+                && this.getCameraCenterValue() <= SWITCH_CAMERA_CENTER
+                        + CAMERA_DEADBAND)
             {
-            center = (visionProcessor.getNthSizeBlob(0).center.x
-                    + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+            driveStraight(speed, false);
+            // System.out.println("We're center");
             }
-        else if (visionProcessor.getParticleReports().length == 1)
-            {
-            center = visionProcessor.getNthSizeBlob(0).center.x;
-            }
-        else
-            {
-            center = SWITCH_CAMERA_CENTER;
-            }
-
-        if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
-                && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
-            {
-            driveStraight(speed);
-            }
-        else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
-            {
-            // center is too far left, drive faster on the right
-            this.getTransmission().drive(speed * compensationFactor,
-                    speed);
-            System.out.println("We're too right");
-            }
-        else
+        else if (this.getCameraCenterValue() > SWITCH_CAMERA_CENTER
+                + CAMERA_DEADBAND)
             {
             // center is too far right, drive faster on the left
+            this.getTransmission().drive(speed * compensationFactor,
+                    speed);
+            // System.out.println("We're too right");
+            }
+        else
+            {
+            // center is too far left, drive faster on the right
             this.getTransmission().drive(speed,
                     speed * compensationFactor);
-            System.out.println("We're too left");
+            // System.out.println("We're too left");
             }
         }
     else
@@ -991,8 +1048,11 @@ public boolean driveToSwitch (double compensationFactor, double speed)
                 .getDistanceFromNearestBumper() <= STOP_ROBOT)
             {
             this.brake();
+            this.getTransmission().drive(0, 0);
+            // System.out.println("We're stopped");
             }
-        this.driveStraight(speed);
+        this.driveStraight(speed, false);
+        // System.out.println("We're driving by ultrasonic");
         return true;
         }
     return false;
@@ -1006,17 +1066,18 @@ public boolean driveToSwitch (double compensationFactor, double speed)
  */
 public void visionTest (double compensationFactor, double speed)
 {
-    visionProcessor.processImage();
-    center = (visionProcessor.getNthSizeBlob(0).center.x
-            + visionProcessor.getNthSizeBlob(1).center.x) / 2;
-    System.out.println("Center for the vision : " + center);
-    if (center >= SWITCH_CAMERA_CENTER - CAMERA_DEADBAND
-            && center <= SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+    this.getCameraCenterValue();
+    // System.out.println("Center for the vision : " + center);
+    if (this.getCameraCenterValue() >= SWITCH_CAMERA_CENTER
+            - CAMERA_DEADBAND
+            && this.getCameraCenterValue() <= SWITCH_CAMERA_CENTER
+                    + CAMERA_DEADBAND)
         {
         // driveStraight(speed, false);
         System.out.println("We are aligned in the center");
         }
-    else if (center > SWITCH_CAMERA_CENTER + CAMERA_DEADBAND)
+    else if (this.getCameraCenterValue() > SWITCH_CAMERA_CENTER
+            + CAMERA_DEADBAND)
         {
         // center is too far right, drive faster on the left
         this.getTransmission().drive(speed * compensationFactor,
@@ -1035,8 +1096,25 @@ public void visionTest (double compensationFactor, double speed)
 /**
  * @return the current center value
  */
-public double getCameraCenterValue()
+public double getCameraCenterValue ()
 {
+    visionProcessor.processImage();
+    if (visionProcessor.getParticleReports().length >= 2)
+        {
+        center = (visionProcessor.getNthSizeBlob(0).center.x
+                + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+        // System.out.println("TWO BLOBS");
+        }
+    else if (visionProcessor.getParticleReports().length == 1)
+        {
+        center = visionProcessor.getNthSizeBlob(0).center.x;
+        // System.out.println("ONE BLOBS");
+        }
+    else
+        {
+        center = SWITCH_CAMERA_CENTER;
+        // System.out.println("NO BLOBS");
+        }
     return center;
 }
 
@@ -1044,8 +1122,7 @@ public double getCameraCenterValue()
  * Hopefully will align to proper distance w. scale
  * then raise fork lift and eject cube
  * 
- * 
- * returns boolean
+ * @return boolean
  * 
  */
 
@@ -1090,19 +1167,19 @@ public boolean alignToScale ()
 }
 
 // ================VISION TUNABLES================
-private final double CAMERA_NO_LONGER_WORKS = 55;
+private final double CAMERA_NO_LONGER_WORKS = 38;
 // 24
 
-private final double CAMERA_DEADBAND = 15;
+private final double CAMERA_DEADBAND = 10;
 
-private final double STOP_ROBOT = 45;
+private final double STOP_ROBOT = 20;
 // 6
 
 // TODO TEST TO FIND ACTUAL VALUE
-private final static double SWITCH_CAMERA_CENTER = 123;
+private final double SWITCH_CAMERA_CENTER = 115;
 
 // ================VISION VARIABLES================
-private static double center = SWITCH_CAMERA_CENTER;
+private double center = 115;
 
 // ================TUNABLES================
 

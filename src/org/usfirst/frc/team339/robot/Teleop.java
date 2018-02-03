@@ -85,7 +85,6 @@ public static void periodic ()
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
-
     // intake controls
     Hardware.cubeManipulator
             .intakeCube(Hardware.rightOperator.getRawButton(2));
@@ -110,7 +109,6 @@ public static void periodic ()
         {
         Hardware.cubeManipulator.deployCubeIntake();
         }
-
 
     // takes a picture with the axis camera when button 7 on the left Operator
     // is pressed
@@ -178,32 +176,10 @@ public static void periodic ()
         Hardware.tractionDrive.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
 
-
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
 
-    if (Hardware.leftDriver.getRawButton(9))
-        isTestingDrive = true;
-
-    if (isTestingDrive)
-        {
-        Hardware.tractionDrive.setForAutonomous();
-        if (driveState == 0
-                && Hardware.autoDrive.driveInches(36, .5))
-            driveState++;
-        else if (driveState == 1 && Hardware.autoDrive.brake())
-            driveState++;
-
-        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
-            {
-            Hardware.tractionDrive.stop();
-            driveState = 0;
-            Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
-            isTestingDrive = false;
-            }
-
-        }
 
 
     // NOTE - CLAIRE TEST NEXT MEETING
@@ -212,10 +188,10 @@ public static void periodic ()
         Hardware.climbingMechanismServo.setAngle(110);
         }
 
-
-
     printStatements();
     beckyTest();
+
+    // testingDrive();
 
     // totalLoopTime += teleopLoopTimer.get();
     // teleopLoopTimer.reset();
@@ -224,7 +200,7 @@ public static void periodic ()
 
 } // end Periodic
 
-private static boolean isTestingDrive = false;
+private static boolean isTestingDrive = true;
 
 private static boolean takePictureByButton = false;
 
@@ -246,6 +222,44 @@ private static double totalLoopTime = 0.0;
 private static int numOfLoops = 1;
 
 private static int testingDriveState = 0;
+
+private static void testingDrive ()
+{
+
+
+    if (Hardware.leftDriver.getRawButton(9))
+        isTestingDrive = true;
+
+    if (isTestingDrive)
+        {
+        Hardware.tractionDrive.setForAutonomous();
+        Hardware.autoDrive.setDefaultAcceleration(.5);
+        if (driveState == 0
+                && Hardware.autoDrive.driveStraightInches(48, .6))
+            {
+            Hardware.autoDrive.resetEncoders();
+            driveState++;
+            }
+        else if (driveState == 1 && Hardware.autoDrive.brake())
+            driveState++;
+
+        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+            {
+            Hardware.tractionDrive.stop();
+            System.out.println("LDistance: "
+                    + Hardware.leftFrontDriveEncoder.getDistance());
+            System.out.println("RDistance: "
+                    + Hardware.rightFrontDriveEncoder.getDistance());
+            driveState = 0;
+            Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+            isTestingDrive = false;
+            }
+        }
+
+    if (Hardware.leftDriver.getRawButton(8))
+        Hardware.autoDrive.resetEncoders();
+
+}
 
 /**
  * stores print statements for future use in the print "bank", statements
@@ -281,9 +295,7 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-
-    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(
@@ -337,7 +349,6 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
 
-
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
 
@@ -362,9 +373,9 @@ public static void printStatements ()
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
 
-    System.out.println(
-            "Lift Encoder Inches = "
-                    + Hardware.liftingEncoder.getDistance());
+    // System.out.println(
+    // "Lift Encoder Inches = "
+    // + Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
@@ -418,12 +429,10 @@ public static void printStatements ()
     // --------------------------
     // Sonar/UltraSonic
     // --------------------------
-    System.out.println("Front UltraSonic "
-            + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    System.out.println("Rear UltraSonic "
-            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-    System.out.println("Scaling factor : "
-            + Hardware.frontUltraSonic.getScalingFactor());
+    // System.out.println("Front UltraSonic "
+    // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Rear UltraSonic "
+    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // =========================
     // Servos
@@ -443,9 +452,8 @@ public static void printStatements ()
     // Cameras
     // prints any camera information required
     // ---------------------------------
-    // System.out.println("The center is : " + (Hardware.axisCamera
-    // .getNthSizeBlob(0).center.x
-    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // System.out.println("The camera center is: " +
+    // Hardware.autoDrive.getCameraCenterValue());
     // =================================
     // Driver station
     // =================================
@@ -478,16 +486,20 @@ public static void printStatements ()
 
 } // end printStatements
 
+
 public static void beckyTest ()
 {
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-    //
-    // Hardware.autoDrive.driveToSwitch(1.3, .6);
-    // }
+    if (Hardware.visionTestButton.isOnCheckNow())
+        {
+        Hardware.tractionDrive.setForAutonomous();
+        if (Hardware.autoDrive.driveToSwitch(1.5, .5) == true)
+            {
+            Hardware.autoDrive.driveInches(0, 0);
+            }
+        }
     Hardware.ringLightRelay.set(Value.kForward);
-    System.out.println("The camera center is: "
-            + Hardware.autoDrive.getCameraCenterValue());
+
+    Hardware.axisCamera.saveImage(ImageType.PROCESSED);
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
