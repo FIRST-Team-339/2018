@@ -1,5 +1,6 @@
 package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
+import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
@@ -396,15 +397,70 @@ public void reset ()
 }
 
 /**
+ * Enum for deciding whether we're braking after driving, or turning.
+ * 
+ * @author Ryan McGee
+ *
+ */
+public static enum BrakeType
+    {
+AFTER_DRIVE, AFTER_TURN
+    }
+
+/**
+ * Expected distance that it will take to stop during brake()
+ * 
+ * @return
+ *         expected distance during brake()
+ */
+public double getBrakeStoppingDistance ()
+{
+    return (this.distanceRequiredToBrake);
+} // end getBrakeStoppingDistance()
+
+/**
+ * Store the expected distance that it will take to stop during brake()
+ * 
+ * @param
+ *            brakeStoppingDistance
+ *            - new stopping distance during braking
+ * @return
+ *         new stored distance during brake()
+ */
+public double setBrakeStoppingDistance (double brakeStoppingDistance)
+{
+    return (this.distanceRequiredToBrake = brakeStoppingDistance);
+} // end setBrakeStoppingDistance()
+
+/**
  * Stops the robot suddenly, to prevent drifting during autonomous functions,
  * and increase the precision.
+ * 
+ * @param type
+ *            TODO
  * 
  * @return
  *         Whether or not the robot has stopped moving.
  */
-public boolean brake ()
+public boolean brake (BrakeType type)
 {
     System.out.println("Calling Brake");
+
+    int deadband = 0;
+    double power = 0;
+
+    if (type == BrakeType.AFTER_DRIVE)
+        {
+        deadband = brakeDriveDeadband;
+        power = brakeDrivePower;
+        }
+    else if (type == BrakeType.AFTER_TURN)
+        {
+        deadband = brakeTurnDeadband;
+        power = brakeTurnPower;
+        }
+
+
     if (System.currentTimeMillis() - previousBrakeTime > INIT_TIMEOUT)
         {
         prevEncoderValues = new double[4];
@@ -441,15 +497,22 @@ public boolean brake ()
     brakePrevEncoderVals[3] = getEncoderTicks(
             MotorPosition.RIGHT_FRONT);
 
+    for (int i = 0; i < brakeDeltas.length; i++)
+        System.out.println("Delta " + i + ": " + brakeDeltas[i]);
+
+    for (int i = 0; i < brakeMotorDirection.length; i++)
+        System.out.println("Power " + i + ": "
+                + brakeMotorDirection[i] * -brakeDrivePower);
+
     // See if the motors are past the deadband
-    if (brakeMotorDirection[0] * brakeDeltas[0] < brakeDeadband
+    if (brakeMotorDirection[0] * brakeDeltas[0] < deadband
             && brakeMotorDirection[1]
-                    * brakeDeltas[1] < brakeDeadband
+                    * brakeDeltas[1] < deadband
             && ((transmissionType == TransmissionType.TRACTION)
                     || brakeMotorDirection[2]
-                            * brakeDeltas[2] < brakeDeadband
+                            * brakeDeltas[2] < deadband
                     || brakeMotorDirection[3]
-                            * brakeDeltas[3] < brakeDeadband))
+                            * brakeDeltas[3] < deadband))
         {
         // Increase the iteration
         currentBrakeIteration++;
@@ -471,16 +534,16 @@ public boolean brake ()
     // Set the rear wheels
     getTransmission()
             .getSpeedController(MotorPosition.LEFT_REAR)
-            .set(-brakeMotorDirection[0] * brakePower);
+            .set(-brakeMotorDirection[0] * power);
     getTransmission().getSpeedController(MotorPosition.RIGHT_REAR)
-            .set(-brakeMotorDirection[1] * brakePower);
+            .set(-brakeMotorDirection[1] * power);
     // Set the front wheels if it's the right kind of drive
     if (transmissionType != TransmissionType.TRACTION)
         {
         getTransmission().getSpeedController(MotorPosition.LEFT_FRONT)
-                .set(-brakeMotorDirection[2] * brakePower);
+                .set(-brakeMotorDirection[2] * power);
         getTransmission().getSpeedController(MotorPosition.RIGHT_FRONT)
-                .set(-brakeMotorDirection[3] * brakePower);
+                .set(-brakeMotorDirection[3] * power);
         }
     // END SET MOTORS
     this.previousBrakeTime = System.currentTimeMillis();
@@ -491,11 +554,15 @@ private long previousBrakeTime = 0;
 
 private int[] brakeMotorDirection = new int[4];
 
-private int brakeDeadband = 100; // ticks
+private int brakeDriveDeadband = 55; // ticks
+
+private int brakeTurnDeadband = 14;
 
 private int[] brakePrevEncoderVals = new int[4];
 
-private double brakePower = .2;
+private double brakeDrivePower = .2;
+
+private double brakeTurnPower = 1.0;
 
 private int currentBrakeIteration = 0;
 
@@ -509,7 +576,7 @@ private int totalBrakeIterations = 3;
  */
 public void setBrakeDeadband (int ticks)
 {
-    this.brakeDeadband = ticks;
+    this.brakeDriveDeadband = ticks;
 }
 
 /**
@@ -520,7 +587,7 @@ public void setBrakeDeadband (int ticks)
  */
 public void setBrakePower (double power)
 {
-    this.brakePower = power;
+    this.brakeDrivePower = power;
 }
 
 /**
@@ -1042,7 +1109,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
                 .getDistanceFromNearestBumper() <= STOP_ROBOT)
             {
             vision = visionDriveState.STOP;
-            this.brake();
+            this.brake(null);
             }
         vision = visionDriveState.DRIVE_BY_ULTRASONIC;
         }
@@ -1063,7 +1130,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             driveStraight(speed, false);
             break;
         case STOP:
-            brake();
+            brake(null);
             this.getTransmission().drive(0, 0);
             return true;
 
@@ -1143,49 +1210,75 @@ public double getCameraCenterValue ()
  * Hopefully will align to proper distance w. scale
  * then raise fork lift and eject cube
  * 
- * @return boolean
+
+ * param speed
+ * Set to negative for too close ajustment
+ * 
+ * @return true when completed
+
  * 
  */
 
-public boolean alignToScale ()
+public boolean alignToScale (double speed, double deadband)
 {
 
-    // todo add deadband to distance(MAKE LESS THAN 72)
+
+    // Started align to scale
+    // todo optimize deadband to distance
 
     // checks if in proper distance
-    if (this.rearUltrasonic.getDistanceFromNearestBumper() > 72
-            - ROBOT_LENGTH
-            && this.rearUltrasonic.getDistanceFromNearestBumper() < 72
-                    + ROBOT_LENGTH)
+    // ROBOT_TO_SCALE_DISTANCE 68-36 =32
+    if (this.rearUltrasonic
+            .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
+
+            && this.rearUltrasonic
+                    .getDistanceFromNearestBumper() >= ROBOT_TO_SCALE_DISTANCE
+                            - deadband)
         {
         System.out.println("Our distance to the scale is correct");
-        // raise forklift autonomously
-        // if(Forklift raise method) {
-        // eject cube method
-        // }else {
-        // raise forklift method
-        // }
-        }
-    // if to close to scale
-    else if (this.rearUltrasonic.getDistanceFromNearestBumper() > 72
-            - ROBOT_LENGTH)
 
+        // Hardware.tractionDrive.drive(0, 0);
+        speed = 0;
+        aligned = true;
+        // start the move forklift switch
+
+        if (Hardware.cubeManipulator.scoreSwitch())
+            {
+            return true;
+            }
+
+
+
+        }
+    // if to far from scale
+    else if (this.rearUltrasonic
+            .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
+                    - deadband
+    /* && aligned == false */)
         {
-        System.out.println("We are to close to the scale");
-        this.getTransmission().drive(-.3, -.3);
+        System.out.println("We are too close to the scale");
+        Hardware.cubeManipulator.moveLiftDistance(0, 0);
+        Hardware.tractionDrive.drive(speed, speed);
         }
     // if to close to scale
-    else if (this.rearUltrasonic.getDistanceFromNearestBumper() < 72
-            + ROBOT_LENGTH)
+    else if (this.rearUltrasonic
+            .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
+    /* && aligned == false */)
         {
         System.out.println("We are to far from the scale");
-        this.getTransmission().drive(.3, .3);
+        Hardware.cubeManipulator.moveLiftDistance(0, 0);
+        Hardware.tractionDrive.drive(-speed, -speed);
         }
-
-
     return false;
-
 }
+
+boolean aligned = false;
+
+// ---------------------------------
+// THis is the distance we expect to move
+// during a brake call
+// ---------------------------------
+private double distanceRequiredToBrake = 3.0;
 
 // ================VISION TUNABLES================
 private final double CAMERA_NO_LONGER_WORKS = 38;
@@ -1203,10 +1296,13 @@ private final double SWITCH_CAMERA_CENTER = 115;
 private double center = 115;
 
 // ================TUNABLES================
+//
+private static final double SCALE_TO_WALL_DISTANCE = 68;
 
+private static final double ROBOT_LENGTH = 36;// TODO magic number
 
-private static final double ROBOT_LENGTH = 0;// TODO magic number
-
+private static final double ROBOT_TO_SCALE_DISTANCE = SCALE_TO_WALL_DISTANCE
+        - ROBOT_LENGTH;
 
 // Number of milliseconds that will pass before collecting data on encoders
 // for driveStraight and brake

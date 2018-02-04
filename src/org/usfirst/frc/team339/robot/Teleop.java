@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
@@ -241,7 +242,7 @@ private static void testingDrive ()
             Hardware.autoDrive.resetEncoders();
             driveState++;
             }
-        else if (driveState == 1 && Hardware.autoDrive.brake())
+        else if (driveState == 1 && Hardware.autoDrive.brake(null))
             driveState++;
 
         if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
