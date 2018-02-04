@@ -1264,7 +1264,7 @@ private final TransmissionType transmissionType;
 
 // ---------------------------------
 // THis is the distance we expect to move
-// during a brake call
+// during a brake call (in inches)
 // ---------------------------------
 private double distanceRequiredToBrake = 3.0;
 
