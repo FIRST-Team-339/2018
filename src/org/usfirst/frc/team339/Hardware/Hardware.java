@@ -298,10 +298,6 @@ public static final Timer autoTimer = new Timer();
 
 public static boolean onNessie = false;
 
-
-// timer for taking pictures via buttons in teleop
-public static final Timer takePictureTimer = new Timer();
-
 // ------------------------------------
 // Transmission class
 // ------------------------------------

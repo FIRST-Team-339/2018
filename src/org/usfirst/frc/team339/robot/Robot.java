@@ -262,7 +262,8 @@ public void robotInit ()
         Hardware.tractionDrive.setAllGearRatios(GEAR_1_SPEED,
                 GEAR_2_SPEED);
         }
-
+    
+    //Sets joystick deadband
     Hardware.tractionDrive.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
 
     // Sets all encoders Distance per pulse
@@ -332,8 +333,6 @@ public void teleopInit ()
 
     Hardware.rightDriveMotor.set(0);
     Hardware.leftDriveMotor.set(0);
-
-
 
     // User code goes above here
     // =========================================================

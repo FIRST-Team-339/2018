@@ -56,14 +56,11 @@ public class Teleop
 
 public static void init ()
 {
-    totalLoopTime = 0.0;
-    numOfLoops = 1;
-    teleopLoopTimer.reset();
-    teleopLoopTimer.start();
-    Hardware.takePictureTimer.reset();
-
+    // totalLoopTime = 0.0;
+    // numOfLoops = 1;
+    // teleopLoopTimer.reset();
+    // teleopLoopTimer.start();
     Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
-
 } // end Init
 
 // tune pid loop
@@ -79,14 +76,14 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+
+    // Forklift controls
     Hardware.cubeManipulator.forkliftUpdate();
 
-    //
-    // Forklift controls
     Hardware.cubeManipulator
             .moveForkliftWithController(Hardware.rightOperator);
 
-    // intake controls
+    // Intake controls
     Hardware.cubeManipulator
             .intakeCube(Hardware.rightOperator.getRawButton(2));
 
@@ -97,13 +94,11 @@ public static void periodic ()
     Hardware.cubeManipulator
             .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
 
-
     // Set Servo to position w/ Momentary Switch
     // if (Hardware.climbButton.isOnCheckNow() == true)
     // {
     // Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
     // }
-
 
     // Set intake/deploy motor to position based on encoder w/ Momentary Switch
     if (Hardware.deployIntakeButton.isOnCheckNow() == true)
@@ -111,126 +106,111 @@ public static void periodic ()
         Hardware.cubeManipulator.deployCubeIntake();
         }
 
-    // takes a picture with the axis camera when button 7 on the left Operator
-    // is pressed
-
-    if (Hardware.leftOperator.getRawButton(6)
-            && Hardware.leftOperator.getRawButton(7)
-            && pictureTakenByButton == false
-            && takePictureByButton == false)
-        {
-        takePictureByButton = true;
-        Hardware.takePictureTimer.start();
-        }
-
-    if (!(Hardware.leftOperator.getRawButton(6)
-            && Hardware.leftOperator.getRawButton(7))
-            && pictureTakenByButton == true)
-        {
-        takePictureByButton = false;
-        pictureTakenByButton = false;
-        }
-
-
-    if (takePictureByButton == true)
-        {
-        if (Hardware.takePictureTimer.get() <= TAKE_PICTURE_DELAY
-                / 2.0)
-            {
-            Hardware.ringLightRelay.set(Value.kForward);
-            }
-
-        if (Hardware.takePictureTimer.get() >= TAKE_PICTURE_DELAY)
-            {
-
-            Hardware.axisCamera.saveImageSafely(
-                    true,
-                    ImageType.RAW);
-
-            pictureTakenByButton = true;
-            takePictureByButton = false;
-
-            Hardware.axisCamera.saveImageSafely(
-                    false,
-                    ImageType.RAW);
-
-
-            Hardware.ringLightRelay.set(Value.kReverse);
-
-            Hardware.takePictureTimer.stop();
-            Hardware.takePictureTimer.reset();
-
-            }
-        }
-
     // =================================================================
     // CAMERA CODE
     // =================================================================
 
     // =================================================================
-    // Driving code
+    // DRIVING CODE
     // =================================================================
 
-    if (isTestingDrive == false)
-        Hardware.tractionDrive.drive(Hardware.leftDriver,
-                Hardware.rightDriver);
-
+    // if the right driver button 3 is pressed, shift up a gear, if the left
+    // driver button 3 id pressed, shift down a gear
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
 
 
-
-    // NOTE - CLAIRE TEST NEXT MEETING
-    if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
+    // if is testing drive is equal to true, the joysticks are locked out to
+    // test some sort of drive function (of drive by camera)
+    if (isTestingDrive == false)
         {
-        Hardware.climbingMechanismServo.setAngle(110);
+        Hardware.tractionDrive.drive(Hardware.leftDriver,
+                Hardware.rightDriver);
         }
 
     printStatements();
-    if (Hardware.onNessie == true)
-        {
-        beckyTest();
-        }
+
+    // =================================================================
+    // DRIVING CODE
+    // =================================================================
+    // -------------------------------------------
+    // Put anything you need to test, but the 
+    // code will not be a part of the final teleop
+    // -------------------------------------------
 
     // testingDrive();
 
-    // totalLoopTime += teleopLoopTimer.get();
-    // teleopLoopTimer.reset();
-    // averageLoopTime = totalLoopTime / numOfLoops;
-    // numOfLoops++;
+    // timeTeleopCycle()
+
+    // if (Hardware.onNessie == true)
+    // {
+    // beckyTest();
+    // }
 
 } // end Periodic
 
-private static boolean isTestingDrive = true;
-
-private static boolean takePictureByButton = false;
-
-private static boolean pictureTakenByButton = false;
+private static boolean isTestingDrive = false;
 
 private static int driveState = 0;
 
 // timer to keep track of how long it spent to get through this loop of teleop
-private static Timer teleopLoopTimer = new Timer();
+// private static Timer teleopLoopTimer = new Timer();
 
 // average time it has taken to loop through teleop (or more accurately, robot
 // as a whole)
-private static double averageLoopTime = 0.0;
+// private static double averageLoopTime = 0.0;
 
 // total time since beginning of teleop init
-private static double totalLoopTime = 0.0;
+// private static double totalLoopTime = 0.0;
 
 // number of times we'll started through teleop periodic (starts at 1)
-private static int numOfLoops = 1;
+// private static int numOfLoops = 1;
 
 private static int testingDriveState = 0;
+
+public static void beckyTest ()
+{
+    if (Hardware.visionTestButton.isOnCheckNow())
+        {
+        Hardware.tractionDrive.setForAutonomous();
+        if (Hardware.autoDrive.driveToSwitch(1.5, .5) == true)
+            {
+            Hardware.autoDrive.driveInches(0, 0);
+            }
+        }
+    Hardware.ringLightRelay.set(Value.kForward);
+
+    Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+
+    if (Hardware.onNessie == true)
+        {
+        isTestingDrive = true;
+        }
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.axisCamera.processImage();
+    // Hardware.autoDrive.visionTest(1.3, .6);
+    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+    // for (int i = 0; i < Hardware.axisCamera
+    // .getParticleReports().length; i++)
+    // {
+    // System.out.println("The center of " + i + " is: "
+    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+    // }
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // }
+}
 
 private static void testingDrive ()
 {
 
-
-    if (Hardware.leftDriver.getRawButton(9))
+    if (Hardware.leftDriver.getRawButton(9) == true)
+        {
         isTestingDrive = true;
+        }
 
     if (isTestingDrive)
         {
@@ -242,8 +222,11 @@ private static void testingDrive ()
             Hardware.autoDrive.resetEncoders();
             driveState++;
             }
-        else if (driveState == 1 && Hardware.autoDrive.brake(null))
+        else if (driveState == 1
+                && Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            {
             driveState++;
+            }
 
         if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
             {
@@ -258,9 +241,19 @@ private static void testingDrive ()
             }
         }
 
-    if (Hardware.leftDriver.getRawButton(8))
+    if (Hardware.leftDriver.getRawButton(8) == true)
+        {
         Hardware.autoDrive.resetEncoders();
+        }
 
+}
+
+public static void timeTeleopCycle ()
+{
+    // totalLoopTime += teleopLoopTimer.get();
+    // teleopLoopTimer.reset();
+    // averageLoopTime = totalLoopTime / numOfLoops;
+    // numOfLoops++;
 }
 
 /**
@@ -468,14 +461,16 @@ public static void printStatements ()
     // System.out.println(
     // "Left Operator Joystick " + Hardware.leftOperator.getY());
     // =================================
-    // Kilroy ancillary items
+    // KILROY ANCILLARY ITEMS
     // =================================
 
     // ---------------------------------
     // timers
     // what time does the timer have now
     // ---------------------------------
-
+    // =================================
+    // KILROY LOOP TIMER
+    // =================================
     // System.out.println(
     // "\n" + "LOOP TIMER: " + teleopLoopTimer.get() + "; "
     // + "avg: " +
@@ -483,49 +478,9 @@ public static void printStatements ()
 
 } // end printStatements
 
-
-public static void beckyTest ()
-{
-    if (Hardware.visionTestButton.isOnCheckNow())
-        {
-        Hardware.tractionDrive.setForAutonomous();
-        if (Hardware.autoDrive.driveToSwitch(1.5, .5) == true)
-            {
-            Hardware.autoDrive.driveInches(0, 0);
-            }
-        }
-    Hardware.ringLightRelay.set(Value.kForward);
-
-    Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-
-    if (Hardware.onNessie == true)
-        {
-        isTestingDrive = true;
-        }
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-    // Hardware.axisCamera.processImage();
-    // Hardware.autoDrive.visionTest(1.3, .6);
-    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-    // for (int i = 0; i < Hardware.axisCamera
-    // .getParticleReports().length; i++)
-    // {
-    // System.out.println("The center of " + i + " is: "
-    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
-    // }
-    // System.out.println("The center is : " + (Hardware.axisCamera
-    // .getNthSizeBlob(0).center.x
-    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
-    // }
-}
-//
 // ================================
 // Constants
 // ================================
-//
-
-// how many seconds we wait before taking a picture via buttons
-public static final double TAKE_PICTURE_DELAY = 0.1;
 
 public static final int CLIMBING_SERVO_ANGLE = 78;
 
