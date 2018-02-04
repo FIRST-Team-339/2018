@@ -62,13 +62,17 @@ public class Autonomous
  */
 public static void init ()
 {
-
+    Hardware.leftFrontDriveEncoder.reset();
+    Hardware.rightFrontDriveEncoder.reset();
+    Hardware.leftRearDriveEncoder.reset();
+    Hardware.rightRearDriveEncoder.reset();
+    Hardware.liftingEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     // Disable auto
     if (Hardware.disableAutonomousSwitch.isOn())
         autoState = State.FINISH;
 
-    Hardware.tractionDrive.setForAutonomous();
+    Hardware.transmission.setForAutonomous();
     Hardware.autoDrive
             .setDefaultAcceleration(DRIVE_STRAIGHT_ACCELERATION_TIME);
 } // end Init
@@ -234,7 +238,7 @@ public static void periodic ()
             break;
         case FINISH:
             // end of autonomous; stops and resets the autotimer
-            Hardware.tractionDrive.stop();
+            Hardware.transmission.stop();
             Hardware.autoTimer.stop();
             Hardware.autoTimer.reset();
             break;
@@ -242,7 +246,7 @@ public static void periodic ()
         default:
             // if something goes wrong, stop autonomous and go straight
             // to FINISH
-            Hardware.tractionDrive.stop();
+            Hardware.transmission.stop();
             Hardware.autoTimer.stop();
             Hardware.autoTimer.reset();
             autoState = State.FINISH;
@@ -260,7 +264,7 @@ public static void periodic ()
  */
 public static Position grabData (GameDataType dataType)
 {
-    // Testing the game data the driver station provides us with
+    // gets the game data the driver station provides us with
     String gameData = DriverStation.getInstance()
             .getGameSpecificMessage();
 
@@ -296,13 +300,18 @@ public static Position grabData (GameDataType dataType)
     return Position.NULL;
 }
 
-private enum GameDataType
+/**
+ * Enum used by the grabData function for specifying if we want to know
+ * the game data for the (our) switch, or the scale;
+ * does not currently have something for the opponent's switch
+ */
+public enum GameDataType
     {
 SWITCH, SCALE
     }
 
 /**
- * Drive across the auto line
+ * Autonomous path for just driving across the auto line
  * 
  * @return
  *         Whether or not the path has finished.
@@ -332,15 +341,17 @@ public static boolean autolinePath ()
                 currentAutolineState = AutolinePathStates.FINISH;
             break;
         default:
+            // if something goes wrong, fall through to FINISH's case
         case FINISH:
             // Stop drive motors and end auto
-            Hardware.tractionDrive.stop();
+            Hardware.transmission.stop();
             return true;
         }
 
     return false;
 }
 
+// Enum for the states in the autolinePath and autolineScalePath autonomouses
 private static enum AutolinePathStates
     {
 PATH_INIT, DRIVE1, BRAKE1, FINISH
@@ -364,7 +375,8 @@ public static boolean autoLineScalePath ()
             currentAutolineState = AutolinePathStates.DRIVE1;
             break;
         case DRIVE1:
-            // Drive across the line
+            // Drive across the auto line, and a little farther to be closer to
+            // the scale
             if (Hardware.autoDrive.driveStraightInches(
                     DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE,
                     DRIVE_SPEED))
@@ -378,7 +390,7 @@ public static boolean autoLineScalePath ()
         default:
         case FINISH:
             // Stop drive motors and end auto
-            Hardware.tractionDrive.stop();
+            Hardware.transmission.stop();
             return true;
         }
     return false;
@@ -408,12 +420,14 @@ PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_RI
  * @return
  *         Whether or not the robot has finished the path
  */
+// TODO @ANE Retest this; the way DONE worked changed slightly to actual do
+// something
 public static boolean leftAutoLineExchangePath ()
 {
     // prints the left auto switch state
     System.out.println("LeftExchangeAuto" + leftExchangeAuto);
 
-    // left auto switch
+    // left auto switch statement
     switch (leftExchangeAuto)
         {
         case PATH_INIT:
@@ -468,11 +482,11 @@ public static boolean leftAutoLineExchangePath ()
             break;
 
         case DONE:
-            // robot does nothing til teleop
-            break;
-
+            // robot stops and does nothing until teleop; returns true
+            // so the main autonomous state machine knows this is done
+            Hardware.transmission.stop();
+            return true;
         }
-
 
     return false;
 }
@@ -555,8 +569,10 @@ public static boolean rightAutoLineExchangePath ()
             break;
 
         case DONE:
-            // robot does nothing til teleop
-            break;
+            // robot stops and does nothing until teleop; returns true
+            // so the main autonomous state machine knows this is done
+            Hardware.transmission.stop();
+            return true;
 
         }
 
@@ -595,6 +611,7 @@ public static boolean centerSwitchPath ()
             break;
         case GRAB_DATA:
             // know where to go and sets state to the appropriate turn state
+            // (whichever side is our side of the switch)
             if (grabData(GameDataType.SWITCH) == Position.LEFT)
                 {
                 visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
@@ -619,7 +636,7 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case TURN_TOWARDS_RIGHT_SIDE:
-            // Turn 90 degrees to the right, if the switch is one the right
+            // Turn 90 degrees to the right, if the switch is on the right
             // sets state to BRAKE_2_L
             if (Hardware.autoDrive.turnDegrees(90,
                     AUTO_SPEED_VISION))
@@ -656,7 +673,7 @@ public static boolean centerSwitchPath ()
             break;
         case DRIVE_STRAIGHT_TO_SWITCH_RIGHT:
             // drive straight, switch is on the right then brakes
-            // stes state to TURN_AGAIN_RIGHT
+            // sets state to TURN_AGAIN_RIGHT
             if (Hardware.autoDrive.driveStraightInches(
                     DRIVE_NO_CAMERA_RIGHT, AUTO_SPEED_VISION))
                 {
@@ -699,15 +716,19 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case LIFT:
-            // moves distance to the scal eheught and holds it there
+            // moves the forklift to the scale height and holds it there
             // sets state to DEPLOY_ARM
             if (Hardware.cubeManipulator.moveLiftDistance(
-                    SCALE_LIFT_HEIGHT, FORKLIFT_SPEED))
+                    SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED))
                 {
                 visionAuto = centerState.DEPLOY_ARM;
                 }
             break;
         case DEPLOY_ARM:
+            // TODO this might be able to go before LIFT, or at the same time
+            // as LIFT; also deployCubeIntake() can be called once early to get
+            // it to start deploying, then it can be called again here to check
+            // if it is finished
             // deploys cube intake and then sets state to MAKE_DEPOSIT
             if (Hardware.cubeManipulator.deployCubeIntake())
                 {
@@ -722,10 +743,10 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case DONE:
-            // stops robot
-            Hardware.tractionDrive.stop();
-            break;
-
+            // stops robot the robot, and return true so the main auto
+            // switch machine knows this path is done
+            Hardware.transmission.stop();
+            return true;
         }
     return false;
 }
@@ -805,14 +826,16 @@ DONE
  */
 public static boolean switchOrScalePath (Position robotPosition)
 {
-    // prints
+    // prints the current state for this autonomous path
     System.out.println("Current State: " + currentSwitchOrScaleState);
 
     switch (currentSwitchOrScaleState)
         {
         case PATH_INIT:
+            // deploys the cube intake and moves on to the next state
             currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE1;
             Hardware.cubeManipulator.deployCubeIntake();
+            break;
         case DRIVE1:
             // FIRST driveInches: drive forward to switch
             if (Hardware.autoDrive.driveStraightInches(
@@ -1013,7 +1036,7 @@ public static boolean switchOrScalePath (Position robotPosition)
             break;
         default:
         case FINISH:
-            Hardware.tractionDrive.stop();
+            Hardware.transmission.stop();
             return true;
         }
     return false;
@@ -1169,7 +1192,7 @@ public static boolean offsetSwitchPath ()
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() < MIN_ULTRSNC_DISTANCE)
                 {
-                Hardware.tractionDrive.stop();
+                Hardware.transmission.stop();
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_B4_EJECT;
                 }
             break;
@@ -1194,7 +1217,7 @@ public static boolean offsetSwitchPath ()
             break;
         case FINISH:
             // Finished with the offset path!
-            Hardware.tractionDrive.stop();
+            Hardware.transmission.stop();
             Hardware.cubeIntakeMotor.stopMotor();
             break;
 
