@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 
-
 // -------------------------------------------------------
 /**
  * puts all of the hardware declarations into one place. In addition, it makes
@@ -51,9 +50,6 @@ import edu.wpi.first.wpilibj.Victor;
 
 public class Hardware
 {
-public static Servo climbingMechanismServo = new Servo(5);
-// Documentation says 200* servo
-
 // ------------------------------------
 // Public Constants
 // ------------------------------------
@@ -65,6 +61,8 @@ public static Servo climbingMechanismServo = new Servo(5);
 // ---------------------------------------
 // Hardware Tunables
 // ---------------------------------------
+public static boolean onNessie = false;
+
 
 // **********************************************************
 // DIGITAL I/O CLASSES
@@ -85,7 +83,6 @@ public static Talon rightDriveMotor = new Talon(2);
 
 public static Talon leftDriveMotor = new Talon(3);
 
-
 // ------------------------------------
 // Victor Classes
 // ------------------------------------
@@ -95,6 +92,12 @@ public static Victor cubeIntakeMotor = new Victor(1);
 
 public static Victor intakeDeployArm = new Victor(4);
 
+// ------------------------------------
+// Servo classes
+// ------------------------------------
+public static Servo climbingMechanismServo = new Servo(5);
+// Documentation says 200* servo
+
 // ====================================
 // CAN classes
 // ====================================
@@ -102,7 +105,6 @@ public static Victor intakeDeployArm = new Victor(4);
 // ====================================
 // Relay classes
 // ====================================
-
 public static Relay ringLightRelay = new Relay(0);
 
 // ====================================
@@ -130,7 +132,6 @@ public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(
 // ------------------------------------
 // Encoders
 // ------------------------------------
-
 public static Encoder leftRearDriveEncoder = new Encoder(10, 11);
 
 public static Encoder rightRearDriveEncoder = new Encoder(12, 13);
@@ -162,7 +163,6 @@ public static Encoder intakeDeployEncoder = new Encoder(23, 24);
 // -------------------------------------
 // Red Light/IR Sensor class
 // -------------------------------------
-
 public static LightSensor rightRedLight = new LightSensor(7);
 
 public static LightSensor leftRedLight = new LightSensor(8);
@@ -191,7 +191,6 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // Double Solenoids
 // ------------------------------------
 
-
 // ------------------------------------
 // Single Solenoids
 // ------------------------------------
@@ -209,20 +208,15 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // -------------------------------------
 // Potentiometers
 // -------------------------------------
-// -------------------------------------
-
 public static RobotPotentiometer delayPot = new RobotPotentiometer(2,
         300);
 
 // -------------------------------------
 // Sonar/Ultrasonic
 // -------------------------------------
-
-
 public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(0);
 
 public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
-
 
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
@@ -231,52 +225,46 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // Axis/USB Camera class
 // -------------------------------------
 public static VisionProcessor axisCamera = new VisionProcessor(
-        "10.13.39.11", CameraModel.AXIS_M1013);
-
-public static UsbCamera USBCam = CameraServer.getInstance()
-        .startAutomaticCapture(0);
-
+        "axis-camera.local", CameraModel.AXIS_M1013);
+// @todo - add ring light relay as 3rd argument
 
 // -------------------------------------
 // declare the USB camera server and the
-// USB camera it serves
+// USB camera it serves at the same time
 // -------------------------------------
-
+public static UsbCamera USBCam = CameraServer.getInstance()
+        .startAutomaticCapture(0);
 
 // **********************************************************
 // DRIVER STATION CLASSES
 // **********************************************************
-
 // ------------------------------------
 // DriverStations class
 // ------------------------------------
-
 public static DriverStation driverStation = DriverStation.getInstance();
-
 
 // ------------------------------------
 // Joystick classes
 // ------------------------------------
-public static Joystick rightDriver = new Joystick(1);
-
 public static Joystick leftDriver = new Joystick(0);
 
-public static Joystick rightOperator = new Joystick(3);
+public static Joystick rightDriver = new Joystick(1);
 
 public static Joystick leftOperator = new Joystick(2);
+
+public static Joystick rightOperator = new Joystick(3);
 
 // ------------------------------------
 // Momentary Switches
 // ------------------------------------
-
 public static MomentarySwitch visionTestButton = new MomentarySwitch(
-        leftOperator, 2, false);
+        leftOperator, 2, false /* starting state */);
 
 public static MomentarySwitch climbButton = new MomentarySwitch(
-        rightOperator, 5, false);
+        rightOperator, 5, false /* starting state */);
 
 public static MomentarySwitch deployIntakeButton = new MomentarySwitch(
-        leftOperator, 3, false);
+        leftOperator, 3, false /* starting state */);
 
 // **********************************************************
 // Kilroy's Ancillary classes
@@ -293,11 +281,7 @@ public static MomentarySwitch deployIntakeButton = new MomentarySwitch(
 // ------------------------------------
 // Utility classes
 // ------------------------------------
-
 public static final Timer autoTimer = new Timer();
-
-public static boolean onNessie = false;
-
 // ------------------------------------
 // Transmission class
 // ------------------------------------
@@ -311,13 +295,12 @@ public static Drive autoDrive = new Drive(tractionDrive,
         leftFrontDriveEncoder, rightFrontDriveEncoder, frontUltraSonic,
         rearUltraSonic, null, axisCamera);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
+
 // -------------------
 // Assembly classes (e.g. forklift)
 // -------------------
-
 public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
         intakeDeployArm, intakeDeployEncoder, autoTimer);
-
 } // end class
