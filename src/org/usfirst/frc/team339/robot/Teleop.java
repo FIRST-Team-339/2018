@@ -79,46 +79,23 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
+    Hardware.cubeManipulator.forkliftUpdate();
 
-
-    // --------- all this is temporary testing code
-
-    // if (Hardware.leftOperator.getRawButton(5))
-    // {
-    // System.out.println("Move to 10.0");
-    // Hardware.cubeManipulator.moveLiftDistance(10.0);
-    // }
     //
-    // if (Hardware.leftOperator.getRawButton(8))
-    // {
-    // System.out.println("Move to 20.0");
-    // Hardware.cubeManipulator.moveLiftDistance(20.0);
-    // }
-    //
-    // if (Hardware.leftOperator.getRawButton(9))
-    // {
-    // System.out.println("Move to 30.0");
-    // Hardware.cubeManipulator.moveLiftDistance(30.0);
-    // }
+    // Forklift controls
+    Hardware.cubeManipulator
+            .moveForkliftWithController(Hardware.rightOperator);
 
-    // ----------- end temporary testing code
+    // intake controls
+    Hardware.cubeManipulator
+            .intakeCube(Hardware.rightOperator.getRawButton(2));
 
+    Hardware.cubeManipulator
+            .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
 
-    // -----------------------------------
-    // forklift functionality - update every loop
-    // to make sure that everything is updated on
-    // all parts of the fork lift mechanism
-    // -----------------------------------
-    // Hardware.cubeManipulator.forkliftUpdate();
-    // Hardware.cubeManipulator
-    // .moveForkliftWithController(Hardware.rightOperator);
-    // Hardware.cubeManipulator
-    // .intakeCube(Hardware.rightOperator.getRawButton(2));
-    // Hardware.cubeManipulator
-    // .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
-    // Hardware.cubeManipulator
-    // .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
-
+    // Push out the cube
+    Hardware.cubeManipulator
+            .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
 
 
     // Set Servo to position w/ Momentary Switch
@@ -128,43 +105,40 @@ public static void periodic ()
     // }
 
 
-
     // Set intake/deploy motor to position based on encoder w/ Momentary Switch
     if (Hardware.deployIntakeButton.isOnCheckNow() == true)
+        {
         Hardware.cubeManipulator.deployCubeIntake();
+        }
 
+    // takes a picture with the axis camera when button 7 on the left Operator
+    // is pressed
 
-
-
-
-    // ------------------------------------
-    // takes a picture with the axis camera when buttons 6 + 7 on the left
-    // Operator is pressed
-    // ------------------------------------
-    if (Hardware.leftOperator.getRawButton(6) == true
-            && Hardware.leftOperator.getRawButton(7) == true
-
+    if (Hardware.leftOperator.getRawButton(6)
+            && Hardware.leftOperator.getRawButton(7)
             && pictureTakenByButton == false
             && takePictureByButton == false)
         {
         takePictureByButton = true;
         Hardware.takePictureTimer.start();
-        } // end if
+        }
 
-    if (!(Hardware.leftOperator.getRawButton(6) == true
-            && Hardware.leftOperator.getRawButton(7)) == true
+    if (!(Hardware.leftOperator.getRawButton(6)
+            && Hardware.leftOperator.getRawButton(7))
             && pictureTakenByButton == true)
         {
         takePictureByButton = false;
         pictureTakenByButton = false;
-        } // end if
+        }
 
 
     if (takePictureByButton == true)
         {
         if (Hardware.takePictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
+            {
             Hardware.ringLightRelay.set(Value.kForward);
+            }
 
         if (Hardware.takePictureTimer.get() >= TAKE_PICTURE_DELAY)
             {
@@ -186,8 +160,8 @@ public static void periodic ()
             Hardware.takePictureTimer.stop();
             Hardware.takePictureTimer.reset();
 
-            } // end if
-        } // end if
+            }
+        }
 
     // =================================================================
     // CAMERA CODE
@@ -198,67 +172,79 @@ public static void periodic ()
     // =================================================================
 
     if (isTestingDrive == false)
-        {
         Hardware.tractionDrive.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
-        }
+
     Hardware.tractionDrive.shiftGears(
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
 
-    if (isTestingScale)
-        {
-        Hardware.tractionDrive.setForAutonomous();
 
-        if (Hardware.autoDrive.alignToScale(.2, 3))
-            {
-            System.out.println("aligned to scale");
-            }
-        }
 
     // NOTE - CLAIRE TEST NEXT MEETING
     if (Hardware.rightOperator.getRawButton(2)) // 2 is a placeholder
+        {
         Hardware.climbingMechanismServo.setAngle(110);
+        }
 
-    testingDrive();
-
-    // ---------------------------------------
-    // Becky's vision testing code
-    // ---------------------------------------
-    if (Hardware.onNessie == true)
-        beckyTest();
-    // --------------------------------------
-    // all print statements for all hardware items
-    // --------------------------------------
     printStatements();
+    if (Hardware.onNessie == true)
+        {
+        beckyTest();
+        }
+
+    // testingDrive();
+
+    // totalLoopTime += teleopLoopTimer.get();
+    // teleopLoopTimer.reset();
+    // averageLoopTime = totalLoopTime / numOfLoops;
+    // numOfLoops++;
 
 } // end Periodic
 
+private static boolean isTestingDrive = true;
+
+private static boolean takePictureByButton = false;
+
+private static boolean pictureTakenByButton = false;
+
+private static int driveState = 0;
+
+// timer to keep track of how long it spent to get through this loop of teleop
+private static Timer teleopLoopTimer = new Timer();
+
+// average time it has taken to loop through teleop (or more accurately, robot
+// as a whole)
+private static double averageLoopTime = 0.0;
+
+// total time since beginning of teleop init
+private static double totalLoopTime = 0.0;
+
+// number of times we'll started through teleop periodic (starts at 1)
+private static int numOfLoops = 1;
+
+private static int testingDriveState = 0;
 
 private static void testingDrive ()
 {
 
-    // Button 9 starts the drive test
+
     if (Hardware.leftDriver.getRawButton(9))
-        isTestingScale = true;
+        isTestingDrive = true;
 
     if (isTestingDrive)
         {
-        // Setup the transmission for auto
         Hardware.tractionDrive.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
-        // First state do this, second state brake.
         if (driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .3))
+                && Hardware.autoDrive.driveStraightInches(48, .6))
             {
             Hardware.autoDrive.resetEncoders();
             driveState++;
             }
-        else if (driveState == 1
-                && Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+        else if (driveState == 1 && Hardware.autoDrive.brake(null))
             driveState++;
 
-        // Button 10 is an override to stop moving
         if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
             {
             Hardware.tractionDrive.stop();
@@ -300,31 +286,10 @@ public static void printStatements ()
     // Gear shift status
     // System.out.println(
     // "Gear = " + Gear);
-
-
     // =================================
     // Motor
     // Prints the value of motors
     // =================================
-
-    // System.out.println("fork lift heigth"
-    // + Hardware.cubeManipulator.getForkliftHeight());
-    //
-
-    // System.out.println(
-    // "intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
-
-
-    // System.out.println("fork lift height: "
-    // + Hardware.cubeManipulator.getForkliftHeight());
-    //
-    //
-    // System.out.println(
-    // "Intake motor speed" + Hardware.cubeIntakeMotor.getSpeed());
-
-
-
-
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
@@ -334,8 +299,6 @@ public static void printStatements ()
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(
     // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-
-
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -465,8 +428,8 @@ public static void printStatements ()
     // --------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    System.out.println("Rear UltraSonic "
-            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Rear UltraSonic "
+    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     //
     // =========================
     // Servos
@@ -523,7 +486,7 @@ public static void printStatements ()
 
 public static void beckyTest ()
 {
-    if (Hardware.visionTestButton.isOnCheckNow() == true)
+    if (Hardware.visionTestButton.isOnCheckNow())
         {
         Hardware.tractionDrive.setForAutonomous();
         if (Hardware.autoDrive.driveToSwitch(1.5, .5) == true)
@@ -534,6 +497,11 @@ public static void beckyTest ()
     Hardware.ringLightRelay.set(Value.kForward);
 
     Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+
+    if (Hardware.onNessie == true)
+        {
+        isTestingDrive = true;
+        }
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
@@ -550,45 +518,15 @@ public static void beckyTest ()
     // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
     // }
 }
-
 //
 // ================================
 // Constants
 // ================================
-// --------------------------------
-// public constants
-// --------------------------------
+//
+
 // how many seconds we wait before taking a picture via buttons
 public static final double TAKE_PICTURE_DELAY = 0.1;
 
 public static final int CLIMBING_SERVO_ANGLE = 78;
 
-// -------------------------------
-// private constants
-// -------------------------------
-private static boolean isTestingDrive = false;
-
-private static boolean isTestingScale = false;
-
-private static boolean takePictureByButton = false;
-
-private static boolean pictureTakenByButton = false;
-
-private static int driveState = 0;
-
-// timer to keep track of how long it spent to get through this loop of teleop
-private static Timer teleopLoopTimer = new Timer();
-
-// average time it has taken to loop through teleop (or more accurately, robot
-// as a whole)
-private static double averageLoopTime = 0.0;
-
-// total time since beginning of teleop init
-private static double totalLoopTime = 0.0;
-
-// number of times we'll started through teleop periodic (starts at 1)
-private static int numOfLoops = 1;
-
-private static int testingDriveState = 0;
-
-} // end class Teleop
+} // end class

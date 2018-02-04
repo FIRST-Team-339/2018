@@ -20,6 +20,28 @@ public class Drive
 // The transmission objects. Only one is used based on the transmission
 // object that is input.
 
+// The reason this is not one "TransmissionBase" object is that the drive
+// functions of each type require a different number of joysticks/input
+// values. Thus, inheritance is hard.
+private TankTransmission tankTransmission = null;
+
+private TractionTransmission tractionTransmission = null;
+
+private MecanumTransmission mecanumTransmission = null;
+
+private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
+        leftRearEncoder = null, rightRearEncoder = null;
+
+private UltraSonic frontUltrasonic = null;
+
+private UltraSonic rearUltrasonic = null;
+
+private KilroyGyro gyro = null;
+
+private VisionProcessor visionProcessor = null;
+
+private final TransmissionType transmissionType;
+
 /**
  * Creates the Drive object. If a sensor listed is not used (except for
  * encoders), set it to null.
@@ -1058,7 +1080,6 @@ private boolean turnDegreesInit = true;
  */
 public boolean driveToSwitch (double compensationFactor, double speed)
 {
-    this.setDefaultAcceleration(0);
     if (this.frontUltrasonic
             .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
         {
@@ -1068,23 +1089,18 @@ public boolean driveToSwitch (double compensationFactor, double speed)
                 && this.getCameraCenterValue() <= SWITCH_CAMERA_CENTER
                         + CAMERA_DEADBAND)
             {
-            driveStraight(speed, false);
-            // System.out.println("We're center");
+            vision = visionDriveState.CENTER;
             }
         else if (this.getCameraCenterValue() > SWITCH_CAMERA_CENTER
                 + CAMERA_DEADBAND)
             {
             // center is too far right, drive faster on the left
-            this.getTransmission().drive(speed * compensationFactor,
-                    speed);
-            // System.out.println("We're too right");
+            vision = visionDriveState.TOO_RIGHT;
             }
         else
             {
             // center is too far left, drive faster on the right
-            this.getTransmission().drive(speed,
-                    speed * compensationFactor);
-            // System.out.println("We're too left");
+            vision = visionDriveState.TOO_LEFT;
             }
         }
     else
@@ -1092,16 +1108,36 @@ public boolean driveToSwitch (double compensationFactor, double speed)
         if (this.frontUltrasonic
                 .getDistanceFromNearestBumper() <= STOP_ROBOT)
             {
-            this.brake(BrakeType.AFTER_DRIVE);
-            this.getTransmission().drive(0, 0);
-            // System.out.println("We're stopped");
+            vision = visionDriveState.STOP;
+            this.brake(null);
             }
-        this.driveStraight(speed, false);
-        // System.out.println("We're driving by ultrasonic");
-        return true;
+        vision = visionDriveState.DRIVE_BY_ULTRASONIC;
+        }
+    switch (vision)
+        {
+        case TOO_LEFT:
+            this.getTransmission().drive(speed * compensationFactor,
+                    speed);
+            break;
+        case TOO_RIGHT:
+            this.getTransmission().drive(speed,
+                    speed * compensationFactor);
+            break;
+        case CENTER:
+            driveStraight(speed, false);
+            break;
+        case DRIVE_BY_ULTRASONIC:
+            driveStraight(speed, false);
+            break;
+        case STOP:
+            brake(null);
+            this.getTransmission().drive(0, 0);
+            return true;
+
         }
     return false;
 }
+
 
 /**
  * Method to test the vision code without the ultrasonic
@@ -1138,11 +1174,14 @@ public void visionTest (double compensationFactor, double speed)
         }
 }
 
+private visionDriveState vision;
+
+private enum visionDriveState
+    {
+TOO_LEFT, TOO_RIGHT, CENTER, DRIVE_BY_ULTRASONIC, STOP
+    }
+
 /**
- * <<<<<<< HEAD
- * Will align to proper distance w. scale
- * =======
- * 
  * @return the current center value
  */
 public double getCameraCenterValue ()
@@ -1169,17 +1208,14 @@ public double getCameraCenterValue ()
 
 /**
  * Hopefully will align to proper distance w. scale
- * >>>>>>> branch 'master' of https://github.com/FIRST-Team-339/2018.git
  * then raise fork lift and eject cube
  * 
- * <<<<<<< HEAD
+
  * param speed
  * Set to negative for too close ajustment
  * 
  * @return true when completed
- *         =======
- * @return boolean
- *         >>>>>>> branch 'master' of https://github.com/FIRST-Team-339/2018.git
+
  * 
  */
 
@@ -1237,30 +1273,6 @@ public boolean alignToScale (double speed, double deadband)
 }
 
 boolean aligned = false;
-
-// ----------------------------------------
-// The reason this is not one "TransmissionBase" object is that the drive
-// functions of each type require a different number of joysticks/input
-// values. Thus, inheritance is hard.
-// ----------------------------------------
-private TankTransmission tankTransmission = null;
-
-private TractionTransmission tractionTransmission = null;
-
-private MecanumTransmission mecanumTransmission = null;
-
-private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
-        leftRearEncoder = null, rightRearEncoder = null;
-
-private UltraSonic frontUltrasonic = null;
-
-private UltraSonic rearUltrasonic = null;
-
-private KilroyGyro gyro = null;
-
-private VisionProcessor visionProcessor = null;
-
-private final TransmissionType transmissionType;
 
 // ---------------------------------
 // THis is the distance we expect to move
