@@ -106,18 +106,11 @@ public void autonomousInit ()
     // =========================================================
     // User code goes below here
     // =========================================================
-    Hardware.rightFrontDriveEncoder.reset();
-    Hardware.leftFrontDriveEncoder.reset();
-    Hardware.rightRearDriveEncoder.reset();
-    Hardware.leftRearDriveEncoder.reset();
-    Hardware.intakeDeployEncoder.reset();
     Autonomous.init();
 
     // =========================================================
     // User code goes above here
     // =========================================================
-
-
     // ---------------------------------------
     // done setup - tell the user we are complete
     // setup
@@ -146,7 +139,6 @@ public void autonomousPeriodic ()
     // =========================================================
     // User code goes above here
     // =========================================================
-
 }// end autonomousPeriodic
  // -------------------------------------------------------
 
@@ -194,9 +186,6 @@ public void disabledInit ()
 @Override
 public void disabledPeriodic ()
 {
-    // -------------------------------------
-    // Watch dog code used to go here.
-    // -------------------------------------
     // =========================================================
     // User code goes below here
     // =========================================================
@@ -226,8 +215,11 @@ public void robotInit ()
 
     // =========================================================
     // User code goes below here
+    // =========================================================
 
+    // -------------------------------------
     // Resets encoder values
+    // -------------------------------------
     Hardware.rightFrontDriveEncoder.reset();
     Hardware.leftFrontDriveEncoder.reset();
     Hardware.rightRearDriveEncoder.reset();
@@ -237,40 +229,9 @@ public void robotInit ()
     Hardware.liftingEncoder.setReverseDirection(false);
     Hardware.intakeDeployEncoder.reset();
 
-    if (Hardware.onNessie == true)
-        {
-        // Nessie Settings
-        Hardware.leftDriveMotor.setInverted(false);
-        Hardware.rightDriveMotor.setInverted(false);
-
-        }
-    else
-        {
-        // Ball Bot Settings
-        Hardware.leftDriveMotor.setInverted(false);
-        Hardware.rightDriveMotor.setInverted(true);
-        }
-
-    // This sets the gear speed percentage for the traction drive
-    if (Hardware.onNessie == true)
-        {
-        Hardware.tractionDrive.setAllGearRatios(GEAR_1_SPEED_NESSIE,
-                GEAR_2_SPEED_NESSIE);
-        }
-    else
-        {
-        Hardware.tractionDrive.setAllGearRatios(GEAR_1_SPEED,
-                GEAR_2_SPEED);
-        }
-
-    Hardware.tractionDrive.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
-
-    // Sets all encoders Distance per pulse
-    Hardware.autoDrive.setEncoderDistancePerPulse(
-            KILROY_XIX_ENCODER_DPP,
-            MotorPosition.ALL);
-
+    // -------------------------------------
     // Manually sets encoders Distance per Pulse
+    // -------------------------------------
     Hardware.leftFrontDriveEncoder
             .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
     Hardware.rightFrontDriveEncoder
@@ -279,19 +240,53 @@ public void robotInit ()
             .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
     Hardware.rightRearDriveEncoder
             .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-
     Hardware.liftingEncoder
             .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
     Hardware.intakeDeployEncoder
             .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
 
+    // ----------------------------------
+    // For last years robot - do the following
+    // ----------------------------------
+    if (Hardware.onNessie == true)
+        {
+        Hardware.leftDriveMotor.setInverted(false);
+        Hardware.rightDriveMotor.setInverted(false);
+        Hardware.transmission.setAllGearRatios(GEAR_1_SPEED_NESSIE,
+                GEAR_2_SPEED_NESSIE);
+        } // if
+    else
+    // ----------------------------------
+    // this years configuration
+    // ----------------------------------
+        {
+        Hardware.leftDriveMotor.setInverted(false);
+        Hardware.rightDriveMotor.setInverted(true);
+        Hardware.transmission.setAllGearRatios(GEAR_1_SPEED,
+                GEAR_2_SPEED);
+        } // else
+
+    // ---------------------------------
+    // Sets joystick deadband
+    // ---------------------------------
+    Hardware.transmission.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
+
+    // ---------------------------------
+    // Sets all encoders Distance per pulse
+    // ---------------------------------
+    Hardware.autoDrive.setEncoderDistancePerPulse(
+            KILROY_XIX_ENCODER_DPP,
+            MotorPosition.ALL);
+
+    // ---------------------------------
     // Sets the angle of the servo to 100
+    // ---------------------------------
     Hardware.climbingMechanismServo.setAngle(200);
 
+    // ---------------------------------
     // sets the ring light to off
+    // ---------------------------------
     Hardware.ringLightRelay.set(Value.kReverse);
-
-
 
     // User code goes above here
     // =========================================================
@@ -301,7 +296,7 @@ public void robotInit ()
     // ---------------------------------------
     System.out.println(
             "Kilroy XIX is started.  All hardware items created.");
-} // end robotInit
+} // end robotInit()
 
 // -------------------------------------------------------
 /**
@@ -322,18 +317,7 @@ public void teleopInit ()
     // ---------------------------------------
     System.out.println("Started teleopInit().");
     // =========================================================
-    // User code goes below here
-    Hardware.rightFrontDriveEncoder.reset();
-    Hardware.leftFrontDriveEncoder.reset();
-    Hardware.rightRearDriveEncoder.reset();
-    Hardware.leftRearDriveEncoder.reset();
-    Hardware.intakeDeployEncoder.reset();
     Teleop.init();
-
-    Hardware.rightDriveMotor.set(0);
-    Hardware.leftDriveMotor.set(0);
-
-
 
     // User code goes above here
     // =========================================================
@@ -364,9 +348,10 @@ public void teleopPeriodic ()
 
     // =========================================================
     // User code goes below here
-
+    // =========================================================
     Teleop.periodic();
 
+    // =========================================================
     // User code goes above here
     // =========================================================
 
@@ -435,7 +420,5 @@ private static final double JOYSTICK_DEADBAND_RANGE = .2;
 private static final double KILROY_XIX_LIFT_ENCODER_DPP = .1;
 
 private static final double KILROY_XIX_DEPLOY_ENCODER_DPP = .1;
-
-
 } // end class
 

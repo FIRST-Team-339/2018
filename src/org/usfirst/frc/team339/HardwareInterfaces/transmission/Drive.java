@@ -1277,7 +1277,7 @@ public boolean alignToScale (double speed, double deadband)
         {
         System.out.println("We are too close to the scale");
         Hardware.cubeManipulator.moveLiftDistance(0, 0);
-        Hardware.tractionDrive.drive(speed, speed);
+        Hardware.transmission.drive(speed, speed);
         }
     // if to close to scale
     else if (this.rearUltrasonic
@@ -1286,7 +1286,7 @@ public boolean alignToScale (double speed, double deadband)
         {
         System.out.println("We are to far from the scale");
         Hardware.cubeManipulator.moveLiftDistance(0, 0);
-        Hardware.tractionDrive.drive(-speed, -speed);
+        Hardware.transmission.drive(-speed, -speed);
         }
     return false;
 }
