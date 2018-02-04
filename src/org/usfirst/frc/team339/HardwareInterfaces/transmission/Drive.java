@@ -1013,7 +1013,6 @@ private boolean turnDegreesInit = true;
  */
 public boolean driveToSwitch (double compensationFactor, double speed)
 {
-    this.setDefaultAcceleration(0);
     if (this.frontUltrasonic
             .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
         {
@@ -1023,23 +1022,18 @@ public boolean driveToSwitch (double compensationFactor, double speed)
                 && this.getCameraCenterValue() <= SWITCH_CAMERA_CENTER
                         + CAMERA_DEADBAND)
             {
-            driveStraight(speed, false);
-            // System.out.println("We're center");
+            vision = visionDriveState.CENTER;
             }
         else if (this.getCameraCenterValue() > SWITCH_CAMERA_CENTER
                 + CAMERA_DEADBAND)
             {
             // center is too far right, drive faster on the left
-            this.getTransmission().drive(speed * compensationFactor,
-                    speed);
-            // System.out.println("We're too right");
+            vision = visionDriveState.TOO_RIGHT;
             }
         else
             {
             // center is too far left, drive faster on the right
-            this.getTransmission().drive(speed,
-                    speed * compensationFactor);
-            // System.out.println("We're too left");
+            vision = visionDriveState.TOO_LEFT;
             }
         }
     else
@@ -1047,16 +1041,36 @@ public boolean driveToSwitch (double compensationFactor, double speed)
         if (this.frontUltrasonic
                 .getDistanceFromNearestBumper() <= STOP_ROBOT)
             {
+            vision = visionDriveState.STOP;
             this.brake();
-            this.getTransmission().drive(0, 0);
-            // System.out.println("We're stopped");
             }
-        this.driveStraight(speed, false);
-        // System.out.println("We're driving by ultrasonic");
-        return true;
+        vision = visionDriveState.DRIVE_BY_ULTRASONIC;
+        }
+    switch (vision)
+        {
+        case TOO_LEFT:
+            this.getTransmission().drive(speed * compensationFactor,
+                    speed);
+            break;
+        case TOO_RIGHT:
+            this.getTransmission().drive(speed,
+                    speed * compensationFactor);
+            break;
+        case CENTER:
+            driveStraight(speed, false);
+            break;
+        case DRIVE_BY_ULTRASONIC:
+            driveStraight(speed, false);
+            break;
+        case STOP:
+            brake();
+            this.getTransmission().drive(0, 0);
+            return true;
+
         }
     return false;
 }
+
 
 /**
  * Method to test the vision code without the ultrasonic
@@ -1092,6 +1106,13 @@ public void visionTest (double compensationFactor, double speed)
         System.out.println("We're too right");
         }
 }
+
+private visionDriveState vision;
+
+private enum visionDriveState
+    {
+TOO_LEFT, TOO_RIGHT, CENTER, DRIVE_BY_ULTRASONIC, STOP
+    }
 
 /**
  * @return the current center value

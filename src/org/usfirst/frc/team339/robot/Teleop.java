@@ -113,8 +113,6 @@ public static void periodic ()
     // takes a picture with the axis camera when button 7 on the left Operator
     // is pressed
 
-
-
     if (Hardware.leftOperator.getRawButton(6)
             && Hardware.leftOperator.getRawButton(7)
             && pictureTakenByButton == false
@@ -189,7 +187,10 @@ public static void periodic ()
         }
 
     printStatements();
-    beckyTest();
+    if (Hardware.onNessie == true)
+        {
+        beckyTest();
+        }
 
     // testingDrive();
 
@@ -284,13 +285,10 @@ public static void printStatements ()
     // Gear shift status
     // System.out.println(
     // "Gear = " + Gear);
-
-
     // =================================
     // Motor
     // Prints the value of motors
     // =================================
-
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
@@ -300,8 +298,6 @@ public static void printStatements ()
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // System.out.println(
     // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-
-
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -500,6 +496,11 @@ public static void beckyTest ()
     Hardware.ringLightRelay.set(Value.kForward);
 
     Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+
+    if (Hardware.onNessie == true)
+        {
+        isTestingDrive = true;
+        }
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
     // Hardware.axisCamera.processImage();
