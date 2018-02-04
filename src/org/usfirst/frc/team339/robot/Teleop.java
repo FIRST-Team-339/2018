@@ -55,7 +55,23 @@ public class Teleop
 
 public static void init ()
 {
+    // User code goes below here
+
+    // ---------------------------------
+    // Encoder resetting
+    // ---------------------------------
+    Hardware.rightFrontDriveEncoder.reset();
+    Hardware.leftFrontDriveEncoder.reset();
+    Hardware.rightRearDriveEncoder.reset();
+    Hardware.leftRearDriveEncoder.reset();
+    Hardware.intakeDeployEncoder.reset();
+
+    // ---------------------------------
+    // setup motors
+    // ---------------------------------
     Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
+    Hardware.rightDriveMotor.set(0);
+    Hardware.leftDriveMotor.set(0);
 } // end Init
 
 // tune pid loop
