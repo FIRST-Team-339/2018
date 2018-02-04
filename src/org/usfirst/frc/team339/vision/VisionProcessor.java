@@ -12,6 +12,9 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.VideoCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Value;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * This class contains vision code that uses OpenCV and the auto-generated
@@ -158,8 +161,13 @@ private final CameraModel cameraModel;
 
 private final VideoCamera camera;
 
+// ========OBJECTS FOR TAKE LIT IMAGE========
+private Relay ringlightRelay = null;
+
+private Timer pictureTimer = new Timer();
+
 /**
- * Creates the object and starts the camera servera
+ * Creates the object and starts the camera server
  * 
  * @param ip
  *            the IP of the the axis camera (usually 10.3.39.11)
@@ -198,6 +206,51 @@ public VisionProcessor (String ip, CameraModel camera)
 /**
  * Creates the object and starts the camera server
  * 
+ * @param ip
+ *            the IP of the the axis camera (usually 10.3.39.11)
+ * @param camera
+ *            the brand / model of the camera
+ * @param ringlightRelay
+ *            camera ringlight to pick up retro-reflective tape
+ * 
+ */
+public VisionProcessor (String ip, CameraModel camera,
+        Relay ringlightRelay)
+{
+    // Adds the camera to the cscore CameraServer, in order to grab the
+    // stream.
+    this.camera = CameraServer.getInstance()
+            .addAxisCamera("Vision Camera", ip);
+
+    // Based on the selected camera type, set the field of views and focal
+    // length.
+    this.cameraModel = camera;
+    switch (this.cameraModel)
+        {
+        case AXIS_M1011:
+            this.horizontalFieldOfView = M1011_HORIZ_FOV;
+            this.verticalFieldOfView = M1011_VERT_FOV;
+            break;
+        case AXIS_M1013:
+            this.horizontalFieldOfView = M1013_HORIZ_FOV;
+            this.verticalFieldOfView = M1013_VERT_FOV;
+            break;
+
+        default: // Data will default to one to avoid any "divide by zero"
+                 // errors.
+            this.horizontalFieldOfView = 1;
+            this.verticalFieldOfView = 1;
+        }
+
+    this.pictureTimer.reset();
+    this.ringlightRelay = ringlightRelay;
+
+}
+
+
+/**
+ * Creates the object and starts the camera server
+ * 
  * @param usbPort
  *            The USB camera port number. '0' for default.
  * @param camera
@@ -227,6 +280,44 @@ public VisionProcessor (int usbPort, CameraModel camera)
             this.verticalFieldOfView = 1;
         }
 
+}
+
+/**
+ * Creates the object and starts the camera server
+ * 
+ * @param usbPort
+ *            The USB camera port number. '0' for default.
+ * @param camera
+ *            the brand / model of the camera
+ * @param ringlightRelay
+ *            camera ringlight to pick up retro-reflective tape
+ */
+public VisionProcessor (int usbPort, CameraModel camera,
+        Relay ringlightRelay)
+{
+    // Adds the camera to the cscore CameraServer, in order to grab the
+    // stream.
+    this.camera = CameraServer.getInstance()
+            .startAutomaticCapture("Vision Camera", usbPort);
+
+    // Based on the selected camera type, set the field of views and focal
+    // length.
+    this.cameraModel = camera;
+    switch (this.cameraModel)
+        {
+        // case LIFECAM: //Not enough information to properly find this data.
+        // see above.
+        // this.horizontalFieldOfView =
+        // this.verticalFieldOfView =
+        // this.focalLength =
+        // break;
+        default: // Data will default to one to avoid any "divide by zero"
+                 // errors.
+            this.horizontalFieldOfView = 1;
+            this.verticalFieldOfView = 1;
+        }
+    this.ringlightRelay = ringlightRelay;
+    this.pictureTimer.reset();
 }
 
 // ==========================END INIT===================================
@@ -385,6 +476,66 @@ public void saveImageSafely (boolean button, ImageType type)
 }
 
 private boolean saveImageButtonState = false;
+
+/**
+ * Takes a lit picture with the camera
+ * 
+ * @param button
+ *            2 joystick buttons
+ *            acceptable parameter:
+ *            joystick.getRawButton(x) && joystick.getRawButton(y)
+ */
+public void takeLitPicture (boolean button)
+{
+    // Start the timer if the button is pressed
+    if (button == true
+            && pictureTakenByButton == false
+            && takePictureByButton == false)
+        {
+        this.takePictureByButton = true;
+        this.pictureTimer.start();
+        }
+    
+    //if the button isn't pressed, reset the other booleans
+    if (button == false && pictureTakenByButton == true)
+        {
+        takePictureByButton = false;
+        pictureTakenByButton = false;
+        }
+
+    // if both buttons are pressed, turn on the relay
+    if (this.takePictureByButton == true)
+        {
+        if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
+                / 2.0)
+            {
+            this.ringlightRelay.set(Value.kForward);
+            }
+
+        // if the timer expires, save the picture , reset the camera
+        if (this.pictureTimer.get() >= TAKE_PICTURE_DELAY)
+            {
+            this.saveImageSafely(true, ImageType.RAW);
+            
+            this.pictureTakenByButton = true;
+            this.takePictureByButton = false;
+            
+            this.saveImageSafely(false, ImageType.RAW);
+            
+            this.ringlightRelay.set(Value.kReverse);
+            
+            this.pictureTimer.stop();
+            this.pictureTimer.reset();
+            }
+        }
+}
+
+private boolean takePictureByButton = false;
+
+private boolean pictureTakenByButton = false;
+
+private final double TAKE_PICTURE_DELAY = 0.1;
+
 
 // =====================USER ACCESSABLE METHODS========================
 /*
