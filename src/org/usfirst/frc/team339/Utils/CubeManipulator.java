@@ -3,69 +3,66 @@ package org.usfirst.frc.team339.Utils;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Victor;
 
 /**
- * Class for forklift and intake subsystems which includes as of 1/16/2018, an
- * intake, and an intake deploy thingy
+ * Class for forklift and intake subsystems which includes a Forklift,
+ * intake motors, and an intake deploy mechanism.
  * 
  * @author Becky Button
  *
  */
 public class CubeManipulator
 {
-private Victor forkliftMotor = null;
+// ---------------HARDWARE---------------------
 
-private Victor intakeMotor = null;
+// ================FORKLIFT================
+private SpeedController forkliftMotor = null;
 
-private Victor intakeDeployMotor = null;
+private Encoder forkliftEncoder = null;
+// ========================================
+
+// ================INTAKE==================
+private SpeedController intakeMotor = null;
+
+private SpeedController intakeDeployMotor = null;
 
 private Encoder intakeDeployEncoder = null;
 
 private LightSensor intakeSwitch = null;
 
-private Encoder forkliftEncoder = null;
-
 private Timer switchTimer = null;
+// ========================================
 
-private double forkliftHeightForMoveLiftDistance = 0;
-
-private boolean finishedForkliftMove = false;
-
-// private boolean deployedArm = false;
-
-private double forkliftSpeedUp = 0;
-
-private double forkliftSpeedDown = 0;
-
-// determines whether or not the intake motor should be stopped
-
-private boolean stopIntake = false;
-
-
-// the following booleans are for determining functions are using the intake
-
-private boolean isRunningIntakeCube = false;
-
-private boolean isRunningIntakeCubeOverride = false;
-
-private boolean isRunningPushOutCubeAuto = false;
-
-private boolean isRunningPushOutCubeTeleop = false;
+// --------------------------------------------
 
 /**
+ * Creates the CubeManipulator class, which conrols the movement of the
+ * forklift, intake, and climbing for autonomous and teleop functions
+ * 
  * @param forkliftMotor
+ *            Motor controller that powers the up and down movement of the
+ *            forklift
  * @param intakeMotor
+ *            Motor controller that powers the spinning wheels that grabs the
+ *            cube
  * @param intakeSwitch
+ *            Light sensor that senses whether or not we are in control of a
+ *            cube
  * @param forkliftEncoder
+ *            Sensor for software stops on the forklift
  * @param intakeDeploy
+ *            Motor controller that is used to deploy the intake
  * @param intakeDeployEncoder
+ *            Sensor for the software stops on the deploy motor
  * @param timer
+ *            Timer used for the intake mechanism
  */
-public CubeManipulator (Victor forkliftMotor, Victor intakeMotor,
-        LightSensor intakeSwitch, Encoder forkliftEncoder,
-        Victor intakeDeploy, Encoder intakeDeployEncoder, Timer timer)
+public CubeManipulator (SpeedController forkliftMotor,
+        SpeedController intakeMotor, LightSensor intakeSwitch,
+        Encoder forkliftEncoder, SpeedController intakeDeploy,
+        Encoder intakeDeployEncoder, Timer timer)
 {
     this.forkliftMotor = forkliftMotor;
     this.intakeMotor = intakeMotor;
@@ -74,6 +71,16 @@ public CubeManipulator (Victor forkliftMotor, Victor intakeMotor,
     this.intakeDeployMotor = intakeDeploy;
     this.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
+}
+
+// ========================FORKLIFT FUNCTIONS========================
+
+/**
+ * Keeps the forklift in the same position, stopping it from moving anymore
+ */
+public void stopForklift ()
+{
+    this.liftState = forkliftState.STAY_AT_POSITION;
 }
 
 /**
@@ -89,10 +96,10 @@ public double getForkliftHeight ()
 }
 
 /**
- *
+ * Moves the forklift up and down based on joystick input, for teleop.
  * 
  * @param operatorJoystick
- *            Joystick object
+ *            the joystick used when operting the forklift
  */
 public void moveForkliftWithController (Joystick operatorJoystick)
 {
@@ -133,21 +140,246 @@ public void moveForkliftWithController (Joystick operatorJoystick)
 }
 
 /**
- * Intake runs until the light switch is on
+ * Moves the arm to the desired position, FORKLIFT_MIN_HEIGHT is the bottom,
+ * FORKLIFT_MAX_HEIGHT is the top
  * 
- * To use this, just pass in a button value
+ * @param position
+ *            The position that the forklift will be set to move to
+ * @param forkliftSpeed
+ *            how fast the robot should move it's forklift (0.0 to 1.0)
+ * @return true if the forklift is at or above the specified height,
+ *         false if we are still moving
+ */
+public boolean setLiftPosition (double position, double forkliftSpeed)
+{
+    this.finishedForkliftMove = false;
+    double direction = position - getForkliftHeight();
+    boolean mustGoUp = direction > 0;
+    this.forkliftHeightForMoveLiftDistance = position;
+    if (mustGoUp == true && this
+            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
+                    + LIFT_TOLERANCE)
+        {
+        this.forkliftSpeedUp = -forkliftSpeed;
+        this.liftState = forkliftState.MOVING_UP;
+        return this.finishedForkliftMove;
+        }
+    else if (mustGoUp == false && this
+            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
+                    + LIFT_TOLERANCE)
+        {
+        this.forkliftSpeedDown = forkliftSpeed;
+        this.liftState = forkliftState.MOVING_DOWN;
+        }
+    else
+        {
+        this.finishedForkliftMove = true;
+        liftState = forkliftState.STAY_AT_POSITION;
+        }
+    return this.finishedForkliftMove;
+
+}
+
+/**
+ * Moves the arm to the the position input, FORKLIFT_MAX_HEIGHT being the
+ * top soft stop, and FORKLIFT_MIN_HEIGHT being the FORKLIFT_MIN_HEIGHT.
  * 
- * Example of how to call this:
- * Hardware.cubeManipulator.intakeCube(Hardware.leftOperator.getRawButton(4));
+ * Overloads the setLiftPosition, using the FORKLIFT_SPEED constants
  * 
- * DO NOT DO:
+ * @param position
+ *            The position the forklift will move to, in inches.
+ * @return true if the forklift is at or above the specified height, false
+ *         if still moving
+ */
+public boolean setLiftPosition (double position)
+{
+    if (this.getForkliftHeight() < position)
+        {
+        setLiftPosition(position, Math.abs(FORKLIFT_SPEED_UP));
+        }
+    else
+        {
+        setLiftPosition(position, Math.abs(FORKLIFT_SPEED_DOWN));
+        }
+    return this.finishedForkliftMove;
+}
+
+/**
+ * For use in teleop and autonomous periodic.
  * 
- * if(Hardware.leftOperator.getRawButton(4))
- * {
- * Hardware.cubeManipulator.intakeCube(Hardware.leftOperator.getRawButton(4));
- * }
+ * Any functions that move the lift will NOT WORK UNLESS this function is called
+ * as well.
  * 
- * @return true if the the cube is in, the light switch is off
+ * Runs the forklift movement code in the background, which allows multiple
+ * movements in autonomous state machines.
+ */
+public void forkliftUpdate ()
+{
+    switch (liftState)
+        {
+        case MOVING_UP:
+            // System.out.println("TRYING TO GO UP");
+            this.finishedForkliftMove = false;
+            if (Math.abs(
+                    this.getForkliftHeight()) >= FORKLIFT_MAX_HEIGHT)
+                {
+                this.liftState = forkliftState.STAY_AT_POSITION;
+                }
+            else
+                {
+                this.forkliftMotor.set(this.forkliftSpeedUp);
+                }
+            break;
+        case MOVING_DOWN:
+            // System.out.println("TRYING TO GO DOWN");
+            if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
+                    + LIFT_TOLERANCE)
+                {
+                this.liftState = forkliftState.AT_STARTING_POSITION;
+                this.finishedForkliftMove = true;
+                }
+            else
+                {
+                this.forkliftMotor.set(this.forkliftSpeedDown);
+                }
+            this.finishedForkliftMove = false;
+            break;
+        case STAY_AT_POSITION:
+            // System.out.println("WE ARE STAYING AT POSITION");
+            this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
+            this.finishedForkliftMove = true;
+            break;
+        case AT_STARTING_POSITION:
+            // System.out.println("WE ARE AT STARTING POSITION");
+            this.forkliftMotor.set(FORKLIFT_AT_STARTING_POSITION);
+            break;
+        }
+
+    // state machine for deploying the intake
+    switch (deployIntakeState)
+        {
+        // initial state of the intake deploy motor; just stays still
+        // until the deployCubeIntake() function is called
+        case INIT:
+            this.intakeDeployMotor.set(0.0);
+            break;
+
+
+        // moves the intake until the encoder reads that the arm has
+        // turned the specified angle, then stops the intake deploy motor and
+        // moves to the next state
+        case DEPLOYING:
+            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+            if (this.intakeDeployEncoder.get() >= INTAKE_DEPLOY_ANGLE
+                    - INTAKE_DEPLOY_COMPENSATION)
+                {
+
+                // stops the intake deploy motor if we've turned far enough;
+                // FINISHED does this as well, but doing it here helps
+                // keep the motor from overshooting too much
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.FINISHED;
+                }
+            break;
+
+        // final state in the state machine; stops the intake deploy
+        // motor
+        case FINISHED:
+            this.intakeDeployMotor.set(0.0);
+            break;
+
+        // we shouldn't ever get here, but in case we do, stop the intake
+        // deploy motor
+        default:
+            this.intakeDeployMotor.set(0.0);
+            break;
+        }
+
+
+    // checks if any of the specified functions wants to move the intake
+    // motor
+    this.stopIntake = !(isRunningIntakeCube
+            || isRunningIntakeCubeOverride ||
+            isRunningPushOutCubeAuto || isRunningPushOutCubeTeleop);
+
+    // if none of the functions from above want to run the intake, then
+    // stop the intake motor
+    if (stopIntake == true)
+        {
+        this.stopIntake();
+        }
+
+}
+
+// ========================INTAKE FUNCTIONS========================
+
+/**
+ * Cuts power to the intake motors
+ */
+public void stopIntake ()
+{
+    this.intakeMotor.set(0);
+}
+
+/**
+ * Sets the intake into the down position, which is required for the
+ * robot to be able to grab any cubes, and drop them off.
+ * 
+ * REQUIRED be called before teleop periodic.
+ * 
+ * @return true if the arm is down, false if it is still moving
+ */
+public boolean deployCubeIntake ()
+{
+    // advances the deploy intake state machine if it hasn't already been
+    // deployed/ is deploying
+    if (deployIntakeState == DeployState.INIT)
+        {
+        deployIntakeState = DeployState.DEPLOYING;
+        }
+
+    // returns whether or not the intake has finished deploying
+    if (deployIntakeState == DeployState.FINISHED)
+        {
+        return true;
+        }
+
+    return false;
+}
+
+/**
+ * Checks whether the intake is deployed
+ * 
+ * @return true if the arm is deployed, and false if it isn't
+ */
+public boolean isIntakeDeployed ()
+{
+    return deployIntakeState == DeployState.FINISHED;
+}
+
+/**
+ * Moves the intake based on the speed provided.
+ * 
+ * @param speed
+ *            How fast the motors should move, in percent. (-1.0 to 1.0)
+ *            Negative is pushing out, positive is pulling in
+ * 
+ */
+public void moveIntake (double speed)
+{
+    if (Math.abs(speed) > Math.abs(JOYSTICK_DEADBAND))
+        {
+        this.intakeMotor.set(speed);
+        }
+}
+
+/**
+ * Intakes the cube if the light sensor finds we don't have a cube. If we do,
+ * then set it to 0.
+ * 
+ * Instead of having an if() statement, input the button.
+ * 
+ * @return true if we are in control of a cube
  */
 public boolean intakeCube (boolean button)
 {
@@ -257,68 +489,6 @@ public boolean pushOutCubeAuto ()
     return false;
 }
 
-private pushOutState pushState = pushOutState.INIT;
-
-private static enum pushOutState
-    {
-INIT, PUSH_OUT, DONE
-    }
-
-/**
- * Method for moving deploy arm to the down position; starts the deploy
- * arm
- * 
- * NEWBIES CAN IGNORE -- THIS ONLY APPLIES TO AUTO
- * 
- * @return true if the arm is down, false if it is still moving
- */
-public boolean deployCubeIntake ()
-{
-    // advances the deploy intake state machine if it hasn't already been
-    // deployed/ is deploying
-    if (deployIntakeState == DeployState.INIT)
-        {
-        deployIntakeState = DeployState.DEPLOYING;
-        }
-
-    // returns whether or not the intake has finished deploying
-    if (deployIntakeState == DeployState.FINISHED)
-        {
-        return true;
-        }
-
-    return false;
-
-    // double degreesPerEncoderTick = 1.0;
-    //
-    // // if (this.intakeDeployEncoder.getDistance() <= INTAKE_ANGLE)
-    // if (this.intakeDeployEncoder.get()
-    // * degreesPerEncoderTick <= INTAKE_ANGLE)
-    // {
-    // this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-    // this.deployedArm = false;
-    // }
-    // else
-    // {
-    // this.intakeDeployMotor.set(0);
-    // this.deployedArm = true;
-    // // liftState = forkliftState.INTAKE_IS_DEPLOYED;
-    // return true;
-    // }
-    // return false;
-}
-
-/**
- * Checks if the intake is deployed
- * 
- * @return true if the arm is deployed, and false if it isn't
- */
-public boolean isIntakeDeployed ()
-{
-    return deployIntakeState == DeployState.FINISHED;
-}
-
-
 /**
  * Returns whether or not the cube intake mechanism is holding a cube
  * 
@@ -331,89 +501,6 @@ public boolean hasCube ()
 }
 
 /**
- * HEY NEWBIES -- USE THIS FOR THE THE INTAKE OVERRIDE
- * This method sets the intake to a speed
- * 
- * @param speed
- *            IF YOU ARE A NEWBIE, USE HARDWARE.someJoystick.getY(), or
- *            something whatever
- *            NON-NEWBS - set the speed of the intake
- * 
- */
-public void moveIntake (double speed)
-{
-    if (Math.abs(speed) > Math.abs(JOYSTICK_DEADBAND))
-        {
-        this.intakeMotor.set(speed);
-        }
-}
-
-/**
- * Moves the arm to the desired position, 0 is the bottom, X is the top
- * 
- * 
- * @param distance
- *            the desired distance the forklift goes in inches.
- * @param forkliftSpeed
- *            the speed of the forklift ALWAYS USE POSITIVE
- * @return true if the forklift is at or above the specified height, set the
- *         distance higher if you are going down from where the forklift was
- *         initially
- */
-public boolean moveLiftDistance (double distance, double forkliftSpeed)
-{
-    this.finishedForkliftMove = false;
-    double direction = distance - getForkliftHeight();
-    boolean mustGoUp = direction > 0;
-    this.forkliftHeightForMoveLiftDistance = distance;
-    if (mustGoUp == true && this
-            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
-                    + LIFT_TOLERANCE)
-        {
-        this.forkliftSpeedUp = -forkliftSpeed;
-        this.liftState = forkliftState.MOVING_UP;
-        return this.finishedForkliftMove;
-        }
-    else if (mustGoUp == false && this
-            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
-                    + LIFT_TOLERANCE)
-        {
-        this.forkliftSpeedDown = forkliftSpeed;
-        this.liftState = forkliftState.MOVING_DOWN;
-        }
-    else
-        {
-        this.finishedForkliftMove = true;
-        liftState = forkliftState.STAY_AT_POSITION;
-        }
-    return this.finishedForkliftMove;
-
-}
-
-/**
- * Moves the arm to the desired position, 0 is the bottom, X is the top
- * 
- * 
- * @param distance
- *            the desired distance the forklift goes in inches.
- * @return true if the forklift is at or above the specified height, set the
- *         distance higher if you are going down from where the forklift was
- *         initially
- */
-public boolean moveLiftDistance (double distance)
-{
-    if (this.getForkliftHeight() < distance)
-        {
-        moveLiftDistance(distance, Math.abs(FORKLIFT_SPEED_UP));
-        }
-    else
-        {
-        moveLiftDistance(distance, Math.abs(FORKLIFT_SPEED_DOWN));
-        }
-    return this.finishedForkliftMove;
-}
-
-/**
  * Scores a cube on a switch - NEWBIES - SET THIS TO A BUTTON
  * 
  * @return true if a cube has been scored in the switch
@@ -423,7 +510,7 @@ public boolean scoreSwitch ()
     switch (switchState)
         {
         case MOVE_LIFT:
-            if (moveLiftDistance(SWITCH_HEIGHT,
+            if (setLiftPosition(SWITCH_HEIGHT,
                     FORKLIFT_SPEED_UP) == true)
                 {
 
@@ -467,25 +554,14 @@ public boolean scoreSwitch ()
     return false;
 }
 
-scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
-
-
-private enum scoreSwitchState
-    {
-MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
-    }
-
-
 /**
  * Scores a cube on a scale
  * 
  * @return true if a cube has been scored in the scale
+ * @deprecated Unused and duplicated code. Use pushOutCube instead.
  */
-public boolean scaleSwitch ()
+public boolean scoreScale ()
 {
-
-    System.out.println(
-            "started scale switch????????????????????????????????????????????????????????????????????????");
     switch (scaleState)
         {
         case DEPLOY_INTAKE:
@@ -497,10 +573,8 @@ public boolean scaleSwitch ()
                 switchState = scoreSwitchState.SPIT_OUT_CUBE;
 
                 this.switchState = scoreSwitchState.SPIT_OUT_CUBE;
-
                 }
             break;
-
         case SPIT_OUT_CUBE:
             System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
@@ -514,164 +588,26 @@ public boolean scaleSwitch ()
             scaleState = scoreScaleState.SPIT_OUT_CUBE;
             return true;
         }
-
     return false;
-
-
 }
-
-scoreScaleState scaleState = scoreScaleState.SPIT_OUT_CUBE;
-
-
-private enum scoreScaleState
-    {
-DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
-    }
 
 /**
  * Stops the forklift motor and the intake motor
  */
-// STOP STUFF
 public void stopEverything ()
 {
-    this.liftState = forkliftState.STAY_AT_POSITION;
-    this.intakeMotor.set(0);
+    stopForklift();
+    stopIntake();
 }
 
-/**
- * Keeps the forklift in the same position, stopping it from moving anymore
- */
-public void stopForklift ()
-{
-    this.liftState = forkliftState.STAY_AT_POSITION;
-}
+
 
 /**
- * Stops the intake
- */
-public void stopIntake ()
-{
-    this.intakeMotor.set(0);
-}
-
-/**
- * Call this in periodic.
- * State machine for the forklift
- */
-public void forkliftUpdate ()
-{
-    // System.out.println("liftstate :" + liftState);
-    switch (liftState)
-        {
-        case MOVING_UP:
-            // System.out.println("TRYING TO GO UP");
-            this.finishedForkliftMove = false;
-            if (Math.abs(
-                    this.getForkliftHeight()) >= FORKLIFT_MAX_HEIGHT)
-                {
-                this.liftState = forkliftState.STAY_AT_POSITION;
-                }
-            else
-                {
-                this.forkliftMotor.set(this.forkliftSpeedUp);
-                }
-            break;
-        case MOVING_DOWN:
-            // System.out.println("TRYING TO GO DOWN");
-            if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
-                    + LIFT_TOLERANCE)
-                {
-                this.liftState = forkliftState.AT_STARTING_POSITION;
-                this.finishedForkliftMove = true;
-                }
-            else
-                {
-                this.forkliftMotor.set(this.forkliftSpeedDown);
-                }
-            this.finishedForkliftMove = false;
-            break;
-        case STAY_AT_POSITION:
-            // System.out.println("WE ARE STAYING AT POSITION");
-            this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
-            this.finishedForkliftMove = true;
-            break;
-        case AT_STARTING_POSITION:
-            // System.out.println("WE ARE AT STARTING POSITION");
-            this.forkliftMotor.set(FORKLIFT_AT_STARTING_POSITION);
-            break;
-        // this code isn't necessary because we made a seperate state
-        // machine for the intake
-        // case INTAKE_IS_DEPLOYED:
-        // this.intakeMotor.set(0);
-        // break;
-        }
-
-    // state machine for deploying the intake
-    switch (deployIntakeState)
-        {
-        // initial state of the intake deploy motor; just stays still
-        // until the deployCubeIntake() function is called
-        case INIT:
-            this.intakeDeployMotor.set(0.0);
-            break;
-
-
-        // moves the intake until the encoder reads that the arm has
-        // turned the specified angle, then stops the intake deploy motor and
-        // moves to the next state
-        case DEPLOYING:
-            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-            if (this.intakeDeployEncoder.get() >= INTAKE_DEPLOY_ANGLE
-                    - INTAKE_DEPLOY_COMPENSATION)
-                {
-
-                // stops the intake deploy motor if we've turned far enough;
-                // FINISHED does this as well, but doing it here helps
-                // keep the motor from overshooting too much
-                this.intakeDeployMotor.set(0.0);
-                deployIntakeState = DeployState.FINISHED;
-                }
-            break;
-
-        // final state in the state machine; stops the intake deploy
-        // motor
-        case FINISHED:
-            this.intakeDeployMotor.set(0.0);
-            break;
-
-        // we shouldn't ever get here, but in case we do, stop the intake
-        // deploy motor
-        default:
-            this.intakeDeployMotor.set(0.0);
-            break;
-        }
-
-
-    // checks if any of the specified functions wants to move the intake
-    // motor
-    this.stopIntake = !(isRunningIntakeCube
-            || isRunningIntakeCubeOverride ||
-            isRunningPushOutCubeAuto || isRunningPushOutCubeTeleop);
-
-    // if none of the functions from above want to run the intake, then
-    // stop the intake motor
-    if (stopIntake == true)
-        {
-        this.stopIntake();
-        }
-
-}
-
-private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
-
-// variable that controls the deploy intake state machine
-private DeployState deployIntakeState = DeployState.INIT;
-
-/**
+ * List of states used when updating the forklift position
+ * 
  * @author Becky Button
- *
  */
-public enum forkliftState
+private static enum forkliftState
     {
 MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION, INTAKE_IS_DEPLOYED
     }
@@ -681,11 +617,79 @@ MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION, INTAKE_IS_DEPLOY
  * 
  * @author Cole Ramos
  */
-public static enum DeployState
+private static enum DeployState
     {
 INIT, DEPLOYING, FINISHED
     }
 
+/**
+ * List of states used when ejecting the cube autonomously
+ */
+private static enum pushOutState
+    {
+INIT, PUSH_OUT, DONE
+    }
+
+/**
+ * List of states used when scoring a cube on the switch
+ */
+private static enum scoreSwitchState
+    {
+MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
+    }
+
+/**
+ * List of states used when scoring a cube on the switch
+ */
+private static enum scoreScaleState
+    {
+DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
+    }
+
+// --------------------VARIABLES--------------------
+// ================FORKLIFT================
+private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
+
+private double forkliftHeightForMoveLiftDistance = 0;
+
+private boolean finishedForkliftMove = false;
+
+private double forkliftSpeedUp = 0;
+
+private double forkliftSpeedDown = 0;
+// ========================================
+
+// ================INTAKE==================
+// private boolean deployedArm = false;
+
+// variable that controls the deploy intake state machine
+private DeployState deployIntakeState = DeployState.INIT;
+
+private pushOutState pushState = pushOutState.INIT;
+
+// determines whether or not the intake motor should be stopped
+private boolean stopIntake = false;
+
+// the following booleans are for determining functions are using the intake
+
+private boolean isRunningIntakeCube = false;
+
+private boolean isRunningIntakeCubeOverride = false;
+
+private boolean isRunningPushOutCubeAuto = false;
+
+private boolean isRunningPushOutCubeTeleop = false;
+// ========================================
+
+private scoreScaleState scaleState = scoreScaleState.SPIT_OUT_CUBE;
+
+private scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
+
+// -------------------------------------------------
+
+// --------------------CONSTANTS--------------------
+
+// ================FORKLIFT================
 private final double FORKLIFT_MAX_HEIGHT = 100;
 
 private final double FORKLIFT_MIN_HEIGHT = 2;
@@ -694,36 +698,36 @@ private final double FORKLIFT_SPEED_UP = -.9;
 
 private final double FORKLIFT_SPEED_DOWN = .4;
 
-
+private final double FORKLIFT_AT_STARTING_POSITION = 0;
 
 private final double FORKLIFT_STAY_UP_SPEED = 0.0;// -.15;
 
-
-private final double FORKLIFT_AT_STARTING_POSITION = 0;
-
-private final double INTAKE_SPEED = .5;
+private final double LIFT_TOLERANCE = 3;
 
 private final double SWITCH_HEIGHT = 30;
 
-
 public final double SCALE_HEIGHT = 72;
+// =========================================
 
-private final double INTAKE_ANGLE = 90;
+// ================INTAKE===================
+private final double INTAKE_SPEED = .5;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
 private final double INTAKE_DEPLOY_ANGLE = 75;
 
+private final double INTAKE_ANGLE = 90;
+
 // constant subtracted from the INTAKE_DEPLOY_ANGLE to help keep us
 // from overshooting; needs to be tuned on the new robot
 private final double INTAKE_DEPLOY_COMPENSATION = 0.0;
 
-
 private final double INTAKE_DEPLOY_SPEED = .3;
+
+private final double EJECT_TIME = 2.0;
+// =========================================
 
 private final double JOYSTICK_DEADBAND = .2;
 
-private final double EJECT_TIME = 2.0;
-
-private final double LIFT_TOLERANCE = 3;
+// ---------------------------------------------
 }

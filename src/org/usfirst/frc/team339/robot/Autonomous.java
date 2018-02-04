@@ -677,7 +677,7 @@ public static boolean centerSwitchPath ()
         case LIFT:
             // moves distance to the scal eheught and holds it there
             // sets state to DEPLOY_ARM
-            if (Hardware.cubeManipulator.moveLiftDistance(
+            if (Hardware.cubeManipulator.setLiftPosition(
                     SCALE_LIFT_HEIGHT, FORKLIFT_SPEED))
                 {
                 visionAuto = centerState.DEPLOY_ARM;
@@ -983,7 +983,7 @@ public static boolean switchOrScalePath (Position robotPosition)
             break;
         case RAISE_ARM2:
             // Raise the arm to the scale height to set up for teleop.
-            if (Hardware.cubeManipulator.moveLiftDistance(
+            if (Hardware.cubeManipulator.setLiftPosition(
                     SCALE_LIFT_HEIGHT, FORKLIFT_SPEED))
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
             break;
@@ -1101,7 +1101,7 @@ public static boolean offsetSwitchPath ()
                 currentOffsetSwitchState = OffsetSwitchPath.RAISE_ARM;
             break;
         case RAISE_ARM:
-            Hardware.cubeManipulator.moveLiftDistance(
+            Hardware.cubeManipulator.setLiftPosition(
                     SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED);
             currentOffsetSwitchState = OffsetSwitchPath.DRIVE3;
             break;

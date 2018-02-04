@@ -1257,7 +1257,7 @@ public boolean alignToScale (double speed, double deadband)
     /* && aligned == false */)
         {
         System.out.println("We are too close to the scale");
-        Hardware.cubeManipulator.moveLiftDistance(0, 0);
+        Hardware.cubeManipulator.setLiftPosition(0, 0);
         Hardware.tractionDrive.drive(speed, speed);
         }
     // if to close to scale
@@ -1266,7 +1266,7 @@ public boolean alignToScale (double speed, double deadband)
     /* && aligned == false */)
         {
         System.out.println("We are to far from the scale");
-        Hardware.cubeManipulator.moveLiftDistance(0, 0);
+        Hardware.cubeManipulator.setLiftPosition(0, 0);
         Hardware.tractionDrive.drive(-speed, -speed);
         }
     return false;
