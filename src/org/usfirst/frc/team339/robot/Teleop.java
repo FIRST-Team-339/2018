@@ -35,7 +35,6 @@ import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.Relay.Value;
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  * This class contains all of the user code for the Autonomous part of the
@@ -56,11 +55,23 @@ public class Teleop
 
 public static void init ()
 {
-    // totalLoopTime = 0.0;
-    // numOfLoops = 1;
-    // teleopLoopTimer.reset();
-    // teleopLoopTimer.start();
-    Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+    // User code goes below here
+
+    // ---------------------------------
+    // Encoder resetting
+    // ---------------------------------
+    Hardware.rightFrontDriveEncoder.reset();
+    Hardware.leftFrontDriveEncoder.reset();
+    Hardware.rightRearDriveEncoder.reset();
+    Hardware.leftRearDriveEncoder.reset();
+    Hardware.intakeDeployEncoder.reset();
+
+    // ---------------------------------
+    // setup motors
+    // ---------------------------------
+    Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
+    Hardware.rightDriveMotor.set(0);
+    Hardware.leftDriveMotor.set(0);
 } // end Init
 
 // tune pid loop
@@ -76,8 +87,9 @@ public static void periodic ()
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
-
+    // -----------------------------------------
     // Forklift controls
+    // -----------------------------------------
     Hardware.cubeManipulator.forkliftUpdate();
 
     Hardware.cubeManipulator
@@ -94,17 +106,13 @@ public static void periodic ()
     Hardware.cubeManipulator
             .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
 
-    // Set Servo to position w/ Momentary Switch
-    // if (Hardware.climbButton.isOnCheckNow() == true)
-    // {
-    // Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
-    // }
-
     // Set intake/deploy motor to position based on encoder w/ Momentary Switch
     if (Hardware.deployIntakeButton.isOnCheckNow() == true)
-        {
         Hardware.cubeManipulator.deployCubeIntake();
-        }
+
+    // Set Servo to position w/ Momentary Switch
+    if (Hardware.climbButton.isOnCheckNow() == true)
+        Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
 
     // =================================================================
     // CAMERA CODE
@@ -113,100 +121,78 @@ public static void periodic ()
     // =================================================================
     // DRIVING CODE
     // =================================================================
-
     // if the right driver button 3 is pressed, shift up a gear, if the left
     // driver button 3 id pressed, shift down a gear
-    Hardware.tractionDrive.shiftGears(
+    Hardware.transmission.shiftGears(
             Hardware.rightDriver.getRawButton(3),
             Hardware.leftDriver.getRawButton(3));
-
 
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
     if (isTestingDrive == false)
-        {
-        Hardware.tractionDrive.drive(Hardware.leftDriver,
+        Hardware.transmission.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
-        }
 
+    // ------------------------------------
+    // print out any information needed to
+    // display on the drivers station
+    // ------------------------------------
     printStatements();
 
-    // =================================================================
-    // DRIVING CODE
-    // =================================================================
     // -------------------------------------------
-    // Put anything you need to test, but the 
+    // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
+    testingDrive();
 
-    // testingDrive();
+    beckyTest();
 
-    // timeTeleopCycle()
-
-    // if (Hardware.onNessie == true)
-    // {
-    // beckyTest();
-    // }
-
-} // end Periodic
+} // end Periodic()
 
 private static boolean isTestingDrive = false;
 
 private static int driveState = 0;
 
-// timer to keep track of how long it spent to get through this loop of teleop
-// private static Timer teleopLoopTimer = new Timer();
-
-// average time it has taken to loop through teleop (or more accurately, robot
-// as a whole)
-// private static double averageLoopTime = 0.0;
-
-// total time since beginning of teleop init
-// private static double totalLoopTime = 0.0;
-
-// number of times we'll started through teleop periodic (starts at 1)
-// private static int numOfLoops = 1;
-
-private static int testingDriveState = 0;
-
 public static void beckyTest ()
 {
-    if (Hardware.visionTestButton.isOnCheckNow())
-        {
-        Hardware.tractionDrive.setForAutonomous();
-        if (Hardware.autoDrive.driveToSwitch(1.5, .5) == true)
-            {
-            Hardware.autoDrive.driveInches(0, 0);
-            }
-        }
-    Hardware.ringLightRelay.set(Value.kForward);
-
-    Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-
     if (Hardware.onNessie == true)
         {
-        isTestingDrive = true;
+        if (Hardware.visionTestButton.isOnCheckNow())
+            {
+            Hardware.transmission.setForAutonomous();
+            if (Hardware.autoDrive.driveToSwitch(1.5, .5) == true)
+                {
+                Hardware.autoDrive.driveInches(0, 0);
+                }
+            }
+        Hardware.ringLightRelay.set(Value.kForward);
+
+        Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+
+        if (Hardware.onNessie == true)
+            {
+            isTestingDrive = true;
+            }
+        // if (Hardware.visionTestButton.isOnCheckNow())
+        // {
+        // Hardware.axisCamera.processImage();
+        // Hardware.autoDrive.visionTest(1.3, .6);
+        // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+        // for (int i = 0; i < Hardware.axisCamera
+        // .getParticleReports().length; i++)
+        // {
+        // System.out.println("The center of " + i + " is: "
+        // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+        // }
+        // System.out.println("The center is : " + (Hardware.axisCamera
+        // .getNthSizeBlob(0).center.x
+        // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+        // }
         }
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-    // Hardware.axisCamera.processImage();
-    // Hardware.autoDrive.visionTest(1.3, .6);
-    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-    // for (int i = 0; i < Hardware.axisCamera
-    // .getParticleReports().length; i++)
-    // {
-    // System.out.println("The center of " + i + " is: "
-    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
-    // }
-    // System.out.println("The center is : " + (Hardware.axisCamera
-    // .getNthSizeBlob(0).center.x
-    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
-    // }
-}
+} // end beckyTest()
 
 private static void testingDrive ()
 {
-
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
         isTestingDrive = true;
@@ -214,7 +200,7 @@ private static void testingDrive ()
 
     if (isTestingDrive)
         {
-        Hardware.tractionDrive.setForAutonomous();
+        Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if (driveState == 0
                 && Hardware.autoDrive.driveStraightInches(48, .6))
@@ -230,31 +216,21 @@ private static void testingDrive ()
 
         if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
             {
-            Hardware.tractionDrive.stop();
+            Hardware.transmission.stop();
             System.out.println("LDistance: "
                     + Hardware.leftFrontDriveEncoder.getDistance());
             System.out.println("RDistance: "
                     + Hardware.rightFrontDriveEncoder.getDistance());
             driveState = 0;
-            Hardware.tractionDrive.setForTeleop(Robot.GEAR_2_SPEED);
+            Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
             isTestingDrive = false;
             }
         }
 
     if (Hardware.leftDriver.getRawButton(8) == true)
-        {
         Hardware.autoDrive.resetEncoders();
-        }
 
-}
-
-public static void timeTeleopCycle ()
-{
-    // totalLoopTime += teleopLoopTimer.get();
-    // teleopLoopTimer.reset();
-    // averageLoopTime = totalLoopTime / numOfLoops;
-    // numOfLoops++;
-}
+} // end of testingDrive()
 
 /**
  * stores print statements for future use in the print "bank", statements
@@ -273,12 +249,6 @@ public static void timeTeleopCycle ()
  */
 public static void printStatements ()
 {
-    // int Gear = Hardware.tractionDrive.getCurrentGear() + 1;
-
-
-    // Gear shift status
-    // System.out.println(
-    // "Gear = " + Gear);
     // =================================
     // Motor
     // Prints the value of motors
@@ -332,13 +302,12 @@ public static void printStatements ()
     // System.out.println(
     // "Right = on");
     //
-    //
     // System.out.println("6 pos = "
     // + Hardware.autoSixPosSwitch.getPosition());
     //
     // ---------------------------------
     // Encoders
-
+    // ---------------------------------
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
 
@@ -377,21 +346,17 @@ public static void printStatements ()
     // + Hardware.intakeDeployEncoder.get());
 
     // ---------------------------------
-
-    // ---------------------------------
     // Red Light/IR Sensors
     // prints the state of the sensor
     // ---------------------------------
-
-    //
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
     // System.out.println(
     // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
-    //
+
     // =================================
-    // Pneumatics----------------------------------
+    // Pneumatics
     // =================================
 
     // ---------------------------------
@@ -412,7 +377,6 @@ public static void printStatements ()
     // pots
     // where the pot is turned to
     // ---------------------------------
-
     // System.out
     // .println("Delay Pot " + Hardware.delayPot.get(0, 5));
 
@@ -423,13 +387,13 @@ public static void printStatements ()
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-    //
+
     // =========================
     // Servos
     // =========================
     // System.out.println("Climbing Mechanism Servo" +
     // Hardware.climbingMechanismServo.getAngle());
-    //
+
     // ================
     // GYRO
     // =================
@@ -444,6 +408,7 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("The camera center is: " +
     // Hardware.autoDrive.getCameraCenterValue());
+
     // =================================
     // Driver station
     // =================================
@@ -460,28 +425,26 @@ public static void printStatements ()
     // "Right Operator Joystick " + Hardware.rightOperator.getY());
     // System.out.println(
     // "Left Operator Joystick " + Hardware.leftOperator.getY());
+
     // =================================
     // KILROY ANCILLARY ITEMS
     // =================================
+    // ---------------------------------
+    // Gear number displayed to driver
+    // ---------------------------------
+    // System.out.println(
+    // "Gear = " + Hardware.transmission.getCurrentGear() + 1);
 
     // ---------------------------------
     // timers
     // what time does the timer have now
     // ---------------------------------
-    // =================================
-    // KILROY LOOP TIMER
-    // =================================
-    // System.out.println(
-    // "\n" + "LOOP TIMER: " + teleopLoopTimer.get() + "; "
-    // + "avg: " +
-    // averageLoopTime + "\n");
 
-} // end printStatements
+} // end printStatements()
 
 // ================================
 // Constants
 // ================================
-
 public static final int CLIMBING_SERVO_ANGLE = 78;
 
 } // end class
