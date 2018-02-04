@@ -23,6 +23,7 @@ public class Drive
 // The reason this is not one "TransmissionBase" object is that the drive
 // functions of each type require a different number of joysticks/input
 // values. Thus, inheritance is hard.
+
 private TankTransmission tankTransmission = null;
 
 private TractionTransmission tractionTransmission = null;
@@ -134,7 +135,8 @@ private void init (TransmissionBase transmission)
             break;
         default:
             System.out.println(
-                    "There was an error setting up the DRIVE class. Please check the declaration for a valid transmission object.");
+                    "There was an error setting up the DRIVE class. "
+                            + "Please check the declaration for a valid transmission object.");
             break;
 
         }
@@ -166,6 +168,7 @@ private double inRange (double val)
  */
 public TransmissionBase getTransmission ()
 {
+    // based on what transmission type we're using, print out the object
     switch (transmissionType)
         {
         case MECANUM:
@@ -188,7 +191,8 @@ public TransmissionBase getTransmission ()
 public enum WheelGroups
     {
 /**
- * All wheels combined
+ * if two wheel drive then one from each side (will be called rear of that side)
+ * if in tank or mecanum, all four wheels combined
  */
 ALL,
 /**
@@ -198,11 +202,7 @@ LEFT_SIDE,
 /**
  * Both front and back on the right side
  */
-RIGHT_SIDE,
-/**
- * Both left and right rear wheels
- */
-REAR
+RIGHT_SIDE
     }
 
 /**
@@ -225,6 +225,8 @@ public void setEncoderDistancePerPulse (double value,
     switch (encoder)
         {
         case ALL:
+            // if we're using mecanum or tank drive then set distance
+            // per pulse to all the encoders
             if (transmissionType == TransmissionType.MECANUM
                     || transmissionType == TransmissionType.TANK)
                 {
@@ -233,6 +235,8 @@ public void setEncoderDistancePerPulse (double value,
                 leftRearEncoder.setDistancePerPulse(value);
                 rightRearEncoder.setDistancePerPulse(value);
                 }
+            // if we're using traction drive set pulse per encoder for both
+            // sides
             else if (transmissionType == TransmissionType.TRACTION)
                 {
                 leftRearEncoder.setDistancePerPulse(value);
@@ -240,15 +244,19 @@ public void setEncoderDistancePerPulse (double value,
                 }
             break;
         case LEFT_FRONT:
+            // set distance per pulse to the left front encoder
             leftFrontEncoder.setDistancePerPulse(value);
             break;
         case RIGHT_FRONT:
+            // set distance per pulse to the right front encoder
             rightFrontEncoder.setDistancePerPulse(value);
             break;
         case LEFT_REAR:
+            // set distance per pulse to the left rear encoder
             leftRearEncoder.setDistancePerPulse(value);
             break;
         case RIGHT_REAR:
+            // set distance per pulse to the right rear encoder
             rightRearEncoder.setDistancePerPulse(value);
             break;
         default:
@@ -257,13 +265,14 @@ public void setEncoderDistancePerPulse (double value,
 }
 
 /**
- * Sets the encoder's stored pulses back to zero.
+ * Sets all the encoder's stored pulses back to zero.
  */
 public void resetEncoders ()
 {
     if (transmissionType == TransmissionType.MECANUM
             || transmissionType == TransmissionType.TANK)
         {
+        // set all four encoders back to zero
         leftFrontEncoder.reset();
         rightFrontEncoder.reset();
         leftRearEncoder.reset();
@@ -271,6 +280,7 @@ public void resetEncoders ()
         }
     else if (transmissionType == TransmissionType.TRACTION)
         {
+        // sets both sides encoders back to zero
         leftRearEncoder.reset();
         rightRearEncoder.reset();
         }
@@ -278,33 +288,45 @@ public void resetEncoders ()
 
 /**
  * Gets the averages of certain wheel groups. All values are the absolute value
- * to stop
- * negative numbers from affecting the average.
+ * to stop negative numbers from affecting the average.
  * 
  * @param encoderGroup
  * @return
  */
 public double getEncoderDistanceAverage (WheelGroups encoderGroup)
 {
+
     if (transmissionType != TransmissionType.TRACTION)
+        // if we are not using traction drive then get averaged
+        // distance of all the encoders
         switch (encoderGroup)
             {
             case ALL:
-                return (Math.abs(leftFrontEncoder.getDistance())
-                        + Math.abs(rightFrontEncoder.getDistance())
-                        + Math.abs(leftRearEncoder.getDistance())
-                        + Math.abs(rightRearEncoder.getDistance()))
-                        / 4.0;
+                // averages all the drive encoders, the two sides if
+                // we're using two wheel drive and all four if mecanum or tank
+                if (transmissionType == TransmissionType.MECANUM
+                        || transmissionType == TransmissionType.TANK)
+                    {
+                    return (Math.abs(leftFrontEncoder.getDistance())
+                            + Math.abs(rightFrontEncoder.getDistance())
+                            + Math.abs(leftRearEncoder.getDistance())
+                            + Math.abs(rightRearEncoder.getDistance()))
+                            / 4.0;
+                    }
+                else if (transmissionType == TransmissionType.TRACTION)
+                    {
+                    return (Math.abs(leftRearEncoder.getDistance())
+                            + Math.abs(rightRearEncoder.getDistance()))
+                            / 2.0;
+                    }
             case LEFT_SIDE:
+                // averages left side encoders
                 return (Math.abs(leftFrontEncoder.getDistance())
                         + Math.abs(leftRearEncoder.getDistance()))
                         / 2.0;
             case RIGHT_SIDE:
+                // averages right side encoders
                 return (Math.abs(rightFrontEncoder.getDistance())
-                        + Math.abs(rightRearEncoder.getDistance()))
-                        / 2.0;
-            case REAR:
-                return (Math.abs(leftRearEncoder.getDistance())
                         + Math.abs(rightRearEncoder.getDistance()))
                         / 2.0;
             default:
@@ -316,7 +338,8 @@ public double getEncoderDistanceAverage (WheelGroups encoderGroup)
 }
 
 /**
- * Gets how many ticks is on each motor controller.
+ * Gets how many ticks is on each motor controller and adds the
+ * two of a side if multiple to get the total ticks per side
  * 
  * @param encoder
  *            Which encoder position to get.
@@ -330,14 +353,17 @@ public int getEncoderTicks (TransmissionBase.MotorPosition encoder)
         {
         switch (encoder)
             {
+            // these cases return the left rear Encoder
             case LEFT_FRONT:
             case LEFT_REAR:
             case LEFT:
                 return leftRearEncoder.get();
+            // these cases return the right rear Encoder
             case RIGHT_FRONT:
             case RIGHT_REAR:
             case RIGHT:
                 return rightRearEncoder.get();
+            // returns 0 to show default case was run
             default:
                 return 0;
             }
@@ -345,18 +371,31 @@ public int getEncoderTicks (TransmissionBase.MotorPosition encoder)
     // Get encoder ticks on a 4 wheel drive system.
     switch (encoder)
         {
+        // returns the total ticks on the left side encoders
         case LEFT:
             return leftFrontEncoder.get() + leftRearEncoder.get();
+
+        // returns the total ticks on the left front encoders
         case LEFT_FRONT:
             return leftFrontEncoder.get();
+
+        // returns the total ticks on the left rear encoders
         case LEFT_REAR:
             return leftRearEncoder.get();
+
+        // returns the total ticks on the right side encoders
         case RIGHT:
             return rightFrontEncoder.get() + rightRearEncoder.get();
+
+        // returns the total ticks on the right front encoders
         case RIGHT_FRONT:
             return rightFrontEncoder.get();
+
+        // returns the total ticks on the right rear encoders
         case RIGHT_REAR:
             return rightRearEncoder.get();
+
+        // default:returns zero
         default:
             return 0;
         }
@@ -373,12 +412,15 @@ public int getEncoderTicks (TransmissionBase.MotorPosition encoder)
  */
 private boolean isAnyEncoderLargerThan (double length)
 {
+    // if using mecanum or tank return true if any of the encoders are
+    // greater than the parameter, return true else return false
     if (transmissionType == TransmissionType.MECANUM
             || transmissionType == TransmissionType.TANK)
         return (Math.abs(leftFrontEncoder.getDistance()) > length
                 || Math.abs(rightFrontEncoder.getDistance()) > length
                 || Math.abs(leftRearEncoder.getDistance()) > length
                 || Math.abs(rightRearEncoder.getDistance()) > length);
+    // else return true if either side is greater than the parameter
     return (Math.abs(leftRearEncoder.getDistance()) > length
             || Math.abs(rightRearEncoder.getDistance()) > length);
 
@@ -391,6 +433,7 @@ private boolean isAnyEncoderLargerThan (double length)
  */
 public void reset ()
 {
+    // sets to true
     this.driveInchesInit = true;
     this.driveStraightInchesInit = true;
     this.turnDegreesInit = true;
@@ -444,16 +487,22 @@ public double setBrakeStoppingDistance (double brakeStoppingDistance)
  */
 public boolean brake (BrakeType type)
 {
+    // prints out calling brake
     System.out.println("Calling Brake");
 
+    // sets deadband and power to zero
     int deadband = 0;
     double power = 0;
 
+    // if BrakeType is AFTER_DRIVE then set deadband to brakeDriveDeadband
+    // and power to brakeDrivePower
     if (type == BrakeType.AFTER_DRIVE)
         {
         deadband = brakeDriveDeadband;
         power = brakeDrivePower;
         }
+    // if Braketype is AFTER_TURN set the deadband to brakeTurndeadband
+    // and set power to brakeTurnPower
     else if (type == BrakeType.AFTER_TURN)
         {
         deadband = brakeTurnDeadband;
@@ -656,27 +705,12 @@ public boolean driveStraightInches (int distance, double speed)
         driveStraightInchesInit = false;
         }
 
-    // Check encoders to see if the distance has been driven
-    if (this.transmissionType == TransmissionType.MECANUM
-            || this.transmissionType == TransmissionType.TANK)
+    // Check all encoders
+    if (this.getEncoderDistanceAverage(WheelGroups.ALL) > distance)
         {
-        // Check all encoders if it is a four wheel drive system.
-        if (this.getEncoderDistanceAverage(WheelGroups.ALL) > distance)
-            {
-            this.getTransmission().stop();
-            driveStraightInchesInit = true;
-            return true;
-            }
-        }
-    else
-        {
-        // Only check the rear encoders if it is a two wheel drive system.
-        if (this.getEncoderDistanceAverage(WheelGroups.REAR) > distance)
-            {
-            this.getTransmission().stop();
-            driveStraightInchesInit = true;
-            return true;
-            }
+        this.getTransmission().stop();
+        driveStraightInchesInit = true;
+        return true;
         }
 
     // Drive straight if we have not reached the distance
@@ -969,32 +1003,17 @@ public boolean turnDegrees (int angle, double speed)
 
     // Tests whether any encoder has driven the arc-length of the angle
     // (angle x radius)// took out +15 on Nov 4
-    if (this.transmissionType == TransmissionType.MECANUM
-            || this.transmissionType == TransmissionType.TANK)
+
+    // Only check 4 encoders if we have a four wheel drive system
+    // if two wheel drive checks, one of each side(called rear of that side)
+    if (this.getEncoderDistanceAverage(
+            WheelGroups.ALL) > Math.toRadians(Math.abs(angle))
+                    * TURNING_RADIUS)
         {
-        // Only check 4 encoders if we have a four wheel drive system
-        if (this.getEncoderDistanceAverage(
-                WheelGroups.ALL) > Math.toRadians(Math.abs(angle))
-                        * TURNING_RADIUS)
-            {
-            // We have finished turning!
-            this.getTransmission().stop();
-            turnDegreesInit = true;
-            return true;
-            }
-        }
-    else
-        {
-        // Only check 2 encoders if we have a two wheel drive system
-        if (this.getEncoderDistanceAverage(
-                WheelGroups.REAR) > Math.toRadians(Math.abs(angle))
-                        * TURNING_RADIUS)
-            {
-            // We have finished turning!
-            this.getTransmission().stop();
-            turnDegreesInit = true;
-            return true;
-            }
+        // We have finished turning!
+        this.getTransmission().stop();
+        turnDegreesInit = true;
+        return true;
         }
 
     // Change which way the robot turns based on whether the angle is
@@ -1210,12 +1229,12 @@ public double getCameraCenterValue ()
  * Hopefully will align to proper distance w. scale
  * then raise fork lift and eject cube
  * 
-
+ * 
  * param speed
  * Set to negative for too close ajustment
  * 
  * @return true when completed
-
+ * 
  * 
  */
 
@@ -1258,7 +1277,7 @@ public boolean alignToScale (double speed, double deadband)
         {
         System.out.println("We are too close to the scale");
         Hardware.cubeManipulator.setLiftPosition(0, 0);
-        Hardware.tractionDrive.drive(speed, speed);
+        Hardware.transmission.drive(speed, speed);
         }
     // if to close to scale
     else if (this.rearUltrasonic
@@ -1267,7 +1286,7 @@ public boolean alignToScale (double speed, double deadband)
         {
         System.out.println("We are to far from the scale");
         Hardware.cubeManipulator.setLiftPosition(0, 0);
-        Hardware.tractionDrive.drive(-speed, -speed);
+        Hardware.transmission.drive(-speed, -speed);
         }
     return false;
 }
