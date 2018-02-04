@@ -74,7 +74,10 @@ public static void init ()
 } // end Init
 
 
-// State of autonomous
+/**
+ * State of autonomous as a whole; mainly for init, delay, finish, and choosing
+ * which autonomous path is being used
+ */
 public static enum State
     {
 INIT, DELAY, CHOOSE_PATH, AUTOLINE, AUTOLINE_SCALE, AUTOLINE_EXCHANGE_L, AUTOLINE_EXCHANGE_R, CENTER_SWITCH, SWITCH_OR_SCALE_L, SWITCH_OR_SCALE_R, OFFSET_SWITCH, FINISH
@@ -85,6 +88,8 @@ public static enum Position
 LEFT, RIGHT, NULL
     }
 
+// variable that controls the state of autonomous as a whole (init, delay
+// which path is being used, etc.)
 public static State autoState = State.INIT;
 
 /**
@@ -96,11 +101,12 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-    // calls the forklift and allows us to use it
+    // calls the forklift to update itself, allowing us to use the
+    // forklift state machine; necessary for the forklift to work properly
     Hardware.cubeManipulator.forkliftUpdate();
-    // prints the main state we're in
+    // prints the main state of autonomous (as a whole) we're in
     System.out.println("Main State: " + autoState);
-    // calls the print statements in Teleop
+    // calls the print statements from Teleop
     Teleop.printStatements();
     // Main switch statement of auto
     switch (autoState)
@@ -131,7 +137,8 @@ public static void periodic ()
              * 4 = SWITCH OR SCALE W/ GAME DATA
              * 5 = OFFSET SWITCH DROP OFF
              */
-
+            // decide which auto path we're using based off of the two auto
+            // switches
             switch (Hardware.autoSixPosSwitch.getPosition())
                 {
                 case 0:
@@ -143,29 +150,40 @@ public static void periodic ()
                     autoState = State.AUTOLINE_SCALE;
                     break;
                 case 2:
-                    // Depends on whether left or right is selected
+                    // cross autoline, then go to the exchange
+                    // two versions depending on whether left or right is
+                    // selected
                     if (Hardware.leftAutoSwitch.isOn())
                         autoState = State.AUTOLINE_EXCHANGE_L;
                     else
                         autoState = State.AUTOLINE_EXCHANGE_R;
                     break;
                 case 3:
+                    // start in the middle between the two switch sides;
+                    // use vision and gamedata to drive to the correct switch
+                    // side and drop off the cube
                     autoState = State.CENTER_SWITCH;
                     break;
                 case 4:
-                    // Depends on whether left or right is selected
+                    // if the robot starts on the right side for the switch,
+                    // drop of the cube
                     if (Hardware.leftAutoSwitch.isOn())
                         autoState = State.SWITCH_OR_SCALE_L;
                     else
                         autoState = State.SWITCH_OR_SCALE_R;
                     break;
                 case 5:
-                    // drops off cube at the sides of the switch depending on
-                    // which side
+                    // drop off the cube on the appropriate switch side
+                    // using gamedata, but from the sides of the switch instead
+                    // of in the front (CENTER_SWITCH is for dropping off in
+                    // front with the vision targets)
+                    // this autonomous starts offset from the center of the
+                    // switch
                     autoState = State.OFFSET_SWITCH;
                     break;
                 default:
-                    // If for some reason we failed, then disable.
+                    // If for some reason we failed to properly set the auto
+                    // State, then disable.
                     autoState = State.FINISH;
                     break;
                 }
@@ -215,13 +233,19 @@ public static void periodic ()
                 autoState = State.FINISH;
             break;
         case FINISH:
-            // stops and resets the autotimer
+            // end of autonomous; stops and resets the autotimer
             Hardware.tractionDrive.stop();
             Hardware.autoTimer.stop();
             Hardware.autoTimer.reset();
             break;
 
         default:
+            // if something goes wrong, stop autonomous and go straight
+            // to FINISH
+            Hardware.tractionDrive.stop();
+            Hardware.autoTimer.stop();
+            Hardware.autoTimer.reset();
+            autoState = State.FINISH;
             break;
         }
 
@@ -1021,6 +1045,7 @@ public static boolean offsetSwitchPath ()
             Hardware.autoDrive.setDefaultAcceleration(
                     DRIVE_STRAIGHT_ACCELERATION_TIME);
             currentOffsetSwitchState = OffsetSwitchPath.DRIVE1;
+            // tell the cube intake mechanism to deploy
             Hardware.cubeManipulator.deployCubeIntake();
             break;
         case DRIVE1:
@@ -1101,6 +1126,8 @@ public static boolean offsetSwitchPath ()
                 currentOffsetSwitchState = OffsetSwitchPath.RAISE_ARM;
             break;
         case RAISE_ARM:
+            // tell the forklift to start raising up so we can drop off
+            // the cube on the switch later
             Hardware.cubeManipulator.moveLiftDistance(
                     SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED);
             currentOffsetSwitchState = OffsetSwitchPath.DRIVE3;
