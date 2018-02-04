@@ -282,10 +282,11 @@ public static MomentarySwitch deployIntakeButton = new MomentarySwitch(
 // Utility classes
 // ------------------------------------
 public static final Timer autoTimer = new Timer();
+
 // ------------------------------------
 // Transmission class
 // ------------------------------------
-public static TractionTransmission tractionDrive = new TractionTransmission(
+public static TractionTransmission transmission = new TractionTransmission(
         leftDriveMotor, rightDriveMotor);
 
 // ------------------------------------
