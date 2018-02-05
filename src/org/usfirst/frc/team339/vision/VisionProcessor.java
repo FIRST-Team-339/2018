@@ -506,13 +506,16 @@ public void takeLitPicture (boolean button)
     // if both buttons are pressed, turn on the relay
     if (this.takePictureByButton == true)
         {
+
+        // turns on the ring light
         if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
             {
             this.ringLightRelay.set(Value.kForward);
             }
 
-        // if the timer expires, save the picture , reset the camera
+        // if the timer expires, save the picture , reset booleans, turns off
+        // the ring light
         if (this.pictureTimer.get() >= TAKE_PICTURE_DELAY)
             {
             this.saveImageSafely(true, ImageType.RAW);
@@ -558,7 +561,8 @@ public void setRelayValue (Value ringLightValue)
 }
 
 /**
- * Turns on the ring light 
+ * Turns on the ring light
+ * 
  * @param button
  *            2 joystick buttons
  *            acceptable parameter:
@@ -593,7 +597,7 @@ public boolean hasBlobs ()
         {
         return true;
         }
-    
+
     return false;
 }
 
