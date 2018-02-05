@@ -648,6 +648,7 @@ public void setBrakePower (double power)
 
 /**
  * 
+ * 
  * @param iterations
  */
 public void setBrakeIterations (int iterations)
@@ -1289,7 +1290,7 @@ public boolean alignToScale (double speed, double deadband)
     // if to close to scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
-    /* && aligned == false */)
+    /* && == false */)
         {
         System.out.println("We are to far from the scale");
         Hardware.cubeManipulator.setLiftPosition(0, 0);
