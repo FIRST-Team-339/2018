@@ -558,12 +558,20 @@ public boolean scoreSwitch ()
  * Scores a cube on a scale
  * 
  * @return true if a cube has been scored in the scale
- * @deprecated Unused and duplicated code. Use pushOutCube instead.
+ * 
  */
 public boolean scoreScale ()
 {
     switch (scaleState)
         {
+        case MOVE_LIFT:
+            if (setLiftPosition(SCALE_HEIGHT,
+                    FORKLIFT_SPEED_UP) == true)
+                {
+                switchState = scoreSwitchState.DEPLOY_INTAKE;
+                this.switchState = scoreSwitchState.DEPLOY_INTAKE;
+                }
+            break;
         case DEPLOY_INTAKE:
             System.out.println("Deploying intake");
             if (deployCubeIntake() == true)
@@ -643,7 +651,7 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
  */
 private static enum scoreScaleState
     {
-DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
+MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
     }
 
 // --------------------VARIABLES--------------------

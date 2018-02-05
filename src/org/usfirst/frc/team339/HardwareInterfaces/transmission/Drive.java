@@ -1235,18 +1235,19 @@ public double getCameraCenterValue ()
  * 
  * @return true when completed
  * 
+ * @param speed
  * 
+ * @param deadband
  */
 
 public boolean alignToScale (double speed, double deadband)
 {
-
-
     // Started align to scale
-    // todo optimize deadband to distance
+    // TODO optimize deadband to distance
 
     // checks if in proper distance
-    // ROBOT_TO_SCALE_DISTANCE 68-36 =32
+
+    // ROBOT_TO_SCALE_DISTANCE 72-36 =36
     if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
 
@@ -1255,25 +1256,20 @@ public boolean alignToScale (double speed, double deadband)
                             - deadband)
         {
         System.out.println("Our distance to the scale is correct");
-
-        // Hardware.tractionDrive.drive(0, 0);
-        speed = 0;
         aligned = true;
+        timeSinceAligned = System.currentTimeMillis();
         // start the move forklift switch
 
-        if (Hardware.cubeManipulator.scoreSwitch())
+        if (Hardware.cubeManipulator.scoreScale())
             {
             return true;
             }
-
-
-
         }
     // if to far from scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
                     - deadband
-    /* && aligned == false */)
+            && (System.currentTimeMillis() < (timeSinceAligned + 2000)))
         {
         System.out.println("We are too close to the scale");
         Hardware.cubeManipulator.setLiftPosition(0, 0);
@@ -1282,7 +1278,7 @@ public boolean alignToScale (double speed, double deadband)
     // if to close to scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
-    /* && aligned == false */)
+            && (System.currentTimeMillis() < (timeSinceAligned + 2000)))
         {
         System.out.println("We are to far from the scale");
         Hardware.cubeManipulator.setLiftPosition(0, 0);
@@ -1292,6 +1288,8 @@ public boolean alignToScale (double speed, double deadband)
 }
 
 boolean aligned = false;
+
+double timeSinceAligned;
 
 // ---------------------------------
 // THis is the distance we expect to move
@@ -1316,7 +1314,7 @@ private double center = 115;
 
 // ================TUNABLES================
 //
-private static final double SCALE_TO_WALL_DISTANCE = 68;
+private static final double SCALE_TO_WALL_DISTANCE = 72;
 
 private static final double ROBOT_LENGTH = 36;// TODO magic number
 
