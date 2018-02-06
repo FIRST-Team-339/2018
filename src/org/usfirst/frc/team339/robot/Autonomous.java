@@ -420,7 +420,7 @@ public static leftExchangeState leftExchangeAuto = leftExchangeState.PATH_INIT;
  */
 public static enum leftExchangeState
     {
-PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_RIGHT, DRIVE_TO_EXCHANGE, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_RIGHT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, DONE
     }
 
 
@@ -465,11 +465,19 @@ public static boolean leftAutoLineExchangePath ()
             // drives backwards across the autoline and sets the state
             // to TURN_90_DEGREES_RIGHT
             if (Hardware.autoDrive.driveStraightInches(
-                    DISTANCE_BACK_ACROSS_AUTOLINE,
+                    DISTANCE_BACK_ACROSS_AUTOLINE
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
                     -DRIVE_SPEED) == true)
                 {
-                leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
+                leftExchangeAuto = leftExchangeState.BRAKE_AFTER_STRAIGHT;
                 }
+            break;
+
+        case BRAKE_AFTER_STRAIGHT:
+            // Brake after driving forwards and backwards
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+                leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
             break;
 
         case TURN_90_DEGREES_RIGHT:
@@ -479,8 +487,14 @@ public static boolean leftAutoLineExchangePath ()
                     LEFT_SIDE_TURN_TOWARDS_EXCHANGE,
                     TURN_SPEED) == true)
                 {
-                leftExchangeAuto = leftExchangeState.DRIVE_TO_EXCHANGE;
+                leftExchangeAuto = leftExchangeState.BRAKE_AFTER_TURN;
                 }
+            break;
+
+        case BRAKE_AFTER_TURN:
+            // Brake after driving forwards and backwards
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+                leftExchangeAuto = leftExchangeState.DRIVE_TO_EXCHANGE;
             break;
 
         case DRIVE_TO_EXCHANGE:
@@ -513,7 +527,7 @@ public static rightExchangeState rightExchangeAuto = rightExchangeState.DRIVE_AC
  */
 public static enum rightExchangeState
     {
-PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, TURN_90_DEGREES_LEFT, DRIVE_TO_EXCHANGE, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_LEFT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, DONE
     }
 
 
@@ -552,11 +566,18 @@ public static boolean rightAutoLineExchangePath ()
             // drives backwards across the autoline and sets the state
             // to TURN_90_DEGREES_LEFT
             if (Hardware.autoDrive.driveStraightInches(
-                    DISTANCE_BACK_ACROSS_AUTOLINE,
+                    DISTANCE_BACK_ACROSS_AUTOLINE - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
                     -DRIVE_SPEED) == true)
                 {
-                rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
+                rightExchangeAuto = rightExchangeState.BRAKE_AFTER_STRAIGHT;
                 }
+            break;
+
+        case BRAKE_AFTER_STRAIGHT:
+            // Brake after driving forwards and backwards
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+                rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
             break;
 
         case TURN_90_DEGREES_LEFT:
@@ -566,8 +587,14 @@ public static boolean rightAutoLineExchangePath ()
                     RIGHT_SIDE_TURN_TOWARDS_EXCHANGE,
                     TURN_SPEED) == true)
                 {
-                rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
+                rightExchangeAuto = rightExchangeState.BRAKE_AFTER_TURN;
                 }
+            break;
+
+        case BRAKE_AFTER_TURN:
+            // Brake after driving forwards and backwards
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+                rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
             break;
 
         case DRIVE_TO_EXCHANGE:
@@ -608,7 +635,9 @@ public static boolean centerSwitchPath ()
         {
         case DRIVE_TEN_INCHES:
             // drive 10 inches to make the turn and sets state to BRAKE_1
-            if (Hardware.autoDrive.driveStraightInches(10,
+            if (Hardware.autoDrive.driveStraightInches(
+                    10 - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
                     AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_1;
@@ -675,66 +704,65 @@ public static boolean centerSwitchPath ()
             // drive straight, switch is on the left then brakes
             // sets state to TURN_AGAIN_LEFT
             if (Hardware.autoDrive.driveStraightInches(
-                    DRIVE_NO_CAMERA_LEFT, AUTO_SPEED_VISION))
+                    DRIVE_NO_CAMERA_LEFT - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
+                    AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
-                    {
+                if (Hardware.autoDrive
+                        .brake(BrakeType.AFTER_DRIVE) == true)
                     visionAuto = centerState.TURN_AGAIN_LEFT;
-                    }
                 }
             break;
         case DRIVE_STRAIGHT_TO_SWITCH_RIGHT:
             // drive straight, switch is on the right then brakes
             // sets state to TURN_AGAIN_RIGHT
             if (Hardware.autoDrive.driveStraightInches(
-                    DRIVE_NO_CAMERA_RIGHT, AUTO_SPEED_VISION))
+                    DRIVE_NO_CAMERA_RIGHT - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
+                    AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
-                    {
+                if (Hardware.autoDrive
+                        .brake(BrakeType.AFTER_DRIVE) == true)
                     visionAuto = centerState.TURN_AGAIN_RIGHT;
-                    }
                 }
             break;
         case TURN_AGAIN_RIGHT:
             // turn 90 to the right and sets the state to DRIVE_WITH_CAMERA
-            if (Hardware.autoDrive.turnDegrees(90, AUTO_SPEED_VISION))
+            if (Hardware.autoDrive.turnDegrees(90,
+                    AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
-                    {
+                if (Hardware.autoDrive
+                        .brake(BrakeType.AFTER_TURN) == true)
                     visionAuto = centerState.DRIVE_WITH_CAMERA;
-                    }
                 }
             break;
 
         case TURN_AGAIN_LEFT:
             // turns 90 to the left then brakes and sets the state to
             // DRIVE_WITH_CAMERA
-            if (Hardware.autoDrive.turnDegrees(90, AUTO_SPEED_VISION))
+            if (Hardware.autoDrive.turnDegrees(90,
+                    AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
-                    {
+                if (Hardware.autoDrive
+                        .brake(BrakeType.AFTER_TURN) == true)
                     visionAuto = centerState.DRIVE_WITH_CAMERA;
-                    }
                 }
             break;
         case DRIVE_WITH_CAMERA:
             // drives to the switch based on the camera
             // sets state to LIFT
             if (Hardware.driveWithCamera.driveToSwitch(
-                    AUTO_COMPENSATION_VISION,
-                    AUTO_SPEED_VISION))
-                {
+                    AUTO_COMPENSATION_VISION - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
+                    AUTO_SPEED_VISION) == true)
                 visionAuto = centerState.LIFT;
-                }
             break;
         case LIFT:
             // moves the forklift to the scale height and holds it there
             // sets state to DEPLOY_ARM
             if (Hardware.cubeManipulator.setLiftPosition(
-                    SCALE_LIFT_HEIGHT, FORKLIFT_SPEED))
-                {
+                    SCALE_LIFT_HEIGHT, FORKLIFT_SPEED) == true)
                 visionAuto = centerState.DEPLOY_ARM;
-                }
             break;
         case DEPLOY_ARM:
             // TODO this might be able to go before LIFT, or at the same time
@@ -742,17 +770,13 @@ public static boolean centerSwitchPath ()
             // it to start deploying, then it can be called again here to check
             // if it is finished
             // deploys cube intake and then sets state to MAKE_DEPOSIT
-            if (Hardware.cubeManipulator.deployCubeIntake())
-                {
+            if (Hardware.cubeManipulator.deployCubeIntake() == true)
                 visionAuto = centerState.MAKE_DEPOSIT;
-                }
             break;
         case MAKE_DEPOSIT:
             // deposits cube on switch and sets state to DONE
-            if (Hardware.cubeManipulator.scoreSwitch())
-                {
+            if (Hardware.cubeManipulator.scoreSwitch() == ture)
                 visionAuto = centerState.DONE;
-                }
             break;
         default: // prints that we reached the default case, then falls through
                  // to DONE
