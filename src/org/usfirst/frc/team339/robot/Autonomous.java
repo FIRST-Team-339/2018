@@ -69,7 +69,7 @@ public static void init ()
     Hardware.liftingEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     // Disable auto
-    if (Hardware.disableAutonomousSwitch.isOn())
+    if (Hardware.disableAutonomousSwitch.isOn() == true)
         autoState = State.FINISH;
 
     Hardware.transmission.setForAutonomous();
@@ -159,7 +159,7 @@ public static void periodic ()
                     // cross autoline, then go to the exchange
                     // two versions depending on whether left or right is
                     // selected
-                    if (Hardware.leftAutoSwitch.isOn())
+                    if (Hardware.leftAutoSwitch.isOn() == true)
                         autoState = State.AUTOLINE_EXCHANGE_L;
                     else
                         autoState = State.AUTOLINE_EXCHANGE_R;
@@ -173,7 +173,7 @@ public static void periodic ()
                 case 4:
                     // if the robot starts on the right side for the switch,
                     // drop of the cube
-                    if (Hardware.leftAutoSwitch.isOn())
+                    if (Hardware.leftAutoSwitch.isOn() == true)
                         autoState = State.SWITCH_OR_SCALE_L;
                     else
                         autoState = State.SWITCH_OR_SCALE_R;
@@ -261,6 +261,8 @@ public static void periodic ()
 /**
  * Receives the game data involving the switch sides and scale side
  * 
+ * @param dataType
+ *            - denotes either SWITCH or SCALE
  * @return
  *         Switch side either RIGHT or LEFT
  */
@@ -336,12 +338,12 @@ public static boolean autolinePath ()
             if (Hardware.autoDrive.driveStraightInches(
                     DISTANCE_TO_CROSS_AUTOLINE - Hardware.autoDrive
                             .getBrakeStoppingDistance(),
-                    DRIVE_SPEED))
+                    DRIVE_SPEED) == true)
                 currentAutolineState = AutolinePathStates.BRAKE1;
             break;
         case BRAKE1:
             // Brake after driving across the line
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentAutolineState = AutolinePathStates.FINISH;
             break;
         default:
@@ -388,12 +390,12 @@ public static boolean autoLineScalePath ()
                     DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE
                             - Hardware.autoDrive
                                     .getBrakeStoppingDistance(),
-                    DRIVE_SPEED))
+                    DRIVE_SPEED) == true)
                 currentAutolineState = AutolinePathStates.BRAKE1;
             break;
         case BRAKE1:
             // Brake after driving across the line
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentAutolineState = AutolinePathStates.FINISH;
             break;
         default: // prints we reached the default case, then fall through to
@@ -476,7 +478,7 @@ public static boolean leftAutoLineExchangePath ()
 
         case BRAKE_AFTER_STRAIGHT:
             // Brake after driving forwards and backwards
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
             break;
 
@@ -493,7 +495,7 @@ public static boolean leftAutoLineExchangePath ()
 
         case BRAKE_AFTER_TURN:
             // Brake after driving forwards and backwards
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 leftExchangeAuto = leftExchangeState.DRIVE_TO_EXCHANGE;
             break;
 
@@ -506,7 +508,7 @@ public static boolean leftAutoLineExchangePath ()
                 leftExchangeAuto = leftExchangeState.DONE;
                 }
             break;
-
+        default:
         case DONE:
             // robot stops and does nothing until teleop; returns true
             // so the main autonomous state machine knows this is done
@@ -576,7 +578,7 @@ public static boolean rightAutoLineExchangePath ()
 
         case BRAKE_AFTER_STRAIGHT:
             // Brake after driving forwards and backwards
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
             break;
 
@@ -593,7 +595,7 @@ public static boolean rightAutoLineExchangePath ()
 
         case BRAKE_AFTER_TURN:
             // Brake after driving forwards and backwards
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
             break;
 
@@ -607,6 +609,7 @@ public static boolean rightAutoLineExchangePath ()
                 }
             break;
 
+        default:
         case DONE:
             // robot stops and does nothing until teleop; returns true
             // so the main autonomous state machine knows this is done
@@ -671,7 +674,7 @@ public static boolean centerSwitchPath ()
             // Turn 90 degrees to the left, if the switch is on the left
             // sets state to BRAKE_2_L
             if (Hardware.autoDrive.turnDegrees(-90,
-                    AUTO_SPEED_VISION))
+                    AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_2_L;
                 }
@@ -680,14 +683,14 @@ public static boolean centerSwitchPath ()
             // Turn 90 degrees to the right, if the switch is on the right
             // sets state to BRAKE_2_L
             if (Hardware.autoDrive.turnDegrees(90,
-                    AUTO_SPEED_VISION))
+                    AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_2_R;
                 }
         case BRAKE_2_L:
             // brake switch is on left
             // sets state to DRIVE_STRAIGHT_TO_SWITCH_LEFT
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 {
                 visionAuto = centerState.DRIVE_STRAIGHT_TO_SWITCH_LEFT;
                 }
@@ -695,7 +698,7 @@ public static boolean centerSwitchPath ()
         case BRAKE_2_R:
             // brake switch is on right
             // sets state to DRIVE_STRAIGHT_TO_SWITCH_RIGHT
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 {
                 visionAuto = centerState.DRIVE_STRAIGHT_TO_SWITCH_RIGHT;
                 }
@@ -861,6 +864,8 @@ DONE
  * setup to either the left or right scale, all based on game data from the
  * driver station.
  * 
+ * @param robotPosition
+ *            denote left or right
  * @return
  *         Whether or not the robot has finished the path
  */
@@ -883,7 +888,8 @@ public static boolean switchOrScalePath (Position robotPosition)
 
             // if we've finished driving this segment
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0], DRIVE_SPEED))
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0],
+                    DRIVE_SPEED) == true)
                 {
                 // If the switch IS on the correct side, brake before turning
                 // towards it
@@ -903,7 +909,7 @@ public static boolean switchOrScalePath (Position robotPosition)
             break;
         case BRAKE_DRIVE1:
             // Brake before turning towards the switch
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.TURN1;
             break;
         case TURN1:
@@ -911,20 +917,22 @@ public static boolean switchOrScalePath (Position robotPosition)
             if (robotPosition == Position.RIGHT)
                 {
                 // We are on the Right side? turn left.
-                if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(-90,
+                        TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN1;
                 } // end if
             else
                 {
                 // We are on the Left side? turn right.
-                if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(90,
+                        TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN1;
                 } // end if
             break;
         case BRAKE_TURN1:
             // Brake after turning, and before going to the switch with
             // ultrasonic
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.RAISE_ARM1;
             break;
         case RAISE_ARM1: // TODO this case was changed and IS UNTESTED!!!
@@ -949,7 +957,7 @@ public static boolean switchOrScalePath (Position robotPosition)
             break;
         case BRAKE_ULTRSNC:
             // Brake after driving using the ultrasonic
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
                 Hardware.autoTimer.reset();
                 Hardware.autoTimer.start();
@@ -970,12 +978,15 @@ public static boolean switchOrScalePath (Position robotPosition)
         case DRIVE2:
             // Drive past the switch to the middle of the platform zone
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[1], DRIVE_SPEED))
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[1]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
+                    DRIVE_SPEED) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_DRIVE2;
             break;
         case BRAKE_DRIVE2:
             // Brake after we get to the middle of the platform zone
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.TURN2;
             break;
         case TURN2:
@@ -983,25 +994,28 @@ public static boolean switchOrScalePath (Position robotPosition)
             if (robotPosition == Position.RIGHT)
                 {
                 // We are on the Right side? turn left.
-                if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(-90,
+                        TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN2;
                 }
             else
                 {
                 // We are on the Left side? turn right.
-                if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(90,
+                        TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN2;
                 }
             break;
         case BRAKE_TURN2:
             // Brake after turning towards the platform zone
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE3;
             break;
         case DRIVE3:
             // Drive to the right scale position
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2], DRIVE_SPEED))
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2],
+                    DRIVE_SPEED) == true)
                 // We start on the right side and the scale is on the right side
                 if (robotPosition == Position.RIGHT && grabData(
                         GameDataType.SCALE) == Position.RIGHT)
@@ -1022,7 +1036,7 @@ public static boolean switchOrScalePath (Position robotPosition)
             break;
         case BRAKE_DRIVE3:
             // Brake after driving to the right side scale
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.TURN3;
             break;
         case TURN3:
@@ -1030,25 +1044,28 @@ public static boolean switchOrScalePath (Position robotPosition)
             if (robotPosition == Position.RIGHT)
                 {
                 // We start on the RIGHT side? turn right.
-                if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(90,
+                        TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_B4_RAISE_ARM2;
                 }
             else
                 {
                 // We start on the LEFT side? turn left.
-                if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(-90,
+                        TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_B4_RAISE_ARM2;
                 }
             break;
         case DRIVE4:
             // Drive across the platform zone to the left
             if (Hardware.autoDrive.driveInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[3], DRIVE_SPEED))
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[3],
+                    DRIVE_SPEED) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_DRIVE4;
             break;
         case BRAKE_DRIVE4:
             // Brake after driving through the platform zone
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.TURN4;
             break;
         case TURN4:
@@ -1056,26 +1073,28 @@ public static boolean switchOrScalePath (Position robotPosition)
             if (robotPosition == Position.RIGHT)
                 {
                 // We start on the RIGHT side? turn right.
-                if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(90,
+                        TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_B4_RAISE_ARM2;
                 }
             else
                 {
                 // We start on the LEFT side? turn left.
-                if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(-90,
+                        TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_B4_RAISE_ARM2;
                 }
             break;
 
         case BRAKE_B4_RAISE_ARM2:
             // Brake right before we finish the auto path
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.RAISE_ARM2;
             break;
         case RAISE_ARM2:
             // Raise the arm to the scale height to set up for teleop.
             if (Hardware.cubeManipulator.setLiftPosition(
-                    SCALE_LIFT_HEIGHT, FORKLIFT_SPEED))
+                    SCALE_LIFT_HEIGHT, FORKLIFT_SPEED) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
             break;
         default: // prints that we reached the default, then falls through to
@@ -1129,13 +1148,15 @@ public static boolean offsetSwitchPath ()
         case DRIVE1:
             // Drive forward a little to allow turning.
             if (Hardware.autoDrive.driveStraightInches(
-                    OFFSET_SWITCH_DRIVE_DISTANCES[0],
-                    DRIVE_SPEED))
+                    OFFSET_SWITCH_DRIVE_DISTANCES[0]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
+                    DRIVE_SPEED) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE1;
             break;
         case BRAKE_DRIVE1:
             // Brake after driving forwards
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.TURN1;
 
             break;
@@ -1144,19 +1165,21 @@ public static boolean offsetSwitchPath ()
             if (grabData(GameDataType.SWITCH) == Position.LEFT)
                 {
                 // If the switch is on the left side, then turn left
-                if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(-90,
+                        TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN1;
                 }
             else
                 {
                 // If the switch is on the right side, then turn right
-                if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(90,
+                        TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN1;
                 }
             break;
         case BRAKE_TURN1:
             // Brake after the first turn
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 {
                 if (grabData(GameDataType.SWITCH) == Position.LEFT)
                     // If the switch is on the left side, then drive the left
@@ -1170,20 +1193,24 @@ public static boolean offsetSwitchPath ()
         case DRIVE2L:
             // Drive if during turn 1, we turned left
             if (Hardware.autoDrive.driveStraightInches(
-                    OFFSET_SWITCH_DRIVE_DISTANCES[1],
-                    DRIVE_SPEED))
+                    OFFSET_SWITCH_DRIVE_DISTANCES[1]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
+                    DRIVE_SPEED) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE2;
             break;
         case DRIVE2R:
             // Drive if during turn 1, we turned right.
             if (Hardware.autoDrive.driveStraightInches(
-                    OFFSET_SWITCH_DRIVE_DISTANCES[2],
-                    DRIVE_SPEED))
+                    OFFSET_SWITCH_DRIVE_DISTANCES[2]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
+                    DRIVE_SPEED) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE2;
             break;
         case BRAKE_DRIVE2:
             // Brake after the 2nd drive function
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.TURN2;
             break;
         case TURN2:
@@ -1191,19 +1218,21 @@ public static boolean offsetSwitchPath ()
             if (grabData(GameDataType.SWITCH) == Position.LEFT)
                 {
                 // switch is on the left side? turn right
-                if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(90,
+                        TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN2;
                 }
             else
                 {
                 // Switch is on the right side? turn left
-                if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(-90,
+                        TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN2;
                 }
             break;
         case BRAKE_TURN2:
             // Brake after turning towards the opposing alliance
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.RAISE_ARM;
             break;
         case RAISE_ARM:
@@ -1217,12 +1246,15 @@ public static boolean offsetSwitchPath ()
         case DRIVE3:
             // Drive to the middle of the end of the switch
             if (Hardware.autoDrive.driveStraightInches(
-                    OFFSET_SWITCH_DRIVE_DISTANCES[3], DRIVE_SPEED))
+                    OFFSET_SWITCH_DRIVE_DISTANCES[3]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
+                    DRIVE_SPEED) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE3;
             break;
         case BRAKE_DRIVE3:
             // Brake after driving to the center of the switch
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.TURN3;
             break;
         case TURN3:
@@ -1230,19 +1262,21 @@ public static boolean offsetSwitchPath ()
             if (grabData(GameDataType.SWITCH) == Position.LEFT)
                 {
                 // Switch is on the left side? turn right.
-                if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(90,
+                        TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN3;
                 }
             else
                 {
                 // Switch is on the right side? turn left.
-                if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
+                if (Hardware.autoDrive.turnDegrees(-90,
+                        TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN3;
                 }
             break;
         case BRAKE_TURN3:
             // Brake after turning towards the switch
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.DRIVE_WITH_ULTRSNC;
             break;
         case DRIVE_WITH_ULTRSNC:
@@ -1257,7 +1291,7 @@ public static boolean offsetSwitchPath ()
             break;
         case BRAKE_B4_EJECT:
             // Brake after driving with the ultrasonic, before we eject the cube
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
                 Hardware.autoTimer.reset();
                 Hardware.autoTimer.start();
@@ -1315,8 +1349,6 @@ private static final double DRIVE_STRAIGHT_ACCELERATION_TIME = .6; // seconds
 private static final double DRIVE_SPEED = .4; // percent
 
 private static final double TURN_SPEED = .4; // percent
-
-private static final double BRAKE_DRIFT = 3.0; // inches
 
 // ==========
 
