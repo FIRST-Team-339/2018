@@ -511,7 +511,7 @@ public void takeLitPicture (boolean button)
         if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
             {
-            this.ringLightRelay.set(Value.kForward);
+            this.setRelayValue(Value.kForward);
             }
 
         // if the timer expires, save the picture , reset booleans, turns off
@@ -525,7 +525,7 @@ public void takeLitPicture (boolean button)
 
             this.saveImageSafely(false, ImageType.RAW);
 
-            this.ringLightRelay.set(Value.kReverse);
+            this.setRelayValue(Value.kReverse);
 
             this.pictureTimer.stop();
             this.pictureTimer.reset();
