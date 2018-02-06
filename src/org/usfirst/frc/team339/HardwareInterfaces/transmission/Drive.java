@@ -703,7 +703,7 @@ private boolean driveInchesInit = true;
  *            How fast the robot should travel
  * @return Whether or not the robot has finished traveling that given distance.
  */
-public boolean driveStraightInches (int distance, double speed)
+public boolean driveStraightInches (double distance, double speed)
 {
     // Runs once when the method runs the first time, and does not run again
     // until after the method returns true.
@@ -714,7 +714,7 @@ public boolean driveStraightInches (int distance, double speed)
         }
 
     // Check all encoders
-    if (this.getEncoderDistanceAverage(WheelGroups.ALL) > distance)
+    if (this.isAnyEncoderLargerThan(distance) == true)
         {
         this.getTransmission().stop();
         driveStraightInchesInit = true;

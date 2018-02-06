@@ -123,10 +123,12 @@ public static void periodic ()
             break;
         case DELAY:
             // Delay using the potentiometer, from 0 to 5 seconds
+            // once finished, stop the timer and go to the next state
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
                     5.0))
                 {
                 autoState = State.CHOOSE_PATH;
+                Hardware.autoTimer.stop();
                 break;
                 }
             break;
@@ -332,7 +334,9 @@ public static boolean autolinePath ()
         case DRIVE1:
             // Drive across the line
             if (Hardware.autoDrive.driveStraightInches(
-                    DISTANCE_TO_CROSS_AUTOLINE, DRIVE_SPEED))
+                    DISTANCE_TO_CROSS_AUTOLINE - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
+                    DRIVE_SPEED))
                 currentAutolineState = AutolinePathStates.BRAKE1;
             break;
         case BRAKE1:
@@ -381,7 +385,9 @@ public static boolean autoLineScalePath ()
             // Drive across the auto line, and a little farther to be closer to
             // the scale
             if (Hardware.autoDrive.driveStraightInches(
-                    DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE,
+                    DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
                     DRIVE_SPEED))
                 currentAutolineState = AutolinePathStates.BRAKE1;
             break;
@@ -714,7 +720,7 @@ public static boolean centerSwitchPath ()
         case DRIVE_WITH_CAMERA:
             // drives to the switch based on the camera
             // sets state to LIFT
-            if (Hardware.autoDrive.driveToSwitch(
+            if (Hardware.driveWithCamera.driveToSwitch(
                     AUTO_COMPENSATION_VISION,
                     AUTO_SPEED_VISION))
                 {
