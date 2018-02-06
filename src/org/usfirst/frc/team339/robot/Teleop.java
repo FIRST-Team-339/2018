@@ -100,7 +100,7 @@ public static void periodic ()
         {
         Hardware.transmission.setForAutonomous();
         System.out.println("Starting align");
-        if (Hardware.scaleAlignment.alignToScale(.5, 3))
+        if (Hardware.scaleAlignment.alignToScale(.2, 3))
             {
             System.out.println("Scored on Scale");
             Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);

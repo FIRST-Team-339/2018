@@ -67,8 +67,8 @@ public boolean alignToScale (double speed, double deadband)
         {
         System.out.println("Our distance to the scale is correct");
         aligned = true;
-        timeSinceAligned = System.currentTimeMillis();
-
+        speed = 0;
+        Hardware.transmission.drive(0, 0);
         // move the forklift and push out cube
         if (Hardware.cubeManipulator.scoreScale())
             {
@@ -79,27 +79,26 @@ public boolean alignToScale (double speed, double deadband)
     else if (Hardware.rearUltraSonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
                     - deadband
-            && (System.currentTimeMillis() < (timeSinceAligned + 2000)))
+            && aligned == false)
         {
         System.out.println("We are too close to the scale");
         Hardware.cubeManipulator.setLiftPosition(0, 0);
         Hardware.transmission.drive(speed, speed);
         }
-    // // if to close to scale
-    // else if (Hardware.rearUltraSonic
-    // .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
-    // && (System.currentTimeMillis() < (timeSinceAligned + 2000)))
-    // {
-    // System.out.println("We are to far from the scale");
-    // Hardware.cubeManipulator.setLiftPosition(0, 0);
-    // Hardware.transmission.drive(-speed, -speed);
-    // }
+    // if to close to scale
+    else if (Hardware.rearUltraSonic
+            .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
+            && aligned == false)
+        {
+        System.out.println("We are to far from the scale");
+        Hardware.cubeManipulator.setLiftPosition(0, 0);
+        Hardware.transmission.drive(-speed, -speed);
+        }
     return false;
 }
 
 boolean aligned = false;
 
-double timeSinceAligned;
 
 private static final double SCALE_TO_WALL_DISTANCE = 68;
 
