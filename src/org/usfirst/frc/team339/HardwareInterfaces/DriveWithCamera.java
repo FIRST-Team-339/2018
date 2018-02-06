@@ -1,17 +1,14 @@
 package org.usfirst.frc.team339.HardwareInterfaces;
 
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.MecanumTransmission;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.TankTransmission;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
- * Contains all game specific vision code
+ * Contains all game specific vision code, including code to drive to the switch
+ * using vision
  * 
  * @author Becky Button
  */
@@ -76,6 +73,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
 
         // gets the position of the center
         this.getCameraCenterValue();
+        // turns on the ring light
         this.visionProcessor.setRelayValue(Value.kForward);
 
         // if we are aligned the center, we will drive straight
@@ -86,34 +84,35 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             {
             driveStraight(speed, false);
             }
-        // if the center is to the right of our center set by the
+        // if the switch center is to the right of our center set by the
         // SWITCH_CAMERA_CENTER, correct by driving faster on the left
         else if (this.getCameraCenterValue() > SWITCH_CAMERA_CENTER
                 + CAMERA_DEADBAND)
             {
-            // center is too far right, drive faster on the left
-            this.getTransmission().drive(speed,
-                    speed * compensationFactor);
+            // the switch's center is too far right, drive faster on the left
+            this.getTransmission().drive(speed * compensationFactor,
+                    speed);
             }
-        // if the center is to the left of our center set by the
+        // if the switch center is to the left of our center set by the
         // SWITCH_CAMERA_CENTER, correct by driving faster on the right
         else
             {
-            // center is too far left, drive faster on the right
-            this.getTransmission().drive(speed * compensationFactor,
-                    speed);
+            // the switch's center is too far left, drive faster on the right
+            this.getTransmission().drive(speed,
+                    speed * compensationFactor);
             }
         }
     // if we can no longer see vision targets, drive by ultrasonic, turn off the
     // relay
     else
         {
+        // turn off the ring light
         this.visionProcessor.setRelayValue(Value.kReverse);
 
         // if we are too close to the wall, brake, then set all motors to zero,
         // else drive by ultrasonic
         if (this.frontUltrasonic
-                .getDistanceFromNearestBumper() <= STOP_ROBOT)
+                .getDistanceFromNearestBumper() <= DISTANCE_FROM_WALL_TO_STOP)
             {
             this.brake(BrakeType.AFTER_DRIVE);
             this.getTransmission().drive(0, 0);
@@ -202,8 +201,8 @@ private final double CAMERA_NO_LONGER_WORKS = 38;
 // the number in pixels that the center we are looking for can be off
 private final double CAMERA_DEADBAND = 10;
 
-// the distance in inches in which we stop the robot
-private final double STOP_ROBOT = 20;
+// the distance from the wall (in inches) where we start stopping the robot
+private final double DISTANCE_FROM_WALL_TO_STOP = 20;
 // 6
 
 // TODO This is for nessie, test for the new robot
