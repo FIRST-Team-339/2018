@@ -458,6 +458,7 @@ AFTER_DRIVE, AFTER_TURN
  */
 public double getBrakeStoppingDistance ()
 {
+    // return distance required to brake
     return (this.distanceRequiredToBrake);
 } // end getBrakeStoppingDistance()
 
@@ -472,6 +473,7 @@ public double getBrakeStoppingDistance ()
  */
 public double setBrakeStoppingDistance (double brakeStoppingDistance)
 {
+    // sets braking distance and returns it
     return (this.distanceRequiredToBrake = brakeStoppingDistance);
 } // end setBrakeStoppingDistance()
 
@@ -501,7 +503,7 @@ public boolean brake (BrakeType type)
         deadband = brakeDriveDeadband;
         power = brakeDrivePower;
         }
-    // if Braketype is AFTER_TURN set the deadband to brakeTurndeadband
+    // if Braketype is AFTER_TURN set the deadband to brakeTurnDeadband
     // and set power to brakeTurnPower
     else if (type == BrakeType.AFTER_TURN)
         {
@@ -530,7 +532,9 @@ public boolean brake (BrakeType type)
         }
 
     int[] brakeDeltas = new int[4];
-
+    // sets values of brakeDelta array to the change in encoder ticks
+    // between the current value and the brakePrevEncoderVals
+    // in the order left rear, right rear, left front, right front
     brakeDeltas[0] = getEncoderTicks(MotorPosition.LEFT_REAR)
             - brakePrevEncoderVals[0];
     brakeDeltas[1] = getEncoderTicks(MotorPosition.RIGHT_REAR)
@@ -540,15 +544,18 @@ public boolean brake (BrakeType type)
     brakeDeltas[3] = getEncoderTicks(MotorPosition.RIGHT_FRONT)
             - brakePrevEncoderVals[3];
 
+    // sets prev encoder tick values to the current tick vals
     brakePrevEncoderVals[0] = getEncoderTicks(MotorPosition.LEFT_REAR);
     brakePrevEncoderVals[1] = getEncoderTicks(MotorPosition.RIGHT_REAR);
     brakePrevEncoderVals[2] = getEncoderTicks(MotorPosition.LEFT_FRONT);
     brakePrevEncoderVals[3] = getEncoderTicks(
             MotorPosition.RIGHT_FRONT);
 
+    // prints out all the brakeDelta array values
     for (int i = 0; i < brakeDeltas.length; i++)
         System.out.println("Delta " + i + ": " + brakeDeltas[i]);
 
+    // prints out all the brakeMotorDirection array values
     for (int i = 0; i < brakeMotorDirection.length; i++)
         System.out.println("Power " + i + ": "
                 + brakeMotorDirection[i] * -brakeDrivePower);
@@ -640,6 +647,7 @@ public void setBrakePower (double power)
 }
 
 /**
+ * 
  * 
  * @param iterations
  */
@@ -1282,7 +1290,7 @@ public boolean alignToScale (double speed, double deadband)
     // if to close to scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
-    /* && aligned == false */)
+    /* && == false */)
         {
         System.out.println("We are to far from the scale");
         Hardware.cubeManipulator.setLiftPosition(0, 0);
