@@ -123,10 +123,12 @@ public static void periodic ()
             break;
         case DELAY:
             // Delay using the potentiometer, from 0 to 5 seconds
+            // once finished, stop the timer and go to the next state
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
                     5.0))
                 {
                 autoState = State.CHOOSE_PATH;
+                Hardware.autoTimer.stop();
                 break;
                 }
             break;
@@ -177,17 +179,17 @@ public static void periodic ()
                         autoState = State.SWITCH_OR_SCALE_R;
                     break;
                 case 5:
-                    // drop off the cube on the appropriate switch side
-                    // using gamedata, but from the sides of the switch instead
-                    // of in the front (CENTER_SWITCH is for dropping off in
-                    // front with the vision targets)
-                    // this autonomous starts offset from the center of the
-                    // switch
+                    // Delivers the cube if another robot chooses to deliver in
+                    // the center. Goes
+                    // around the switch to deliver on the end.
                     autoState = State.OFFSET_SWITCH;
                     break;
                 default:
                     // If for some reason we failed to properly set the auto
-                    // State, then disable.
+                    // State, then print we reached the default case and
+                    // disable.
+                    System.out.println(
+                            "REACHED THE DEFAULT CASE FOR the six position switch)");
                     autoState = State.FINISH;
                     break;
                 }
@@ -201,7 +203,7 @@ public static void periodic ()
             break;
         case AUTOLINE_SCALE:
             // calls method that runs that path
-            if (autoLineScalePath())
+            if (autoLineScalePath() == true)
                 {
                 autoState = State.FINISH;
                 }
@@ -332,7 +334,9 @@ public static boolean autolinePath ()
         case DRIVE1:
             // Drive across the line
             if (Hardware.autoDrive.driveStraightInches(
-                    DISTANCE_TO_CROSS_AUTOLINE, DRIVE_SPEED))
+                    DISTANCE_TO_CROSS_AUTOLINE - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
+                    DRIVE_SPEED))
                 currentAutolineState = AutolinePathStates.BRAKE1;
             break;
         case BRAKE1:
@@ -341,7 +345,10 @@ public static boolean autolinePath ()
                 currentAutolineState = AutolinePathStates.FINISH;
             break;
         default:
-            // if something goes wrong, fall through to FINISH's case
+            // if something goes wrong, print we reached default and fall
+            // through to FINISH's case
+            System.out.println(
+                    "REACHED THE DEFAULT CASE FOR autolinePath()");
         case FINISH:
             // Stop drive motors and end auto
             Hardware.transmission.stop();
@@ -378,7 +385,9 @@ public static boolean autoLineScalePath ()
             // Drive across the auto line, and a little farther to be closer to
             // the scale
             if (Hardware.autoDrive.driveStraightInches(
-                    DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE,
+                    DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
                     DRIVE_SPEED))
                 currentAutolineState = AutolinePathStates.BRAKE1;
             break;
@@ -387,7 +396,10 @@ public static boolean autoLineScalePath ()
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
                 currentAutolineState = AutolinePathStates.FINISH;
             break;
-        default:
+        default: // prints we reached the default case, then fall through to
+                 // FINISH
+            System.out.println(
+                    "REACHED THE DEFAULT CASE FOR autoLineScalePath()");
         case FINISH:
             // Stop drive motors and end auto
             Hardware.transmission.stop();
@@ -708,7 +720,7 @@ public static boolean centerSwitchPath ()
         case DRIVE_WITH_CAMERA:
             // drives to the switch based on the camera
             // sets state to LIFT
-            if (Hardware.autoDrive.driveToSwitch(
+            if (Hardware.driveWithCamera.driveToSwitch(
                     AUTO_COMPENSATION_VISION,
                     AUTO_SPEED_VISION))
                 {
@@ -742,6 +754,10 @@ public static boolean centerSwitchPath ()
                 visionAuto = centerState.DONE;
                 }
             break;
+        default: // prints that we reached the default case, then falls through
+                 // to DONE
+            System.out.println(
+                    "REACHED THE DEFAULT CASE FOR centerSwitchPath()");
         case DONE:
             // stops robot the robot, and return true so the main auto
             // switch machine knows this path is done
@@ -803,7 +819,7 @@ DRIVE_WITH_CAMERA,
  */
 LIFT,
 /**
- * Sets intake out
+ * Deploy the intake mechanism
  */
 DEPLOY_ARM,
 /**
@@ -832,12 +848,16 @@ public static boolean switchOrScalePath (Position robotPosition)
     switch (currentSwitchOrScaleState)
         {
         case PATH_INIT:
-            // deploys the cube intake and moves on to the next state
+            // starts deploying the cube intake and moves on to the next state
+            // does not wait for the intake to finish deploying before moving
+            // onto the next state
             currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE1;
             Hardware.cubeManipulator.deployCubeIntake();
             break;
         case DRIVE1:
             // FIRST driveInches: drive forward to switch
+
+            // if we've finished driving this segment
             if (Hardware.autoDrive.driveStraightInches(
                     SWITCH_OR_SCALE_DRIVE_DISTANCE[0], DRIVE_SPEED))
                 {
@@ -855,7 +875,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                     // If not, then keep driving forwards.
                     currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;
 
-                }
+                } // end if
             break;
         case BRAKE_DRIVE1:
             // Brake before turning towards the switch
@@ -869,14 +889,13 @@ public static boolean switchOrScalePath (Position robotPosition)
                 // We are on the Right side? turn left.
                 if (Hardware.autoDrive.turnDegrees(-90, TURN_SPEED))
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN1;
-                }
+                } // end if
             else
                 {
                 // We are on the Left side? turn right.
                 if (Hardware.autoDrive.turnDegrees(90, TURN_SPEED))
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN1;
-                }
-
+                } // end if
             break;
         case BRAKE_TURN1:
             // Brake after turning, and before going to the switch with
@@ -884,14 +903,15 @@ public static boolean switchOrScalePath (Position robotPosition)
             if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
                 currentSwitchOrScaleState = SwitchOrScaleStates.RAISE_ARM1;
             break;
-        case RAISE_ARM1:
-            // Raise the arm for the switch after turning towards it, but before
+        case RAISE_ARM1: // TODO this case was changed and IS UNTESTED!!!
+            // TODO do we want to start to raising the forklift early so it's
+            // already up?
+            // Raise the forklift/ arm for the switch after turning towards it,
+            // but before
             // driving to the wall.
-            Hardware.liftingMotor.set(FORKLIFT_SPEED);
-            if (Math.abs(Hardware.liftingEncoder
-                    .getDistance()) > SWITCH_LIFT_HEIGHT)
+            if (Hardware.cubeManipulator
+                    .setLiftPosition(SWITCH_LIFT_HEIGHT) == true)
                 {
-                Hardware.liftingMotor.set(0.0);
                 currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_WITH_ULTRSNC;
                 }
             break;
@@ -1034,8 +1054,14 @@ public static boolean switchOrScalePath (Position robotPosition)
                     SCALE_LIFT_HEIGHT, FORKLIFT_SPEED))
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
             break;
-        default:
+        default: // prints that we reached the default, then falls through to
+                 // FINISH
+            System.out.println(
+                    "REACHED THE DEFAULT CASE for switchOrScalePath()");
         case FINISH:
+            // if we don't know what's going on (default case) or we're
+            // finished, stop driving and return true so the main autonomous
+            // state can continue
             Hardware.transmission.stop();
             return true;
         }
@@ -1043,8 +1069,12 @@ public static boolean switchOrScalePath (Position robotPosition)
 }
 
 
+// variable that controls the states for the Switch or Scale autonomous path
 private static SwitchOrScaleStates currentSwitchOrScaleState = SwitchOrScaleStates.PATH_INIT;
 
+/**
+ * Enum for the possible states for the Switch or Scale autonomous path
+ */
 private static enum SwitchOrScaleStates
     {
 PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE, DRIVE2, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, DRIVE4, BRAKE_DRIVE4, TURN4, BRAKE_B4_RAISE_ARM2, RAISE_ARM2, FINISH
@@ -1059,9 +1089,10 @@ PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTR
  */
 public static boolean offsetSwitchPath ()
 {
-
+    // prints the current state for this autonomous path
     System.out.println("Current State: " + currentOffsetSwitchState);
 
+    // switch statement/ state machine for this autonomous path
     switch (currentOffsetSwitchState)
         {
         case PATH_INIT:
@@ -1073,7 +1104,8 @@ public static boolean offsetSwitchPath ()
             break;
         case DRIVE1:
             // Drive forward a little to allow turning.
-            if (Hardware.autoDrive.driveStraightInches(OFFSET_SWITCH[0],
+            if (Hardware.autoDrive.driveStraightInches(
+                    OFFSET_SWITCH_DRIVE_DISTANCES[0],
                     DRIVE_SPEED))
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE1;
             break;
@@ -1113,13 +1145,15 @@ public static boolean offsetSwitchPath ()
             break;
         case DRIVE2L:
             // Drive if during turn 1, we turned left
-            if (Hardware.autoDrive.driveStraightInches(OFFSET_SWITCH[1],
+            if (Hardware.autoDrive.driveStraightInches(
+                    OFFSET_SWITCH_DRIVE_DISTANCES[1],
                     DRIVE_SPEED))
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE2;
             break;
         case DRIVE2R:
             // Drive if during turn 1, we turned right.
-            if (Hardware.autoDrive.driveStraightInches(OFFSET_SWITCH[2],
+            if (Hardware.autoDrive.driveStraightInches(
+                    OFFSET_SWITCH_DRIVE_DISTANCES[2],
                     DRIVE_SPEED))
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE2;
             break;
@@ -1159,7 +1193,7 @@ public static boolean offsetSwitchPath ()
         case DRIVE3:
             // Drive to the middle of the end of the switch
             if (Hardware.autoDrive.driveStraightInches(
-                    OFFSET_SWITCH[3], DRIVE_SPEED))
+                    OFFSET_SWITCH_DRIVE_DISTANCES[3], DRIVE_SPEED))
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE3;
             break;
         case BRAKE_DRIVE3:
@@ -1216,18 +1250,27 @@ public static boolean offsetSwitchPath ()
                 currentOffsetSwitchState = OffsetSwitchPath.FINISH;
                 }
             break;
+        default: // prints out a message to let the console know we got here,
+                 // then falls through to FINISH
+            System.out.println(
+                    "REACHED THE DEFAULT CASE for offsetSwitchPath()");
         case FINISH:
-            // Finished with the offset path!
+            // Finished with the offset path; stops motors and returns true
+            // so the main auto state machine knows we're finished
             Hardware.transmission.stop();
             Hardware.cubeIntakeMotor.stopMotor();
-            break;
-
+            return true;
         }
     return false;
 }
 
+
+// variable that controls the states for the offsetSwitchPath autonomous
 private static OffsetSwitchPath currentOffsetSwitchState = OffsetSwitchPath.PATH_INIT;
 
+/**
+ * Enum for the possible states of the offsetSwitchPath autonomous
+ */
 private enum OffsetSwitchPath
     {
 PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRIVE2R, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, RAISE_ARM_AND_DRIVE3_2, BRAKE_DRIVE3, TURN3, BRAKE_TURN3, RAISE_ARM, DRIVE_WITH_ULTRSNC, BRAKE_B4_EJECT, EJECT, FINISH
@@ -1288,6 +1331,8 @@ private final static int DISTANCE_TO_CROSS_AUTOLINE = 120;
 private final static int DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE = 207;
 
 // AUTOLINE_EXCHANGE
+// distance required to drive back across the autoline before turning to go
+// towards the exchange
 private final static int DISTANCE_BACK_ACROSS_AUTOLINE = 100;
 
 private final static int LEFT_DISTANCE_TO_EXCHANGE = 58;
@@ -1306,10 +1351,13 @@ private final static int DRIVE_NO_CAMERA_RIGHT = 116;
 // TODO change for actual auto speed
 private final static double AUTO_SPEED_VISION = .5;
 
+// the constant we used to multiply one side's motors' speed by to correct
+// driving when driving using vision
 private final static double AUTO_COMPENSATION_VISION = 1.2;
 
 
 // SWITCH_OR_SCALE
+// array for storing the different driving distances in SWITH_OR_SCALE
 private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
     {(int) (AUTO_TESTING_SCALAR * 133),
             (int) (AUTO_TESTING_SCALAR * 67),
@@ -1319,12 +1367,13 @@ private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
 
 
 // OFFSET_SWITCH
-// DRIVE1, DRIVE2L, DRIVE2R, DRIVE3
-private static final int[] OFFSET_SWITCH = new int[]
-    {6, 180, 59, 127};
-
-private static final int DISTANCE_TO_RAISE_ARM = 30;
-
+// array for storing the different driving distances used in OFFSET_SWITCH
+// values in the array (in order) are for DRIVE1, DRIVE2L, DRIVE2R, DRIVE3
+private static final int[] OFFSET_SWITCH_DRIVE_DISTANCES = new int[]
+    {(int) (AUTO_TESTING_SCALAR * 6),
+            (int) (AUTO_TESTING_SCALAR * 180),
+            (int) (AUTO_TESTING_SCALAR * 59),
+            (int) (AUTO_TESTING_SCALAR * 127)};
 
 
 // FINISH

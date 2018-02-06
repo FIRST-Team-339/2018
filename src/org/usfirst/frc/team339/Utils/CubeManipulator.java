@@ -580,25 +580,27 @@ public boolean scoreScale ()
         {
         // Make sure the intake is deployed before scoring on the switch
         case DEPLOY_INTAKE:
-            System.out.println("Deploying intake");
             if (deployCubeIntake() == true)
                 {
-
-                System.out.println("Deployed intake");
+                switchState = scoreSwitchState.MOVE_LIFT;
+                }
+            break;
+        // Move the lift to the height of the scale
+        case MOVE_LIFT:
+            if (setLiftPosition(SCALE_HEIGHT,
+                    FORKLIFT_SPEED_UP) == true)
+                {
                 switchState = scoreSwitchState.SPIT_OUT_CUBE;
-
-                this.switchState = scoreSwitchState.SPIT_OUT_CUBE;
                 }
             break;
         // Push the cube on the scale
         case SPIT_OUT_CUBE:
-            System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
-                System.out.println("Spat out cube");
                 scaleState = scoreScaleState.FINISHED;
                 }
             break;
+        // Debugging purposes: if we input a state that doesn't exist.
         default:
             System.out.println("Error finding state " + scaleState
                     + " in CubeManipulator.scoreScale()");
@@ -664,7 +666,7 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
  */
 private static enum scoreScaleState
     {
-DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
+MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
     }
 
 // --------------------VARIABLES--------------------

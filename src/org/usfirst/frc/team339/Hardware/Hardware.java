@@ -15,6 +15,7 @@
 package org.usfirst.frc.team339.Hardware;
 
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
+import org.usfirst.frc.team339.HardwareInterfaces.DriveWithCamera;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
@@ -24,6 +25,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.Utils.ScaleAlignment;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
@@ -283,6 +285,7 @@ public static MomentarySwitch deployIntakeButton = new MomentarySwitch(
 // ------------------------------------
 public static final Timer autoTimer = new Timer();
 
+
 // ------------------------------------
 // Transmission class
 // ------------------------------------
@@ -297,6 +300,10 @@ public static Drive autoDrive = new Drive(transmission,
         rearUltraSonic, null, axisCamera);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
+public static DriveWithCamera driveWithCamera = new DriveWithCamera(
+        transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
+        frontUltraSonic, rearUltraSonic, null, axisCamera);
+
 // -------------------
 // Assembly classes (e.g. forklift)
 // -------------------
@@ -304,4 +311,7 @@ public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
         intakeDeployArm, intakeDeployEncoder, autoTimer);
+
+public static ScaleAlignment scaleAlignment = new ScaleAlignment(
+        rearUltraSonic);
 } // end class

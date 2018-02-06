@@ -162,7 +162,7 @@ private final CameraModel cameraModel;
 private final VideoCamera camera;
 
 // ========OBJECTS FOR TAKE LIT IMAGE========
-private Relay ringlightRelay = null;
+private Relay ringLightRelay = null;
 
 private Timer pictureTimer = new Timer();
 
@@ -243,7 +243,7 @@ public VisionProcessor (String ip, CameraModel camera,
         }
 
     this.pictureTimer.reset();
-    this.ringlightRelay = ringlightRelay;
+    this.ringLightRelay = ringlightRelay;
 
 }
 
@@ -316,7 +316,7 @@ public VisionProcessor (int usbPort, CameraModel camera,
             this.horizontalFieldOfView = 1;
             this.verticalFieldOfView = 1;
         }
-    this.ringlightRelay = ringlightRelay;
+    this.ringLightRelay = ringlightRelay;
     this.pictureTimer.reset();
 }
 
@@ -495,8 +495,8 @@ public void takeLitPicture (boolean button)
         this.takePictureByButton = true;
         this.pictureTimer.start();
         }
-    
-    //if the button isn't pressed, reset the other booleans
+
+    // if the button isn't pressed, reset the other booleans
     if (button == false && pictureTakenByButton == true)
         {
         takePictureByButton = false;
@@ -506,24 +506,27 @@ public void takeLitPicture (boolean button)
     // if both buttons are pressed, turn on the relay
     if (this.takePictureByButton == true)
         {
+
+        // turns on the ring light
         if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
             {
-            this.ringlightRelay.set(Value.kForward);
+            this.setRelayValue(Value.kForward);
             }
 
-        // if the timer expires, save the picture , reset the camera
+        // if the timer expires, save the picture , reset booleans, turns off
+        // the ring light
         if (this.pictureTimer.get() >= TAKE_PICTURE_DELAY)
             {
             this.saveImageSafely(true, ImageType.RAW);
-            
+
             this.pictureTakenByButton = true;
             this.takePictureByButton = false;
-            
+
             this.saveImageSafely(false, ImageType.RAW);
-            
-            this.ringlightRelay.set(Value.kReverse);
-            
+
+            this.setRelayValue(Value.kReverse);
+
             this.pictureTimer.stop();
             this.pictureTimer.reset();
             }
@@ -536,6 +539,39 @@ private boolean pictureTakenByButton = false;
 
 private final double TAKE_PICTURE_DELAY = 0.1;
 
+/**
+ * Gets the value of the ring light relay
+ * 
+ * @return the value of the camera ring light relay
+ */
+public Value getRelayValue ()
+{
+    return this.ringLightRelay.get();
+}
+
+/**
+ * Set the ring light to a value
+ * 
+ * @param ringlightValue
+ *            use kForward or kReverse to set the ring light
+ */
+public void setRelayValue (Value ringLightValue)
+{
+    this.ringLightRelay.set(ringLightValue);
+}
+
+/**
+ * Turns on the ring light
+ * 
+ * @param button
+ *            2 joystick buttons
+ *            acceptable parameter:
+ *            joystick.getRawButton(x) && joystick.getRawButton(y)
+ */
+public void turnRingLightOn (boolean button)
+{
+
+}
 
 // =====================USER ACCESSABLE METHODS========================
 /*
