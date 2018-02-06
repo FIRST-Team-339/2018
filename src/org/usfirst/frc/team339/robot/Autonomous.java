@@ -775,7 +775,7 @@ public static boolean centerSwitchPath ()
             break;
         case MAKE_DEPOSIT:
             // deposits cube on switch and sets state to DONE
-            if (Hardware.cubeManipulator.scoreSwitch() == ture)
+            if (Hardware.cubeManipulator.scoreSwitch() == true)
                 visionAuto = centerState.DONE;
             break;
         default: // prints that we reached the default case, then falls through
