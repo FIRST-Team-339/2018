@@ -179,7 +179,7 @@ public static void beckyTest ()
         if (Hardware.visionTestButton.isOnCheckNow())
             {
             Hardware.transmission.setForAutonomous();
-            if (Hardware.autoDrive.driveToSwitch(1.5, .5) == true)
+            if (Hardware.driveWithCamera.driveToSwitch(1.5, .5) == true)
                 {
                 Hardware.autoDrive.driveInches(0, 0);
                 }
