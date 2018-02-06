@@ -1,6 +1,5 @@
 package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
-import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;

@@ -1,55 +1,63 @@
 package org.usfirst.frc.team339.Utils;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
-import org.usfirst.frc.team339.HardwareInterfaces.KilroyGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
-import org.usfirst.frc.team339.vision.VisionProcessor;
-import edu.wpi.first.wpilibj.Encoder;
 
-public class AlignToScale extends Drive
+public class ScaleAlignment
 {
 
 private UltraSonic rearUltrasonic = null;
 
 
 
-
-public AlignToScale (TransmissionBase transmission,
-        Encoder leftFrontEncoder, Encoder rightFrontEncoder,
-        Encoder leftRearEncoder, Encoder rightRearEncoder,
-        UltraSonic ultrasonic, KilroyGyro gyro,
-        VisionProcessor visionProcessor)
+/**
+ * Creates the Drive object. If a sensor listed is not used (except for
+ * encoders), set it to null.
+ * 
+ * 
+ * @param transmission
+ *            The robot's transmission object
+ * @param leftFrontEncoder
+ *            The left-front corner encoder
+ * @param rightFrontEncoder
+ *            The right-front corner encoder
+ * @param leftRearEncoder
+ *            The left-rear corner encoder
+ * @param rightRearEncoder
+ *            The right-rear corner encoder
+ * @param ultrasonic
+ *            The sensor that finds distance using sound
+ * @param gyro
+ *            A sensor that uses a spinning disk to measure rotation.
+ * @param visionProcessor
+ *            The camera's vision processing code, as a sensor.
+ */
+public ScaleAlignment (UltraSonic ultrasonic)
 {
-    super(transmission, leftFrontEncoder, rightFrontEncoder,
-            leftRearEncoder, rightRearEncoder, ultrasonic, gyro,
-            visionProcessor);
+
 
     this.rearUltrasonic = ultrasonic;
 
 }
 
 /**
- * Hopefully will align to proper distance w. scale
- * then raise fork lift and eject cube
- * 
- * 
- * param speed
- * Set to negative for too close ajustment
+ * Score cube on to scale
  * 
  * @return true when completed
  * 
+ * @param speed
+ *            Do not set negative
+ * 
+ * @param deadband
  * 
  */
 
 public boolean alignToScale (double speed, double deadband)
 {
-    // Started align to scale
-    // todo optimize deadband to distance
+    // TODO optimize deadband to distance
 
     // checks if in proper distance
-    // ROBOT_TO_SCALE_DISTANCE 68-36 =32
+    // ROBOT_TO_SCALE_DISTANCE 72-36 =36
     if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
 
@@ -58,25 +66,20 @@ public boolean alignToScale (double speed, double deadband)
                             - deadband)
         {
         System.out.println("Our distance to the scale is correct");
-
-        // Hardware.tractionDrive.drive(0, 0);
-        speed = 0;
         aligned = true;
-        // start the move forklift switch
+        timeSinceAligned = System.currentTimeMillis();
 
-        if (Hardware.cubeManipulator.scoreSwitch())
+        // move the forklift and push out cube
+        if (Hardware.cubeManipulator.scoreScale())
             {
             return true;
             }
-
-
-
         }
     // if to far from scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
                     - deadband
-    /* && aligned == false */)
+            && (System.currentTimeMillis() < (timeSinceAligned + 2000)))
         {
         System.out.println("We are too close to the scale");
         Hardware.cubeManipulator.setLiftPosition(0, 0);
@@ -85,7 +88,7 @@ public boolean alignToScale (double speed, double deadband)
     // if to close to scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
-    /* && aligned == false */)
+            && (System.currentTimeMillis() < (timeSinceAligned + 2000)))
         {
         System.out.println("We are to far from the scale");
         Hardware.cubeManipulator.setLiftPosition(0, 0);
@@ -95,6 +98,8 @@ public boolean alignToScale (double speed, double deadband)
 }
 
 boolean aligned = false;
+
+double timeSinceAligned;
 
 private static final double SCALE_TO_WALL_DISTANCE = 68;
 
