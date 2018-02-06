@@ -84,14 +84,23 @@ public static void init ()
  */
 public static void periodic ()
 {
+    System.out.println(allowAlignment);
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
 
-    if (Hardware.leftOperator.getRawButton(6) == true)
+
+    if (Hardware.leftDriver.getRawButton(9) == true)
         {
+        allowAlignment = true;
+        }
 
-
+    if (allowAlignment == true)
+        {
+        if (Hardware.scaleAlignment.alignToScale(.3, 3))
+            {
+            System.out.println("Scored on Scale");
+            }
         }
 
 
@@ -151,11 +160,13 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    testingDrive();
+    // testingDrive();
 
     beckyTest();
 
 } // end Periodic()
+
+private static boolean allowAlignment = false;
 
 private static boolean isTestingDrive = false;
 

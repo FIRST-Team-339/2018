@@ -24,6 +24,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.Utils.ScaleAlignment;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
@@ -283,11 +284,15 @@ public static MomentarySwitch deployIntakeButton = new MomentarySwitch(
 // ------------------------------------
 public static final Timer autoTimer = new Timer();
 
+
 // ------------------------------------
 // Transmission class
 // ------------------------------------
 public static TractionTransmission transmission = new TractionTransmission(
         leftDriveMotor, rightDriveMotor);
+
+public static ScaleAlignment scaleAlignment = new ScaleAlignment(
+        rearUltraSonic);
 
 // ------------------------------------
 // Drive system
