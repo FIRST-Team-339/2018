@@ -54,14 +54,14 @@ public ScaleAlignment (UltraSonic ultrasonic)
 
 public boolean alignToScale (double speed, double deadband)
 {
+    System.out.println("In aligning function");
     // TODO optimize deadband to distance
 
     // checks if in proper distance
     // ROBOT_TO_SCALE_DISTANCE 72-36 =36
-    if (this.rearUltrasonic
+    if (Hardware.rearUltraSonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
-
-            && this.rearUltrasonic
+            && Hardware.rearUltraSonic
                     .getDistanceFromNearestBumper() >= ROBOT_TO_SCALE_DISTANCE
                             - deadband)
         {
@@ -76,7 +76,7 @@ public boolean alignToScale (double speed, double deadband)
             }
         }
     // if to far from scale
-    else if (this.rearUltrasonic
+    else if (Hardware.rearUltraSonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
                     - deadband
             && (System.currentTimeMillis() < (timeSinceAligned + 2000)))
@@ -85,15 +85,15 @@ public boolean alignToScale (double speed, double deadband)
         Hardware.cubeManipulator.setLiftPosition(0, 0);
         Hardware.transmission.drive(speed, speed);
         }
-    // if to close to scale
-    else if (this.rearUltrasonic
-            .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
-            && (System.currentTimeMillis() < (timeSinceAligned + 2000)))
-        {
-        System.out.println("We are to far from the scale");
-        Hardware.cubeManipulator.setLiftPosition(0, 0);
-        Hardware.transmission.drive(-speed, -speed);
-        }
+    // // if to close to scale
+    // else if (Hardware.rearUltraSonic
+    // .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
+    // && (System.currentTimeMillis() < (timeSinceAligned + 2000)))
+    // {
+    // System.out.println("We are to far from the scale");
+    // Hardware.cubeManipulator.setLiftPosition(0, 0);
+    // Hardware.transmission.drive(-speed, -speed);
+    // }
     return false;
 }
 

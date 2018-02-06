@@ -566,6 +566,7 @@ public boolean scoreScale ()
         {
         case MOVE_LIFT:
             System.out.println("Moving lift");
+            System.out.println(this.getForkliftHeight());
             if (setLiftPosition(SCALE_HEIGHT,
                     FORKLIFT_SPEED_UP) == true)
                 {
@@ -575,7 +576,7 @@ public boolean scoreScale ()
             break;
         case DEPLOY_INTAKE:
             System.out.println("Deploying Intake");
-            System.out.println("Deploying intake");
+
             if (deployCubeIntake() == true)
                 {
                 System.out.println("Deployed intake");
@@ -594,7 +595,7 @@ public boolean scoreScale ()
         case FINISHED:
             System.out.println("Finished");
             stopEverything();
-            scaleState = scoreScaleState.SPIT_OUT_CUBE;
+
             return true;
         }
     return false;
