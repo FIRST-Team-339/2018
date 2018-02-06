@@ -92,14 +92,19 @@ public static void periodic ()
 
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
+        System.out.println("got Button");
         allowAlignment = true;
         }
 
     if (allowAlignment == true)
         {
-        if (Hardware.scaleAlignment.alignToScale(.3, 3))
+        Hardware.transmission.setForAutonomous();
+        System.out.println("Starting align");
+        if (Hardware.scaleAlignment.alignToScale(.5, 3))
             {
             System.out.println("Scored on Scale");
+            Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
+            allowAlignment = false;
             }
         }
 
@@ -146,9 +151,10 @@ public static void periodic ()
 
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
-    if (isTestingDrive == false)
-        Hardware.transmission.drive(Hardware.leftDriver,
-                Hardware.rightDriver);
+
+    // if (isTestingDrive == false)
+    // Hardware.transmission.drive(Hardware.leftDriver,
+    // Hardware.rightDriver);
 
     // ------------------------------------
     // print out any information needed to
@@ -404,8 +410,8 @@ public static void printStatements ()
     // --------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // System.out.println("Rear UltraSonic "
-    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    System.out.println("Rear UltraSonic "
+            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
     // =========================
     // Servos
