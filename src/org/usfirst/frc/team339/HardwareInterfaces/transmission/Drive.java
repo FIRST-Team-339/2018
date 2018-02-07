@@ -32,13 +32,8 @@ private MecanumTransmission mecanumTransmission = null;
 private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
         leftRearEncoder = null, rightRearEncoder = null;
 
-private UltraSonic frontUltrasonic = null;
-
-private UltraSonic rearUltrasonic = null;
 
 private KilroyGyro gyro = null;
-
-private VisionProcessor visionProcessor = null;
 
 private final TransmissionType transmissionType;
 
@@ -67,18 +62,14 @@ private final TransmissionType transmissionType;
 public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
         Encoder rightFrontEncoder,
         Encoder leftRearEncoder, Encoder rightRearEncoder,
-        UltraSonic ultrasonic, KilroyGyro gyro,
-        VisionProcessor visionProcessor)
+        KilroyGyro gyro)
 {
     this.transmissionType = transmission.getType();
     this.leftFrontEncoder = leftFrontEncoder;
     this.rightFrontEncoder = rightFrontEncoder;
     this.leftRearEncoder = leftRearEncoder;
     this.rightRearEncoder = rightRearEncoder;
-
-    this.frontUltrasonic = ultrasonic;
     this.gyro = gyro;
-    this.visionProcessor = visionProcessor;
 
     init(transmission);
 }
@@ -100,18 +91,14 @@ public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
  *            A sensor that uses a spinning disk to measure rotation.
  */
 public Drive (TransmissionBase transmission, Encoder leftEncoder,
-        Encoder rightEncoder, UltraSonic frontUltrasonic,
-        UltraSonic rearUltrasonic, KilroyGyro gyro,
-        VisionProcessor visionProcessor)
+        Encoder rightEncoder, KilroyGyro gyro)
 {
     this.transmissionType = transmission.getType();
     this.leftRearEncoder = leftEncoder;
     this.rightRearEncoder = rightEncoder;
 
-    this.frontUltrasonic = frontUltrasonic;
-    this.rearUltrasonic = rearUltrasonic;
     this.gyro = gyro;
-    this.visionProcessor = visionProcessor;
+
 
     init(transmission);
 }

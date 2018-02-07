@@ -580,28 +580,51 @@ public boolean scoreScale ()
         {
         // Make sure the intake is deployed before scoring on the switch
         case DEPLOY_INTAKE:
+            System.out.println("Deploying intake");
             if (deployCubeIntake() == true)
                 {
+                System.out.println("Done deploying intake");
                 switchState = scoreSwitchState.MOVE_LIFT;
                 }
             break;
         // Move the lift to the height of the scale
         case MOVE_LIFT:
-
             System.out.println("Moving lift");
-            System.out.println(this.getForkliftHeight());
+            System.out.println(
+                    "Forklift height" + this.getForkliftHeight());
+            // TODO 3 is for deadband maybe
+            // if (Hardware.cubeManipulator
+            // .getForkliftHeight() > SCALE_HEIGHT + 3)
+            // {
+            // System.out.println("Forklift is at correct distance");
+            // Hardware.cubeManipulator.forkliftUpdate();
+            // switchState = scoreSwitchState.SPIT_OUT_CUBE;
+            // }
+            // else if (Hardware.cubeManipulator
+            // .getForkliftHeight() <= SCALE_HEIGHT)
+            // {
+            // System.out.println("Forklift to(o) low");
+            // Hardware.liftingMotor.set(.9);
+            // }
+            // // TODO ajust 7 deadband
+            // else if (Hardware.cubeManipulator
+            // .getForkliftHeight() > SCALE_HEIGHT + 7)
+            // {
+            // System.out.println("forklift to high");
+            // Hardware.liftingMotor.set(-.4);
+            // }
 
-            if (setLiftPosition(SCALE_HEIGHT,
-                    FORKLIFT_SPEED_UP) == true)
+            if (setLiftPosition(SCALE_HEIGHT) == true)
                 {
-
-                switchState = scoreSwitchState.DEPLOY_INTAKE;
-                this.switchState = scoreSwitchState.DEPLOY_INTAKE;
+                System.out.println(
+                        "Finished raising lift: flork lyft height = "
+                                + this.getForkliftHeight());
+                switchState = scoreSwitchState.SPIT_OUT_CUBE;
                 }
             break;
-
         // Push the cube on the scale
         case SPIT_OUT_CUBE:
+            System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
                 scaleState = scoreScaleState.FINISHED;
@@ -611,10 +634,9 @@ public boolean scoreScale ()
         default:
             System.out.println("Error finding state " + scaleState
                     + " in CubeManipulator.scoreScale()");
-            // We have finished scoring a cube on the scale (hopefully!)
         case FINISHED:
+            // We have finished scoring a cube on the scale (hopefully!)
             stopEverything();
-
             return true;
         }
     return false;
@@ -712,7 +734,7 @@ private boolean isRunningPushOutCubeAuto = false;
 private boolean isRunningPushOutCubeTeleop = false;
 // ========================================
 
-private scoreScaleState scaleState = scoreScaleState.SPIT_OUT_CUBE;
+private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 
 private scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
 

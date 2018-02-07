@@ -61,12 +61,38 @@ public Rect boundingRect = new Rect(new Point(0, 0), new Point(0, 0));
  */
 public Point center = new Point(0, 0);
 
+/**
+ * Compares the areas of the two ParticleReports
+ * 
+ * @param r1
+ *            The first particle report in the comparison
+ * @param r2
+ *            The second particle report in the comparison
+ * @return
+ *         the area of r1 - the area of r2; positive value if r1.area
+ *         > r2.area, 0 if they are equal, and a negative value if r1.area <
+ *         r2.area
+ */
 @Override
 public int compare (ParticleReport r1, ParticleReport r2)
 {
     return (int) (r1.area - r2.area);
 }
 
+
+/**
+ * Compares the area of <b>this</b> ParticleReport to the area of the inputted
+ * particle report
+ * 
+ * @param r
+ *            The particle report whose area is being compared to <b>this</b>
+ *            particle report's
+ * 
+ * @return
+ *         the area of r - the area of <b>this</b>; positive value if r.area
+ *         > this.area, 0 if they are equal, and a negative value if r.area <
+ *         this.area
+ */
 @Override
 public int compareTo (ParticleReport r)
 {
@@ -97,10 +123,7 @@ AXIS_M1011,
 AXIS_M1013
     }
 
-/**
- * @author Kilroy Programming
- *
- */
+
 /**
  * A list of the different kind of images, for accessing the images directly.
  * 
@@ -132,13 +155,17 @@ PROCESSED
 // of the sensor is used.
 
 // ========M1011 SPECS========
+// horizontal field of view for the M1011 camera, in degrees
 private final int M1011_HORIZ_FOV = 47;
 
+// vertical field of view for the M1011 camera, in degrees
 private final int M1011_VERT_FOV = 36;
 
 // ========M1013 SPECS========
+// horizontal field of view for the M1013 camera, in degrees
 private final int M1013_HORIZ_FOV = 67;
 
+// vertical field of view for the M1013 camera, in degrees
 private final int M1013_VERT_FOV = 51;
 
 // ========LIFECAM SPECS========
@@ -147,23 +174,33 @@ private final int M1013_VERT_FOV = 51;
  * info. They must instead be calculated manually.
  */
 
+// the file path where we save the images we take
 private final String SAVE_IMAGE_PATH = "/home/lvuser/images/";
 
 private Mat image = new Mat(); // The stored "image" (in a matrix format)
 
 private ParticleReport[] particleReports = new ParticleReport[0];
 
+// the horizontal field of view of the current camera, in degrees
 private final int horizontalFieldOfView;
 
+// the vertical field of view of the current camera, in degrees
 private final int verticalFieldOfView;
 
+// the model of the current camera
 private final CameraModel cameraModel;
 
 private final VideoCamera camera;
 
+// brightness the camera is set to under setDefaultCameraSettings
+private int DEFAULT_CAMERA_BRIGHTNESS = 50;
+
 // ========OBJECTS FOR TAKE LIT IMAGE========
+// relay that controls the ringLight (turns it on or off)
 private Relay ringLightRelay = null;
 
+// timer used in the takeLitPicture function to delay taking an image until
+// after the ringLight turned on
 private Timer pictureTimer = new Timer();
 
 /**
@@ -385,9 +422,11 @@ public void setCameraSettings (int exposure, int whiteBalence,
 public void setDefaultCameraSettings ()
 {
     this.camera.setExposureAuto();
-    this.camera.setBrightness(50);
+    this.camera.setBrightness(DEFAULT_CAMERA_BRIGHTNESS);
     this.camera.setWhiteBalanceAuto();
 }
+
+
 
 /**
  * Saves an image to the roborio. This has a max of 26 images per type, before
@@ -409,6 +448,7 @@ public void saveImage (ImageType type)
     // exists, do nothing.
     try
         {
+        // system command that creates the path the image will be saved in
         Runtime.getRuntime().exec("mkdir -p /home/lvuser/images");
         }
     catch (IOException e)
@@ -420,7 +460,7 @@ public void saveImage (ImageType type)
     CameraServer.getInstance().getVideo("Vision Camera")
             .grabFrame(tempImage);
 
-    // Chosses which type of image will be saved: raw or processed.
+    // Choses which type of image will be saved: raw or processed.
     switch (type)
         {
         case RAW:
@@ -458,8 +498,8 @@ private int processedImageNum = 0;
 private int contourImageNum = 0;
 
 /**
- * Saves an image once, no matter how long the button is pressed down on the
- * joystick.
+ * Saves an image once (and only once), no matter how long the button is pressed
+ * down on the joystick.
  * 
  * @param button
  *            Whether or not the button is pressed
@@ -478,12 +518,13 @@ public void saveImageSafely (boolean button, ImageType type)
 private boolean saveImageButtonState = false;
 
 /**
- * Takes a lit picture with the camera
+ * Takes a lit picture with the camera when the user presses a button
  * 
  * @param button
- *            2 joystick buttons
- *            acceptable parameter:
+ *            1 (or multiple) joystick button values; recommended to use 2
+ *            example parameter:
  *            joystick.getRawButton(x) && joystick.getRawButton(y)
+ * 
  */
 public void takeLitPicture (boolean button)
 {
@@ -542,7 +583,8 @@ private final double TAKE_PICTURE_DELAY = 0.1;
 /**
  * Gets the value of the ring light relay
  * 
- * @return the value of the camera ring light relay
+ * @return the value of the camera ring light relay; see the get() function
+ *         in the Relay class for more information
  */
 public Value getRelayValue ()
 {
@@ -564,9 +606,7 @@ public void setRelayValue (Value ringLightValue)
  * Turns on the ring light
  * 
  * @param button
- *            2 joystick buttons
- *            acceptable parameter:
- *            joystick.getRawButton(x) && joystick.getRawButton(y)
+ *            1 (or multiple) joystick buttons
  */
 public void turnRingLightOn (boolean button)
 {
