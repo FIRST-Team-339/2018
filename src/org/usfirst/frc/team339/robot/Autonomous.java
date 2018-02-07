@@ -320,6 +320,8 @@ SWITCH, SCALE
  * @return
  *         Whether or not the path has finished.
  */
+
+//TODO @ANE add in brake to your auto methods
 public static boolean autolinePath ()
 {
     System.out.println("autoline path state : " + currentAutolineState);
@@ -434,7 +436,6 @@ PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIG
  * @return
  *         Whether or not the robot has finished the path
  */
-// TODO @ANE Retest this; the way DONE worked changed slightly to actual do
 // something
 public static boolean leftAutoLineExchangePath ()
 {
@@ -473,6 +474,7 @@ public static boolean leftAutoLineExchangePath ()
                     -DRIVE_SPEED) == true)
                 {
                 leftExchangeAuto = leftExchangeState.BRAKE_AFTER_STRAIGHT;
+                Hardware.autoDrive.resetAccelerate();
                 }
             break;
 
@@ -561,6 +563,7 @@ public static boolean rightAutoLineExchangePath ()
                     DRIVE_SPEED) == true)
                 {
                 rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                Hardware.autoDrive.resetAccelerate();
                 }
             break;
 
@@ -755,8 +758,7 @@ public static boolean centerSwitchPath ()
             // drives to the switch based on the camera
             // sets state to LIFT
             if (Hardware.driveWithCamera.driveToSwitch(
-                    AUTO_COMPENSATION_VISION - Hardware.autoDrive
-                            .getBrakeStoppingDistance(),
+                    AUTO_COMPENSATION_VISION,
                     AUTO_SPEED_VISION) == true)
                 visionAuto = centerState.LIFT;
             break;
@@ -888,7 +890,7 @@ public static boolean switchOrScalePath (Position robotPosition)
 
             // if we've finished driving this segment
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0],
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0] - Hardware.autoDrive.getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 {
                 // If the switch IS on the correct side, brake before turning
@@ -903,7 +905,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_DRIVE1;
                 else
                     // If not, then keep driving forwards.
-                    currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;
+                    currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_BRAKING_DISTANCE_B4_DRIVE2;
 
                 } // end if
             break;
@@ -1012,9 +1014,11 @@ public static boolean switchOrScalePath (Position robotPosition)
                 currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE3;
             break;
         case DRIVE3:
+        
+   
             // Drive to the right scale position
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2],
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2] - Hardware.autoDrive.getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 // We start on the right side and the scale is on the right side
                 if (robotPosition == Position.RIGHT && grabData(
@@ -1031,7 +1035,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                 // No? adventure on...
                 else
                     {
-                    currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE4;
+                    currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_BRAKING_DISTANCE_B4_DRIVE4;
                     }
             break;
         case BRAKE_DRIVE3:
@@ -1097,6 +1101,16 @@ public static boolean switchOrScalePath (Position robotPosition)
                     SCALE_LIFT_HEIGHT, FORKLIFT_SPEED) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
             break;
+        case DRIVE_BRAKING_DISTANCE_B4_DRIVE2:
+            if (Hardware.autoDrive.driveStraightInches(Hardware.autoDrive.getBrakeStoppingDistance(), DRIVE_SPEED))
+                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;        
+            break;
+            
+        case DRIVE_BRAKING_DISTANCE_B4_DRIVE4:
+        if (Hardware.autoDrive.driveStraightInches(Hardware.autoDrive.getBrakeStoppingDistance(), DRIVE_SPEED))
+            currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE4;        
+        break;
+            
         default: // prints that we reached the default, then falls through to
                  // FINISH
             System.out.println(
@@ -1120,7 +1134,7 @@ private static SwitchOrScaleStates currentSwitchOrScaleState = SwitchOrScaleStat
  */
 private static enum SwitchOrScaleStates
     {
-PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE, DRIVE2, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, DRIVE4, BRAKE_DRIVE4, TURN4, BRAKE_B4_RAISE_ARM2, RAISE_ARM2, FINISH
+PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, RAISE_ARM1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE, DRIVE2, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, BRAKE_DRIVE3, TURN3, DRIVE4, BRAKE_DRIVE4, TURN4, BRAKE_B4_RAISE_ARM2, RAISE_ARM2, DRIVE_BRAKING_DISTANCE_B4_DRIVE2, DRIVE_BRAKING_DISTANCE_B4_DRIVE4, FINISH
     }
 
 /**
@@ -1419,6 +1433,7 @@ private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
             (int) (AUTO_TESTING_SCALAR * 67),
             (int) (AUTO_TESTING_SCALAR * 31),
             (int) (AUTO_TESTING_SCALAR * 169)};
+
 
 
 

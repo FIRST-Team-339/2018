@@ -248,7 +248,7 @@ private static void testingDrive ()
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if (driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .3))
+                && Hardware.autoDrive.turnDegrees(90, .4))
             {
             driveState++;
             }
