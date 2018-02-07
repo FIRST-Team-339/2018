@@ -718,7 +718,7 @@ private boolean isRunningPushOutCubeAuto = false;
 private boolean isRunningPushOutCubeTeleop = false;
 // ========================================
 
-private scoreScaleState scaleState = scoreScaleState.SPIT_OUT_CUBE;
+private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 
 private scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
 
