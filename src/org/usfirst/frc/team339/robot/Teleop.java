@@ -84,29 +84,28 @@ public static void init ()
  */
 public static void periodic ()
 {
-    System.out.println(allowAlignment);
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
 
 
-    if (Hardware.leftDriver.getRawButton(9) == true)
-        {
-        System.out.println("got Button");
-        allowAlignment = true;
-        }
+    // if (Hardware.leftDriver.getRawButton(9) == true)
+    // {
+    // System.out.println("got Button");
+    // allowAlignment = true;
+    // }
 
-    if (allowAlignment == true)
-        {
-        Hardware.transmission.setForAutonomous();
-        System.out.println("Starting align");
-        if (Hardware.scaleAlignment.alignToScale(.2, 3))
-            {
-            System.out.println("Scored on Scale");
-            Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
+    // if (allowAlignment == true)
+    // {
+    // Hardware.transmission.setForAutonomous();
+    // System.out.println("Starting align");
+    // if (Hardware.scaleAlignment.alignToScale(.2, 3))
+    // {
+    // System.out.println("Scored on Scale");
+    // Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // }
 
 
     // -----------------------------------------
@@ -152,9 +151,9 @@ public static void periodic ()
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
 
-    // if (isTestingDrive == false)
-    // Hardware.transmission.drive(Hardware.leftDriver,
-    // Hardware.rightDriver);
+    if (isTestingDrive == false)
+        Hardware.transmission.drive(Hardware.leftDriver,
+                Hardware.rightDriver);
 
     // ------------------------------------
     // print out any information needed to
@@ -166,9 +165,9 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    // testingDrive();
+    testingDrive();
 
-    beckyTest();
+    // beckyTest();
 
 } // end Periodic()
 
@@ -228,13 +227,12 @@ private static void testingDrive ()
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if (driveState == 0
-                && Hardware.autoDrive.driveStraightInches(48, .6))
+                && Hardware.autoDrive.turnDegrees(90, .3))
             {
-            Hardware.autoDrive.resetEncoders();
             driveState++;
             }
         else if (driveState == 1
-                && Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+                && Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
             {
             driveState++;
             }
@@ -410,8 +408,8 @@ public static void printStatements ()
     // --------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    System.out.println("Rear UltraSonic "
-            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    // System.out.println("Rear UltraSonic "
+    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
     // =========================
     // Servos
