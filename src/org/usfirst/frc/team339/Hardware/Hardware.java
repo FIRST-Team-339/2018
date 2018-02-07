@@ -227,7 +227,7 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // Axis/USB Camera class
 // -------------------------------------
 public static VisionProcessor axisCamera = new VisionProcessor(
-        "axis-camera.local", CameraModel.AXIS_M1013);
+        "axis-camera.local", CameraModel.AXIS_M1013, ringLightRelay);
 // @todo - add ring light relay as 3rd argument
 
 // -------------------------------------

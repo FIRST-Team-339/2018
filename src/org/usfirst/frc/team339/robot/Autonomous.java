@@ -1342,7 +1342,7 @@ PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRI
  */
 
 // DRIVING
-private static final double AUTO_TESTING_SCALAR = 1.0; // percent
+private static final double AUTO_TESTING_SCALAR = .5; // percent
 
 private static final double DRIVE_STRAIGHT_ACCELERATION_TIME = .6; // seconds
 

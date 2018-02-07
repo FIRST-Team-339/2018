@@ -88,6 +88,19 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
+    // take a picture with a joystick button
+    // TODO move to proper buttons, right now this is just testing code
+    // Hardware.axisCamera
+    // .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+    // && Hardware.leftOperator.getRawButton(7));
+    //
+    // currently, Cole's 0 image problem is with this method, not the
+    // takeLitPicture method
+    // Hardware.axisCamera.saveImageSafely(
+    // Hardware.leftOperator.getRawButton(4), ImageType.RAW);
+
+
+
     if (Hardware.leftOperator.getRawButton(9) == true)
         {
         allowAlignment = true;
@@ -345,24 +358,38 @@ public static void printStatements ()
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
+    SmartDashboard.putNumber("Left Front Encoder Ticks",
+            Hardware.leftFrontDriveEncoder.get());
 
     // System.out.println("Right Front Inches = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Right Front Encoder Inches",
+            Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
+    SmartDashboard.putNumber("Right Front Encoder Ticks",
+            Hardware.rightFrontDriveEncoder.get());
 
     // System.out.println("Left Rear Encoder Inches = "
     // + Hardware.leftRearDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Left Rear Encoder Inches",
+            Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
+    SmartDashboard.putNumber("Left Rear Encoder Ticks",
+            Hardware.leftRearDriveEncoder.get());
 
     // System.out.println("Right Rear Inches = "
     // + Hardware.rightRearDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Right Rear Encoder Inches",
+            Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
+    SmartDashboard.putNumber("Rightt Rear Encoder Ticks",
+            Hardware.rightRearDriveEncoder.get());
 
     // System.out.println(
     // "Lift Encoder Inches = "
