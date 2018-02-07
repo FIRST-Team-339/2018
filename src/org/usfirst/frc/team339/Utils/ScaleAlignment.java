@@ -54,9 +54,9 @@ public ScaleAlignment (UltraSonic ultrasonic)
 
 public boolean alignToScale (double speed, double deadband)
 {
-
-    // TODO optimize deadband to distance
-
+    System.out.println("Rear UltraSonic "
+            + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    // TODO optimize deadband to distanc
     // checks if in proper distance
     // ROBOT_TO_SCALE_DISTANCE 72-36 =36
     if (Hardware.rearUltraSonic
@@ -68,10 +68,15 @@ public boolean alignToScale (double speed, double deadband)
         System.out.println("Our distance to the scale is correct");
         aligned = true;
         speed = 0;
-        Hardware.transmission.drive(0, 0);
-
+            {
+            if (Hardware.cubeManipulator.scoreScale())
+                {
+                return true;
+                }
+            }
         return true;
         }
+
     // if to far from scale
     else if (Hardware.rearUltraSonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
@@ -79,16 +84,16 @@ public boolean alignToScale (double speed, double deadband)
             && aligned == false)
         {
         System.out.println("We are too close to the scale");
-        Hardware.cubeManipulator.setLiftPosition(0, 0);
         Hardware.transmission.drive(speed, speed);
         }
+
     // if to close to scale
     else if (Hardware.rearUltraSonic
             .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
             && aligned == false)
         {
+
         System.out.println("We are to far from the scale");
-        Hardware.cubeManipulator.setLiftPosition(0, 0);
         Hardware.transmission.drive(-speed, -speed);
         }
     return false;

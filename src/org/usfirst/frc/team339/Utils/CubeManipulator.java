@@ -568,6 +568,8 @@ public boolean scoreSwitch ()
     return false;
 }
 
+
+// TODO make sure this works
 /**
  * Scores a cube on a scale autonomously, using the forklift, intake and intake
  * deploy.
@@ -589,37 +591,19 @@ public boolean scoreScale ()
             break;
         // Move the lift to the height of the scale
         case MOVE_LIFT:
-            System.out.println("Moving lift");
             System.out.println(
                     "Forklift height" + this.getForkliftHeight());
-            // TODO 3 is for deadband maybe
-            // if (Hardware.cubeManipulator
-            // .getForkliftHeight() > SCALE_HEIGHT + 3)
-            // {
-            // System.out.println("Forklift is at correct distance");
-            // Hardware.cubeManipulator.forkliftUpdate();
-            // switchState = scoreSwitchState.SPIT_OUT_CUBE;
-            // }
-            // else if (Hardware.cubeManipulator
-            // .getForkliftHeight() <= SCALE_HEIGHT)
-            // {
-            // System.out.println("Forklift to(o) low");
-            // Hardware.liftingMotor.set(.9);
-            // }
-            // // TODO ajust 7 deadband
-            // else if (Hardware.cubeManipulator
-            // .getForkliftHeight() > SCALE_HEIGHT + 7)
-            // {
-            // System.out.println("forklift to high");
-            // Hardware.liftingMotor.set(-.4);
-            // }
 
-            if (setLiftPosition(SCALE_HEIGHT) == true)
+            if (setLiftPosition(SCALE_HEIGHT, .8) == true)
                 {
                 System.out.println(
                         "Finished raising lift: flork lyft height = "
                                 + this.getForkliftHeight());
                 switchState = scoreSwitchState.SPIT_OUT_CUBE;
+                }
+            else
+                {
+                setLiftPosition(SCALE_HEIGHT, .8);
                 }
             break;
         // Push the cube on the scale
@@ -734,7 +718,7 @@ private boolean isRunningPushOutCubeAuto = false;
 private boolean isRunningPushOutCubeTeleop = false;
 // ========================================
 
-private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
+private scoreScaleState scaleState = scoreScaleState.SPIT_OUT_CUBE;
 
 private scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
 

@@ -35,7 +35,6 @@ import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.Relay.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This class contains all of the user code for the Autonomous part of the
@@ -101,22 +100,19 @@ public static void periodic ()
     if (allowAlignment == true)
         {
         Hardware.transmission.setForAutonomous();
-
-        if (Hardware.scaleAlignment.alignToScale(.2, 3))
+        if (/* Hardware.scaleAlignment.alignToScale(.3, 3) */ Hardware.cubeManipulator
+                .scoreScale())
             {
-            System.out.println("Aligned");
-            if (Hardware.cubeManipulator.setLiftPosition(75, .9))
-                {
-                Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
-                allowAlignment = false;
-                }
+            Hardware.transmission
+                    .setForTeleop(Robot.GEAR_2_SPEED);
+            allowAlignment = false;
             }
         }
 
     // -----------------------------------------
     // Forklift controls
     // -----------------------------------------
-    if (allowAlignment)
+    if (allowAlignment == false)
         {
         Hardware.cubeManipulator.forkliftUpdate();
 
@@ -161,15 +157,16 @@ public static void periodic ()
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
 
-    if (isTestingDrive == false)
+    if (isTestingDrive == false && allowAlignment == false)
         Hardware.transmission.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
+
 
     // ------------------------------------
     // print out any information needed to
     // display on the drivers station
     // ------------------------------------
-    printStatements();
+    // printStatements();
 
     // -------------------------------------------
     // Put anything you need to test, but the
@@ -290,11 +287,11 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    System.out.println(
-            "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    System.out.println(
-            "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println(
+    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+    // System.out.println(
+    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -343,8 +340,8 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Left Front Encoder Inches",
-            Hardware.leftFrontDriveEncoder.getDistance());
+    // SmartDashboard.putNumber("Left Front Encoder Inches",
+    // Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
@@ -387,8 +384,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    // System.out.println(
+    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
 
     // =================================
     // Pneumatics
