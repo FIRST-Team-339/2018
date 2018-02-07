@@ -89,6 +89,19 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
+    // take a picture with a joystick button
+    // TODO move to proper buttons, right now this is just testing code
+    // Hardware.axisCamera
+    // .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+    // && Hardware.leftOperator.getRawButton(7));
+    //
+    // currently, Cole's 0 image problem is with this method, not the
+    // takeLitPicture method
+    // Hardware.axisCamera.saveImageSafely(
+    // Hardware.leftOperator.getRawButton(4), ImageType.RAW);
+
+
+
     if (Hardware.leftOperator.getRawButton(9) == true)
         {
         allowAlignment = true;
@@ -287,11 +300,11 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    System.out.println(
-            "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    System.out.println(
-            "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println(
+    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+    // System.out.println(
+    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -384,8 +397,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    // System.out.println(
+    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
 
     // =================================
     // Pneumatics

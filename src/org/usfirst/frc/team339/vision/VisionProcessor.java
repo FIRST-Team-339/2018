@@ -457,6 +457,8 @@ public void saveImage (ImageType type)
         }
     // grab the image
     Mat tempImage = new Mat();
+
+    // TODO this is Cole's problem line
     CameraServer.getInstance().getVideo("Vision Camera")
             .grabFrame(tempImage);
 
@@ -488,6 +490,8 @@ public void saveImage (ImageType type)
             break;
         }
     // Save the image to the folder specified with the name specified
+
+    // TODO this is what is printing Cole's problem
     Imgcodecs.imwrite(SAVE_IMAGE_PATH + fileName, tempImage);
 }
 
