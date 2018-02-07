@@ -84,22 +84,25 @@ public static void init ()
  */
 public static void periodic ()
 {
-    System.out.println(allowAlignment);
+
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
 
 
-    if (Hardware.leftDriver.getRawButton(9) == true)
+    if (Hardware.leftOperator.getRawButton(9) == true)
         {
-        System.out.println("got Button");
         allowAlignment = true;
+        }
+    if (Hardware.leftOperator.getRawButton(10))
+        {
+        allowAlignment = false;
         }
 
     if (allowAlignment == true)
         {
         Hardware.transmission.setForAutonomous();
-        System.out.println("Starting align");
+
         if (Hardware.scaleAlignment.alignToScale(.2, 3))
             {
             System.out.println("Scored on Scale");
@@ -112,26 +115,31 @@ public static void periodic ()
     // -----------------------------------------
     // Forklift controls
     // -----------------------------------------
-    Hardware.cubeManipulator.forkliftUpdate();
+    if (allowAlignment)
+        {
+        Hardware.cubeManipulator.forkliftUpdate();
 
-    Hardware.cubeManipulator
-            .moveForkliftWithController(Hardware.rightOperator);
+        Hardware.cubeManipulator
+                .moveForkliftWithController(Hardware.rightOperator);
 
-    // Intake controls
-    Hardware.cubeManipulator
-            .intakeCube(Hardware.rightOperator.getRawButton(2));
+        // Intake controls
+        Hardware.cubeManipulator
+                .intakeCube(Hardware.rightOperator.getRawButton(2));
 
-    Hardware.cubeManipulator
-            .intakeCubeOverride(Hardware.rightOperator.getRawButton(4));
+        Hardware.cubeManipulator
+                .intakeCubeOverride(
+                        Hardware.rightOperator.getRawButton(4));
 
-    // Push out the cube
-    Hardware.cubeManipulator
-            .pushOutCubeTeleop(Hardware.rightOperator.getRawButton(3));
+        // Push out the cube
+        Hardware.cubeManipulator
+                .pushOutCubeTeleop(
+                        Hardware.rightOperator.getRawButton(3));
 
-    // Set intake/deploy motor to position based on encoder w/ Momentary Switch
-    if (Hardware.deployIntakeButton.isOnCheckNow() == true)
-        Hardware.cubeManipulator.deployCubeIntake();
-
+        // Set intake/deploy motor to position based on encoder w/ Momentary
+        // Switch
+        if (Hardware.deployIntakeButton.isOnCheckNow() == true)
+            Hardware.cubeManipulator.deployCubeIntake();
+        }
     // Set Servo to position w/ Momentary Switch
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
@@ -282,11 +290,11 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    // System.out.println(
-    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    // System.out.println(
-    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    System.out.println(
+            "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+    System.out.println(
+            "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
     // =================================
     // CAN items
     // prints value of the CAN controllers
