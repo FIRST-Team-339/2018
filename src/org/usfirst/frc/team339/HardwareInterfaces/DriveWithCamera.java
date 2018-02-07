@@ -1,7 +1,11 @@
 package org.usfirst.frc.team339.HardwareInterfaces;
 
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.MecanumTransmission;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TankTransmission;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay.Value;
@@ -10,14 +14,74 @@ import edu.wpi.first.wpilibj.Relay.Value;
  * Contains all game specific vision code, including code to drive to the switch
  * using vision
  * 
- * @author Becky Button
+ * @author Ashley Espeland 
+ * 
+ * MODIFIED BY: Becky Button
  */
 public class DriveWithCamera extends Drive
 {
 
+private TankTransmission tankTransmission = null;
+
+private TractionTransmission tractionTransmission = null;
+
+private MecanumTransmission mecanumTransmission = null;
+
+private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
+        leftRearEncoder = null, rightRearEncoder = null;
+
 private UltraSonic frontUltrasonic = null;
 
+private UltraSonic rearUltrasonic = null;
+
+private KilroyGyro gyro = null;
+
 private VisionProcessor visionProcessor = null;
+
+private final TransmissionType transmissionType;
+
+
+
+/**
+ * Creates the drive with camera object. If a sensor listed is not used (except for
+ * encoders), set it to null.
+ * 
+ * 
+ * @param transmission
+ *            The robot's transmission object
+ * @param leftFrontEncoder
+ *            The left-front corner encoder
+ * @param rightFrontEncoder
+ *            The right-front corner encoder
+ * @param leftRearEncoder
+ *            The left-rear corner encoder
+ * @param rightRearEncoder
+ *            The right-rear corner encoder
+ * @param ultrasonic
+ *            The sensor that finds distance using sound
+ * @param gyro
+ *            A sensor that uses a spinning disk to measure rotation.
+ * @param visionProcessor
+ *            The camera's vision processing code, as a sensor.
+ */
+public DriveWithCamera (TransmissionBase transmission, Encoder leftFrontEncoder,
+        Encoder rightFrontEncoder,
+        Encoder leftRearEncoder, Encoder rightRearEncoder,
+         KilroyGyro gyro,
+        VisionProcessor visionProcessor)
+{
+super (transmission, leftFrontEncoder, rightFrontEncoder, leftRearEncoder, rightRearEncoder,
+        gyro);
+
+this.visionProcessor = visionProcessor;
+    this.transmissionType = transmission.getType();
+    this.leftFrontEncoder = leftFrontEncoder;
+    this.rightFrontEncoder = rightFrontEncoder;
+    this.leftRearEncoder = leftRearEncoder;
+    this.rightRearEncoder = rightRearEncoder;
+    this.gyro = gyro;
+
+}
 
 /**
  * Creates drive with camera object
@@ -43,12 +107,19 @@ public DriveWithCamera (TransmissionBase transmission,
         UltraSonic frontUltrasonic, UltraSonic rearUltrasonic,
         KilroyGyro gyro, VisionProcessor visionProcessor)
 {
-    super(transmission, leftEncoder, rightEncoder, frontUltrasonic,
-            rearUltrasonic, gyro, visionProcessor);
+    super(transmission, leftEncoder, rightEncoder, gyro);
 
     this.frontUltrasonic = frontUltrasonic;
+    this.rearUltrasonic = rearUltrasonic;
     this.visionProcessor = visionProcessor;
+    this.transmissionType = transmission.getType();
+    this.leftRearEncoder = leftEncoder;
+    this.rightRearEncoder = rightEncoder;
+    this.gyro = gyro;
+
 }
+
+
 
 /**
  * Drives using the camera until it hits CAMERA_NO_LONGER_WORKS inches, where it
