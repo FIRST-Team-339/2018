@@ -671,8 +671,11 @@ private void createParticleReports (List<MatOfPoint> contours)
 {
     ParticleReport[] reports = new ParticleReport[contours.size()];
 
+    // creates and properly sets the values of each individual element
+    // in the reports arrays
     for (int i = 0; i < reports.length; i++)
         {
+
         reports[i] = new ParticleReport();
         Rect r = Imgproc.boundingRect(contours.get(i));
         reports[i].area = r.area();
