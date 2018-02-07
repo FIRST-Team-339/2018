@@ -287,11 +287,11 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    System.out.println(
-            "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    System.out.println(
-            "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println(
+    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+    // System.out.println(
+    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -345,24 +345,38 @@ public static void printStatements ()
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
+    SmartDashboard.putNumber("Left Front Encoder Ticks",
+            Hardware.leftFrontDriveEncoder.get());
 
     // System.out.println("Right Front Inches = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Right Front Encoder Inches",
+            Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
+    SmartDashboard.putNumber("Right Front Encoder Ticks",
+            Hardware.rightFrontDriveEncoder.get());
 
     // System.out.println("Left Rear Encoder Inches = "
     // + Hardware.leftRearDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Left Rear Encoder Inches",
+            Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
+    SmartDashboard.putNumber("Left Rear Encoder Ticks",
+            Hardware.leftRearDriveEncoder.get());
 
     // System.out.println("Right Rear Inches = "
     // + Hardware.rightRearDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Right Rear Encoder Inches",
+            Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
+    SmartDashboard.putNumber("Rightt Rear Encoder Ticks",
+            Hardware.rightRearDriveEncoder.get());
 
     // System.out.println(
     // "Lift Encoder Inches = "
@@ -384,8 +398,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    // System.out.println(
+    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
 
     // =================================
     // Pneumatics
