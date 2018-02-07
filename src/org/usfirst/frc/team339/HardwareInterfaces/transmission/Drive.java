@@ -1,10 +1,8 @@
 package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyGyro;
-import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
-import org.usfirst.frc.team339.vision.VisionProcessor;
 import edu.wpi.first.wpilibj.Encoder;
 
 /**
@@ -538,13 +536,13 @@ public boolean brake (BrakeType type)
             MotorPosition.RIGHT_FRONT);
 
     // prints out all the brakeDelta array values
-    for (int i = 0; i < brakeDeltas.length; i++)
-        System.out.println("Delta " + i + ": " + brakeDeltas[i]);
+    // for (int i = 0; i < brakeDeltas.length; i++)
+    // System.out.println("Delta " + i + ": " + brakeDeltas[i]);
 
     // prints out all the brakeMotorDirection array values
-    for (int i = 0; i < brakeMotorDirection.length; i++)
-        System.out.println("Power " + i + ": "
-                + brakeMotorDirection[i] * -brakeDrivePower);
+    // for (int i = 0; i < brakeMotorDirection.length; i++)
+    // System.out.println("Power " + i + ": "
+    // + brakeMotorDirection[i] * -brakeDrivePower);
 
     // See if the motors are past the deadband
     if (brakeMotorDirection[0] * brakeDeltas[0] < deadband
@@ -598,7 +596,7 @@ private int[] brakeMotorDirection = new int[4];
 
 private int brakeDriveDeadband = 55; // ticks
 
-private int brakeTurnDeadband = 25;// ticks
+private int brakeTurnDeadband = 12;// ticks
 
 private int[] brakePrevEncoderVals = new int[4];
 
@@ -664,7 +662,7 @@ public boolean driveInches (int distance, double speed)
         this.driveInchesInit = false;
         }
 
-    // Test if ANY encoder is past the distance.
+    // Test if ANY encoder is past the distance. stop if there is 
     if (this.isAnyEncoderLargerThan(distance) == true)
         {
         this.driveInchesInit = true;
@@ -672,6 +670,7 @@ public boolean driveInches (int distance, double speed)
         return true;
         }
 
+    //sets transmission speed to the input 
     this.getTransmission().drive(speed, speed);
     return false;
 }
@@ -699,7 +698,7 @@ public boolean driveStraightInches (double distance, double speed)
         driveStraightInchesInit = false;
         }
 
-    // Check all encoders
+    // Check all encoders to see if they've reached the distance
     if (this.isAnyEncoderLargerThan(distance) == true)
         {
         this.getTransmission().stop();
@@ -733,7 +732,7 @@ private boolean driveStraightInchesInit = true;
 public boolean strafeStraightInches (int inches, double speed,
         int directionDegrees)
 {
-    // Wrong transmission type!
+    // Wrong transmission type! we cant strafe if we dont have the right transmission 
     if (this.transmissionType != TransmissionType.MECANUM)
         return true;
 
@@ -773,6 +772,7 @@ private double strafeStraightScalar = .08;
  */
 public void setStrafeStraightScalar (double scalar)
 {
+//sets strafe straight scalar to thr input 
     this.strafeStraightScalar = scalar;
 }
 
@@ -800,10 +800,12 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
         double time)
 {
     // If we timeout, then reset all the accelerate
-    if (System.currentTimeMillis() - lastAccelerateTime > INIT_TIMEOUT)
+    if (System.currentTimeMillis() - lastAccelerateTime > INIT_TIMEOUT
+            || accelerateInit == true)
         {
         lastAccelerateTime = System.currentTimeMillis();
         accelMotorPower = accelStartingSpeed;
+        accelerateInit = false;
         }
 
     // main acceleration maths
@@ -820,7 +822,9 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
     lastAccelerateTime = System.currentTimeMillis();
 
     if (accelMotorPower > 1.0)
+        {
         return true;
+        }
     // We are not done accelerating
     return false;
 }
@@ -833,6 +837,8 @@ private long lastAccelerateTime = 0; // Milliseconds
 
 private double defaultAcceleration = .8;// Seconds
 
+private boolean accelerateInit = true;
+
 /**
  * Sets the initial speed of the accelerateTo motors
  * 
@@ -841,7 +847,16 @@ private double defaultAcceleration = .8;// Seconds
  */
 public void setAccelStartingSpeed (double value)
 {
+//sets accelStartingSpeed to the input value 
     this.accelStartingSpeed = value;
+}
+
+/**
+ * Resets the accelerate function, if the robot changes direction too fast.
+ */
+public void resetAccelerate ()
+{
+    this.accelerateInit = true;
 }
 
 /**
@@ -852,6 +867,7 @@ public void setAccelStartingSpeed (double value)
  */
 public void setDefaultAcceleration (double value)
 {
+//sets default acceleration to the input value 
     this.defaultAcceleration = .8;
 }
 
@@ -972,6 +988,7 @@ private double[] prevEncoderValues =
  */
 public void setDriveStraightConstant (double value)
 {
+//sets Drive Straight Constant to the input 
     this.driveStraightConstant = value;
 }
 
@@ -1085,7 +1102,7 @@ private static final int COLLECTION_TIME = 100;
 // The distance from the left side wheel to the right-side wheel divided by
 // 2, in inches. Used in turnDegrees.
 // Nov 4 changed from 16 to 17
-private static final int TURNING_RADIUS = 11;
+private static final double TURNING_RADIUS = 11 - 1;
 
 private static final int INIT_TIMEOUT = 300;// Milliseconds until the
                                             // initialization should reset.

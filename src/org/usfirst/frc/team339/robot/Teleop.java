@@ -114,11 +114,11 @@ public static void periodic ()
     if (allowAlignment == true)
         {
         Hardware.transmission.setForAutonomous();
-
-        if (Hardware.scaleAlignment.alignToScale(.2, 3))
+        if (/* Hardware.scaleAlignment.alignToScale(.3, 3) */ Hardware.cubeManipulator
+                .scoreScale())
             {
-            System.out.println("Scored on Scale");
-            Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
+            Hardware.transmission
+                    .setForTeleop(Robot.GEAR_2_SPEED);
             allowAlignment = false;
             }
         }
@@ -126,7 +126,7 @@ public static void periodic ()
     // -----------------------------------------
     // Forklift controls
     // -----------------------------------------
-    if (allowAlignment)
+    if (allowAlignment == false)
         {
         Hardware.cubeManipulator.forkliftUpdate();
 
@@ -171,15 +171,16 @@ public static void periodic ()
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
 
-    if (isTestingDrive == false)
+    if (isTestingDrive == false && allowAlignment == false)
         Hardware.transmission.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
+
 
     // ------------------------------------
     // print out any information needed to
     // display on the drivers station
     // ------------------------------------
-    printStatements();
+    // printStatements();
 
     // -------------------------------------------
     // Put anything you need to test, but the
@@ -247,7 +248,7 @@ private static void testingDrive ()
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if (driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .3))
+                && Hardware.autoDrive.turnDegrees(90, .4))
             {
             driveState++;
             }
@@ -353,8 +354,8 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Left Front Encoder Inches",
-            Hardware.leftFrontDriveEncoder.getDistance());
+    // SmartDashboard.putNumber("Left Front Encoder Inches",
+    // Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
