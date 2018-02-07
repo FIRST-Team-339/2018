@@ -35,7 +35,6 @@ import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.Relay.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This class contains all of the user code for the Autonomous part of the
@@ -234,7 +233,7 @@ private static void testingDrive ()
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if (driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .3))
+                && Hardware.autoDrive.turnDegrees(90, .4))
             {
             driveState++;
             }
@@ -287,11 +286,11 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    System.out.println(
-            "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    System.out.println(
-            "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // System.out.println(
+    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+    // System.out.println(
+    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -340,8 +339,8 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Left Front Encoder Inches",
-            Hardware.leftFrontDriveEncoder.getDistance());
+    // SmartDashboard.putNumber("Left Front Encoder Inches",
+    // Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
@@ -384,8 +383,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-    System.out.println(
-            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    // System.out.println(
+    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
 
     // =================================
     // Pneumatics

@@ -473,6 +473,7 @@ public static boolean leftAutoLineExchangePath ()
                     -DRIVE_SPEED) == true)
                 {
                 leftExchangeAuto = leftExchangeState.BRAKE_AFTER_STRAIGHT;
+                Hardware.autoDrive.resetAccelerate();
                 }
             break;
 
@@ -561,6 +562,7 @@ public static boolean rightAutoLineExchangePath ()
                     DRIVE_SPEED) == true)
                 {
                 rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                Hardware.autoDrive.resetAccelerate();
                 }
             break;
 
