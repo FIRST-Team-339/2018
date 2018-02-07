@@ -601,10 +601,7 @@ public boolean scoreScale ()
                                 + this.getForkliftHeight());
                 switchState = scoreSwitchState.SPIT_OUT_CUBE;
                 }
-            else
-                {
-                setLiftPosition(SCALE_HEIGHT, .8);
-                }
+
             break;
         // Push the cube on the scale
         case SPIT_OUT_CUBE:
