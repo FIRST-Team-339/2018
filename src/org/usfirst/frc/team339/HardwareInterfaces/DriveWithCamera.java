@@ -160,7 +160,8 @@ public void visionTest (double compensationFactor, double speed)
 }
 
 /**
- * Gets the center x value of of the vision targets
+ * Gets the center x value of of the vision targets (average of the x values
+ * of both visions targets)
  * 
  * @return the current center x value
  */
@@ -209,6 +210,9 @@ private final double DISTANCE_FROM_WALL_TO_STOP = 20;
 private final double SWITCH_CAMERA_CENTER = 115;
 
 // ================VISION TUNABLES================
+// Gets the center x value of the vision targets (average of the x values
+// of both vision targets, or of the only one if there is only one blob: see
+// getCameraCenterValue())
 private double center = 115;
 
 }
