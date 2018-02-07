@@ -662,7 +662,7 @@ public boolean driveInches (int distance, double speed)
         this.driveInchesInit = false;
         }
 
-    // Test if ANY encoder is past the distance.
+    // Test if ANY encoder is past the distance. stop if there is 
     if (this.isAnyEncoderLargerThan(distance) == true)
         {
         this.driveInchesInit = true;
@@ -670,6 +670,7 @@ public boolean driveInches (int distance, double speed)
         return true;
         }
 
+    //sets transmission speed to the input 
     this.getTransmission().drive(speed, speed);
     return false;
 }
@@ -697,7 +698,7 @@ public boolean driveStraightInches (double distance, double speed)
         driveStraightInchesInit = false;
         }
 
-    // Check all encoders
+    // Check all encoders to see if they've reached the distance
     if (this.isAnyEncoderLargerThan(distance) == true)
         {
         this.getTransmission().stop();
@@ -731,7 +732,7 @@ private boolean driveStraightInchesInit = true;
 public boolean strafeStraightInches (int inches, double speed,
         int directionDegrees)
 {
-    // Wrong transmission type!
+    // Wrong transmission type! we cant strafe if we dont have the right transmission 
     if (this.transmissionType != TransmissionType.MECANUM)
         return true;
 
@@ -771,6 +772,7 @@ private double strafeStraightScalar = .08;
  */
 public void setStrafeStraightScalar (double scalar)
 {
+//sets strafe straight scalar to thr input 
     this.strafeStraightScalar = scalar;
 }
 
@@ -845,6 +847,7 @@ private boolean accelerateInit = true;
  */
 public void setAccelStartingSpeed (double value)
 {
+//sets accelStartingSpeed to the input value 
     this.accelStartingSpeed = value;
 }
 
@@ -864,6 +867,7 @@ public void resetAccelerate ()
  */
 public void setDefaultAcceleration (double value)
 {
+//sets default acceleration to the input value 
     this.defaultAcceleration = .8;
 }
 
@@ -984,6 +988,7 @@ private double[] prevEncoderValues =
  */
 public void setDriveStraightConstant (double value)
 {
+//sets Drive Straight Constant to the input 
     this.driveStraightConstant = value;
 }
 

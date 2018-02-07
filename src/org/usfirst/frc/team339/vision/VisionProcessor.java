@@ -457,6 +457,8 @@ public void saveImage (ImageType type)
         }
     // grab the image
     Mat tempImage = new Mat();
+
+    // TODO this is Cole's problem line
     CameraServer.getInstance().getVideo("Vision Camera")
             .grabFrame(tempImage);
 
@@ -488,6 +490,8 @@ public void saveImage (ImageType type)
             break;
         }
     // Save the image to the folder specified with the name specified
+
+    // TODO this is what is printing Cole's problem
     Imgcodecs.imwrite(SAVE_IMAGE_PATH + fileName, tempImage);
 }
 
@@ -671,6 +675,8 @@ private void createParticleReports (List<MatOfPoint> contours)
 {
     ParticleReport[] reports = new ParticleReport[contours.size()];
 
+    // creates and properly sets the values of each individual element
+    // in the reports arrays
     for (int i = 0; i < reports.length; i++)
         {
         reports[i] = new ParticleReport();
@@ -685,7 +691,7 @@ private void createParticleReports (List<MatOfPoint> contours)
 }
 
 /**
- * TODO TEST THIS
+ * TODO TEST THIS AND COMMENT SOME OF THE CALCULATIONS
  * 
  * Calculates the angle the target is at from the center line.
  * The formula can be cut into two easier sections, one for the focal
@@ -721,7 +727,7 @@ public double getPitchAngleDegrees (ParticleReport target)
 }
 
 /**
- * TODO TEST THIS
+ * TODO TEST THIS AND COMMENT SOME OF THE CALCULATIONS
  * 
  * Calculates the angle the target is at from the center line.
  * The formula can be cut into two easier sections, one for the focal
