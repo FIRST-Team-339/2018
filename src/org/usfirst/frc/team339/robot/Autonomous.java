@@ -1348,7 +1348,7 @@ private static final double DRIVE_STRAIGHT_ACCELERATION_TIME = .6; // seconds
 
 private static final double DRIVE_SPEED = .4; // percent
 
-private static final double TURN_SPEED = .4; // percent
+private static final double TURN_SPEED = .3; // percent
 
 // ==========
 
