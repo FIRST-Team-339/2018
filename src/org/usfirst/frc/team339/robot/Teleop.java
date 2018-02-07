@@ -105,9 +105,12 @@ public static void periodic ()
 
         if (Hardware.scaleAlignment.alignToScale(.2, 3))
             {
-            System.out.println("Scored on Scale");
-            Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
-            allowAlignment = false;
+            System.out.println("Aligned");
+            if (Hardware.cubeManipulator.setLiftPosition(75, .9))
+                {
+                Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
+                allowAlignment = false;
+                }
             }
         }
 
@@ -385,8 +388,8 @@ public static void printStatements ()
     // System.out
     // .println("Right Red Light " + Hardware.rightRedLight.get());
     // System.out.println("Left Red Light " + Hardware.leftRedLight.get());
-     System.out.println(
-     "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+    System.out.println(
+            "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
 
     // =================================
     // Pneumatics

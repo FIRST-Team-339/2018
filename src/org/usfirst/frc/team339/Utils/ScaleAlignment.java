@@ -70,12 +70,7 @@ public boolean alignToScale (double speed, double deadband)
         speed = 0;
         Hardware.transmission.drive(0, 0);
 
-        // move the forklift and push out cube
-        if (Hardware.cubeManipulator.scoreScale())
-            {
-            return true;
-            }
-
+        return true;
         }
     // if to far from scale
     else if (Hardware.rearUltraSonic
