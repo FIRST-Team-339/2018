@@ -46,7 +46,7 @@ public ScaleAlignment (UltraSonic ultrasonic)
  * @return true when completed
  * 
  * @param speed
- *            Do not set negative
+ *            Do not set negative(0.0 to 1.0)
  * 
  * @param deadband
  * 
@@ -54,7 +54,7 @@ public ScaleAlignment (UltraSonic ultrasonic)
 
 public boolean alignToScale (double speed, double deadband)
 {
-    System.out.println("In aligning function");
+
     // TODO optimize deadband to distance
 
     // checks if in proper distance
@@ -69,11 +69,13 @@ public boolean alignToScale (double speed, double deadband)
         aligned = true;
         speed = 0;
         Hardware.transmission.drive(0, 0);
+
         // move the forklift and push out cube
         if (Hardware.cubeManipulator.scoreScale())
             {
             return true;
             }
+
         }
     // if to far from scale
     else if (Hardware.rearUltraSonic

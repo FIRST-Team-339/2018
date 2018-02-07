@@ -592,13 +592,13 @@ public boolean brake (BrakeType type)
     return false;
 }
 
-private long previousBrakeTime = 0;
+private long previousBrakeTime = 0; // milliseconds
 
 private int[] brakeMotorDirection = new int[4];
 
 private int brakeDriveDeadband = 55; // ticks
 
-private int brakeTurnDeadband = 14;
+private int brakeTurnDeadband = 25;// ticks
 
 private int[] brakePrevEncoderVals = new int[4];
 
