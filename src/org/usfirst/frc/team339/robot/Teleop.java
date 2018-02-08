@@ -248,12 +248,12 @@ private static void testingDrive ()
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if (driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .4))
+                && Hardware.autoDrive.driveStraightInches(60, -.5))
             {
             driveState++;
             }
         else if (driveState == 1
-                && Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+                && Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
             {
             driveState++;
             }
@@ -301,6 +301,10 @@ public static void printStatements ()
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
+    SmartDashboard.putNumber("Left Motor: ",
+            Hardware.leftDriveMotor.get());
+    SmartDashboard.putNumber("Right Motor: ",
+            Hardware.rightDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
@@ -499,7 +503,7 @@ public static void printStatements ()
     // timers
     // what time does the timer have now
     // ---------------------------------
-
+    SmartDashboard.updateValues();
 } // end printStatements()
 
 // ================================
