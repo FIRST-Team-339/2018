@@ -107,7 +107,7 @@ public static void periodic ()
 {
     // calls the forklift to update itself, allowing us to use the
     // forklift state machine; necessary for the forklift to work properly
-    Hardware.cubeManipulator.forkliftUpdate();
+    Hardware.cubeManipulator.masterUpdate();
     // prints the main state of autonomous (as a whole) we're in
     System.out.println("Main State: " + autoState);
     // calls the print statements from Teleop
@@ -321,7 +321,7 @@ SWITCH, SCALE
  *         Whether or not the path has finished.
  */
 
-//TODO @ANE add in brake to your auto methods
+// TODO @ANE add in brake to your auto methods
 public static boolean autolinePath ()
 {
     System.out.println("autoline path state : " + currentAutolineState);
@@ -890,7 +890,9 @@ public static boolean switchOrScalePath (Position robotPosition)
 
             // if we've finished driving this segment
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0] - Hardware.autoDrive.getBrakeStoppingDistance(),
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 {
                 // If the switch IS on the correct side, brake before turning
@@ -1014,11 +1016,13 @@ public static boolean switchOrScalePath (Position robotPosition)
                 currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE3;
             break;
         case DRIVE3:
-        
-   
+
+
             // Drive to the right scale position
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2] - Hardware.autoDrive.getBrakeStoppingDistance(),
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 // We start on the right side and the scale is on the right side
                 if (robotPosition == Position.RIGHT && grabData(
@@ -1102,15 +1106,19 @@ public static boolean switchOrScalePath (Position robotPosition)
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
             break;
         case DRIVE_BRAKING_DISTANCE_B4_DRIVE2:
-            if (Hardware.autoDrive.driveStraightInches(Hardware.autoDrive.getBrakeStoppingDistance(), DRIVE_SPEED))
-                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;        
+            if (Hardware.autoDrive.driveStraightInches(
+                    Hardware.autoDrive.getBrakeStoppingDistance(),
+                    DRIVE_SPEED))
+                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;
             break;
-            
+
         case DRIVE_BRAKING_DISTANCE_B4_DRIVE4:
-        if (Hardware.autoDrive.driveStraightInches(Hardware.autoDrive.getBrakeStoppingDistance(), DRIVE_SPEED))
-            currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE4;        
-        break;
-            
+            if (Hardware.autoDrive.driveStraightInches(
+                    Hardware.autoDrive.getBrakeStoppingDistance(),
+                    DRIVE_SPEED))
+                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE4;
+            break;
+
         default: // prints that we reached the default, then falls through to
                  // FINISH
             System.out.println(

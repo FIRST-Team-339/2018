@@ -89,17 +89,11 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-    // take a picture with a joystick button
-    // TODO move to proper buttons, right now this is just testing code
-    // Hardware.axisCamera
-    // .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-    // && Hardware.leftOperator.getRawButton(7));
-    //
-    // currently, Cole's 0 image problem is with this method, not the
-    // takeLitPicture method
-    // Hardware.axisCamera.saveImageSafely(
-    // Hardware.leftOperator.getRawButton(4), ImageType.RAW);
+    if (Hardware.leftOperator.getRawButton(6) == true)
+        Hardware.cubeManipulator.deployCubeIntake();
 
+    if (Hardware.leftOperator.getRawButton(7) == true)
+        Hardware.cubeManipulator.retractCubeIntake();
 
 
     if (Hardware.leftOperator.getRawButton(9) == true)
@@ -128,7 +122,7 @@ public static void periodic ()
     // -----------------------------------------
     if (allowAlignment == false)
         {
-        Hardware.cubeManipulator.forkliftUpdate();
+        Hardware.cubeManipulator.masterUpdate();
 
         Hardware.cubeManipulator
                 .moveForkliftWithController(Hardware.rightOperator);

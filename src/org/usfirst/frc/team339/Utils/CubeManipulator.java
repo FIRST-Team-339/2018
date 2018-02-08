@@ -208,115 +208,7 @@ public boolean setLiftPosition (double position)
     return this.finishedForkliftMove;
 }
 
-/**
- * For use in teleop and autonomous periodic.
- * 
- * Any functions that move the lift will NOT WORK UNLESS this function is called
- * as well.
- * 
- * Runs the forklift movement code in the background, which allows multiple
- * movements in autonomous state machines.
- */
-public void forkliftUpdate ()
-{
-    switch (liftState)
-        {
-        // Moves the forklift up
-        case MOVING_UP:
-            this.finishedForkliftMove = false;
-            if (Math.abs(
-                    this.getForkliftHeight()) >= FORKLIFT_MAX_HEIGHT)
-                {
-                this.liftState = forkliftState.STAY_AT_POSITION;
-                }
-            else
-                {
-                this.forkliftMotor.set(this.forkliftSpeedUp);
-                }
-            break;
-        // Moves the forklift down
-        case MOVING_DOWN:
-            if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
-                    + LIFT_TOLERANCE)
-                {
-                this.liftState = forkliftState.AT_STARTING_POSITION;
-                this.finishedForkliftMove = true;
-                }
-            else
-                {
-                this.forkliftMotor.set(this.forkliftSpeedDown);
-                }
-            this.finishedForkliftMove = false;
-            break;
-        // Make the cube "hover" by sending a constant small voltage to the
-        // forklift motor.
-        case STAY_AT_POSITION:
-            this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
-            this.finishedForkliftMove = true;
-            break;
 
-        // Send no voltage to the motors, if all else fails (AND IT WILL, I SAY
-        // YOU!)
-        default:
-        case AT_STARTING_POSITION:
-            this.forkliftMotor.set(FORKLIFT_AT_STARTING_POSITION);
-            break;
-        }
-
-    // state machine for deploying the intake
-    switch (deployIntakeState)
-        {
-        // initial state of the intake deploy motor; just stays still
-        // until the deployCubeIntake() function is called
-        case INIT:
-            this.intakeDeployMotor.set(0.0);
-            break;
-
-        // moves the intake until the encoder reads that the arm has
-        // turned the specified angle, then stops the intake deploy motor and
-        // moves to the next state
-        case DEPLOYING:
-            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-            if (this.intakeDeployEncoder.get() >= INTAKE_DEPLOY_ANGLE
-                    - INTAKE_DEPLOY_COMPENSATION)
-                {
-
-                // stops the intake deploy motor if we've turned far enough;
-                // FINISHED does this as well, but doing it here helps
-                // keep the motor from overshooting too much
-                this.intakeDeployMotor.set(0.0);
-                deployIntakeState = DeployState.FINISHED;
-                }
-            break;
-
-        // final state in the state machine; stops the intake deploy
-        // motor
-        case FINISHED:
-            this.intakeDeployMotor.set(0.0);
-            break;
-
-        // we shouldn't ever get here, but in case we do, stop the intake
-        // deploy motor
-        default:
-            this.intakeDeployMotor.set(0.0);
-            break;
-        }
-
-
-    // checks if any of the specified functions wants to move the intake
-    // motor
-    this.stopIntake = !(isRunningIntakeCube
-            || isRunningIntakeCubeOverride ||
-            isRunningPushOutCubeAuto || isRunningPushOutCubeTeleop);
-
-    // if none of the functions from above want to run the intake, then
-    // stop the intake motor
-    if (stopIntake == true)
-        {
-        this.stopIntake();
-        }
-
-}
 
 // ========================INTAKE FUNCTIONS========================
 
@@ -332,7 +224,12 @@ public void stopIntake ()
  * Sets the intake into the down position, which is required for the
  * robot to be able to grab any cubes, and drop them off.
  * 
- * REQUIRED be called before teleop periodic.
+ * Only works if the intake mechanism is not currently already deployed
+ * 
+ * REQUIRED to be called before teleop periodic.
+ * 
+ * If the override boolean for this function is true, will call the override
+ * code to always move the deployIntake down
  * 
  * @return true if the arm is down, false if it is still moving
  */
@@ -340,18 +237,47 @@ public boolean deployCubeIntake ()
 {
     // advances the deploy intake state machine if it hasn't already been
     // deployed/ is deploying
-    if (deployIntakeState == DeployState.INIT)
+    if (deployIntakeState == DeployState.NOT_DEPLOYED)
         {
         deployIntakeState = DeployState.DEPLOYING;
         }
 
     // returns whether or not the intake has finished deploying
-    if (deployIntakeState == DeployState.FINISHED)
+    if (deployIntakeState == DeployState.DEPLOYED)
+        {
+        return true;
+        }
+
+    return false; // returns false if we haven't finished deploying
+}
+
+/**
+ * Draws the cube intake mechanism back into the robot if it the mechanism
+ * is not already deployed
+ * 
+ * @return true if the mechanism is retracted/ in the robot, false is otherwise
+ *         (hasn't finished retracting)
+ * 
+ * @author Cole Ramos
+ */
+public boolean retractCubeIntake ()
+{
+    // tells the deployIntake state machine to retract if the cube intake
+    // mechanism was already deployed
+    if (deployIntakeState == DeployState.DEPLOYED)
+        {
+        deployIntakeState = DeployState.RETRACTING;
+        }
+
+    // returns true if it has finished retracting or was not deployed in the
+    // first place
+    if (deployIntakeState == DeployState.NOT_DEPLOYED)
         {
         return true;
         }
 
     return false;
+
 }
 
 /**
@@ -361,7 +287,7 @@ public boolean deployCubeIntake ()
  */
 public boolean isIntakeDeployed ()
 {
-    return deployIntakeState == DeployState.FINISHED;
+    return deployIntakeState == DeployState.DEPLOYED;
 }
 
 /**
@@ -626,6 +552,194 @@ public boolean scoreScale ()
     return false;
 }
 
+
+// ===================== Update Methods ========================
+
+/**
+ * Master update function that calls the update functions for forklift,
+ * deploy intake, and intake/ push out cube, allowing them to properly
+ * use their state machines
+ * 
+ * @author Cole Ramos
+ * 
+ */
+public void masterUpdate ()
+{
+    // update the forklift state machine
+    forkliftUpdate();
+    // update the deployIntake state machine
+    deployIntakeUpdate();
+    // update the intake/ PushOut cube state machines
+    intakePushOutCubeUpdate();
+}
+
+
+/**
+ * For use in teleop and autonomous periodic.
+ * 
+ * Any functions that move the lift will NOT WORK UNLESS this function is called
+ * as well.
+ * 
+ * Runs the forklift movement code in the background, which allows multiple
+ * movements in autonomous state machines.
+ */
+public void forkliftUpdate ()
+{
+    switch (liftState)
+        {
+        // Moves the forklift up
+        case MOVING_UP:
+            this.finishedForkliftMove = false;
+            if (Math.abs(
+                    this.getForkliftHeight()) >= FORKLIFT_MAX_HEIGHT)
+                {
+                this.liftState = forkliftState.STAY_AT_POSITION;
+                }
+            else
+                {
+                this.forkliftMotor.set(this.forkliftSpeedUp);
+                }
+            break;
+        // Moves the forklift down
+        case MOVING_DOWN:
+            if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
+                    + LIFT_TOLERANCE)
+                {
+                this.liftState = forkliftState.AT_STARTING_POSITION;
+                this.finishedForkliftMove = true;
+                }
+            else
+                {
+                this.forkliftMotor.set(this.forkliftSpeedDown);
+                }
+            this.finishedForkliftMove = false;
+            break;
+        // Make the cube "hover" by sending a constant small voltage to the
+        // forklift motor.
+        case STAY_AT_POSITION:
+            this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
+            this.finishedForkliftMove = true;
+            break;
+
+        // Send no voltage to the motors, if all else fails (AND IT WILL, I SAY
+        // YOU!)
+        default:
+        case AT_STARTING_POSITION:
+            this.forkliftMotor.set(FORKLIFT_AT_STARTING_POSITION);
+            break;
+        }
+}
+
+
+/**
+ * Update method for the deployIntake functions. Allows the deployIntake
+ * code to use their state machine. deployIntake and related functions
+ * will not work unless this updateFunction is called
+ * 
+ * @author Cole Ramos
+ * 
+ */
+public void deployIntakeUpdate ()
+{
+
+    System.out.println("deployIntakeState: " + deployIntakeState);
+    // state machine for deploying the intake
+    switch (deployIntakeState)
+        {
+        // initial state of the intake deploy motor; just stays still
+        // until the deployCubeIntake() function is called
+        case NOT_DEPLOYED:
+            this.intakeDeployMotor.set(0.0);
+            break;
+
+        // moves the intake until the encoder reads that the arm has
+        // turned the specified angle, then stops the intake deploy motor
+        // and
+        // moves to the next state
+        case DEPLOYING:
+            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+            if (this.intakeDeployEncoder
+                    .get() >= INTAKE_DEPLOY_ANGLE
+                            - INTAKE_DEPLOY_COMPENSATION)
+                {
+
+                // stops the intake deploy motor if we've turned far enough;
+                // FINISHED does this as well, but doing it here helps
+                // keep the motor from overshooting too much
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.DEPLOYED;
+                }
+            break;
+
+        // final state in the state machine; stops the intake deploy
+        // motor
+        case DEPLOYED:
+            this.intakeDeployMotor.set(0.0);
+            break;
+
+
+        // brings the intake mechanism back into the robot, and sets the
+        // state to NOT_DEPLOYED
+        case RETRACTING:
+            this.intakeDeployMotor.set(-INTAKE_DEPLOY_SPEED);
+            if (this.intakeDeployEncoder
+                    .get() <= INTAKE_RETRACT_ANGLE)
+                {
+                // brings back in the intake mechanism until the intake
+                // deploy
+                // encoder reads the INTAKE_RETRACT_ANGLE (usually 0)
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.NOT_DEPLOYED;
+                }
+            break;
+
+        case OVERRIDE_DEPLOY: // override that deploys the intake mechanism
+                              // regardless of encoders
+            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+            break;
+
+        case OVERRIDE_RETRACT: // override that retracts the intake mechanism
+                               // regardless of encoders
+            this.intakeDeployMotor.set(-INTAKE_DEPLOY_SPEED);
+            break;
+
+        // we shouldn't ever get here, but in case we do, stop the intake
+        // deploy motor
+        default:
+            this.intakeDeployMotor.set(0.0);
+            break;
+        }
+
+}
+
+
+
+/**
+ * Update method for the intakeCube, pushOutCube, and related functions.
+ * 
+ * intakeCube and pushOutCube will not work unless this function is constantly
+ * called
+ * 
+ * @author Cole Ramos
+ */
+public void intakePushOutCubeUpdate ()
+{
+    // checks if any of the specified functions wants to move the intake
+    // motor
+    this.stopIntake = !(isRunningIntakeCube
+            || isRunningIntakeCubeOverride ||
+            isRunningPushOutCubeAuto || isRunningPushOutCubeTeleop);
+
+    // if none of the functions from above want to run the intake, then
+    // stop the intake motor
+    if (stopIntake == true)
+        {
+        this.stopIntake();
+        }
+}
+
+// ===================== End Update Methods Section ========================
+
 /**
  * Cuts the power to all motors.
  */
@@ -655,7 +769,7 @@ MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION, INTAKE_IS_DEPLOY
  */
 private static enum DeployState
     {
-INIT, DEPLOYING, FINISHED
+NOT_DEPLOYED, DEPLOYING, DEPLOYED, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT
     }
 
 /**
@@ -683,6 +797,11 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
     }
 
 // --------------------VARIABLES--------------------
+
+// ================Override Related================
+
+
+
 // ================FORKLIFT================
 // Used in forkliftUpdate()
 private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
@@ -700,7 +819,7 @@ private double forkliftSpeedDown = 0;
 // private boolean deployedArm = false;
 
 // variable that controls the deploy intake state machine
-private DeployState deployIntakeState = DeployState.INIT;
+private DeployState deployIntakeState = DeployState.NOT_DEPLOYED;
 
 private pushOutState pushState = pushOutState.INIT;
 
@@ -752,6 +871,9 @@ private final double INTAKE_SPEED = .5;
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
 private final double INTAKE_DEPLOY_ANGLE = 75;
+
+// the encoder value that counts as the intake being retracted
+private final double INTAKE_RETRACT_ANGLE = 0.0;
 
 // constant subtracted from the INTAKE_DEPLOY_ANGLE to help keep us
 // from overshooting; needs to be tuned on the new robot
