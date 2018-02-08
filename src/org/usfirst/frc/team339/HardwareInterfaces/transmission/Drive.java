@@ -699,7 +699,7 @@ public boolean driveStraightInches (double distance, double speed)
         }
 
     // Check all encoders to see if they've reached the distance
-    if (this.isAnyEncoderLargerThan(distance) == true)
+    if (this.isAnyEncoderLargerThan(Math.abs(distance)) == true)
         {
         this.getTransmission().stop();
         driveStraightInchesInit = true;
@@ -928,38 +928,10 @@ public void driveStraight (double speed, boolean accelerate)
     double delta = leftChange - rightChange;
     double leftMotorVal = speed, rightMotorVal = speed;
 
-    // We are going forwards?
-    if (speed > 0)
-        {
-        // Left is more forwards than right?
-        if (leftChange > rightChange)
-            {
-            leftMotorVal = speed - driveStraightConstant;
-            rightMotorVal = speed;
-            }
-        // Right is more forwards than left?
-        else if (rightChange > leftChange)
-            {
-            leftMotorVal = speed;
-            rightMotorVal = speed - driveStraightConstant;
-            }
-        }
-    else if (speed < 0)
-    // We are going backwards?
-        {
-        // Left is more backwards than right?
-        if (leftChange < rightChange)
-            {
-            leftMotorVal = speed + driveStraightConstant;
-            rightMotorVal = speed;
-            }
-        // Right is more backwards than left?
-        else if (rightChange < leftChange)
-            {
-            rightMotorVal = speed + driveStraightConstant;
-            leftMotorVal = speed;
-            }
-        }
+
+    leftMotorVal -= Math.signum(delta) * driveStraightConstant;
+    rightMotorVal += Math.signum(delta) * driveStraightConstant;
+
 
     // Changes how much the robot corrects by how off course it is. The
     // more off course, the more it will attempt to correct.
