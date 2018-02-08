@@ -186,7 +186,7 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    testingDrive();
+    // testingDrive();
 
     // beckyTest();
 
@@ -205,15 +205,18 @@ public static void beckyTest ()
         if (Hardware.visionTestButton.isOnCheckNow())
             {
             Hardware.transmission.setForAutonomous();
-            if (Hardware.driveWithCamera.driveToSwitch(1.5, .5) == true)
+            if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
                 {
                 Hardware.autoDrive.driveInches(0, 0);
                 }
+            // System.out.println("The center is: " +
+            // Hardware.driveWithCamera.getCameraCenterValue());
             }
-        Hardware.ringLightRelay.set(Value.kForward);
+        // Hardware.ringLightRelay.set(Value.kForward);
 
-        Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+        // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
 
+        // Hardware.driveWithCamera.getCameraCenterValue();
         if (Hardware.onNessie == true)
             {
             isTestingDrive = true;
@@ -359,38 +362,24 @@ public static void printStatements ()
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
-    SmartDashboard.putNumber("Left Front Encoder Ticks",
-            Hardware.leftFrontDriveEncoder.get());
 
     // System.out.println("Right Front Inches = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Right Front Encoder Inches",
-            Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
-    SmartDashboard.putNumber("Right Front Encoder Ticks",
-            Hardware.rightFrontDriveEncoder.get());
 
     // System.out.println("Left Rear Encoder Inches = "
     // + Hardware.leftRearDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Left Rear Encoder Inches",
-            Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
-    SmartDashboard.putNumber("Left Rear Encoder Ticks",
-            Hardware.leftRearDriveEncoder.get());
 
     // System.out.println("Right Rear Inches = "
     // + Hardware.rightRearDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Right Rear Encoder Inches",
-            Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
-    SmartDashboard.putNumber("Rightt Rear Encoder Ticks",
-            Hardware.rightRearDriveEncoder.get());
 
     // System.out.println(
     // "Lift Encoder Inches = "

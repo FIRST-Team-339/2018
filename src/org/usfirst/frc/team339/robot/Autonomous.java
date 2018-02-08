@@ -758,7 +758,6 @@ public static boolean centerSwitchPath ()
             // drives to the switch based on the camera
             // sets state to LIFT
             if (Hardware.driveWithCamera.driveToSwitch(
-                    AUTO_COMPENSATION_VISION,
                     AUTO_SPEED_VISION) == true)
                 visionAuto = centerState.LIFT;
             break;

@@ -136,7 +136,7 @@ public DriveWithCamera (TransmissionBase transmission,
  * @return true if the robot has driven all the way to the front of the scale,
  *         and false if it hasn't
  */
-public boolean driveToSwitch (double compensationFactor, double speed)
+public boolean driveToSwitch (double speed)
 {
     // if the robot can still see the vision targets, drive by camera
     if (this.frontUltrasonic
@@ -181,12 +181,11 @@ public boolean driveToSwitch (double compensationFactor, double speed)
             // // if the switch center is to the right of our center set by the
             // // SWITCH_CAMERA_CENTER, correct by driving faster on the left
             // else
-            if (center > SWITCH_CAMERA_CENTER
-                    + CAMERA_DEADBAND)
+            if (center >= SWITCH_CAMERA_CENTER)
                 {
                 // the switch's center is too far right, drive faster on the
                 // left
-                System.out.println("WE ARE TOO LEFT");
+                // System.out.println("WE ARE TOO LEFT");
                 this.getTransmission().drive(speed - DRIVE_CORRECTION,
                         speed + DRIVE_CORRECTION);
                 }
@@ -196,7 +195,7 @@ public boolean driveToSwitch (double compensationFactor, double speed)
                 {
                 // the switch's center is too far left, drive faster on the
                 // right
-                System.out.println("WE ARE TOO RIGHT");
+                // System.out.println("WE ARE TOO RIGHT");
 
                 this.getTransmission().drive(speed + DRIVE_CORRECTION,
                         speed - DRIVE_CORRECTION);
@@ -308,7 +307,8 @@ private final double DISTANCE_FROM_WALL_TO_STOP = 20;
 // 6
 
 // TODO This is for nessie, test for the new robot
-private final double SWITCH_CAMERA_CENTER = 160;
+private final double SWITCH_CAMERA_CENTER = 115;
+// 160;
 
 private final double DRIVE_CORRECTION = .1;
 
