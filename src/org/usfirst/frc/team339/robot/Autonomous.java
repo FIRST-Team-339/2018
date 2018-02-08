@@ -219,7 +219,7 @@ public static void periodic ()
                 autoState = State.FINISH;
             break;
         case CENTER_SWITCH:
-            // calls method that runs that path
+            // calls method that runs vision path
             if (centerSwitchPath() == true)
                 autoState = State.FINISH;
             break;
@@ -321,7 +321,7 @@ SWITCH, SCALE
  *         Whether or not the path has finished.
  */
 
-//TODO @ANE add in brake to your auto methods
+// TODO @ANE add in brake to your auto methods
 public static boolean autolinePath ()
 {
     System.out.println("autoline path state : " + currentAutolineState);
@@ -890,7 +890,9 @@ public static boolean switchOrScalePath (Position robotPosition)
 
             // if we've finished driving this segment
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0] - Hardware.autoDrive.getBrakeStoppingDistance(),
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 {
                 // If the switch IS on the correct side, brake before turning
@@ -907,7 +909,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                     // If not, then keep driving forwards.
                     currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_BRAKING_DISTANCE_B4_DRIVE2;
 
-                } // end if
+                } // end of
             break;
         case BRAKE_DRIVE1:
             // Brake before turning towards the switch
@@ -977,6 +979,14 @@ public static boolean switchOrScalePath (Position robotPosition)
                 }
 
             break;
+
+        case DRIVE_BRAKING_DISTANCE_B4_DRIVE2:
+            if (Hardware.autoDrive.driveStraightInches(
+                    Hardware.autoDrive.getBrakeStoppingDistance(),
+                    DRIVE_SPEED))
+                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;
+            break;
+
         case DRIVE2:
             // Drive past the switch to the middle of the platform zone
             if (Hardware.autoDrive.driveStraightInches(
@@ -986,11 +996,13 @@ public static boolean switchOrScalePath (Position robotPosition)
                     DRIVE_SPEED) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_DRIVE2;
             break;
+
         case BRAKE_DRIVE2:
             // Brake after we get to the middle of the platform zone
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.TURN2;
             break;
+
         case TURN2:
             // Turn towards the platform zone
             if (robotPosition == Position.RIGHT)
@@ -1008,17 +1020,19 @@ public static boolean switchOrScalePath (Position robotPosition)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN2;
                 }
             break;
+
         case BRAKE_TURN2:
             // Brake after turning towards the platform zone
             if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE3;
             break;
+
         case DRIVE3:
-        
-   
             // Drive to the right scale position
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2] - Hardware.autoDrive.getBrakeStoppingDistance(),
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 // We start on the right side and the scale is on the right side
                 if (robotPosition == Position.RIGHT && grabData(
@@ -1060,10 +1074,20 @@ public static boolean switchOrScalePath (Position robotPosition)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_B4_RAISE_ARM2;
                 }
             break;
+
+        case DRIVE_BRAKING_DISTANCE_B4_DRIVE4:
+            if (Hardware.autoDrive.driveStraightInches(
+                    Hardware.autoDrive.getBrakeStoppingDistance(),
+                    DRIVE_SPEED))
+                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE4;
+            break;
+
         case DRIVE4:
             // Drive across the platform zone to the left
-            if (Hardware.autoDrive.driveInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[3],
+            if (Hardware.autoDrive.driveStraightInches(
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[3]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_DRIVE4;
             break;
@@ -1101,16 +1125,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                     SCALE_LIFT_HEIGHT, FORKLIFT_SPEED) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
             break;
-        case DRIVE_BRAKING_DISTANCE_B4_DRIVE2:
-            if (Hardware.autoDrive.driveStraightInches(Hardware.autoDrive.getBrakeStoppingDistance(), DRIVE_SPEED))
-                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;        
-            break;
-            
-        case DRIVE_BRAKING_DISTANCE_B4_DRIVE4:
-        if (Hardware.autoDrive.driveStraightInches(Hardware.autoDrive.getBrakeStoppingDistance(), DRIVE_SPEED))
-            currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE4;        
-        break;
-            
+
         default: // prints that we reached the default, then falls through to
                  // FINISH
             System.out.println(
@@ -1159,6 +1174,7 @@ public static boolean offsetSwitchPath ()
             // tell the cube intake mechanism to deploy
             Hardware.cubeManipulator.deployCubeIntake();
             break;
+
         case DRIVE1:
             // Drive forward a little to allow turning.
             if (Hardware.autoDrive.driveStraightInches(
@@ -1360,9 +1376,9 @@ private static final double AUTO_TESTING_SCALAR = .5; // percent
 
 private static final double DRIVE_STRAIGHT_ACCELERATION_TIME = .6; // seconds
 
-private static final double DRIVE_SPEED = .4; // percent
+private static final double DRIVE_SPEED = .5; // percent
 
-private static final double TURN_SPEED = .3; // percent
+private static final double TURN_SPEED = .4; // percent
 
 // ==========
 
