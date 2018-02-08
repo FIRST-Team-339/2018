@@ -321,7 +321,7 @@ SWITCH, SCALE
  *         Whether or not the path has finished.
  */
 
-//TODO @ANE add in brake to your auto methods
+// TODO @ANE add in brake to your auto methods
 public static boolean autolinePath ()
 {
     System.out.println("autoline path state : " + currentAutolineState);
@@ -424,7 +424,7 @@ public static leftExchangeState leftExchangeAuto = leftExchangeState.PATH_INIT;
  */
 public static enum leftExchangeState
     {
-PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_RIGHT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_RIGHT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, DEPLOY, DONE
     }
 
 
@@ -497,7 +497,7 @@ public static boolean leftAutoLineExchangePath ()
 
         case BRAKE_AFTER_TURN:
             // Brake after driving forwards and backwards
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 leftExchangeAuto = leftExchangeState.DRIVE_TO_EXCHANGE;
             break;
 
@@ -506,10 +506,15 @@ public static boolean leftAutoLineExchangePath ()
             if (Hardware.autoDrive.driveStraightInches(
                     LEFT_DISTANCE_TO_EXCHANGE,
                     DRIVE_SPEED) == true)
-                {
-                leftExchangeAuto = leftExchangeState.DONE;
-                }
+                leftExchangeAuto = leftExchangeState.DEPLOY;
             break;
+
+        case DEPLOY:
+            // deploys the cube intake DONE
+            Hardware.cubeManipulator.deployCubeIntake();
+            leftExchangeAuto = leftExchangeState.DONE;
+            break;
+
         default:
         case DONE:
             // robot stops and does nothing until teleop; returns true
@@ -531,7 +536,7 @@ public static rightExchangeState rightExchangeAuto = rightExchangeState.DRIVE_AC
  */
 public static enum rightExchangeState
     {
-PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_LEFT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_LEFT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, DEPLOY, DONE
     }
 
 
@@ -574,9 +579,7 @@ public static boolean rightAutoLineExchangePath ()
                     DISTANCE_BACK_ACROSS_AUTOLINE - Hardware.autoDrive
                             .getBrakeStoppingDistance(),
                     -DRIVE_SPEED) == true)
-                {
                 rightExchangeAuto = rightExchangeState.BRAKE_AFTER_STRAIGHT;
-                }
             break;
 
         case BRAKE_AFTER_STRAIGHT:
@@ -598,7 +601,7 @@ public static boolean rightAutoLineExchangePath ()
 
         case BRAKE_AFTER_TURN:
             // Brake after driving forwards and backwards
-            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
             break;
 
@@ -608,8 +611,14 @@ public static boolean rightAutoLineExchangePath ()
                     RIGHT_DISTANCE_TO_EXCHANGE,
                     DRIVE_SPEED) == true)
                 {
-                rightExchangeAuto = rightExchangeState.DONE;
+                rightExchangeAuto = rightExchangeState.DEPLOY;
                 }
+            break;
+
+        case DEPLOY:
+            // deploys the cube intake DONE
+            Hardware.cubeManipulator.deployCubeIntake();
+            rightExchangeAuto = rightExchangeState.DONE;
             break;
 
         default:
@@ -890,7 +899,9 @@ public static boolean switchOrScalePath (Position robotPosition)
 
             // if we've finished driving this segment
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0] - Hardware.autoDrive.getBrakeStoppingDistance(),
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[0]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 {
                 // If the switch IS on the correct side, brake before turning
@@ -1014,11 +1025,13 @@ public static boolean switchOrScalePath (Position robotPosition)
                 currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE3;
             break;
         case DRIVE3:
-        
-   
+
+
             // Drive to the right scale position
             if (Hardware.autoDrive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2] - Hardware.autoDrive.getBrakeStoppingDistance(),
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 // We start on the right side and the scale is on the right side
                 if (robotPosition == Position.RIGHT && grabData(
@@ -1102,15 +1115,19 @@ public static boolean switchOrScalePath (Position robotPosition)
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
             break;
         case DRIVE_BRAKING_DISTANCE_B4_DRIVE2:
-            if (Hardware.autoDrive.driveStraightInches(Hardware.autoDrive.getBrakeStoppingDistance(), DRIVE_SPEED))
-                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;        
+            if (Hardware.autoDrive.driveStraightInches(
+                    Hardware.autoDrive.getBrakeStoppingDistance(),
+                    DRIVE_SPEED))
+                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE2;
             break;
-            
+
         case DRIVE_BRAKING_DISTANCE_B4_DRIVE4:
-        if (Hardware.autoDrive.driveStraightInches(Hardware.autoDrive.getBrakeStoppingDistance(), DRIVE_SPEED))
-            currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE4;        
-        break;
-            
+            if (Hardware.autoDrive.driveStraightInches(
+                    Hardware.autoDrive.getBrakeStoppingDistance(),
+                    DRIVE_SPEED))
+                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE4;
+            break;
+
         default: // prints that we reached the default, then falls through to
                  // FINISH
             System.out.println(
@@ -1356,13 +1373,13 @@ PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRI
  */
 
 // DRIVING
-private static final double AUTO_TESTING_SCALAR = .5; // percent
+private static final double AUTO_TESTING_SCALAR = 1.0; // percent
 
 private static final double DRIVE_STRAIGHT_ACCELERATION_TIME = .6; // seconds
 
-private static final double DRIVE_SPEED = .4; // percent
+private static final double DRIVE_SPEED = .5; // percent
 
-private static final double TURN_SPEED = .3; // percent
+private static final double TURN_SPEED = .4; // percent
 
 // ==========
 
