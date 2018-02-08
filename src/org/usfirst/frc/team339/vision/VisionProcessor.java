@@ -495,10 +495,10 @@ public void saveImage (ImageType type)
     // Save the image to the folder specified with the name specified
 
     // TODO this is what is printing Cole's problem
-    if (tempImage.empty() == false)
-        Imgcodecs.imwrite(SAVE_IMAGE_PATH + fileName, tempImage);
-    else
-        System.out.println("saveImage: Image was empty; was not saved");
+    // if (tempImage.empty() == false)
+    Imgcodecs.imwrite(SAVE_IMAGE_PATH + fileName, tempImage);
+    // else
+    // System.out.println("saveImage: Image was empty; was not saved");
 }
 
 private int rawImageNum = 0;
