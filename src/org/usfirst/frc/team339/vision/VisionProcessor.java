@@ -201,7 +201,7 @@ private Relay ringLightRelay = null;
 
 // timer used in the takeLitPicture function to delay taking an image until
 // after the ringLight turned on
-private Timer pictureTimer = new Timer();
+private final Timer pictureTimer = new Timer();
 
 /**
  * Creates the object and starts the camera server
@@ -459,6 +459,9 @@ public void saveImage (ImageType type)
     Mat tempImage = new Mat();
 
     // TODO this is Cole's problem line
+    // maybe check to see if we have an image first before using this
+    // test if we are getting an image, and then try putting it in a loop
+    // until we get one
     CameraServer.getInstance().getVideo("Vision Camera")
             .grabFrame(tempImage);
 
@@ -492,7 +495,10 @@ public void saveImage (ImageType type)
     // Save the image to the folder specified with the name specified
 
     // TODO this is what is printing Cole's problem
+    // if (tempImage.empty() == false)
     Imgcodecs.imwrite(SAVE_IMAGE_PATH + fileName, tempImage);
+    // else
+    // System.out.println("saveImage: Image was empty; was not saved");
 }
 
 private int rawImageNum = 0;

@@ -474,7 +474,7 @@ public double setBrakeStoppingDistance (double brakeStoppingDistance)
 public boolean brake (BrakeType type)
 {
     // prints out calling brake
-    System.out.println("Calling Brake");
+    // System.out.println("Calling Brake");
 
     // sets deadband and power to zero
     int deadband = 0;
@@ -594,7 +594,7 @@ private long previousBrakeTime = 0; // milliseconds
 
 private int[] brakeMotorDirection = new int[4];
 
-private int brakeDriveDeadband = 55; // ticks
+private int brakeDriveDeadband = 20; // ticks
 
 private int brakeTurnDeadband = 12;// ticks
 
@@ -602,7 +602,7 @@ private int[] brakePrevEncoderVals = new int[4];
 
 private double brakeDrivePower = .2;
 
-private double brakeTurnPower = 1.0;
+private double brakeTurnPower = .5;
 
 private int currentBrakeIteration = 0;
 
@@ -662,7 +662,7 @@ public boolean driveInches (int distance, double speed)
         this.driveInchesInit = false;
         }
 
-    // Test if ANY encoder is past the distance. stop if there is 
+    // Test if ANY encoder is past the distance. stop if there is
     if (this.isAnyEncoderLargerThan(distance) == true)
         {
         this.driveInchesInit = true;
@@ -670,7 +670,7 @@ public boolean driveInches (int distance, double speed)
         return true;
         }
 
-    //sets transmission speed to the input 
+    // sets transmission speed to the input
     this.getTransmission().drive(speed, speed);
     return false;
 }
@@ -699,7 +699,7 @@ public boolean driveStraightInches (double distance, double speed)
         }
 
     // Check all encoders to see if they've reached the distance
-    if (this.isAnyEncoderLargerThan(distance) == true)
+    if (this.isAnyEncoderLargerThan(Math.abs(distance)) == true)
         {
         this.getTransmission().stop();
         driveStraightInchesInit = true;
@@ -732,7 +732,8 @@ private boolean driveStraightInchesInit = true;
 public boolean strafeStraightInches (int inches, double speed,
         int directionDegrees)
 {
-    // Wrong transmission type! we cant strafe if we dont have the right transmission 
+    // Wrong transmission type! we cant strafe if we dont have the right
+    // transmission
     if (this.transmissionType != TransmissionType.MECANUM)
         return true;
 
@@ -772,7 +773,7 @@ private double strafeStraightScalar = .08;
  */
 public void setStrafeStraightScalar (double scalar)
 {
-//sets strafe straight scalar to thr input 
+    // sets strafe straight scalar to thr input
     this.strafeStraightScalar = scalar;
 }
 
@@ -847,7 +848,7 @@ private boolean accelerateInit = true;
  */
 public void setAccelStartingSpeed (double value)
 {
-//sets accelStartingSpeed to the input value 
+    // sets accelStartingSpeed to the input value
     this.accelStartingSpeed = value;
 }
 
@@ -867,7 +868,7 @@ public void resetAccelerate ()
  */
 public void setDefaultAcceleration (double value)
 {
-//sets default acceleration to the input value 
+    // sets default acceleration to the input value
     this.defaultAcceleration = .8;
 }
 
@@ -927,38 +928,10 @@ public void driveStraight (double speed, boolean accelerate)
     double delta = leftChange - rightChange;
     double leftMotorVal = speed, rightMotorVal = speed;
 
-    // We are going forwards?
-    if (speed > 0)
-        {
-        // Left is more forwards than right?
-        if (leftChange > rightChange)
-            {
-            leftMotorVal = speed - driveStraightConstant;
-            rightMotorVal = speed;
-            }
-        // Right is more forwards than left?
-        else if (rightChange > leftChange)
-            {
-            leftMotorVal = speed;
-            rightMotorVal = speed - driveStraightConstant;
-            }
-        }
-    else if (speed < 0)
-    // We are going backwards?
-        {
-        // Left is more backwards than right?
-        if (leftChange < rightChange)
-            {
-            leftMotorVal = speed + driveStraightConstant;
-            rightMotorVal = speed;
-            }
-        // Right is more backwards than left?
-        else if (rightChange < leftChange)
-            {
-            rightMotorVal = speed + driveStraightConstant;
-            leftMotorVal = speed;
-            }
-        }
+
+    leftMotorVal -= Math.signum(delta) * driveStraightConstant;
+    rightMotorVal += Math.signum(delta) * driveStraightConstant;
+
 
     // Changes how much the robot corrects by how off course it is. The
     // more off course, the more it will attempt to correct.
@@ -988,7 +961,7 @@ private double[] prevEncoderValues =
  */
 public void setDriveStraightConstant (double value)
 {
-//sets Drive Straight Constant to the input 
+    // sets Drive Straight Constant to the input
     this.driveStraightConstant = value;
 }
 
