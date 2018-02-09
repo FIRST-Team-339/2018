@@ -80,6 +80,7 @@ public CubeManipulator (SpeedController forkliftMotor,
  */
 public void stopForklift ()
 {
+    System.out.println("Calling stop forklift");
     this.liftState = forkliftState.STAY_AT_POSITION;
 }
 
@@ -146,6 +147,10 @@ public void moveForkliftWithController (Joystick operatorJoystick)
  */
 public boolean setLiftPosition (double position, double forkliftSpeed)
 {
+
+    System.out.println("setting lift position");
+
+
     this.finishedForkliftMove = false;
 
     // If the requested position is above the forklift height, then
@@ -159,6 +164,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
             .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
                     + LIFT_TOLERANCE)
         {
+        System.out.println("Decided to move up");
         this.forkliftSpeedUp = -forkliftSpeed;
         this.liftState = forkliftState.MOVING_UP;
         return this.finishedForkliftMove;
@@ -168,6 +174,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
             .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
                     + LIFT_TOLERANCE)
         {
+        System.out.println("Decided to move down");
         this.forkliftSpeedDown = forkliftSpeed;
         this.liftState = forkliftState.MOVING_DOWN;
         }
@@ -207,8 +214,6 @@ public boolean setLiftPosition (double position)
         }
     return this.finishedForkliftMove;
 }
-
-
 
 // ========================INTAKE FUNCTIONS========================
 
@@ -452,6 +457,8 @@ public boolean hasCube ()
  * Autonomously scores a cube on the switch using the forklift, intake and
  * intake deploy
  * 
+ * Not currently working
+ * 
  * @return true if a cube has been scored in the switch
  */
 public boolean scoreSwitch ()
@@ -467,6 +474,7 @@ public boolean scoreSwitch ()
             break;
         // Move the lift to the switch height, and move on when it's finished
         case MOVE_LIFT:
+            System.out.println("Moving lift");
             if (setLiftPosition(SWITCH_HEIGHT,
                     FORKLIFT_SPEED_UP) == true)
                 {
@@ -475,6 +483,7 @@ public boolean scoreSwitch ()
             break;
         // Eject the cube (onto the switch preferably)
         case SPIT_OUT_CUBE:
+            System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
                 switchState = scoreSwitchState.FINISHED;
@@ -500,39 +509,31 @@ public boolean scoreSwitch ()
  * Scores a cube on a scale autonomously, using the forklift, intake and intake
  * deploy.
  * 
+ * Not currently working
+ * 
  * @return true if a cube has been scored in the scale
  */
 public boolean scoreScale ()
 {
     switch (scaleState)
         {
-        // Make sure the intake is deployed before scoring on the switch
+        // If the intake has not been deployed already, then do so.
         case DEPLOY_INTAKE:
-            System.out.println("Deploying intake");
             if (deployCubeIntake() == true)
                 {
-                System.out.println("Done deploying intake");
-                switchState = scoreSwitchState.MOVE_LIFT;
+                scaleState = scoreScaleState.MOVE_LIFT;
                 }
             break;
-        // Move the lift to the height of the scale
+        // Move the lift to the scale height, and move on when it's finished
         case MOVE_LIFT:
-            System.out.println(
-                    "Forklift height" + this.getForkliftHeight());
-
-            if (setLiftPosition(SCALE_HEIGHT, .8) == true)
+            System.out.println("Moving lift");
+            if (setLiftPosition(SCALE_HEIGHT,
+                    FORKLIFT_SPEED_UP) == true)
                 {
-                System.out.println(
-                        "Finished raising lift: flork lyft height = "
-                                + this.getForkliftHeight());
-                switchState = scoreSwitchState.SPIT_OUT_CUBE;
-                }
-            else
-                {
-                setLiftPosition(SCALE_HEIGHT, .8);
+                scaleState = scoreScaleState.SPIT_OUT_CUBE;
                 }
             break;
-        // Push the cube on the scale
+        // Eject the cube (onto the scale preferably)
         case SPIT_OUT_CUBE:
             System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
@@ -540,17 +541,20 @@ public boolean scoreScale ()
                 scaleState = scoreScaleState.FINISHED;
                 }
             break;
-        // Debugging purposes: if we input a state that doesn't exist.
+        // If we have an undefined state input, for debugging
         default:
             System.out.println("Error finding state " + scaleState
                     + " in CubeManipulator.scoreScale()");
+            // We have finished (hopefully) scoring on the scale! Hurrah!
         case FINISHED:
-            // We have finished scoring a cube on the scale (hopefully!)
             stopEverything();
+            this.scaleState = scoreScaleState.MOVE_LIFT;
             return true;
         }
+    // We have not yet finished scoring the scale
     return false;
 }
+
 
 
 // ===================== Update Methods ========================
@@ -740,6 +744,7 @@ public void intakePushOutCubeUpdate ()
 
 // ===================== End Update Methods Section ========================
 
+
 /**
  * Cuts the power to all motors.
  */
@@ -837,7 +842,7 @@ private boolean isRunningPushOutCubeAuto = false;
 private boolean isRunningPushOutCubeTeleop = false;
 // ========================================
 
-private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
+private scoreScaleState scaleState = scoreScaleState.SPIT_OUT_CUBE;
 
 private scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
 
@@ -850,7 +855,7 @@ private final double FORKLIFT_MAX_HEIGHT = 100;
 
 private final double FORKLIFT_MIN_HEIGHT = 2;
 
-private final double FORKLIFT_SPEED_UP = -.9;
+private final double FORKLIFT_SPEED_UP = .9;
 
 private final double FORKLIFT_SPEED_DOWN = .4;
 
@@ -862,7 +867,7 @@ private final double LIFT_TOLERANCE = 3;
 
 private final double SWITCH_HEIGHT = 30;
 
-private final double SCALE_HEIGHT = 72;
+private final double SCALE_HEIGHT = 80;
 // =========================================
 
 // ================INTAKE===================

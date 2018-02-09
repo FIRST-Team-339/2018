@@ -96,6 +96,41 @@ public static void periodic ()
     if (Hardware.leftOperator.getRawButton(7) == true)
         Hardware.cubeManipulator.retractCubeIntake();
 
+    if (Hardware.leftOperator.getRawButton(8))
+        {
+        isTestinfForklift = true;
+        forkliftState = 0;
+        }
+
+    if (Hardware.leftOperator.getRawButton(7))
+        {
+        isTestinfForklift = true;
+        forkliftState = 0;
+        }
+
+    // NOT WORKING IN cubeManipulator
+    // scoreScale
+    // scoreSwitch
+
+
+    if (isTestinfForklift == true)
+        {
+        System.out.println("lifting motor position: "
+                + Hardware.liftingMotor.getPosition());
+        System.out.println("lifting motor speed: "
+                + Hardware.liftingMotor.getSpeed());
+        System.out.println("Forklift height: "
+                + Hardware.cubeManipulator.getForkliftHeight());
+        if (Hardware.cubeManipulator.scoreScale()
+                && forkliftState == 0)
+            {
+
+            }
+
+
+        }
+
+
 
     if (Hardware.leftOperator.getRawButton(9) == true)
         {
@@ -108,16 +143,17 @@ public static void periodic ()
 
     if (allowAlignment == true)
         {
+        // Hardware.cubeManipulator.forkliftUpdate();
+        // Hardware.cubeManipulator.setLiftPosition(80, .9);
         Hardware.transmission.setForAutonomous();
-        if (/* Hardware.scaleAlignment.alignToScale(.3, 3) */ Hardware.cubeManipulator
-                .scoreScale())
+        if (Hardware.scaleAlignment.alignToScale(.3, 3))
             {
+            System.out.println("aligned to scale");
             Hardware.transmission
                     .setForTeleop(Robot.GEAR_2_SPEED);
             allowAlignment = false;
             }
         }
-
     // -----------------------------------------
     // Forklift controls
     // -----------------------------------------
@@ -181,9 +217,9 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    testingDrive();
+    // testingDrive();
 
-    // beckyTest();
+    beckyTest();
 
 } // end Periodic()
 
@@ -191,25 +227,29 @@ private static boolean allowAlignment = false;
 
 private static boolean isTestingDrive = false;
 
+private static boolean isTestinfForklift = false;
+
+private static int forkliftState = 0;
+
 private static int driveState = 0;
 
 public static void beckyTest ()
 {
     if (Hardware.onNessie == true)
         {
-        if (Hardware.visionTestButton.isOnCheckNow())
-            {
-            Hardware.transmission.setForAutonomous();
-            if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
-                {
-                Hardware.autoDrive.driveInches(0, 0);
-                }
-            // System.out.println("The center is: " +
-            // Hardware.driveWithCamera.getCameraCenterValue());
-            }
+        // if (Hardware.visionTestButton.isOnCheckNow())
+        // {
+        // Hardware.transmission.setForAutonomous();
+        // if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
+        // {
+        //
+        // Hardware.autoDrive.driveInches(0, 0);
+        // }
+        // System.out.println("The center is: " +
+        // Hardware.driveWithCamera.getCameraCenterValue());
+        // }
         // Hardware.ringLightRelay.set(Value.kForward);
-
-        // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+        // Hardware.axisCamera.saveImage(ImageType.RAW);
 
         // Hardware.driveWithCamera.getCameraCenterValue();
         if (Hardware.onNessie == true)

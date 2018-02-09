@@ -651,7 +651,7 @@ public static boolean rightAutoLineExchangePath ()
  * Starts in the left corner.
  *
  * Left Plan: Drive ten inches, brake, turn 90 degrees to left, drive 73 inches,
- * turn 90 degrees to right, drive 54 inhes with camera, drive 24 inches with
+ * turn 90 degrees to right, drive 54 inches with camera, drive 24 inches with
  * ultrasonic
  * 
  * @return

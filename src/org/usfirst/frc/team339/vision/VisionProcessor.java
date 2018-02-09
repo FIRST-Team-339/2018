@@ -201,7 +201,7 @@ private Relay ringLightRelay = null;
 
 // timer used in the takeLitPicture function to delay taking an image until
 // after the ringLight turned on
-private Timer pictureTimer = new Timer();
+private final Timer pictureTimer = new Timer();
 
 /**
  * Creates the object and starts the camera server
