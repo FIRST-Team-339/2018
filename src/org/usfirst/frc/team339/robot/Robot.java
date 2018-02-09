@@ -288,6 +288,9 @@ public void robotInit ()
     // ---------------------------------
     Hardware.ringLightRelay.set(Value.kReverse);
 
+
+    Hardware.gyro.calibrate();
+    Hardware.gyro.reset();
     // User code goes above here
     // =========================================================
     // ---------------------------------------

@@ -7,6 +7,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmiss
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
 import org.usfirst.frc.team339.vision.VisionProcessor;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay.Value;
 
@@ -32,7 +33,7 @@ private UltraSonic frontUltrasonic = null;
 
 private UltraSonic rearUltrasonic = null;
 
-private KilroyGyro gyro = null;
+private ADXRS450_Gyro gyro = null;
 
 private VisionProcessor visionProcessor = null;
 
@@ -67,7 +68,7 @@ public DriveWithCamera (TransmissionBase transmission,
         Encoder leftFrontEncoder,
         Encoder rightFrontEncoder,
         Encoder leftRearEncoder, Encoder rightRearEncoder,
-        KilroyGyro gyro,
+        ADXRS450_Gyro gyro,
         VisionProcessor visionProcessor)
 {
     super(transmission, leftFrontEncoder, rightFrontEncoder,
@@ -106,7 +107,7 @@ public DriveWithCamera (TransmissionBase transmission,
 public DriveWithCamera (TransmissionBase transmission,
         Encoder leftEncoder, Encoder rightEncoder,
         UltraSonic frontUltrasonic, UltraSonic rearUltrasonic,
-        KilroyGyro gyro, VisionProcessor visionProcessor)
+        ADXRS450_Gyro gyro, VisionProcessor visionProcessor)
 {
     super(transmission, leftEncoder, rightEncoder, gyro);
 

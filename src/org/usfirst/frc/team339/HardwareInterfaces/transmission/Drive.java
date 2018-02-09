@@ -1,8 +1,8 @@
 package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
-import org.usfirst.frc.team339.HardwareInterfaces.KilroyGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 
 /**
@@ -31,7 +31,7 @@ private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
         leftRearEncoder = null, rightRearEncoder = null;
 
 
-private KilroyGyro gyro = null;
+private ADXRS450_Gyro gyro = null;
 
 private final TransmissionType transmissionType;
 
@@ -60,7 +60,7 @@ private final TransmissionType transmissionType;
 public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
         Encoder rightFrontEncoder,
         Encoder leftRearEncoder, Encoder rightRearEncoder,
-        KilroyGyro gyro)
+        ADXRS450_Gyro gyro)
 {
     this.transmissionType = transmission.getType();
     this.leftFrontEncoder = leftFrontEncoder;
@@ -89,7 +89,7 @@ public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
  *            A sensor that uses a spinning disk to measure rotation.
  */
 public Drive (TransmissionBase transmission, Encoder leftEncoder,
-        Encoder rightEncoder, KilroyGyro gyro)
+        Encoder rightEncoder, ADXRS450_Gyro gyro)
 {
     this.transmissionType = transmission.getType();
     this.leftRearEncoder = leftEncoder;
@@ -421,6 +421,7 @@ public void reset ()
     this.driveInchesInit = true;
     this.driveStraightInchesInit = true;
     this.turnDegreesInit = true;
+    this.turnDegreesGyroInit = true;
 }
 
 /**
@@ -602,7 +603,7 @@ private int[] brakePrevEncoderVals = new int[4];
 
 private double brakeDrivePower = .2;
 
-private double brakeTurnPower = .5;
+private double brakeTurnPower = 1.0;
 
 private int currentBrakeIteration = 0;
 
@@ -832,7 +833,7 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
 
 private double accelMotorPower = 0;// Power sent to each motor
 
-private double accelStartingSpeed = .2;
+private double accelStartingSpeed = .15;
 
 private long lastAccelerateTime = 0; // Milliseconds
 
@@ -1004,11 +1005,11 @@ public boolean turnDegrees (int angle, double speed)
     // positive or negative
     if (angle < 0)
         {
-        this.getTransmission().drive(-speed, speed);
+        this.getTransmission().drive(0, speed);
         }
     else
         {
-        this.getTransmission().drive(speed, -speed);
+        this.getTransmission().drive(speed, 0);
         }
 
     return false;
@@ -1035,7 +1036,7 @@ public boolean turnDegreesGyro (int angle, double speed)
         }
 
     // If we have traveled the number of degrees in any direction, stop.
-    if (Math.abs(gyro.getAngle()) > Math.abs(angle))
+    if (Math.abs(gyro.getAngle()) >= Math.abs(angle))
         {
         this.getTransmission().stop();
         turnDegreesGyroInit = true;
@@ -1075,7 +1076,7 @@ private static final int COLLECTION_TIME = 100;
 // The distance from the left side wheel to the right-side wheel divided by
 // 2, in inches. Used in turnDegrees.
 // Nov 4 changed from 16 to 17
-private static final double TURNING_RADIUS = 11 - 1;
+private static final double TURNING_RADIUS = 22;// 11 - .35;
 
 private static final int INIT_TIMEOUT = 300;// Milliseconds until the
                                             // initialization should reset.

@@ -55,12 +55,12 @@ public KilroyGyro (boolean hasGyro)
         // then declare as a new gyro
         this.gyro = new ADXRS450_Gyro();
         // If the gyro is not slightly offset, we know it is not working.
-        if (this.isConnected())
-            {
-            this.hasGyro = false;
-            System.out.println("Gyro Not Connected");
-            this.gyro = null;
-            }
+        // if (this.isConnected() == false)
+        // {
+        // this.hasGyro = false;
+        // System.out.println("Gyro Not Connected");
+        // this.gyro = null;
+        // }
         }
     // if we don't have a gyro, but we don't not have a gyro, return null
     else
@@ -153,8 +153,8 @@ public double getRate ()
  */
 public boolean isConnected ()
 {
-    return this.hasGyro == true && this.gyro != null &&
-            this.gyro.getAngle() != 0.0;
+    return this.hasGyro == true && this.gyro != null
+            && this.getRate() != 0.0;
 
 }
 

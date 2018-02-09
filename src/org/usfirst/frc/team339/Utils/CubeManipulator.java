@@ -642,7 +642,7 @@ public void forkliftUpdate ()
 public void deployIntakeUpdate ()
 {
 
-    System.out.println("deployIntakeState: " + deployIntakeState);
+    // System.out.println("deployIntakeState: " + deployIntakeState);
     // state machine for deploying the intake
     switch (deployIntakeState)
         {

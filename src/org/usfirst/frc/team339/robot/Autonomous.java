@@ -498,7 +498,14 @@ public static boolean leftAutoLineExchangePath ()
         case BRAKE_AFTER_TURN:
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
+                {
+                System.out.println("LeftFront: "
+                        + Hardware.leftFrontDriveEncoder.getDistance());
+                System.out.println(
+                        "RightFront: " + Hardware.rightFrontDriveEncoder
+                                .getDistance());
                 leftExchangeAuto = leftExchangeState.DRIVE_TO_EXCHANGE;
+                }
             break;
 
         case DRIVE_TO_EXCHANGE:
@@ -601,7 +608,14 @@ public static boolean rightAutoLineExchangePath ()
         case BRAKE_AFTER_TURN:
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
+                {
+                System.out.println("LeftFront: "
+                        + Hardware.leftFrontDriveEncoder.getDistance());
+                System.out.println(
+                        "RightFront: " + Hardware.rightFrontDriveEncoder
+                                .getDistance());
                 rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
+                }
             break;
 
         case DRIVE_TO_EXCHANGE:

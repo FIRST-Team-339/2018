@@ -33,8 +33,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
-import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -73,6 +71,9 @@ public static void init ()
     Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
     Hardware.rightDriveMotor.set(0);
     Hardware.leftDriveMotor.set(0);
+
+    // Hardware.gyro.calibrate();
+    Hardware.gyro.reset();
 } // end Init
 
 // tune pid loop
@@ -245,12 +246,12 @@ private static void testingDrive ()
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if (driveState == 0
-                && Hardware.autoDrive.driveStraightInches(60, -.5))
+                && Hardware.autoDrive.turnDegreesGyro(90, .25))
             {
             driveState++;
             }
         else if (driveState == 1
-                && Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE))
+                && Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
             {
             driveState++;
             }
@@ -258,18 +259,15 @@ private static void testingDrive ()
         if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
             {
             Hardware.transmission.stop();
-            System.out.println("LDistance: "
-                    + Hardware.leftFrontDriveEncoder.getDistance());
-            System.out.println("RDistance: "
-                    + Hardware.rightFrontDriveEncoder.getDistance());
             driveState = 0;
             Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
+            Hardware.autoDrive.reset();
             isTestingDrive = false;
             }
         }
 
     if (Hardware.leftDriver.getRawButton(8) == true)
-        Hardware.autoDrive.resetEncoders();
+        Hardware.gyro.reset();
 
 } // end of testingDrive()
 
@@ -290,7 +288,7 @@ private static void testingDrive ()
  */
 public static void printStatements ()
 {
-// =================================
+    // =================================
     // Motor
     // Prints the value of motors
     // =================================
@@ -494,6 +492,9 @@ public static void printStatements ()
     // ================
     // GYRO
     // =================
+
+    // System.out.println("Gyro: " + Hardware.gyro.getAngle());
+    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
     // =================================
     // Connection Items
