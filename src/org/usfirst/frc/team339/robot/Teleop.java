@@ -101,6 +101,41 @@ public static void periodic ()
     // Hardware.leftOperator.getRawButton(4), ImageType.RAW);
 
 
+    if (Hardware.leftOperator.getRawButton(8))
+        {
+        isTestinfForklift = true;
+        forkliftState = 0;
+        }
+
+    if (Hardware.leftOperator.getRawButton(7))
+        {
+        isTestinfForklift = true;
+        forkliftState = 0;
+        }
+
+    // NOT WORKING IN cubeManipulator
+    // scoreScale
+    // scoreSwitch
+
+
+    if (isTestinfForklift == true)
+        {
+        System.out.println("lifting motor position: "
+                + Hardware.liftingMotor.getPosition());
+        System.out.println("lifting motor speed: "
+                + Hardware.liftingMotor.getSpeed());
+        System.out.println("Forklift height: "
+                + Hardware.cubeManipulator.getForkliftHeight());
+        if (Hardware.cubeManipulator.scoreScale()
+                && forkliftState == 0)
+            {
+
+            }
+
+
+        }
+
+
 
     if (Hardware.leftOperator.getRawButton(9) == true)
         {
@@ -113,16 +148,17 @@ public static void periodic ()
 
     if (allowAlignment == true)
         {
+        // Hardware.cubeManipulator.forkliftUpdate();
+        // Hardware.cubeManipulator.setLiftPosition(80, .9);
         Hardware.transmission.setForAutonomous();
-        if (/* Hardware.scaleAlignment.alignToScale(.3, 3) */ Hardware.cubeManipulator
-                .scoreScale())
+        if (Hardware.scaleAlignment.alignToScale(.3, 3))
             {
+            System.out.println("aligned to scale");
             Hardware.transmission
                     .setForTeleop(Robot.GEAR_2_SPEED);
             allowAlignment = false;
             }
         }
-
     // -----------------------------------------
     // Forklift controls
     // -----------------------------------------
@@ -195,6 +231,10 @@ public static void periodic ()
 private static boolean allowAlignment = false;
 
 private static boolean isTestingDrive = false;
+
+private static boolean isTestinfForklift = false;
+
+private static int forkliftState = 0;
 
 private static int driveState = 0;
 
