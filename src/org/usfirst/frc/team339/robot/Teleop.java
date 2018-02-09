@@ -33,8 +33,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
-import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -290,7 +288,7 @@ private static void testingDrive ()
  */
 public static void printStatements ()
 {
-// =================================
+    // =================================
     // Motor
     // Prints the value of motors
     // =================================
