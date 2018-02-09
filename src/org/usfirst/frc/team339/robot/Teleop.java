@@ -180,9 +180,9 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    testingDrive();
+    // testingDrive();
 
-    // beckyTest();
+    beckyTest();
 
 } // end Periodic()
 
@@ -196,19 +196,19 @@ public static void beckyTest ()
 {
     if (Hardware.onNessie == true)
         {
-        if (Hardware.visionTestButton.isOnCheckNow())
-            {
-            Hardware.transmission.setForAutonomous();
-            if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
-                {
-                Hardware.autoDrive.driveInches(0, 0);
-                }
-            // System.out.println("The center is: " +
-            // Hardware.driveWithCamera.getCameraCenterValue());
-            }
+        // if (Hardware.visionTestButton.isOnCheckNow())
+        // {
+        // Hardware.transmission.setForAutonomous();
+        // if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
+        // {
+        //
+        // Hardware.autoDrive.driveInches(0, 0);
+        // }
+        // System.out.println("The center is: " +
+        // Hardware.driveWithCamera.getCameraCenterValue());
+        // }
         // Hardware.ringLightRelay.set(Value.kForward);
-
-        // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+        // Hardware.axisCamera.saveImage(ImageType.RAW);
 
         // Hardware.driveWithCamera.getCameraCenterValue();
         if (Hardware.onNessie == true)
@@ -290,7 +290,7 @@ private static void testingDrive ()
  */
 public static void printStatements ()
 {
-// =================================
+    // =================================
     // Motor
     // Prints the value of motors
     // =================================

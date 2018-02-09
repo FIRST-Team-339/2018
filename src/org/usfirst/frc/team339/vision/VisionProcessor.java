@@ -623,53 +623,6 @@ public void turnRingLightOn (boolean button)
 
 }
 
-/**
- * Takes a picture every 3 seconds.
- */
-public void takePicturesWhileDriving ()
-{
-    switch (pictureState)
-        {
-        case INIT:
-            // resets timer
-            this.pictureTimer.reset();
-            this.pictureTimer.start();
-            this.pictureState = takePictureState.WAIT;
-            break;
-        case WAIT:
-            // waits two seconds, then goes to next state
-            if (this.pictureTimer.get() >= 2)
-                {
-                this.pictureState = takePictureState.TAKE_PICTURE;
-                this.takeTimedPicture = true;
-                }
-            break;
-        case TAKE_PICTURE:
-            // saves processed picture to the rio, goes back to
-            this.takeLitPicture(this.takeTimedPicture);
-            if (this.pictureTimer.get() >= 3)
-                {
-                this.takeTimedPicture = false;
-                this.pictureState = takePictureState.INIT;
-                }
-            break;
-        default:
-            // just resets the timer
-            this.pictureTimer.reset();
-            break;
-
-        }
-}
-
-private boolean takeTimedPicture = false;
-
-private takePictureState pictureState = takePictureState.INIT;
-
-private enum takePictureState
-    {
-INIT, WAIT, TAKE_PICTURE
-    }
-
 // =====================USER ACCESSABLE METHODS========================
 /*
  * Any methods that will allow the user to directly access raw data outside
