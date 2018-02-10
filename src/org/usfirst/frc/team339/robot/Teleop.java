@@ -129,10 +129,8 @@ public static void periodic ()
         if (Hardware.cubeManipulator.deployCubeIntake()
                 && forkliftState == 0)
             {
-
+            isTestingForklift = false;
             }
-
-
         }
 
 
