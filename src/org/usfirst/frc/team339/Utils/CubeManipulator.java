@@ -220,6 +220,11 @@ public boolean setLiftPosition (double position)
 /**
  * Cuts power to the intake motors
  */
+public double getIntakeAngle ()
+{
+    return this.intakeDeployEncoder.get();
+}
+
 public void stopIntake ()
 {
     this.intakeMotor.set(0);
@@ -661,12 +666,15 @@ public void deployIntakeUpdate ()
         // and
         // moves to the next state
         case DEPLOYING:
-            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-            if (this.intakeDeployEncoder
-                    .get() >= INTAKE_DEPLOY_ANGLE
-                            - INTAKE_DEPLOY_COMPENSATION)
-                {
 
+            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+            System.out.println(
+                    "Deploy speed" + this.intakeDeployMotor.get());
+
+            if (this.getIntakeAngle() >= INTAKE_DEPLOY_ANGLE
+                    - INTAKE_DEPLOY_COMPENSATION)
+                {
+                System.out.println("Deployed the thing");
                 // stops the intake deploy motor if we've turned far enough;
                 // FINISHED does this as well, but doing it here helps
                 // keep the motor from overshooting too much
@@ -871,6 +879,8 @@ private final double SCALE_HEIGHT = 80;
 // =========================================
 
 // ================INTAKE===================
+
+
 private final double INTAKE_SPEED = .5;
 
 // how many degrees the intake deploy motor needs to turn for the intake
@@ -882,9 +892,9 @@ private final double INTAKE_RETRACT_ANGLE = 0.0;
 
 // constant subtracted from the INTAKE_DEPLOY_ANGLE to help keep us
 // from overshooting; needs to be tuned on the new robot
-private final double INTAKE_DEPLOY_COMPENSATION = 0.0;
+private final double INTAKE_DEPLOY_COMPENSATION = 20.0;
 
-private final double INTAKE_DEPLOY_SPEED = .3;
+private final double INTAKE_DEPLOY_SPEED = .2;
 
 private final double EJECT_TIME = 2.0;
 // =========================================

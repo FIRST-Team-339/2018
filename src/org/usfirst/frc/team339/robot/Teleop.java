@@ -86,6 +86,10 @@ public static void init ()
  */
 public static void periodic ()
 {
+    System.out.println(
+            "Intake ticks: " + Hardware.intakeDeployEncoder.get());
+    System.out.println(
+            "Intake angle" + Hardware.cubeManipulator.getIntakeAngle());
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
@@ -98,13 +102,13 @@ public static void periodic ()
 
     if (Hardware.leftOperator.getRawButton(8))
         {
-        isTestinfForklift = true;
+        isTestingForklift = true;
         forkliftState = 0;
         }
 
     if (Hardware.leftOperator.getRawButton(7))
         {
-        isTestinfForklift = true;
+        isTestingForklift = false;
         forkliftState = 0;
         }
 
@@ -113,7 +117,7 @@ public static void periodic ()
     // scoreSwitch
 
 
-    if (isTestinfForklift == true)
+    if (isTestingForklift == true)
         {
         System.out.println("lifting motor position: "
                 + Hardware.liftingMotor.getPosition());
@@ -121,7 +125,8 @@ public static void periodic ()
                 + Hardware.liftingMotor.getSpeed());
         System.out.println("Forklift height: "
                 + Hardware.cubeManipulator.getForkliftHeight());
-        if (Hardware.cubeManipulator.scoreScale()
+
+        if (Hardware.cubeManipulator.deployCubeIntake()
                 && forkliftState == 0)
             {
 
@@ -227,7 +232,7 @@ private static boolean allowAlignment = false;
 
 private static boolean isTestingDrive = false;
 
-private static boolean isTestinfForklift = false;
+private static boolean isTestingForklift = false;
 
 private static int forkliftState = 0;
 
