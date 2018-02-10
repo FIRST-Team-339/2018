@@ -105,11 +105,12 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
+
     // calls the forklift to update itself, allowing us to use the
     // forklift state machine; necessary for the forklift to work properly
     Hardware.cubeManipulator.masterUpdate();
     // prints the main state of autonomous (as a whole) we're in
-    System.out.println("Main State: " + autoState);
+    // System.out.println("Main State: " + autoState);
     // calls the print statements from Teleop
     Teleop.printStatements();
     // Main switch statement of auto
@@ -346,8 +347,17 @@ public static boolean autolinePath ()
             break;
         case BRAKE1:
             // Brake after driving across the line
+
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                currentAutolineState = AutolinePathStates.DEPLOY;
+            break;
+        case DEPLOY:
+            System.out.println("Deploy angle:"
+                    + Hardware.cubeManipulator.getIntakeAngle());
+            if (Hardware.cubeManipulator.deployCubeIntake())
+                {
                 currentAutolineState = AutolinePathStates.FINISH;
+                }
             break;
         default:
             // if something goes wrong, print we reached default and fall
@@ -366,7 +376,7 @@ public static boolean autolinePath ()
 // Enum for the states in the autolinePath and autolineScalePath autonomouses
 private static enum AutolinePathStates
     {
-PATH_INIT, DRIVE1, BRAKE1, FINISH
+PATH_INIT, DRIVE1, BRAKE1, FINISH, DEPLOY
     }
 
 /**
@@ -893,7 +903,7 @@ DONE
 public static boolean switchOrScalePath (Position robotPosition)
 {
     // prints the current state for this autonomous path
-    System.out.println("Current State: " + currentSwitchOrScaleState);
+    // System.out.println("Current State: " + currentSwitchOrScaleState);
 
     switch (currentSwitchOrScaleState)
         {

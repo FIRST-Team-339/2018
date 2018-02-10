@@ -87,6 +87,10 @@ public static void init ()
  */
 public static void periodic ()
 {
+    System.out.println(
+            "Intake ticks: " + Hardware.intakeDeployEncoder.get());
+    System.out.println(
+            "Intake angle" + Hardware.cubeManipulator.getIntakeAngle());
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
@@ -99,13 +103,13 @@ public static void periodic ()
 
     if (Hardware.leftOperator.getRawButton(8))
         {
-        isTestinfForklift = true;
+        isTestingForklift = true;
         forkliftState = 0;
         }
 
     if (Hardware.leftOperator.getRawButton(7))
         {
-        isTestinfForklift = true;
+        isTestingForklift = false;
         forkliftState = 0;
         }
 
@@ -114,7 +118,7 @@ public static void periodic ()
     // scoreSwitch
 
 
-    if (isTestinfForklift == true)
+    if (isTestingForklift == true)
         {
         System.out.println("lifting motor position: "
                 + Hardware.liftingMotor.getPosition());
@@ -122,7 +126,8 @@ public static void periodic ()
                 + Hardware.liftingMotor.getSpeed());
         System.out.println("Forklift height: "
                 + Hardware.cubeManipulator.getForkliftHeight());
-        if (Hardware.cubeManipulator.scoreScale()
+
+        if (Hardware.cubeManipulator.deployCubeIntake()
                 && forkliftState == 0)
             {
 
@@ -203,7 +208,10 @@ public static void periodic ()
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
 
-    if (isTestingDrive == false && allowAlignment == false)
+    if (isTestingGyroTurn == false && allowAlignment == false
+            && isTesting2StepTurn == false
+            && isTestingPivotTurn == false
+            && isTestingEncoderTurn == false)
         Hardware.transmission.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
 
@@ -226,9 +234,15 @@ public static void periodic ()
 
 private static boolean allowAlignment = false;
 
-private static boolean isTestingDrive = false;
+private static boolean isTestingGyroTurn = false;
 
-private static boolean isTestinfForklift = false;
+private static boolean isTestingEncoderTurn = false;
+
+private static boolean isTestingPivotTurn = false;
+
+private static boolean isTesting2StepTurn = false;
+
+private static boolean isTestingForklift = false;
 
 private static int forkliftState = 0;
 
@@ -255,7 +269,7 @@ public static void beckyTest ()
         // Hardware.driveWithCamera.getCameraCenterValue();
         if (Hardware.onNessie == true)
             {
-            isTestingDrive = true;
+            isTestingGyroTurn = true;
             }
         // if (Hardware.visionTestButton.isOnCheckNow())
         // {
@@ -279,15 +293,41 @@ private static void testingDrive ()
 {
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
-        isTestingDrive = true;
+        isTestingGyroTurn = true;
+        }
+    else if (Hardware.leftDriver.getRawButton(7) == true)
+        {
+        isTestingEncoderTurn = true;
+        }
+    else if (Hardware.leftDriver.getRawButton(10))
+        {
+        isTestingPivotTurn = true;
+        }
+    else if (Hardware.leftDriver.getRawButton(11))
+        {
+        isTesting2StepTurn = true;
         }
 
-    if (isTestingDrive)
+    if (isTestingGyroTurn || isTestingEncoderTurn || isTestingPivotTurn
+            || isTesting2StepTurn)
         {
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
-        if (driveState == 0
+        if (isTestingGyroTurn && driveState == 0
                 && Hardware.autoDrive.turnDegreesGyro(90, .25))
+            {
+            driveState++;
+            }
+        else if (isTestingEncoderTurn && driveState == 0
+                && Hardware.autoDrive.turnDegrees(90, .25))
+            {
+            driveState++;
+            }
+        else if (isTestingPivotTurn && driveState == 0)
+            {
+            driveState++;
+            }
+        else if (isTesting2StepTurn && driveState == 0)
             {
             driveState++;
             }
@@ -303,7 +343,7 @@ private static void testingDrive ()
             driveState = 0;
             Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
             Hardware.autoDrive.reset();
-            isTestingDrive = false;
+            isTestingGyroTurn = false;
             }
         }
 

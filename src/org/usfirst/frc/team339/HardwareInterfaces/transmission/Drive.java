@@ -1005,11 +1005,11 @@ public boolean turnDegrees (int angle, double speed)
     // positive or negative
     if (angle < 0)
         {
-        this.getTransmission().drive(0, speed);
+        this.getTransmission().drive(-speed, speed);
         }
     else
         {
-        this.getTransmission().drive(speed, 0);
+        this.getTransmission().drive(speed, -speed);
         }
 
     return false;
@@ -1076,7 +1076,7 @@ private static final int COLLECTION_TIME = 100;
 // The distance from the left side wheel to the right-side wheel divided by
 // 2, in inches. Used in turnDegrees.
 // Nov 4 changed from 16 to 17
-private static final double TURNING_RADIUS = 22;// 11 - .35;
+private static final double TURNING_RADIUS = 11 - .35;
 
 private static final int INIT_TIMEOUT = 300;// Milliseconds until the
                                             // initialization should reset.
