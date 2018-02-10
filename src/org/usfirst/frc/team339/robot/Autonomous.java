@@ -109,7 +109,7 @@ public static void periodic ()
     // forklift state machine; necessary for the forklift to work properly
     Hardware.cubeManipulator.masterUpdate();
     // prints the main state of autonomous (as a whole) we're in
-    System.out.println("Main State: " + autoState);
+    // System.out.println("Main State: " + autoState);
     // calls the print statements from Teleop
     Teleop.printStatements();
     // Main switch statement of auto
@@ -895,7 +895,7 @@ DONE
 public static boolean switchOrScalePath (Position robotPosition)
 {
     // prints the current state for this autonomous path
-    System.out.println("Current State: " + currentSwitchOrScaleState);
+    // System.out.println("Current State: " + currentSwitchOrScaleState);
 
     switch (currentSwitchOrScaleState)
         {

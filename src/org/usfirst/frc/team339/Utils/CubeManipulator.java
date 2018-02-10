@@ -148,7 +148,7 @@ public void moveForkliftWithController (Joystick operatorJoystick)
 public boolean setLiftPosition (double position, double forkliftSpeed)
 {
 
-    System.out.println("setting lift position");
+    // System.out.println("setting lift position");
 
 
     this.finishedForkliftMove = false;
@@ -164,7 +164,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
             .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
                     + LIFT_TOLERANCE)
         {
-        System.out.println("Decided to move up");
+        // System.out.println("Decided to move up");
         this.forkliftSpeedUp = -forkliftSpeed;
         this.liftState = forkliftState.MOVING_UP;
         return this.finishedForkliftMove;
@@ -861,7 +861,7 @@ private final double FORKLIFT_SPEED_DOWN = .4;
 
 private final double FORKLIFT_AT_STARTING_POSITION = 0;
 
-private final double FORKLIFT_STAY_UP_SPEED = 0.0;// -.15;
+private final double FORKLIFT_STAY_UP_SPEED = -.15;
 
 private final double LIFT_TOLERANCE = 3;
 
