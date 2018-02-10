@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -223,9 +224,9 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    // testingDrive();
+    testingDrive();
 
-    beckyTest();
+    // beckyTest();
 
 } // end Periodic()
 
@@ -249,18 +250,18 @@ public static void beckyTest ()
 {
     if (Hardware.onNessie == true)
         {
+        Hardware.ringLightRelay.set(Value.kForward);
         // if (Hardware.visionTestButton.isOnCheckNow())
         // {
         // Hardware.transmission.setForAutonomous();
         // if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
         // {
-        //
         // Hardware.autoDrive.driveInches(0, 0);
         // }
         // System.out.println("The center is: " +
         // Hardware.driveWithCamera.getCameraCenterValue());
         // }
-        // Hardware.ringLightRelay.set(Value.kForward);
+
         // Hardware.axisCamera.saveImage(ImageType.RAW);
 
         // Hardware.driveWithCamera.getCameraCenterValue();
@@ -296,7 +297,7 @@ private static void testingDrive ()
         {
         isTestingEncoderTurn = true;
         }
-    else if (Hardware.leftDriver.getRawButton(10))
+    else if (Hardware.leftDriver.getRawButton(12))
         {
         isTestingPivotTurn = true;
         }
@@ -320,11 +321,13 @@ private static void testingDrive ()
             {
             driveState++;
             }
-        else if (isTestingPivotTurn && driveState == 0)
+        else if (isTestingPivotTurn && driveState == 0
+                && Hardware.autoDrive.pivotTurnDegrees(90, .4))
             {
             driveState++;
             }
-        else if (isTesting2StepTurn && driveState == 0)
+        else if (isTesting2StepTurn && driveState == 0
+                && Hardware.autoDrive.turnDegrees2Stage(90, .4))
             {
             driveState++;
             }
@@ -341,6 +344,9 @@ private static void testingDrive ()
             Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
             Hardware.autoDrive.reset();
             isTestingGyroTurn = false;
+            isTestingEncoderTurn = false;
+            isTestingPivotTurn = false;
+            isTesting2StepTurn = false;
             }
         }
 
