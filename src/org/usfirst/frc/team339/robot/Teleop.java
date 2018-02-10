@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -86,6 +87,10 @@ public static void init ()
  */
 public static void periodic ()
 {
+    System.out.println(
+            "Intake ticks: " + Hardware.intakeDeployEncoder.get());
+    System.out.println(
+            "Intake angle" + Hardware.cubeManipulator.getIntakeAngle());
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
@@ -98,13 +103,13 @@ public static void periodic ()
 
     if (Hardware.leftOperator.getRawButton(8))
         {
-        isTestinfForklift = true;
+        isTestingForklift = true;
         forkliftState = 0;
         }
 
     if (Hardware.leftOperator.getRawButton(7))
         {
-        isTestinfForklift = true;
+        isTestingForklift = false;
         forkliftState = 0;
         }
 
@@ -113,7 +118,7 @@ public static void periodic ()
     // scoreSwitch
 
 
-    if (isTestinfForklift == true)
+    if (isTestingForklift == true)
         {
         System.out.println("lifting motor position: "
                 + Hardware.liftingMotor.getPosition());
@@ -121,7 +126,8 @@ public static void periodic ()
                 + Hardware.liftingMotor.getSpeed());
         System.out.println("Forklift height: "
                 + Hardware.cubeManipulator.getForkliftHeight());
-        if (Hardware.cubeManipulator.scoreScale()
+
+        if (Hardware.cubeManipulator.deployCubeIntake()
                 && forkliftState == 0)
             {
 
@@ -222,7 +228,7 @@ public static void periodic ()
     // -------------------------------------------
     testingDrive();
 
-    beckyTest();
+    // beckyTest();
 
 } // end Periodic()
 
@@ -236,7 +242,7 @@ private static boolean isTestingPivotTurn = false;
 
 private static boolean isTesting2StepTurn = false;
 
-private static boolean isTestinfForklift = false;
+private static boolean isTestingForklift = false;
 
 private static int forkliftState = 0;
 
@@ -246,18 +252,18 @@ public static void beckyTest ()
 {
     if (Hardware.onNessie == true)
         {
+        Hardware.ringLightRelay.set(Value.kForward);
         // if (Hardware.visionTestButton.isOnCheckNow())
         // {
         // Hardware.transmission.setForAutonomous();
         // if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
         // {
-        //
         // Hardware.autoDrive.driveInches(0, 0);
         // }
         // System.out.println("The center is: " +
         // Hardware.driveWithCamera.getCameraCenterValue());
         // }
-        // Hardware.ringLightRelay.set(Value.kForward);
+
         // Hardware.axisCamera.saveImage(ImageType.RAW);
 
         // Hardware.driveWithCamera.getCameraCenterValue();
