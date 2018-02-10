@@ -317,6 +317,7 @@ SWITCH, SCALE
 /**
  * Autonomous path for just driving across the auto line
  * 
+ * 
  * @return
  *         Whether or not the path has finished.
  */
@@ -647,9 +648,6 @@ public static boolean rightAutoLineExchangePath ()
 }
 
 /**
- * Crosses the auto line and returns to the exchange zone to setup for teleop.
- * Starts in the left corner.
- *
  * Left Plan: Drive ten inches, brake, turn 90 degrees to left, drive 73 inches,
  * turn 90 degrees to right, drive 54 inches with camera, drive 24 inches with
  * ultrasonic

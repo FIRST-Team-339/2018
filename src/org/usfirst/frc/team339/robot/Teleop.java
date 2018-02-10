@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -219,7 +220,7 @@ public static void periodic ()
     // -------------------------------------------
     // testingDrive();
 
-    beckyTest();
+    // beckyTest();
 
 } // end Periodic()
 
@@ -237,18 +238,18 @@ public static void beckyTest ()
 {
     if (Hardware.onNessie == true)
         {
+        Hardware.ringLightRelay.set(Value.kForward);
         // if (Hardware.visionTestButton.isOnCheckNow())
         // {
         // Hardware.transmission.setForAutonomous();
         // if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
         // {
-        //
         // Hardware.autoDrive.driveInches(0, 0);
         // }
         // System.out.println("The center is: " +
         // Hardware.driveWithCamera.getCameraCenterValue());
         // }
-        // Hardware.ringLightRelay.set(Value.kForward);
+
         // Hardware.axisCamera.saveImage(ImageType.RAW);
 
         // Hardware.driveWithCamera.getCameraCenterValue();
