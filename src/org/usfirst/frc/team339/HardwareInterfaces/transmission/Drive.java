@@ -1005,11 +1005,11 @@ public boolean turnDegrees (int angle, double speed)
     // positive or negative
     if (angle < 0)
         {
-        this.getTransmission().drive(0, speed);
+        this.getTransmission().drive(-speed, speed);
         }
     else
         {
-        this.getTransmission().drive(speed, 0);
+        this.getTransmission().drive(speed, -speed);
         }
 
     return false;
