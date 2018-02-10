@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -87,110 +88,109 @@ public static void init ()
  */
 public static void periodic ()
 {
-    System.out.println(
-            "Intake ticks: " + Hardware.intakeDeployEncoder.get());
-    System.out.println(
-            "Intake angle" + Hardware.cubeManipulator.getIntakeAngle());
+
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
 
-    if (Hardware.leftOperator.getRawButton(6) == true)
-        Hardware.cubeManipulator.deployCubeIntake();
 
-    if (Hardware.leftOperator.getRawButton(7) == true)
-        Hardware.cubeManipulator.retractCubeIntake();
 
-    if (Hardware.leftOperator.getRawButton(8))
-        {
-        isTestingForklift = true;
-        forkliftState = 0;
-        }
+    // if (Hardware.leftOperator.getRawButton(6) == true)
+    // Hardware.cubeManipulator.deployCubeIntake();
+    //
+    // if (Hardware.leftOperator.getRawButton(7) == true)
+    // Hardware.cubeManipulator.retractCubeIntake();
 
-    if (Hardware.leftOperator.getRawButton(7))
-        {
-        isTestingForklift = false;
-        forkliftState = 0;
-        }
+
 
     // NOT WORKING IN cubeManipulator
     // scoreScale
     // scoreSwitch
 
-
-    if (isTestingForklift == true)
-        {
-        System.out.println("lifting motor position: "
-                + Hardware.liftingMotor.getPosition());
-        System.out.println("lifting motor speed: "
-                + Hardware.liftingMotor.getSpeed());
-        System.out.println("Forklift height: "
-                + Hardware.cubeManipulator.getForkliftHeight());
-
-        if (Hardware.cubeManipulator.deployCubeIntake()
-                && forkliftState == 0)
-            {
-
-            }
-
-
-        }
-
-
-
-    if (Hardware.leftOperator.getRawButton(9) == true)
-        {
-        allowAlignment = true;
-        }
-    if (Hardware.leftOperator.getRawButton(10))
-        {
-        allowAlignment = false;
-        }
-
-    if (allowAlignment == true)
-        {
-        // Hardware.cubeManipulator.forkliftUpdate();
-        // Hardware.cubeManipulator.setLiftPosition(80, .9);
-        Hardware.transmission.setForAutonomous();
-        if (Hardware.scaleAlignment.alignToScale(.3, 3))
-            {
-            System.out.println("aligned to scale");
-            Hardware.transmission
-                    .setForTeleop(Robot.GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
+    // if (Hardware.leftOperator.getRawButton(9) == true)
+    // {
+    // allowAlignment = true;
+    // }
+    // if (Hardware.leftOperator.getRawButton(10))
+    // {
+    // allowAlignment = false;
+    // }
+    //
+    // if (allowAlignment == true)
+    // {
+    // // Hardware.cubeManipulator.setLiftPosition(80, .9);
+    // Hardware.transmission.setForAutonomous();
+    // if (Hardware.scaleAlignment.alignToScale(.3, 3))
+    // {
+    // System.out.println("aligned to scale");
+    // Hardware.transmission
+    // .setForTeleop(Robot.GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // }
     // -----------------------------------------
-    // Forklift controls
+    // Deploy Intake controls
     // -----------------------------------------
-    if (allowAlignment == false)
-        {
-        Hardware.cubeManipulator.masterUpdate();
 
+
+    Hardware.cubeManipulator.deployRetractIntakeByButtons(
+            Hardware.leftOperator.getRawButton(4),
+            Hardware.leftOperator.getRawButton(5),
+            Hardware.leftOperator.getRawButton(2));
+
+
+    // -----------------------------------------
+    // Forklift (not Cube Manipulator) controls
+    // -----------------------------------------
+    // if (allowAlignment == false)
+    // {
+
+    if (Math.abs(Hardware.rightOperator
+            .getY()) >= CubeManipulator.JOYSTICK_DEADBAND)
+        {
         Hardware.cubeManipulator
                 .moveForkliftWithController(Hardware.rightOperator);
-
-        // Intake controls
-        Hardware.cubeManipulator
-                .intakeCube(Hardware.rightOperator.getRawButton(2));
-
-        Hardware.cubeManipulator
-                .intakeCubeOverride(
-                        Hardware.rightOperator.getRawButton(4));
-
-        // Push out the cube
-        Hardware.cubeManipulator
-                .pushOutCubeTeleop(
-                        Hardware.rightOperator.getRawButton(3));
-
-        // Set intake/deploy motor to position based on encoder w/ Momentary
-        // Switch
-        if (Hardware.deployIntakeButton.isOnCheckNow() == true)
-            Hardware.cubeManipulator.deployCubeIntake();
         }
+    // testing code for setting forklift height; temporary
+    // if (Hardware.rightOperator.getRawButton(6) == true)
+    // {
+    // Hardware.cubeManipulator.setLiftPosition(0.0);
+    // }
+    //
+    // if (Hardware.rightOperator.getRawButton(7) == true)
+    // {
+    // Hardware.cubeManipulator.setLiftPosition(30);
+    // }
+    //
+    // if (Hardware.rightOperator.getRawButton(8))
+    // {
+    // Hardware.cubeManipulator.setLiftPosition(40.0);
+    // }
+
+
+    // Intake controls
+    Hardware.cubeManipulator
+            .intakeCube(Hardware.rightOperator.getRawButton(2));
+
+    Hardware.cubeManipulator
+            .intakeCubeOverride(
+                    Hardware.rightOperator.getRawButton(4));
+
+    // Push out the cube
+    Hardware.cubeManipulator
+            .pushOutCubeTeleop(
+                    Hardware.rightOperator.getRawButton(3));
+
+    // } // end if(allowAllignment == false) if statement
     // Set Servo to position w/ Momentary Switch
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+
+
+    // update for the cube manipulator (forklift, intake, etc.) and its state
+    // machines
+    Hardware.cubeManipulator.masterUpdate();
+
 
     // =================================================================
     // CAMERA CODE
@@ -214,6 +214,10 @@ public static void periodic ()
             && isTestingEncoderTurn == false)
         Hardware.transmission.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
+
+    // update
+
+
 
 
     // ------------------------------------
@@ -241,10 +245,6 @@ private static boolean isTestingEncoderTurn = false;
 private static boolean isTestingPivotTurn = false;
 
 private static boolean isTesting2StepTurn = false;
-
-private static boolean isTestingForklift = false;
-
-private static int forkliftState = 0;
 
 private static int driveState = 0;
 
@@ -491,16 +491,16 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Right Rear Encoder Ticks",
     // Hardware.rightRearDriveEncoder.get());
 
-    // System.out.println(
-    // "Lift Encoder Inches = "
-    // + Hardware.liftingEncoder.getDistance());
-    // SmartDashboard.putNumber("Lift Encoder Inches",
-    // Hardware.liftingEncoder.getDistance());
+    System.out.println(
+            "Lift Encoder Inches = "
+                    + Hardware.liftingEncoder.getDistance());
+    SmartDashboard.putNumber("Lift Encoder Inches",
+            Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
-    // SmartDashboard.putNumber("Lift Encoder Ticks",
-    // Hardware.liftingEncoder.getDistance());
+    SmartDashboard.putNumber("Lift Encoder Ticks",
+            Hardware.liftingEncoder.getDistance());
 
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
@@ -539,10 +539,8 @@ public static void printStatements ()
 
     // ---------------------------------
     // Solenoids
-    // prints the state of solenoids
     // ---------------------------------
 
-    // =================================
     // Analogs
     // =================================
 

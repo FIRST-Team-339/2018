@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Class for forklift and intake subsystems which includes a Forklift,
@@ -147,10 +148,6 @@ public void moveForkliftWithController (Joystick operatorJoystick)
  */
 public boolean setLiftPosition (double position, double forkliftSpeed)
 {
-
-    // System.out.println("setting lift position");
-
-
     this.finishedForkliftMove = false;
 
     // If the requested position is above the forklift height, then
@@ -260,6 +257,92 @@ public boolean deployCubeIntake ()
 
     return false; // returns false if we haven't finished deploying
 }
+
+
+/**
+ * Method that handles calling the deployCubeIntake and retractCubeIntake
+ * functions, as well using the overrides for deploy and retract
+ * 
+ * @param deployButton
+ *            Joystick button used to deploy the intake mechanism
+ * @param retractButton
+ *            Joystick button used to retract the intake mechanism
+ * @param overrideButton
+ *            Joystick button used to toggle the overrides; hold this down and
+ *            hit the other buttons in order to use the overriden version of the
+ *            functions
+ * 
+ * @return true if the intake (state) is deployed, else if otherwise
+ * 
+ * @author C.R.
+ */
+public boolean deployRetractIntakeByButtons (boolean deployButton,
+        boolean retractButton,
+        boolean overrideButton)
+{
+
+    if (overrideButton == false) // run the non-overriden deploy and retract
+                                 // functions
+        {
+        if (deployButton == true) // if the deployButton is being pressed
+            {
+            // ask the intake mechanism to deploy if it hasn't been deployed
+            // already
+            deployCubeIntake();
+            }
+
+        if (retractButton == true) // if the reractButton is being pressed
+            {
+            // ask the intake mechanism to retract if it is already deployed
+            retractCubeIntake();
+            }
+        }
+    else // if overrideButton == true, run the overidden versions of the deploy
+         // and retract functions
+        {
+        if (deployButton == true) // if the deploy button is being pressed
+            {
+            // set the deployIntakeState to OVERRIDE_DEPLOY so the deployRetract
+            // state machine knows to deploy no matter what the encoders say
+            deployIntakeState = DeployState.OVERRIDE_DEPLOY;
+            this.lastOverride = DeployState.OVERRIDE_DEPLOY;
+            }
+        // if the deploy button is not being pressed and the retract button is
+        // being pressed
+        else if (retractButton == true)
+            {
+            // set the deployIntakeState to OVERRIDE_RETRACT so the
+            // deployRetract state machine knwos to retract no matter what the
+            // encoders say
+            deployIntakeState = DeployState.OVERRIDE_RETRACT;
+            this.lastOverride = DeployState.OVERRIDE_RETRACT;
+            }
+        else
+            {
+            // default state when we are in override (if we aren't trying to
+            // deploy or retract); stops the intake motor
+            deployIntakeState = DeployState.OVERRIDE_DEFAULT;
+            }
+        }
+
+    // if we were using override last call but are not now
+    if (usedOverrideLast == true && overrideButton == false)
+        {
+        // sets the deployIntakeState back to its appropriate non override state
+        deployIntakeState = DeployState.OVERRIDE_END;
+        }
+
+
+    usedOverrideLast = overrideButton;
+    // return true is we are not in an override state and the intake mechanism
+    // is deployed
+    return deployIntakeState == DeployState.DEPLOYED;
+}
+
+// boolean used to tell if we were in override last call; used so the
+// deployRetractIntakeByButtons
+private boolean usedOverrideLast = false;
+
 
 /**
  * Draws the cube intake mechanism back into the robot if it the mechanism
@@ -574,6 +657,7 @@ public boolean scoreScale ()
  */
 public void masterUpdate ()
 {
+
     // update the forklift state machine
     forkliftUpdate();
     // update the deployIntake state machine
@@ -594,15 +678,19 @@ public void masterUpdate ()
  */
 public void forkliftUpdate ()
 {
+    SmartDashboard.putString("Forklift State:", liftState + "");
+    System.out.println("Forklift State:  " + liftState);
+
     switch (liftState)
         {
         // Moves the forklift up
         case MOVING_UP:
             this.finishedForkliftMove = false;
-            if (Math.abs(
-                    this.getForkliftHeight()) >= FORKLIFT_MAX_HEIGHT)
+            if (// Math.abs(
+            this.getForkliftHeight() >= FORKLIFT_MAX_HEIGHT)
                 {
                 this.liftState = forkliftState.STAY_AT_POSITION;
+                this.finishedForkliftMove = true;
                 }
             else
                 {
@@ -651,7 +739,6 @@ public void forkliftUpdate ()
 public void deployIntakeUpdate ()
 {
 
-    // System.out.println("deployIntakeState: " + deployIntakeState);
     // state machine for deploying the intake
     switch (deployIntakeState)
         {
@@ -668,13 +755,10 @@ public void deployIntakeUpdate ()
         case DEPLOYING:
 
             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-            System.out.println(
-                    "Deploy speed" + this.intakeDeployMotor.get());
 
             if (this.getIntakeAngle() >= INTAKE_DEPLOY_ANGLE
                     - INTAKE_DEPLOY_COMPENSATION)
                 {
-                System.out.println("Deployed the thing");
                 // stops the intake deploy motor if we've turned far enough;
                 // FINISHED does this as well, but doing it here helps
                 // keep the motor from overshooting too much
@@ -693,9 +777,10 @@ public void deployIntakeUpdate ()
         // brings the intake mechanism back into the robot, and sets the
         // state to NOT_DEPLOYED
         case RETRACTING:
-            this.intakeDeployMotor.set(-INTAKE_DEPLOY_SPEED);
+            this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
             if (this.intakeDeployEncoder
-                    .get() <= INTAKE_RETRACT_ANGLE)
+                    .get() <= INTAKE_RETRACT_ANGLE
+                            - INTAKE_RETRACT_COMPENSATION)
                 {
                 // brings back in the intake mechanism until the intake
                 // deploy
@@ -712,7 +797,46 @@ public void deployIntakeUpdate ()
 
         case OVERRIDE_RETRACT: // override that retracts the intake mechanism
                                // regardless of encoders
-            this.intakeDeployMotor.set(-INTAKE_DEPLOY_SPEED);
+            this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
+            break;
+        case OVERRIDE_DEFAULT: // default state if the override button is being
+                               // held; just tells the motor to stop (but might
+                               // keep moving anyway because of gravity)
+            this.intakeDeployMotor.set(0.0);
+            break;
+        // sets the deployIntakeState back to its proper non override state
+        // based on encoder values
+        case OVERRIDE_END:
+            // if the encoder says we are deployed, stop the motor and set state
+            // to DEPLOYED
+            if (this.getIntakeAngle() >= INTAKE_DEPLOY_ANGLE
+                    - INTAKE_DEPLOY_COMPENSATION)
+                {
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.DEPLOYED;
+                }
+            // if the encoder says the intake is still in the robot, stop the
+            // motor and set the state to NOT_DEPLOYED
+            else if (this.intakeDeployEncoder
+                    .get() <= INTAKE_RETRACT_ANGLE
+                            - INTAKE_RETRACT_COMPENSATION)
+                {
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.NOT_DEPLOYED;
+                }
+            // if the encoder isn't telling us we are deployed and retracted,
+            // and the time we thing we did in override was retract, tell the
+            // intake to keep retracting
+            else if (this.lastOverride == DeployState.OVERRIDE_RETRACT)
+                {
+                deployIntakeState = DeployState.RETRACTING;
+                }
+            // otherwise, tell the intake to deploy
+            else
+                {
+                deployIntakeState = DeployState.DEPLOYING;
+                }
+
             break;
 
         // we shouldn't ever get here, but in case we do, stop the intake
@@ -782,7 +906,7 @@ MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION, INTAKE_IS_DEPLOY
  */
 private static enum DeployState
     {
-NOT_DEPLOYED, DEPLOYING, DEPLOYED, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT
+NOT_DEPLOYED, DEPLOYING, DEPLOYED, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, OVERRIDE_DEFAULT, OVERRIDE_END
     }
 
 /**
@@ -869,7 +993,7 @@ private final double FORKLIFT_SPEED_DOWN = .4;
 
 private final double FORKLIFT_AT_STARTING_POSITION = 0;
 
-private final double FORKLIFT_STAY_UP_SPEED = -.15;
+private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
 private final double LIFT_TOLERANCE = 3;
 
@@ -888,18 +1012,31 @@ private final double INTAKE_SPEED = .5;
 private final double INTAKE_DEPLOY_ANGLE = 75;
 
 // the encoder value that counts as the intake being retracted
-private final double INTAKE_RETRACT_ANGLE = 0.0;
+private final double INTAKE_RETRACT_ANGLE = 10.0;
 
 // constant subtracted from the INTAKE_DEPLOY_ANGLE to help keep us
 // from overshooting; needs to be tuned on the new robot
 private final double INTAKE_DEPLOY_COMPENSATION = 20.0;
 
+// constant SUBTRACTED from the INTAKE_RETRACT_ANGLE to help keep us from over
+// or under shooting; needs to be tuned on the new robot; if you want the intake
+// motor to be stopping earlier, should be negative
+private final double INTAKE_RETRACT_COMPENSATION = -10.0;
+
 private final double INTAKE_DEPLOY_SPEED = .2;
 
+// speed we retract the intake mechanism at
+private final double INTAKE_RETRACT_SPEED = -INTAKE_DEPLOY_SPEED;
+
 private final double EJECT_TIME = 2.0;
+
+// is set elsewhere in the code to OVERRIDE_DEPLOY or OVERRIDE_RETRACT,
+// depending on which one was used last; used in the OVERRIDE_END state in the
+// deploy/retract intake state machine
+private DeployState lastOverride = DeployState.OVERRIDE_DEPLOY;
 // =========================================
 
-private final double JOYSTICK_DEADBAND = .2;
+public static final double JOYSTICK_DEADBAND = .2;
 
 // ---------------------------------------------
 }
