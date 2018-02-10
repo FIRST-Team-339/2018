@@ -2,8 +2,8 @@ package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.GyroBase;
 
 /**
  * The class that controls autonomous driving functions or
@@ -30,8 +30,7 @@ private MecanumTransmission mecanumTransmission = null;
 private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
         leftRearEncoder = null, rightRearEncoder = null;
 
-
-private ADXRS450_Gyro gyro = null;
+private GyroBase gyro = null;
 
 private final TransmissionType transmissionType;
 
@@ -60,7 +59,7 @@ private final TransmissionType transmissionType;
 public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
         Encoder rightFrontEncoder,
         Encoder leftRearEncoder, Encoder rightRearEncoder,
-        ADXRS450_Gyro gyro)
+        GyroBase gyro)
 {
     this.transmissionType = transmission.getType();
     this.leftFrontEncoder = leftFrontEncoder;
@@ -89,7 +88,7 @@ public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
  *            A sensor that uses a spinning disk to measure rotation.
  */
 public Drive (TransmissionBase transmission, Encoder leftEncoder,
-        Encoder rightEncoder, ADXRS450_Gyro gyro)
+        Encoder rightEncoder, GyroBase gyro)
 {
     this.transmissionType = transmission.getType();
     this.leftRearEncoder = leftEncoder;
@@ -164,6 +163,28 @@ public TransmissionBase getTransmission ()
         default:
             return null;
         }
+}
+
+/**
+ * return Gyro to the caller
+ * 
+ * @return - this class is Gyro
+ */
+public GyroBase getGyro ()
+{
+    return (this.gyro);
+}
+
+/**
+ * 
+ * @param newGyro
+ *            - Gyro for drive to use
+ * @return - this class is Gyro
+ */
+
+public GyroBase setGyro (GyroBase newGyro)
+{
+    return (this.gyro = newGyro);
 }
 
 // ================ENCODER METHODS================
