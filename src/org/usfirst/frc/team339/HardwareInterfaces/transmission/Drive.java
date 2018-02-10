@@ -1061,6 +1061,117 @@ private boolean turnDegreesGyroInit = true;
 // variable to determine if it is the first time running a method
 private boolean turnDegreesInit = true;
 
+/**
+ * Turns the robot by pivoting either on one wheel or the other. Only useful for
+ * 2 wheel drive systems.
+ * 
+ * @param degrees
+ *            number of degrees the robot should turn. Negative for
+ *            counter-clockwise, positive for clockwise.
+ * @param power
+ *            How fast the robot should be turning, in percentage (0.0 to 1.0)
+ * @return
+ *         Whether or not the robot has finished turning.
+ */
+public boolean pivotTurnDegrees (int degrees, double power)
+{
+    // Reset the encoders on the first start only
+    if (pivotTurnDegreesInit == true)
+        {
+        this.resetEncoders();
+        pivotTurnDegreesInit = false;
+        }
+
+    // Turning clockwise
+    if (degrees > 0)
+        {
+        // If the left side has reached it's calculated arc length, stop.
+        if (this.getEncoderDistanceAverage(WheelGroups.LEFT_SIDE) > Math
+                .toRadians(Math.abs(degrees)) * (TURNING_RADIUS))
+            {
+            this.getTransmission().stop();
+            pivotTurnDegreesInit = true;
+            return true;
+            }
+        this.getTransmission().drive(power,
+                -pivotDegreesStationaryPercentage);
+        }
+    // Turning counter-clockwise
+    else
+        {
+        // If the right side has reached it's calculated arc length, stop.
+        if (this.getEncoderDistanceAverage(
+                WheelGroups.RIGHT_SIDE) > Math
+                        .toRadians(Math.abs(degrees))
+                        * (TURNING_RADIUS * 2))
+            {
+            this.getTransmission().stop();
+            pivotTurnDegreesInit = true;
+            return true;
+            }
+        this.getTransmission().drive(-pivotDegreesStationaryPercentage,
+                power);
+        }
+    return false;
+}
+
+private boolean pivotTurnDegreesInit = true;
+
+private double pivotDegreesStationaryPercentage = .1;
+
+/**
+ * Turns the robot using the gyro, and slows down after passing
+ * "turnDegreesTriggerStage" degrees from the requested degrees.
+ * 
+ * @param degrees
+ *            How much the robot should turn, in degrees. Positive for
+ *            clockwise, negative for counter-clockwise.
+ * @param power
+ *            How fast the robot should turn, in percentage (0.0 to 1.0)
+ * @return
+ *         Whether or not the robot has finished turning.
+ */
+public boolean turnDegrees2Stage (int degrees, double power)
+{
+    if (turnDegrees2StageInit == true)
+        {
+        this.gyro.reset();
+        turnDegrees2StageInit = false;
+        }
+
+    // If we have turned (degrees) at all (left or right, just in case), return
+    // true.
+    if (Math.abs(gyro.getAngle()) > Math.abs(degrees))
+        {
+        this.getTransmission().stop();
+        turnDegrees2StageInit = true;
+        return true;
+        }
+
+    // 2nd stage run slow
+    if (Math.abs(this.gyro.getAngle()) > degrees
+            - turnDegreesTriggerStage)
+        {
+        this.getTransmission().drive(
+                Math.signum(degrees) * turnDegrees2ndStagePower,
+                -Math.signum(degrees) * turnDegrees2ndStagePower);
+        }
+    // 1st stage run (power)
+    else
+        {
+        this.getTransmission().drive(Math.signum(degrees) * power,
+                -Math.signum(degrees) * power);
+        }
+
+    return false;
+}
+
+private boolean turnDegrees2StageInit = true;
+
+private double turnDegreesTriggerStage = 15;// Degrees
+
+private double turnDegrees2ndStagePower = .15;
+
 // ---------------------------------
 // THis is the distance we expect to move
 // during a brake call (in inches)
@@ -1076,7 +1187,7 @@ private static final int COLLECTION_TIME = 100;
 // The distance from the left side wheel to the right-side wheel divided by
 // 2, in inches. Used in turnDegrees.
 // Nov 4 changed from 16 to 17
-private static final double TURNING_RADIUS = 22;// 11 - .35;
+private static final double TURNING_RADIUS = 11 - .35;
 
 private static final int INIT_TIMEOUT = 300;// Milliseconds until the
                                             // initialization should reset.
