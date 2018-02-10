@@ -352,8 +352,6 @@ public static boolean autolinePath ()
                 currentAutolineState = AutolinePathStates.DEPLOY;
             break;
         case DEPLOY:
-            System.out.println("Deploy angle:"
-                    + Hardware.cubeManipulator.getIntakeAngle());
             if (Hardware.cubeManipulator.deployCubeIntake())
                 {
                 currentAutolineState = AutolinePathStates.FINISH;

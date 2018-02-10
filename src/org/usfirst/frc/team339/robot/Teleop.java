@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -87,110 +88,109 @@ public static void init ()
  */
 public static void periodic ()
 {
-    System.out.println(
-            "Intake ticks: " + Hardware.intakeDeployEncoder.get());
-    System.out.println(
-            "Intake angle" + Hardware.cubeManipulator.getIntakeAngle());
+
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
 
-    if (Hardware.leftOperator.getRawButton(6) == true)
-        Hardware.cubeManipulator.deployCubeIntake();
 
-    if (Hardware.leftOperator.getRawButton(7) == true)
-        Hardware.cubeManipulator.retractCubeIntake();
 
-    if (Hardware.leftOperator.getRawButton(8))
-        {
-        isTestingForklift = true;
-        forkliftState = 0;
-        }
+    // if (Hardware.leftOperator.getRawButton(6) == true)
+    // Hardware.cubeManipulator.deployCubeIntake();
+    //
+    // if (Hardware.leftOperator.getRawButton(7) == true)
+    // Hardware.cubeManipulator.retractCubeIntake();
 
-    if (Hardware.leftOperator.getRawButton(7))
-        {
-        isTestingForklift = false;
-        forkliftState = 0;
-        }
+
 
     // NOT WORKING IN cubeManipulator
     // scoreScale
     // scoreSwitch
 
-
-    if (isTestingForklift == true)
-        {
-        System.out.println("lifting motor position: "
-                + Hardware.liftingMotor.getPosition());
-        System.out.println("lifting motor speed: "
-                + Hardware.liftingMotor.getSpeed());
-        System.out.println("Forklift height: "
-                + Hardware.cubeManipulator.getForkliftHeight());
-
-        if (Hardware.cubeManipulator.deployCubeIntake()
-                && forkliftState == 0)
-            {
-
-            }
-
-
-        }
-
-
-
-    if (Hardware.leftOperator.getRawButton(9) == true)
-        {
-        allowAlignment = true;
-        }
-    if (Hardware.leftOperator.getRawButton(10))
-        {
-        allowAlignment = false;
-        }
-
-    if (allowAlignment == true)
-        {
-        // Hardware.cubeManipulator.forkliftUpdate();
-        // Hardware.cubeManipulator.setLiftPosition(80, .9);
-        Hardware.transmission.setForAutonomous();
-        if (Hardware.scaleAlignment.alignToScale(.3, 3))
-            {
-            System.out.println("aligned to scale");
-            Hardware.transmission
-                    .setForTeleop(Robot.GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
+    // if (Hardware.leftOperator.getRawButton(9) == true)
+    // {
+    // allowAlignment = true;
+    // }
+    // if (Hardware.leftOperator.getRawButton(10))
+    // {
+    // allowAlignment = false;
+    // }
+    //
+    // if (allowAlignment == true)
+    // {
+    // // Hardware.cubeManipulator.setLiftPosition(80, .9);
+    // Hardware.transmission.setForAutonomous();
+    // if (Hardware.scaleAlignment.alignToScale(.3, 3))
+    // {
+    // System.out.println("aligned to scale");
+    // Hardware.transmission
+    // .setForTeleop(Robot.GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // }
     // -----------------------------------------
-    // Forklift controls
+    // Deploy Intake controls
     // -----------------------------------------
-    if (allowAlignment == false)
-        {
-        Hardware.cubeManipulator.masterUpdate();
 
+
+    Hardware.cubeManipulator.deployRetractIntakeByButtons(
+            Hardware.leftOperator.getRawButton(4),
+            Hardware.leftOperator.getRawButton(5),
+            Hardware.leftOperator.getRawButton(2));
+
+
+    // -----------------------------------------
+    // Forklift (not Cube Manipulator) controls
+    // -----------------------------------------
+    // if (allowAlignment == false)
+    // {
+
+    if (Math.abs(Hardware.rightOperator
+            .getY()) >= CubeManipulator.JOYSTICK_DEADBAND)
+        {
         Hardware.cubeManipulator
                 .moveForkliftWithController(Hardware.rightOperator);
-
-        // Intake controls
-        Hardware.cubeManipulator
-                .intakeCube(Hardware.rightOperator.getRawButton(2));
-
-        Hardware.cubeManipulator
-                .intakeCubeOverride(
-                        Hardware.rightOperator.getRawButton(4));
-
-        // Push out the cube
-        Hardware.cubeManipulator
-                .pushOutCubeTeleop(
-                        Hardware.rightOperator.getRawButton(3));
-
-        // Set intake/deploy motor to position based on encoder w/ Momentary
-        // Switch
-        if (Hardware.deployIntakeButton.isOnCheckNow() == true)
-            Hardware.cubeManipulator.deployCubeIntake();
         }
+    // testing code for setting forklift height; temporary
+    // if (Hardware.rightOperator.getRawButton(6) == true)
+    // {
+    // Hardware.cubeManipulator.setLiftPosition(0.0);
+    // }
+    //
+    // if (Hardware.rightOperator.getRawButton(7) == true)
+    // {
+    // Hardware.cubeManipulator.setLiftPosition(30);
+    // }
+    //
+    // if (Hardware.rightOperator.getRawButton(8))
+    // {
+    // Hardware.cubeManipulator.setLiftPosition(40.0);
+    // }
+
+
+    // Intake controls
+    Hardware.cubeManipulator
+            .intakeCube(Hardware.rightOperator.getRawButton(2));
+
+    Hardware.cubeManipulator
+            .intakeCubeOverride(
+                    Hardware.rightOperator.getRawButton(4));
+
+    // Push out the cube
+    Hardware.cubeManipulator
+            .pushOutCubeTeleop(
+                    Hardware.rightOperator.getRawButton(3));
+
+    // } // end if(allowAllignment == false) if statement
     // Set Servo to position w/ Momentary Switch
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+
+
+    // update for the cube manipulator (forklift, intake, etc.) and its state
+    // machines
+    Hardware.cubeManipulator.masterUpdate();
+
 
     // =================================================================
     // CAMERA CODE
@@ -215,6 +215,10 @@ public static void periodic ()
         Hardware.transmission.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
 
+    // update
+
+
+
 
     // ------------------------------------
     // print out any information needed to
@@ -236,15 +240,13 @@ private static boolean allowAlignment = false;
 
 private static boolean isTestingGyroTurn = false;
 
+private static boolean isTestingAnalogGyroTurn = false;
+
 private static boolean isTestingEncoderTurn = false;
 
 private static boolean isTestingPivotTurn = false;
 
 private static boolean isTesting2StepTurn = false;
-
-private static boolean isTestingForklift = false;
-
-private static int forkliftState = 0;
 
 private static int driveState = 0;
 
@@ -294,6 +296,7 @@ private static void testingDrive ()
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
         isTestingGyroTurn = true;
+        Hardware.autoDrive.setGyro(Hardware.gyro);
         }
     else if (Hardware.leftDriver.getRawButton(7) == true)
         {
@@ -307,39 +310,54 @@ private static void testingDrive ()
         {
         isTesting2StepTurn = true;
         }
+    else if (Hardware.leftDriver.getRawButton(5) == true)
+        {
+        isTestingAnalogGyroTurn = true;
+        Hardware.autoDrive.setGyro(Hardware.gyroAnalog);
+        }
 
-    if (isTestingGyroTurn || isTestingEncoderTurn || isTestingPivotTurn
-            || isTesting2StepTurn)
+    if (isTestingGyroTurn == true || isTestingEncoderTurn == true
+            || isTestingPivotTurn == true
+            || isTesting2StepTurn == true
+            || isTestingAnalogGyroTurn == true)
         {
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
-        if (isTestingGyroTurn && driveState == 0
-                && Hardware.autoDrive.turnDegreesGyro(90, .25))
+        if ((isTestingGyroTurn == true
+                || isTestingAnalogGyroTurn == true) && driveState == 0
+                && Hardware.autoDrive.turnDegreesGyro(90, .25) == true)
             {
             driveState++;
             }
         else if (isTestingEncoderTurn && driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .25))
+                && Hardware.autoDrive.turnDegrees(90, .25) == true)
             {
             driveState++;
             }
         else if (isTestingPivotTurn && driveState == 0
-                && Hardware.autoDrive.pivotTurnDegrees(90, .4))
+                && Hardware.autoDrive.pivotTurnDegrees(90, .4) == true)
             {
             driveState++;
             }
         else if (isTesting2StepTurn && driveState == 0
-                && Hardware.autoDrive.turnDegrees2Stage(90, .4))
+                && Hardware.autoDrive.turnDegrees2Stage(90, .4) == true)
+            {
+            driveState++;
+            }
+        else if (isTestingAnalogGyroTurn && driveState == 0
+                && Hardware.autoDrive.turnDegreesGyro(90, .4) == true)
             {
             driveState++;
             }
         else if (driveState == 1
-                && Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+                && Hardware.autoDrive
+                        .brake(BrakeType.AFTER_TURN) == true)
             {
             driveState++;
             }
 
-        if (Hardware.leftDriver.getRawButton(10) || driveState == 2)
+        if (Hardware.leftDriver.getRawButton(10) == true
+                || driveState == 2)
             {
             Hardware.transmission.stop();
             driveState = 0;
@@ -349,11 +367,15 @@ private static void testingDrive ()
             isTestingEncoderTurn = false;
             isTestingPivotTurn = false;
             isTesting2StepTurn = false;
+            isTestingAnalogGyroTurn = false;
             }
         }
 
     if (Hardware.leftDriver.getRawButton(8) == true)
+        {
         Hardware.gyro.reset();
+        Hardware.gyroAnalog.reset();
+        }
 
 } // end of testingDrive()
 
@@ -539,10 +561,8 @@ public static void printStatements ()
 
     // ---------------------------------
     // Solenoids
-    // prints the state of solenoids
     // ---------------------------------
 
-    // =================================
     // Analogs
     // =================================
 
@@ -555,9 +575,17 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Delay Pot",
     // Hardware.delayPot.get(0, 5));
 
-    // --------------------------
+    // ---------------------------------
+    // GYRO
+    // ---------------------------------
+
+    // System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
+    SmartDashboard.putNumber("AnalogGyro",
+            Hardware.gyroAnalog.getAngle());
+
+    // ---------------------------------
     // Sonar/UltraSonic
-    // --------------------------
+    // ---------------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     // SmartDashboard.putNumber("Front Ultrasonic",
@@ -575,9 +603,13 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Climb Servo",
     // Hardware.climbingMechanismServo.getAngle());
 
-    // ================
-    // GYRO
-    // =================
+    // =================================
+    // SPI Bus
+    // =================================
+
+    // -------------------------------------
+    // Analog Interfaces
+    // -------------------------------------
 
     // System.out.println("Gyro: " + Hardware.gyro.getAngle());
     SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
