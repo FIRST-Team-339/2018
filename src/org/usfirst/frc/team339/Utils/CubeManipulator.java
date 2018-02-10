@@ -81,7 +81,7 @@ public CubeManipulator (SpeedController forkliftMotor,
  */
 public void stopForklift ()
 {
-    System.out.println("Calling stop forklift");
+    // System.out.println("Calling stop forklift");
     this.liftState = forkliftState.STAY_AT_POSITION;
 }
 
@@ -171,7 +171,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
             .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
                     + LIFT_TOLERANCE)
         {
-        System.out.println("Decided to move down");
+        // System.out.println("Decided to move down");
         this.forkliftSpeedDown = forkliftSpeed;
         this.liftState = forkliftState.MOVING_DOWN;
         }
@@ -517,8 +517,8 @@ public boolean pushOutCubeAuto ()
             break;
         // Stop motors and reset state machine for future uses.
         default:
-            System.out.println("Error finding state " + pushState
-                    + " in CubeManipulator.pushOutCubeAuto()");
+            // System.out.println("Error finding state " + pushState
+            // + " in CubeManipulator.pushOutCubeAuto()");
         case DONE:
             this.intakeMotor.set(0);
             this.pushState = pushOutState.INIT;
@@ -562,7 +562,7 @@ public boolean scoreSwitch ()
             break;
         // Move the lift to the switch height, and move on when it's finished
         case MOVE_LIFT:
-            System.out.println("Moving lift");
+            // System.out.println("Moving lift");
             if (setLiftPosition(SWITCH_HEIGHT,
                     FORKLIFT_SPEED_UP) == true)
                 {
@@ -571,7 +571,7 @@ public boolean scoreSwitch ()
             break;
         // Eject the cube (onto the switch preferably)
         case SPIT_OUT_CUBE:
-            System.out.println("Spitting out cube");
+            // System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
                 switchState = scoreSwitchState.FINISHED;
@@ -614,7 +614,7 @@ public boolean scoreScale ()
             break;
         // Move the lift to the scale height, and move on when it's finished
         case MOVE_LIFT:
-            System.out.println("Moving lift");
+            // System.out.println("Moving lift");
             if (setLiftPosition(SCALE_HEIGHT,
                     FORKLIFT_SPEED_UP) == true)
                 {
@@ -623,7 +623,7 @@ public boolean scoreScale ()
             break;
         // Eject the cube (onto the scale preferably)
         case SPIT_OUT_CUBE:
-            System.out.println("Spitting out cube");
+            // System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
                 scaleState = scoreScaleState.FINISHED;
@@ -679,7 +679,7 @@ public void masterUpdate ()
 public void forkliftUpdate ()
 {
     SmartDashboard.putString("Forklift State:", liftState + "");
-    System.out.println("Forklift State:  " + liftState);
+    // System.out.println("Forklift State: " + liftState);
 
     switch (liftState)
         {

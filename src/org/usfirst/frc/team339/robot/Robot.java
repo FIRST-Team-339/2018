@@ -220,6 +220,10 @@ public void robotInit ()
     // -------------------------------------
     // Resets encoder values
     // -------------------------------------
+    Hardware.rightFrontDriveEncoder.setReverseDirection(false);
+    Hardware.leftFrontDriveEncoder.setReverseDirection(false);
+    Hardware.rightRearDriveEncoder.setReverseDirection(false);
+    Hardware.leftRearDriveEncoder.setReverseDirection(false);
     Hardware.rightFrontDriveEncoder.reset();
     Hardware.leftFrontDriveEncoder.reset();
     Hardware.rightRearDriveEncoder.reset();
@@ -232,18 +236,36 @@ public void robotInit ()
     // -------------------------------------
     // Manually sets encoders Distance per Pulse
     // -------------------------------------
-    Hardware.leftFrontDriveEncoder
-            .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-    Hardware.rightFrontDriveEncoder
-            .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-    Hardware.leftRearDriveEncoder
-            .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-    Hardware.rightRearDriveEncoder
-            .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-    Hardware.liftingEncoder
-            .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
-    Hardware.intakeDeployEncoder
-            .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
+    if (Hardware.on2018 == true)
+        {
+        Hardware.leftFrontDriveEncoder
+                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.rightFrontDriveEncoder
+                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.leftRearDriveEncoder
+                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.rightRearDriveEncoder
+                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.liftingEncoder
+                .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
+        Hardware.intakeDeployEncoder
+                .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
+        }
+    else
+        {
+        Hardware.leftFrontDriveEncoder
+                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
+        Hardware.rightFrontDriveEncoder
+                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
+        Hardware.leftRearDriveEncoder
+                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
+        Hardware.rightRearDriveEncoder
+                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
+        Hardware.liftingEncoder
+                .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
+        Hardware.intakeDeployEncoder
+                .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
+        }
 
     // ----------------------------------
     // For last years robot - do the following
@@ -407,14 +429,15 @@ public void testPeriodic ()
 // ==========================================
 // TUNEABLES
 // ==========================================
+private static final double KILROY_XV_ENCODER_DPP = .0174;
 
-private static final double KILROY_XIX_ENCODER_DPP = .0174;
+private static final double KILROY_XIX_ENCODER_DPP = 0.0346;
 
-private static final double GEAR_1_SPEED = .4;
+private static final double GEAR_1_SPEED = .3;
 
 private static final double GEAR_1_SPEED_NESSIE = .5;
 
-public static final double GEAR_2_SPEED = .5;
+public static final double GEAR_2_SPEED = .4;
 
 private static final double GEAR_2_SPEED_NESSIE = .5;
 

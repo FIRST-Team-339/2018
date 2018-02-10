@@ -67,6 +67,7 @@ public class Hardware
 // ---------------------------------------
 public static boolean onNessie = false;
 
+public static boolean on2018 = true;
 
 // **********************************************************
 // DIGITAL I/O CLASSES

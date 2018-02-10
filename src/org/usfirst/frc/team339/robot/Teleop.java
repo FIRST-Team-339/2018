@@ -513,16 +513,16 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Right Rear Encoder Ticks",
     // Hardware.rightRearDriveEncoder.get());
 
-    System.out.println(
-            "Lift Encoder Inches = "
-                    + Hardware.liftingEncoder.getDistance());
-    SmartDashboard.putNumber("Lift Encoder Inches",
-            Hardware.liftingEncoder.getDistance());
+    // System.out.println(
+    // "Lift Encoder Inches = "
+    // + Hardware.liftingEncoder.getDistance());
+    // SmartDashboard.putNumber("Lift Encoder Inches",
+    // Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
-    SmartDashboard.putNumber("Lift Encoder Ticks",
-            Hardware.liftingEncoder.getDistance());
+    // SmartDashboard.putNumber("Lift Encoder Ticks",
+    // Hardware.liftingEncoder.getDistance());
 
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
@@ -579,10 +579,9 @@ public static void printStatements ()
     // GYRO
     // ---------------------------------
 
-    System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
+    // System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
     SmartDashboard.putNumber("AnalogGyro",
             Hardware.gyroAnalog.getAngle());
-
 
     // ---------------------------------
     // Sonar/UltraSonic
