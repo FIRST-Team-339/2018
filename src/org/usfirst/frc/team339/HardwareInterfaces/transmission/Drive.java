@@ -1149,7 +1149,7 @@ public boolean turnDegrees2Stage (int degrees, double power)
         }
 
     // 2nd stage run slow
-    if (Math.abs(this.gyro.getAngle()) > degrees
+    if (Math.abs(this.gyro.getAngle()) > Math.abs(degrees)
             - turnDegreesTriggerStage)
         {
         this.getTransmission().drive(
@@ -1168,7 +1168,7 @@ public boolean turnDegrees2Stage (int degrees, double power)
 
 private boolean turnDegrees2StageInit = true;
 
-private double turnDegreesTriggerStage = 15;// Degrees
+private double turnDegreesTriggerStage = 50;// Degrees
 
 private double turnDegrees2ndStagePower = .15;
 
