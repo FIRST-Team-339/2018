@@ -19,6 +19,7 @@
 package org.usfirst.frc.team339.HardwareInterfaces;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
  * sets up the gyro and includes the functions
@@ -26,52 +27,30 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
  * @author Becky Button
  *
  */
-public class KilroyGyro
+public class KilroySPIGyro implements Gyro
 {
-private ADXRS450_Gyro gyro;
+private final ADXRS450_Gyro gyro;
 
 private boolean hasGyro = true;
 
 /**
- * determines based on whether we have a gyro or not, whether to declare
- * the gyro(if we have one), print that we dont have a gyro(if we
- * dont), and return null if neither apply
+ * Creates the Gyro object. If we input that the gyro is not connected, then do
+ * not create it to avoid errors, and set the methods to avoid
+ * nullPointerExceptions.
  * 
  * @param hasGyro
+ *            Whether or not the gyro is connected.
  */
-public KilroyGyro (boolean hasGyro)
+public KilroySPIGyro (boolean hasGyro)
 {
-    // set this.hasGyro equal to hasGyro-essentially setting up shorthand
-    this.hasGyro = hasGyro;
-    // if we do not have a gyro
-    if (hasGyro == false)
+    if (hasGyro)
         {
-        // print out Gyro not connected
-        System.out.println("Gyro not connected");
-        }
-    //// if we have a gyro
-    if (hasGyro == true)
-        {
-        // then declare as a new gyro
         this.gyro = new ADXRS450_Gyro();
-        // If the gyro is not slightly offset, we know it is not working.
-        // if (this.isConnected() == false)
-        // {
-        // this.hasGyro = false;
-        // System.out.println("Gyro Not Connected");
-        // this.gyro = null;
-        // }
         }
-    // if we don't have a gyro, but we don't not have a gyro, return null
     else
-        // if neither then return null
-        this.gyro = null;
-
-    // IF for some reason the gyro is not created, THEN tell the class that we
-    // do not have a gyro.
-    if (this.gyro == null)
         {
-        this.hasGyro = false;
+        System.out.println("***Gyro is NOT enabled!***");
+        this.gyro = null;
         }
 }
 
@@ -81,9 +60,9 @@ public KilroyGyro (boolean hasGyro)
 public void calibrate ()
 {
     // if we do not have a gyro
-    if (this.isConnected() == false)
+    if (this.hasGyro() == false)
         {
-        // then return void
+        System.out.println("***Gyro is NOT enabled!***");
         return;
         }
     // then calibrate gyro
@@ -97,9 +76,9 @@ public void calibrate ()
 public void reset ()
 {
     // if we do not have a gyro
-    if (this.isConnected() == false)
+    if (this.hasGyro() == false)
         {
-        // return void
+        System.out.println("***Gyro is NOT enabled!***");
         return;
         }
     // then reset the gyro
@@ -116,10 +95,10 @@ public void reset ()
 public double getAngle ()
 {
     // if we don't have a gyro
-    if (this.isConnected() == false)
+    if (this.hasGyro() == false)
         {
-        // return 339339
-        return 339339;
+        System.out.println("***Gyro is NOT enabled!***");
+        return 0;
         }
     // return the angle of the gyro in degrees
     return this.gyro.getAngle();
@@ -136,26 +115,35 @@ public double getAngle ()
 public double getRate ()
 {
     // if we don't have a gyro
-    if (this.isConnected() == false)
+    if (this.hasGyro() == false)
         {
-        // return the random value 339339
-        return 339339;
+        System.out.println("***Gyro is NOT enabled!***");
+        return 0;
         }
     // return the rate of rotation of the gyro
     return this.gyro.getRate();
 }
 
 /**
- * 
- * @return Whether or not the gyro's angle is 0.0, which is returned
- *         if the SPI bus is null (in wpi's Gyro class)
- *         constructor.
+ * @return Whether or not the gyro is enabled in the code.
  */
-public boolean isConnected ()
+public boolean hasGyro ()
 {
-    return this.hasGyro == true && this.gyro != null
-            && this.getRate() != 0.0;
+    return this.hasGyro;
+}
 
+@Override
+/**
+ * Free the gyro object from memory, since it is called through a JNI.
+ */
+public void free ()
+{
+    if (this.hasGyro() == false)
+        {
+        System.out.println("***Gyro is NOT enabled!***");
+        return;
+        }
+    this.gyro.free();
 }
 
 }
