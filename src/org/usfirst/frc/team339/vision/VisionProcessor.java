@@ -49,7 +49,7 @@ public class ParticleReport implements Comparator<ParticleReport>,
 /**
  * The area of the bounding rectangle around the blob
  */
-public double area = 0;
+public double area = 0.0;
 
 /**
  * The rectangle around the blob
@@ -77,7 +77,7 @@ public Point center = new Point(0, 0);
 public int compare (ParticleReport r1, ParticleReport r2)
 {
     return (int) (r1.area - r2.area);
-}
+} // end compare()
 
 
 /**
@@ -97,8 +97,8 @@ public int compare (ParticleReport r1, ParticleReport r2)
 public int compareTo (ParticleReport r)
 {
     return (int) (r.area - this.area);
-}
-}
+} // end compareTo()
+} // end class VisionProcessor
 
 /**
  * The user must set which camera is connected for correct field of views and
@@ -121,7 +121,7 @@ AXIS_M1011,
  * The NEW model of the IP camera supplied by FIRST
  */
 AXIS_M1013
-    }
+    } // end enum CameraModel
 
 
 /**
@@ -139,7 +139,7 @@ RAW,
  * An image that has gone through post processing.
  */
 PROCESSED
-    }
+    } // end enum ImageType
 
 // In order to calculate the horizontal / vertical field of view,
 // you can use the formula: a = 2arctan(d/2f) where 'a' is the angle,
@@ -236,9 +236,9 @@ public VisionProcessor (String ip, CameraModel camera)
                  // errors.
             this.horizontalFieldOfView = 1;
             this.verticalFieldOfView = 1;
-        }
+        } // end switch
 
-}
+} // end VisionProcessor()
 
 /**
  * Creates the object and starts the camera server
@@ -277,12 +277,11 @@ public VisionProcessor (String ip, CameraModel camera,
                  // errors.
             this.horizontalFieldOfView = 1;
             this.verticalFieldOfView = 1;
-        }
+        } // end switch
 
     this.pictureTimer.reset();
     this.ringLightRelay = ringlightRelay;
-
-}
+} // end VisionProcessor()
 
 
 /**
@@ -315,9 +314,9 @@ public VisionProcessor (int usbPort, CameraModel camera)
                  // errors.
             this.horizontalFieldOfView = 1;
             this.verticalFieldOfView = 1;
-        }
+        } // end switch
 
-}
+} // end VisionProcessor()
 
 /**
  * Creates the object and starts the camera server
@@ -352,10 +351,10 @@ public VisionProcessor (int usbPort, CameraModel camera,
                  // errors.
             this.horizontalFieldOfView = 1;
             this.verticalFieldOfView = 1;
-        }
+        } // end switch
     this.ringLightRelay = ringlightRelay;
     this.pictureTimer.reset();
-}
+} // end VisionProcessor()
 
 // ==========================END INIT===================================
 
@@ -369,11 +368,11 @@ public void processImage ()
     long errorCode = CameraServer.getInstance()
             .getVideo("Vision Camera").grabFrame(image);
 
-    if (image.empty())
+    if (image.empty() == true)
         {
         System.out.println("Image is Empty! Unable to process image!");
         return;
-        }
+        } // end if
 
     if (errorCode == 0)
         {
@@ -381,7 +380,7 @@ public void processImage ()
                 "There was an error grabbing the image. See below:");
         System.out.println(
                 CameraServer.getInstance().getVideo().getError());
-        }
+        } // end if
 
     // The process image function found in the AutoGenVision class.
     super.process(image);
@@ -393,8 +392,8 @@ public void processImage ()
     // for (int i = 0; i < particleReports.length; i++)
     // {
     // System.out.println(i + " " + particleReports[i].area);
-    // }
-}
+    // } // end for
+} // end processImage()
 
 /**
  * Sets the camera image settings for use in image processing.
@@ -413,7 +412,7 @@ public void setCameraSettings (int exposure, int whiteBalence,
     this.camera.setBrightness(brightness);
     this.camera.setExposureManual(exposure);
     this.camera.setWhiteBalanceManual(whiteBalence);
-}
+} // end setCameraSettings()
 
 /**
  * Sets the camera back to default settings for switching between vision
@@ -424,9 +423,7 @@ public void setDefaultCameraSettings ()
     this.camera.setExposureAuto();
     this.camera.setBrightness(DEFAULT_CAMERA_BRIGHTNESS);
     this.camera.setWhiteBalanceAuto();
-}
-
-
+} // end setDefaultCameraSettings()
 
 /**
  * Saves an image to the roborio. This has a max of 26 images per type, before
@@ -450,11 +447,11 @@ public void saveImage (ImageType type)
         {
         // system command that creates the path the image will be saved in
         Runtime.getRuntime().exec("mkdir -p /home/lvuser/images");
-        }
+        } // end try
     catch (IOException e)
         {
         e.printStackTrace();
-        }
+        } // catch
     // grab the image
     Mat tempImage = new Mat();
 
@@ -471,14 +468,14 @@ public void saveImage (ImageType type)
         case RAW:
             // Creating the file name. Only 26 images will be saved before
             // overwrite.
-            if (rawImageNum > 25)
+            if (rawImageNum > this.maxRawImagesAllowedToCollect)
                 rawImageNum = 0;
             fileName = "raw_image_" + rawImageNum++ + ".png";
             break;
         case PROCESSED:
             // Creating the file name. Only 26 images will be saved before
             // overwrite.
-            if (processedImageNum > 25)
+            if (processedImageNum > this.maxProcessedImagesAllowedToCollect)
                 processedImageNum = 0;
             fileName = "proc_image_" + processedImageNum++ + ".png";
             // Only process the image if it is chosen as the image type.
@@ -491,7 +488,7 @@ public void saveImage (ImageType type)
             System.out.println(
                     "Failed to save image: Image type not recognized.");
             break;
-        }
+        } // switch
     // Save the image to the folder specified with the name specified
 
     // TODO this is what is printing Cole's problem
@@ -499,13 +496,11 @@ public void saveImage (ImageType type)
     Imgcodecs.imwrite(SAVE_IMAGE_PATH + fileName, tempImage);
     // else
     // System.out.println("saveImage: Image was empty; was not saved");
-}
+} // end saveImage()
 
 private int rawImageNum = 0;
 
 private int processedImageNum = 0;
-
-private int contourImageNum = 0;
 
 /**
  * Saves an image once (and only once), no matter how long the button is pressed
@@ -519,11 +514,9 @@ private int contourImageNum = 0;
 public void saveImageSafely (boolean button, ImageType type)
 {
     if (button == true && saveImageButtonState == false)
-        {
         this.saveImage(type);
-        }
     saveImageButtonState = button;
-}
+} // end saveImageSafely()
 
 private boolean saveImageButtonState = false;
 
@@ -545,14 +538,14 @@ public void takeLitPicture (boolean button)
         {
         this.takePictureByButton = true;
         this.pictureTimer.start();
-        }
+        } // end if
 
     // if the button isn't pressed, reset the other booleans
     if (button == false && pictureTakenByButton == true)
         {
         takePictureByButton = false;
         pictureTakenByButton = false;
-        }
+        } // end if
 
     // if both buttons are pressed, turn on the relay
     if (this.takePictureByButton == true)
@@ -561,9 +554,7 @@ public void takeLitPicture (boolean button)
         // turns on the ring light
         if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
-            {
             this.setRelayValue(Value.kForward);
-            }
 
         // if the timer expires, save the picture , reset booleans, turns off
         // the ring light
@@ -580,9 +571,9 @@ public void takeLitPicture (boolean button)
 
             this.pictureTimer.stop();
             this.pictureTimer.reset();
-            }
-        }
-}
+            } // end if
+        } // end if
+} // end takeLitPicture()
 
 private boolean takePictureByButton = false;
 
@@ -599,18 +590,18 @@ private final double TAKE_PICTURE_DELAY = 0.1;
 public Value getRelayValue ()
 {
     return this.ringLightRelay.get();
-}
+} // end getRelayValue()
 
 /**
  * Set the ring light to a value
  * 
- * @param ringlightValue
+ * @param ringLightValue
  *            use kForward or kReverse to set the ring light
  */
 public void setRelayValue (Value ringLightValue)
 {
     this.ringLightRelay.set(ringLightValue);
-}
+} // end setRelayValue()
 
 /**
  * Turns on the ring light
@@ -621,7 +612,7 @@ public void setRelayValue (Value ringLightValue)
 public void turnRingLightOn (boolean button)
 {
 
-}
+} // end turnRingLightOn()
 
 // =====================USER ACCESSABLE METHODS========================
 /*
@@ -636,7 +627,7 @@ public void turnRingLightOn (boolean button)
 public ParticleReport[] getParticleReports ()
 {
     return particleReports;
-}
+} // getParticleReports()
 
 /**
  * @return Whether or not the camera can see any retro-reflective tape
@@ -644,12 +635,9 @@ public ParticleReport[] getParticleReports ()
 public boolean hasBlobs ()
 {
     if (this.particleReports.length > 0)
-        {
         return true;
-        }
-
     return false;
-}
+} // end hasBlobs()
 
 /**
  * Gets a report of the index the user requests.
@@ -662,7 +650,7 @@ public boolean hasBlobs ()
 public ParticleReport getNthSizeBlob (int n)
 {
     return particleReports[n];
-}
+} // end getNthSizeBlob()
 
 // ======================POST PROCESSING METHODS========================
 /*
@@ -688,13 +676,13 @@ private void createParticleReports (List<MatOfPoint> contours)
         reports[i] = new ParticleReport();
         Rect r = Imgproc.boundingRect(contours.get(i));
         reports[i].area = r.area();
-        reports[i].center = new Point(r.x + (r.width / 2),
-                r.y + (r.height / 2));
+        reports[i].center = new Point(r.x + (r.width / 2.0),
+                r.y + (r.height / 2.0));
         reports[i].boundingRect = r;
-        }
+        } // end for
 
     this.particleReports = reports;
-}
+} // end createParticleReports()
 
 /**
  * TODO TEST THIS AND COMMENT SOME OF THE CALCULATIONS
@@ -715,22 +703,22 @@ private void createParticleReports (List<MatOfPoint> contours)
 public double getPitchAngleDegrees (ParticleReport target)
 {
     int distFromCenterLine = (int) Math
-            .abs((image.size().height / 2) - target.center.y);
+            .abs((image.size().height / 2.0) - target.center.y);
 
     // The focal length is dependent on the resolution of the image, since
     // units must remain in pixels, and the field of view must not change.
     double focalLengthPixels = image.size().height
-            / (2 * Math.tan(verticalFieldOfView / 2.0));
+            / (2.0 * Math.tan(verticalFieldOfView / 2.0));
 
     // Conditions for the return statement based on the position of the
     // target.
-    if ((image.size().height / 2) - target.center.y > 0)
+    if ((image.size().height / 2.0) - target.center.y > 0.0)
         return Math.toDegrees(
                 Math.atan(distFromCenterLine / focalLengthPixels));
 
     return -Math.toDegrees(
             Math.atan(distFromCenterLine / focalLengthPixels));
-}
+} // end getPitchAngleDegrees
 
 /**
  * TODO TEST THIS AND COMMENT SOME OF THE CALCULATIONS
@@ -751,7 +739,7 @@ public double getPitchAngleDegrees (ParticleReport target)
 public double getYawAngleDegrees (ParticleReport target)
 {
     int distFromCenterLine = (int) Math
-            .abs((image.size().width / 2) - target.center.x);
+            .abs((image.size().width / 2.0) - target.center.x);
 
     // The focal length is dependent on the resolution of the image, since
     // units must remain in pixels, and the field of view must not change.
@@ -760,20 +748,21 @@ public double getYawAngleDegrees (ParticleReport target)
 
     // Conditions for the return statement based on the position of the
     // target.
-    if ((image.size().width / 2) - target.center.x < 0)
+    if ((image.size().width / 2.0) - target.center.x < 0)
         return Math.toDegrees(
                 Math.atan(distFromCenterLine / focalLengthPixels));
 
     return -Math.toDegrees(
             Math.atan(distFromCenterLine / focalLengthPixels));
-}
+} // end getYawAngleDegrees()
 
-// ======================GAME SPECIFIC METHODS======================
-/*
- * Contains methods that ARE specific to the game each year. Any methods
- * that control the robot's drive system should be placed in the DRIVE
- * class. This is strictly for finding distances, angles, number of targets,
- * etc.
- */
+// -------------------------------------
+// Max number of processed images allowed on the roboRIO
+// -------------------------------------
+private final int maxProcessedImagesAllowedToCollect = 25;
 
-}
+// -------------------------------------
+// Max number of raw images allowed on the roboRIO
+// -------------------------------------
+private final int maxRawImagesAllowedToCollect = 25;
+} // end class
