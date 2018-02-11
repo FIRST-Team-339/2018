@@ -581,8 +581,8 @@ public static void printStatements ()
     // ---------------------------------
 
     // System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
-    SmartDashboard.putNumber("AnalogGyro",
-            Hardware.gyroAnalog.getAngle());
+    // SmartDashboard.putNumber("AnalogGyro",
+    // Hardware.gyroAnalog.getAngle());
 
     // ---------------------------------
     // Sonar/UltraSonic
@@ -613,7 +613,7 @@ public static void printStatements ()
     // -------------------------------------
 
     // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
     // =================================
     // Connection Items

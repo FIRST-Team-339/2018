@@ -1055,7 +1055,8 @@ public static boolean switchOrScalePath (Position robotPosition)
             break;
 
         case DRIVE3:
-            // Drive to the right scale position
+            // Drive to the right scale position (and even with the switch
+            // while still on the initial side we were on)
             if (Hardware.autoDrive.driveStraightInches(
                     SWITCH_OR_SCALE_DRIVE_DISTANCE[2]
                             - Hardware.autoDrive
@@ -1472,9 +1473,14 @@ private final static double AUTO_COMPENSATION_VISION = 1.2;
 // SWITCH_OR_SCALE
 // array for storing the different driving distances in SWITH_OR_SCALE
 private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
+// distance to be perpendicular to the switch
     {(int) (AUTO_TESTING_SCALAR * 133),
+            // distance to drive to the middle of the platform zone
             (int) (AUTO_TESTING_SCALAR * 67),
+            // distance to drive in platform zone til you are in line with the
+            // scale
             (int) (AUTO_TESTING_SCALAR * 31),
+            // distance to drive across the platform zone
             (int) (AUTO_TESTING_SCALAR * 169)};
 
 
