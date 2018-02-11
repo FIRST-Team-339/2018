@@ -151,20 +151,21 @@ public static void periodic ()
     // .moveForkliftWithController(Hardware.rightOperator);
     // }
     // testing code for setting forklift height; temporary
-    if (Hardware.rightOperator.getRawButton(6) == true)
-        {
-        Hardware.cubeManipulator.setLiftPosition(0.0);
-        }
-
-    if (Hardware.rightOperator.getRawButton(7) == true)
-        {
-        Hardware.cubeManipulator.setLiftPosition(30.0);
-        }
-
-    if (Hardware.rightOperator.getRawButton(8) == true)
-        {
-        Hardware.cubeManipulator.setLiftPosition(40.0);
-        }
+    // TODO use the two parameter version
+    // if (Hardware.rightOperator.getRawButton(6) == true)
+    // {
+    // Hardware.cubeManipulator.setLiftPosition(0.0);
+    // }
+    //
+    // if (Hardware.rightOperator.getRawButton(7) == true)
+    // {
+    // Hardware.cubeManipulator.setLiftPosition(30.0);
+    // }
+    //
+    // if (Hardware.rightOperator.getRawButton(8) == true)
+    // {
+    // Hardware.cubeManipulator.setLiftPosition(40.0);
+    // }
 
 
     // Intake controls

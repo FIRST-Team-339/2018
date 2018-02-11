@@ -109,14 +109,16 @@ public void moveForkliftWithController (Joystick operatorJoystick)
     if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND
             && this.getForkliftHeight() <= FORKLIFT_MAX_HEIGHT)
         {
-        this.liftState = ForkliftState.MOVING_UP_MAX;
+        // this.liftState = ForkliftState.MOVING_UP_MAX;
+        this.setLiftPosition(FORKLIFT_MAX_HEIGHT, .5);
         }
     // If we move the forklift down with the joystick, only do so if we are
     // above the min height
     else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND
             && this.getForkliftHeight() >= FORKLIFT_MIN_HEIGHT)
         {
-        this.liftState = ForkliftState.MOVING_DOWN_MIN;
+        // this.liftState = ForkliftState.MOVING_DOWN_MIN;
+        this.setLiftPosition(FORKLIFT_MIN_HEIGHT, .5);
         }
     // // If we are not using the joysticks and the lift is near the bottom,
     // // then the lift is in the starting position.
@@ -413,22 +415,6 @@ public boolean isIntakeDeployed ()
     return deployIntakeState == DeployState.DEPLOYED;
 }
 
-/**
- * Moves the intake based on the speed provided.
- * 
- * @param speed
- *            How fast the motors should move, in percent. (-1.0 to 1.0)
- *            Negative is pushing out, positive is pulling in
- * 
- */
-public void moveIntake (double speed)
-{
-    // Deadband calcs
-    if (Math.abs(speed) > Math.abs(JOYSTICK_DEADBAND))
-        {
-        this.intakeMotor.set(speed);
-        }
-}
 
 /**
  * Intakes the cube if the light sensor finds we don't have a cube. If we do,
