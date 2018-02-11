@@ -3,7 +3,7 @@ package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.GyroBase;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
  * The class that controls autonomous driving functions or
@@ -30,7 +30,7 @@ private MecanumTransmission mecanumTransmission = null;
 private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
         leftRearEncoder = null, rightRearEncoder = null;
 
-private GyroBase gyro = null;
+private Gyro gyro = null;
 
 private final TransmissionType transmissionType;
 
@@ -59,7 +59,7 @@ private final TransmissionType transmissionType;
 public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
         Encoder rightFrontEncoder,
         Encoder leftRearEncoder, Encoder rightRearEncoder,
-        GyroBase gyro)
+        Gyro gyro)
 {
     this.transmissionType = transmission.getType();
     this.leftFrontEncoder = leftFrontEncoder;
@@ -88,7 +88,7 @@ public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
  *            A sensor that uses a spinning disk to measure rotation.
  */
 public Drive (TransmissionBase transmission, Encoder leftEncoder,
-        Encoder rightEncoder, GyroBase gyro)
+        Encoder rightEncoder, Gyro gyro)
 {
     this.transmissionType = transmission.getType();
     this.leftRearEncoder = leftEncoder;
@@ -170,7 +170,7 @@ public TransmissionBase getTransmission ()
  * 
  * @return - this class is Gyro
  */
-public GyroBase getGyro ()
+public Gyro getGyro ()
 {
     return (this.gyro);
 }
@@ -182,7 +182,7 @@ public GyroBase getGyro ()
  * @return - this class is Gyro
  */
 
-public GyroBase setGyro (GyroBase newGyro)
+public Gyro setGyro (Gyro newGyro)
 {
     return (this.gyro = newGyro);
 }
