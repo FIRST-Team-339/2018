@@ -41,8 +41,8 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 
-// -------------------------------------------------------
 /**
+ * -------------------------------------------------------
  * puts all of the hardware declarations into one place. In addition, it makes
  * them available to both autonomous and teleop.
  *
@@ -233,7 +233,6 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // -------------------------------------
 // Analog Interfaces
 // -------------------------------------
-
 public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 
 // **********************************************************

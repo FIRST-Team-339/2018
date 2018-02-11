@@ -520,6 +520,7 @@ public boolean brake (BrakeType type)
 
     if (System.currentTimeMillis() - previousBrakeTime > INIT_TIMEOUT)
         {
+        BRAKE_ITERATIONS = 0;
         prevEncoderValues = new double[4];
 
         // Get the direction of the motor values on the first start.
@@ -536,6 +537,7 @@ public boolean brake (BrakeType type)
                     .signum(rightFrontEncoder.getRate());
             }
         }
+    BRAKE_ITERATIONS++;
 
     int[] brakeDeltas = new int[4];
     // sets values of brakeDelta array to the change in encoder ticks
@@ -611,6 +613,8 @@ public boolean brake (BrakeType type)
     this.previousBrakeTime = System.currentTimeMillis();
     return false;
 }
+
+public static int BRAKE_ITERATIONS = 0;
 
 private long previousBrakeTime = 0; // milliseconds
 
@@ -1189,7 +1193,7 @@ public boolean turnDegrees2Stage (int degrees, double power)
 
 private boolean turnDegrees2StageInit = true;
 
-private double turnDegreesTriggerStage = 50;// Degrees
+private double turnDegreesTriggerStage = 40;// Degrees
 
 private double turnDegrees2ndStagePower = .15;
 
