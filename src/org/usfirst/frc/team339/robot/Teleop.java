@@ -70,7 +70,7 @@ public static void init ()
     // ---------------------------------
     // setup motors
     // ---------------------------------
-    Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
+    Hardware.transmission.setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
     Hardware.rightDriveMotor.set(0);
     Hardware.leftDriveMotor.set(0);
 
@@ -361,7 +361,8 @@ private static void testingDrive ()
             {
             Hardware.transmission.stop();
             driveState = 0;
-            Hardware.transmission.setForTeleop(Robot.GEAR_2_SPEED);
+            Hardware.transmission
+                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
             Hardware.autoDrive.reset();
             isTestingGyroTurn = false;
             isTestingEncoderTurn = false;

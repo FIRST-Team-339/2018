@@ -250,6 +250,9 @@ public void robotInit ()
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder
                 .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
+
+        Hardware.transmission.setAllGearRatios(KILROY_XIX_GEAR_1_SPEED,
+                KILROY_XIX_GEAR_2_SPEED);
         }
     else
         {
@@ -265,6 +268,9 @@ public void robotInit ()
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder
                 .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
+
+        Hardware.transmission.setAllGearRatios(KILROY_XV_GEAR_1_SPEED,
+                KILROY_XV_GEAR_2_SPEED);
         }
 
     // ----------------------------------
@@ -284,8 +290,6 @@ public void robotInit ()
         {
         Hardware.leftDriveMotor.setInverted(false);
         Hardware.rightDriveMotor.setInverted(true);
-        Hardware.transmission.setAllGearRatios(GEAR_1_SPEED,
-                GEAR_2_SPEED);
         } // else
 
     // ---------------------------------
@@ -433,11 +437,15 @@ private static final double KILROY_XV_ENCODER_DPP = .0174;
 
 private static final double KILROY_XIX_ENCODER_DPP = 0.0346;
 
-private static final double GEAR_1_SPEED = .3;
+private static final double KILROY_XIX_GEAR_1_SPEED = .3;
+
+private static final double KILROY_XV_GEAR_1_SPEED = .4;
 
 private static final double GEAR_1_SPEED_NESSIE = .5;
 
-public static final double GEAR_2_SPEED = .4;
+public static final double KILROY_XIX_GEAR_2_SPEED = .4;
+
+public static final double KILROY_XV_GEAR_2_SPEED = .6;
 
 private static final double GEAR_2_SPEED_NESSIE = .5;
 
