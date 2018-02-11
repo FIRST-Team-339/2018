@@ -65,7 +65,7 @@ public class Hardware
 // ---------------------------------------
 // Hardware Tunables
 // ---------------------------------------
-public static boolean onNessie = true;
+public static boolean onNessie = false;
 
 public static boolean on2018 = false;
 
@@ -309,12 +309,12 @@ public static TractionTransmission transmission = new TractionTransmission(
 // Drive system
 // ------------------------------------
 public static Drive autoDrive = new Drive(transmission,
-        leftFrontDriveEncoder, rightFrontDriveEncoder, gyro);
+        leftFrontDriveEncoder, rightFrontDriveEncoder, null);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 public static DriveWithCamera driveWithCamera = new DriveWithCamera(
         transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
-        frontUltraSonic, rearUltraSonic, gyro, axisCamera);
+        frontUltraSonic, rearUltraSonic, null, axisCamera);
 
 // -------------------
 // Assembly classes (e.g. forklift)

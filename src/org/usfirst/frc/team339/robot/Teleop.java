@@ -466,12 +466,12 @@ public static void printStatements ()
     // SmartDashboard.putBoolean("R Auto SW",
     // Hardware.rightAutoSwitch.isOn());
     //
-    // System.out.println("6 pos = "
-    // + Hardware.autoSixPosSwitch.getPosition());
-    SmartDashboard.putNumber("6 Pos Switch",
-            Hardware.autoSixPosSwitch.getPosition());
-    // Hardware.leftFrontDriveEncoder.get());
-    //
+//    System.out.println("6 pos = "
+//            + Hardware.autoSixPosSwitch.getPosition());
+
+    // SmartDashboard.putNumber("6 Pos Switch",
+    // Hardware.autoSixPosSwitch.getPosition());
+
     // ---------------------------------
     // Encoders
     // ---------------------------------
@@ -582,8 +582,8 @@ public static void printStatements ()
     // ---------------------------------
 
     // System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
-    SmartDashboard.putNumber("AnalogGyro",
-            Hardware.gyroAnalog.getAngle());
+    // SmartDashboard.putNumber("AnalogGyro",
+    // Hardware.gyroAnalog.getAngle());
 
     // ---------------------------------
     // Sonar/UltraSonic
@@ -614,7 +614,7 @@ public static void printStatements ()
     // -------------------------------------
 
     // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+//    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
     // =================================
     // Connection Items
