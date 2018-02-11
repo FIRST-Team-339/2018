@@ -152,20 +152,20 @@ public static void periodic ()
                 .moveForkliftWithController(Hardware.rightOperator);
         }
     // testing code for setting forklift height; temporary
-    // if (Hardware.rightOperator.getRawButton(6) == true)
-    // {
-    // Hardware.cubeManipulator.setLiftPosition(0.0);
-    // }
-    //
-    // if (Hardware.rightOperator.getRawButton(7) == true)
-    // {
-    // Hardware.cubeManipulator.setLiftPosition(30);
-    // }
-    //
-    // if (Hardware.rightOperator.getRawButton(8))
-    // {
-    // Hardware.cubeManipulator.setLiftPosition(40.0);
-    // }
+    if (Hardware.rightOperator.getRawButton(6) == true)
+        {
+        Hardware.cubeManipulator.setLiftPosition(0.0);
+        }
+
+    if (Hardware.rightOperator.getRawButton(7) == true)
+        {
+        Hardware.cubeManipulator.setLiftPosition(30);
+        }
+
+    if (Hardware.rightOperator.getRawButton(8))
+        {
+        Hardware.cubeManipulator.setLiftPosition(40.0);
+        }
 
 
     // Intake controls
@@ -325,12 +325,12 @@ private static void testingDrive ()
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if ((isTestingGyroTurn == true
                 || isTestingAnalogGyroTurn == true) && driveState == 0
-                && Hardware.autoDrive.turnDegreesGyro(90, .25) == true)
+                && Hardware.autoDrive.turnDegreesGyro(90, .4) == true)
             {
             driveState++;
             }
         else if (isTestingEncoderTurn && driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .25) == true)
+                && Hardware.autoDrive.turnDegrees(90, .4) == true)
             {
             driveState++;
             }
@@ -583,6 +583,9 @@ public static void printStatements ()
     // System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
     // SmartDashboard.putNumber("AnalogGyro",
     // Hardware.gyroAnalog.getAngle());
+
+    // System.out.println("Gyro: " + Hardware.gyro.getAngle());
+    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
     // ---------------------------------
     // Sonar/UltraSonic

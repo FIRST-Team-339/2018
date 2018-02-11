@@ -238,14 +238,9 @@ public void robotInit ()
     // -------------------------------------
     if (Hardware.on2018 == true)
         {
-        Hardware.leftFrontDriveEncoder
-                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-        Hardware.rightFrontDriveEncoder
-                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-        Hardware.leftRearDriveEncoder
-                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-        Hardware.rightRearDriveEncoder
-                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.autoDrive.setEncoderDistancePerPulse(
+                KILROY_XIX_ENCODER_DPP,
+                MotorPosition.ALL);
         Hardware.liftingEncoder
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder
@@ -256,14 +251,10 @@ public void robotInit ()
         }
     else
         {
-        Hardware.leftFrontDriveEncoder
-                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
-        Hardware.rightFrontDriveEncoder
-                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
-        Hardware.leftRearDriveEncoder
-                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
-        Hardware.rightRearDriveEncoder
-                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
+        Hardware.autoDrive.setEncoderDistancePerPulse(
+                KILROY_XV_ENCODER_DPP,
+                MotorPosition.ALL);
+
         Hardware.liftingEncoder
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder
@@ -296,13 +287,6 @@ public void robotInit ()
     // Sets joystick deadband
     // ---------------------------------
     Hardware.transmission.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
-
-    // ---------------------------------
-    // Sets all encoders Distance per pulse
-    // ---------------------------------
-    Hardware.autoDrive.setEncoderDistancePerPulse(
-            KILROY_XIX_ENCODER_DPP,
-            MotorPosition.ALL);
 
     // ---------------------------------
     // Sets the angle of the servo to 100
