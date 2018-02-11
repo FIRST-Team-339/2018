@@ -669,8 +669,7 @@ public static boolean rightAutoLineExchangePath ()
  */
 public static boolean centerSwitchPath ()
 {
-    System.out.println("We are in the " + visionAuto + " state.");
-    // TODO comment out
+    // System.out.println("We are in the " + visionAuto + " state.");
     switch (visionAuto)
         {
         case CENTER_INIT:
@@ -690,7 +689,7 @@ public static boolean centerSwitchPath ()
             // brakes!!! and sets state to GRAB_DATA
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                visionAuto = centerState.DONE;
+                visionAuto = centerState.GRAB_DATA;
                 }
             break;
         case GRAB_DATA:
@@ -779,7 +778,6 @@ public static boolean centerSwitchPath ()
                     visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
             break;
-
         case TURN_AGAIN_LEFT:
             // turns 90 to the left then brakes and sets the state to
             // DRIVE_WITH_CAMERA
@@ -788,7 +786,7 @@ public static boolean centerSwitchPath ()
                 {
                 if (Hardware.autoDrive
                         .brake(BrakeType.AFTER_TURN) == true)
-                    visionAuto = centerState.LIFT; // TODO change back to LIFT
+                    visionAuto = centerState.LIFT; // TODO change back to DRIVE_WITH_CAMERA
                 }
             break;
         case DRIVE_WITH_CAMERA:
