@@ -64,7 +64,7 @@ public class Hardware
 // ---------------------------------------
 // Hardware Tunables
 // ---------------------------------------
-public static boolean onNessie = false;
+public static boolean onNessie = true;
 
 
 // **********************************************************
