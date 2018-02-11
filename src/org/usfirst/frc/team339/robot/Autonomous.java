@@ -433,7 +433,7 @@ public static leftExchangeState leftExchangeAuto = leftExchangeState.PATH_INIT;
  */
 public static enum leftExchangeState
     {
-PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_RIGHT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, DEPLOY, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_B4_TURN, TURN_90_DEGREES_RIGHT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, BRAKE_B4_DEPLOY, DEPLOY, DONE
     }
 
 
@@ -466,11 +466,18 @@ public static boolean leftAutoLineExchangePath ()
             // drives the necessary distance across the autoline then
             // changes the state to DRIVE_BACK_ACROSS_AUTOLINE
             if (Hardware.autoDrive.driveStraightInches(
-                    DISTANCE_TO_CROSS_AUTOLINE,
+                    DISTANCE_TO_CROSS_AUTOLINE - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 {
-                leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                leftExchangeAuto = leftExchangeState.BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE;
                 }
+            break;
+
+        case BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE:
+            // brakes after driving
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
@@ -482,12 +489,12 @@ public static boolean leftAutoLineExchangePath ()
                                     .getBrakeStoppingDistance(),
                     -DRIVE_SPEED) == true)
                 {
-                leftExchangeAuto = leftExchangeState.BRAKE_AFTER_STRAIGHT;
+                leftExchangeAuto = leftExchangeState.BRAKE_B4_TURN;
                 Hardware.autoDrive.resetAccelerate();
                 }
             break;
 
-        case BRAKE_AFTER_STRAIGHT:
+        case BRAKE_B4_TURN:
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
@@ -520,8 +527,15 @@ public static boolean leftAutoLineExchangePath ()
         case DRIVE_TO_EXCHANGE:
             // drives distance to the exchange and sets state to DONE
             if (Hardware.autoDrive.driveStraightInches(
-                    LEFT_DISTANCE_TO_EXCHANGE,
+                    LEFT_DISTANCE_TO_EXCHANGE - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
+                leftExchangeAuto = leftExchangeState.BRAKE_B4_DEPLOY;
+            break;
+
+        case BRAKE_B4_DEPLOY:
+            // brake before deploying
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 leftExchangeAuto = leftExchangeState.DEPLOY;
             break;
 
@@ -551,7 +565,7 @@ public static rightExchangeState rightExchangeAuto = rightExchangeState.DRIVE_AC
  */
 public static enum rightExchangeState
     {
-PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_LEFT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, DEPLOY, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_LEFT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, BRAKE_B4_DEPLOY, DEPLOY, DONE
     }
 
 
@@ -582,9 +596,14 @@ public static boolean rightAutoLineExchangePath ()
                     DISTANCE_TO_CROSS_AUTOLINE,
                     DRIVE_SPEED) == true)
                 {
-                rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                rightExchangeAuto = rightExchangeState.BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE;
                 Hardware.autoDrive.resetAccelerate();
                 }
+            break;
+        case BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE:
+            // brakes after driving
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
@@ -633,8 +652,14 @@ public static boolean rightAutoLineExchangePath ()
                     RIGHT_DISTANCE_TO_EXCHANGE,
                     DRIVE_SPEED) == true)
                 {
-                rightExchangeAuto = rightExchangeState.DEPLOY;
+                rightExchangeAuto = rightExchangeState.BRAKE_B4_DEPLOY;
                 }
+            break;
+
+        case BRAKE_B4_DEPLOY:
+            // brake before deploying
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                leftExchangeAuto = leftExchangeState.DEPLOY;
             break;
 
         case DEPLOY:
@@ -901,7 +926,7 @@ DONE
 public static boolean switchOrScalePath (Position robotPosition)
 {
     // prints the current state for this autonomous path
-    // System.out.println("Current State: " + currentSwitchOrScaleState);
+    System.out.println("Current State: " + currentSwitchOrScaleState);
 
     switch (currentSwitchOrScaleState)
         {
