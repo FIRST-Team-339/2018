@@ -303,10 +303,15 @@ public static void beckyTest ()
 
 private static void testingDrive ()
 {
+    if (driveState == 1)
+        {
+        System.out.println("Gyro After Brake" +
+                Hardware.gyro.getAngle());
+        }
+
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
         isTestingGyroTurn = true;
-        Hardware.autoDrive.setGyro(Hardware.gyro);
         }
     else if (Hardware.leftDriver.getRawButton(7) == true)
         {
@@ -322,8 +327,11 @@ private static void testingDrive ()
         }
     else if (Hardware.leftDriver.getRawButton(5) == true)
         {
-        isTestingAnalogGyroTurn = true;
         Hardware.autoDrive.setGyro(Hardware.gyroAnalog);
+        }
+    else if (Hardware.leftDriver.getRawButton(6) == true)
+        {
+        Hardware.autoDrive.setGyro(Hardware.gyro);
         }
 
     if (isTestingGyroTurn == true || isTestingEncoderTurn == true
@@ -337,6 +345,7 @@ private static void testingDrive ()
                 || isTestingAnalogGyroTurn == true) && driveState == 0
                 && Hardware.autoDrive.turnDegreesGyro(90, .4) == true)
             {
+            System.out.println("Calling Brake");
             driveState++;
             }
         else if (isTestingEncoderTurn && driveState == 0
@@ -354,11 +363,6 @@ private static void testingDrive ()
             {
             driveState++;
             }
-        else if (isTestingAnalogGyroTurn && driveState == 0
-                && Hardware.autoDrive.turnDegreesGyro(90, .4) == true)
-            {
-            driveState++;
-            }
         else if (driveState == 1
                 && Hardware.autoDrive
                         .brake(BrakeType.AFTER_TURN) == true)
@@ -372,7 +376,7 @@ private static void testingDrive ()
             Hardware.transmission.stop();
             driveState = 0;
             Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+                    .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
             Hardware.autoDrive.reset();
             isTestingGyroTurn = false;
             isTestingEncoderTurn = false;
