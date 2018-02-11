@@ -62,6 +62,16 @@ public class Autonomous
  */
 public static void init ()
 {
+    // --------------------------------------
+    // reset the MotorSafetyHelpers for each
+    // of the drive motors
+    // --------------------------------------
+    Hardware.leftDriveMotor.setSafetyEnabled(false);
+    Hardware.rightDriveMotor.setSafetyEnabled(false);
+    Hardware.liftingMotor.setSafetyEnabled(false);
+    Hardware.cubeIntakeMotor.setSafetyEnabled(false);
+    Hardware.intakeDeployArm.setSafetyEnabled(false);
+
     Hardware.leftFrontDriveEncoder.reset();
     Hardware.rightFrontDriveEncoder.reset();
     Hardware.leftRearDriveEncoder.reset();
@@ -155,6 +165,10 @@ public static void periodic ()
                 case 1:
                     // drives and sets up at scale
                     autoState = State.AUTOLINE_SCALE;
+                    if (Hardware.onNessie == true)
+                        {
+                        autoState = State.CENTER_SWITCH;
+                        }
                     break;
                 case 2:
                     // cross autoline, then go to the exchange
@@ -690,14 +704,18 @@ public static boolean rightAutoLineExchangePath ()
  */
 public static boolean centerSwitchPath ()
 {
+    // System.out.println("We are in the " + visionAuto + " state.");
     switch (visionAuto)
         {
+        case CENTER_INIT:
+            Hardware.autoDrive.setDefaultAcceleration(CENTER_ACCEL);
+            visionAuto = centerState.DRIVE_TEN_INCHES;
+            break;
         case DRIVE_TEN_INCHES:
             // drive 10 inches to make the turn and sets state to BRAKE_1
+            // -Hardware.autoDrive.getBrakeStoppingDistance()
             if (Hardware.autoDrive.driveStraightInches(
-                    10 - Hardware.autoDrive
-                            .getBrakeStoppingDistance(),
-                    AUTO_SPEED_VISION) == true)
+                    10, AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_1;
                 }
@@ -795,7 +813,6 @@ public static boolean centerSwitchPath ()
                     visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
             break;
-
         case TURN_AGAIN_LEFT:
             // turns 90 to the left then brakes and sets the state to
             // DRIVE_WITH_CAMERA
@@ -804,7 +821,7 @@ public static boolean centerSwitchPath ()
                 {
                 if (Hardware.autoDrive
                         .brake(BrakeType.AFTER_TURN) == true)
-                    visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    visionAuto = centerState.LIFT; // TODO change back to DRIVE_WITH_CAMERA
                 }
             break;
         case DRIVE_WITH_CAMERA:
@@ -827,28 +844,32 @@ public static boolean centerSwitchPath ()
             // it to start deploying, then it can be called again here to check
             // if it is finished
             // deploys cube intake and then sets state to MAKE_DEPOSIT
+            Hardware.transmission.stop();
             if (Hardware.cubeManipulator.deployCubeIntake() == true)
                 visionAuto = centerState.MAKE_DEPOSIT;
             break;
         case MAKE_DEPOSIT:
             // deposits cube on switch and sets state to DONE
+            Hardware.transmission.stop();
             if (Hardware.cubeManipulator.scoreSwitch() == true)
                 visionAuto = centerState.DONE;
             break;
         default: // prints that we reached the default case, then falls through
                  // to DONE
+            Hardware.transmission.stop();
             System.out.println(
                     "REACHED THE DEFAULT CASE FOR centerSwitchPath()");
         case DONE:
             // stops robot the robot, and return true so the main auto
             // switch machine knows this path is done
-            Hardware.transmission.stop();
+            Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE);
+            Hardware.autoDrive.driveInches(0, 0);
             return true;
         }
     return false;
 }
 
-public static centerState visionAuto = centerState.DRIVE_TEN_INCHES;
+public static centerState visionAuto = centerState.CENTER_INIT;
 
 /**
  * Possible states for center vision autonomous
@@ -858,7 +879,8 @@ public static centerState visionAuto = centerState.DRIVE_TEN_INCHES;
  */
 public static enum centerState
     {
-DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA,
+
+CENTER_INIT, DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA,
 /**
  * Left side auto, turns 90 degrees to the left
  */
@@ -1483,17 +1505,14 @@ private final static int RIGHT_SIDE_TURN_TOWARDS_EXCHANGE = -90;
 private final static int RIGHT_DISTANCE_TO_EXCHANGE = 130;
 
 // CENTER_SWITCH
-private final static int DRIVE_NO_CAMERA_LEFT = 73;
+private final static int DRIVE_NO_CAMERA_LEFT = 53;
 
-private final static int DRIVE_NO_CAMERA_RIGHT = 116;
+private final static int DRIVE_NO_CAMERA_RIGHT = 50;
+
+private final static double CENTER_ACCEL = .6;
 
 // TODO change for actual auto speed
 private final static double AUTO_SPEED_VISION = .5;
-
-// the constant we used to multiply one side's motors' speed by to correct
-// driving when driving using vision
-private final static double AUTO_COMPENSATION_VISION = 1.2;
-
 
 // SWITCH_OR_SCALE
 // array for storing the different driving distances in SWITH_OR_SCALE
