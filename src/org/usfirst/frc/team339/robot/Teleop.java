@@ -58,6 +58,16 @@ public static void init ()
 {
     // User code goes below here
 
+    // --------------------------------------
+    // reset the MotorSafetyHelpers for each
+    // of the drive motors
+    // --------------------------------------
+    Hardware.leftDriveMotor.setSafetyEnabled(false);
+    Hardware.rightDriveMotor.setSafetyEnabled(false);
+    Hardware.liftingMotor.setSafetyEnabled(false);
+    Hardware.cubeIntakeMotor.setSafetyEnabled(false);
+    Hardware.intakeDeployArm.setSafetyEnabled(false);
+
     // ---------------------------------
     // Encoder resetting
     // ---------------------------------

@@ -62,6 +62,16 @@ public class Autonomous
  */
 public static void init ()
 {
+    // --------------------------------------
+    // reset the MotorSafetyHelpers for each
+    // of the drive motors
+    // --------------------------------------
+    Hardware.leftDriveMotor.setSafetyEnabled(false);
+    Hardware.rightDriveMotor.setSafetyEnabled(false);
+    Hardware.liftingMotor.setSafetyEnabled(false);
+    Hardware.cubeIntakeMotor.setSafetyEnabled(false);
+    Hardware.intakeDeployArm.setSafetyEnabled(false);
+
     Hardware.leftFrontDriveEncoder.reset();
     Hardware.rightFrontDriveEncoder.reset();
     Hardware.leftRearDriveEncoder.reset();
