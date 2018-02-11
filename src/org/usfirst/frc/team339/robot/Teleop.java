@@ -325,12 +325,12 @@ private static void testingDrive ()
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if ((isTestingGyroTurn == true
                 || isTestingAnalogGyroTurn == true) && driveState == 0
-                && Hardware.autoDrive.turnDegreesGyro(90, .25) == true)
+                && Hardware.autoDrive.turnDegreesGyro(90, .4) == true)
             {
             driveState++;
             }
         else if (isTestingEncoderTurn && driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .25) == true)
+                && Hardware.autoDrive.turnDegrees(90, .4) == true)
             {
             driveState++;
             }
@@ -584,6 +584,9 @@ public static void printStatements ()
     SmartDashboard.putNumber("AnalogGyro",
             Hardware.gyroAnalog.getAngle());
 
+    // System.out.println("Gyro: " + Hardware.gyro.getAngle());
+    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+
     // ---------------------------------
     // Sonar/UltraSonic
     // ---------------------------------
@@ -611,9 +614,6 @@ public static void printStatements ()
     // -------------------------------------
     // Analog Interfaces
     // -------------------------------------
-
-    // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
     // =================================
     // Connection Items
