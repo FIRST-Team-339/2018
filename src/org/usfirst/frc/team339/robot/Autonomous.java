@@ -787,7 +787,7 @@ public static boolean centerSwitchPath ()
             // sets state to LIFT
             if (Hardware.driveWithCamera.driveToSwitch(
                     AUTO_SPEED_VISION) == true)
-                visionAuto = centerState.LIFT;
+                visionAuto = centerState.DONE;
             break;
         case LIFT:
             // moves the forklift to the scale height and holds it there
@@ -802,16 +802,19 @@ public static boolean centerSwitchPath ()
             // it to start deploying, then it can be called again here to check
             // if it is finished
             // deploys cube intake and then sets state to MAKE_DEPOSIT
+            Hardware.transmission.stop();
             if (Hardware.cubeManipulator.deployCubeIntake() == true)
                 visionAuto = centerState.MAKE_DEPOSIT;
             break;
         case MAKE_DEPOSIT:
             // deposits cube on switch and sets state to DONE
+            Hardware.transmission.stop();
             if (Hardware.cubeManipulator.scoreSwitch() == true)
                 visionAuto = centerState.DONE;
             break;
         default: // prints that we reached the default case, then falls through
                  // to DONE
+            Hardware.transmission.stop();
             System.out.println(
                     "REACHED THE DEFAULT CASE FOR centerSwitchPath()");
         case DONE:

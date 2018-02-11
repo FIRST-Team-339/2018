@@ -467,7 +467,8 @@ public static void printStatements ()
     //
     // System.out.println("6 pos = "
     // + Hardware.autoSixPosSwitch.getPosition());
-    // SmartDashboard.putNumber("6 Pos Switch",
+    SmartDashboard.putNumber("6 Pos Switch",
+            Hardware.autoSixPosSwitch.getPosition());
     // Hardware.leftFrontDriveEncoder.get());
     //
     // ---------------------------------
