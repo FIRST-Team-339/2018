@@ -82,7 +82,7 @@ public CubeManipulator (SpeedController forkliftMotor,
 public void stopForklift ()
 {
     // System.out.println("Calling stop forklift");
-    this.liftState = forkliftState.STAY_AT_POSITION;
+    this.liftState = ForkliftState.STAY_AT_POSITION;
 }
 
 /**
@@ -109,29 +109,27 @@ public void moveForkliftWithController (Joystick operatorJoystick)
     if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND
             && this.getForkliftHeight() <= FORKLIFT_MAX_HEIGHT)
         {
-        this.forkliftSpeedUp = FORKLIFT_SPEED_UP;
-        this.liftState = forkliftState.MOVING_UP;
+        this.liftState = ForkliftState.MOVING_UP_MAX;
         }
     // If we move the forklift down with the joystick, only do so if we are
     // above the min height
     else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND
             && this.getForkliftHeight() >= FORKLIFT_MIN_HEIGHT)
         {
-        this.forkliftSpeedDown = FORKLIFT_SPEED_DOWN;
-        this.liftState = forkliftState.MOVING_DOWN;
+        this.liftState = ForkliftState.MOVING_DOWN_MIN;
         }
     // If we are not using the joysticks and the lift is near the bottom, then
     // the lift is in the starting position.
     else if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
             + LIFT_TOLERANCE)
         {
-        this.liftState = forkliftState.AT_STARTING_POSITION;
+        this.liftState = ForkliftState.AT_STARTING_POSITION;
         }
     // If we are not moving the forklift, and it is above the starting position,
     // then stay there with a little voltage.
     else
         {
-        this.liftState = forkliftState.STAY_AT_POSITION;
+        this.liftState = ForkliftState.STAY_AT_POSITION;
         }
 }
 
@@ -154,32 +152,32 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
     // the forklift is going up
     boolean mustGoUp = position > getForkliftHeight();
 
-    this.forkliftHeightForMoveLiftDistance = position;
+    this.forkliftTargetHeight = position;
 
     // If we will travel up, then set it so for the state machine
     if (mustGoUp == true && this
-            .getForkliftHeight() <= this.forkliftHeightForMoveLiftDistance
+            .getForkliftHeight() <= this.forkliftTargetHeight
                     + LIFT_TOLERANCE)
         {
         // System.out.println("Decided to move up");
-        this.forkliftSpeedUp = -forkliftSpeed;
-        this.liftState = forkliftState.MOVING_UP;
+        this.forkliftCurrentSpeedUp = -forkliftSpeed;
+        this.liftState = ForkliftState.MOVING_UP_MAX;
         return this.finishedForkliftMove;
         }
     // If we will travel down, then set it so for the state machine
     else if (mustGoUp == false && this
-            .getForkliftHeight() >= this.forkliftHeightForMoveLiftDistance
+            .getForkliftHeight() >= this.forkliftTargetHeight
                     + LIFT_TOLERANCE)
         {
         // System.out.println("Decided to move down");
-        this.forkliftSpeedDown = forkliftSpeed;
-        this.liftState = forkliftState.MOVING_DOWN;
+        this.forkliftCurrentSpeedDown = forkliftSpeed;
+        this.liftState = ForkliftState.MOVING_DOWN_MIN;
         }
     // We have finished moving the forklift! hurray!
     else
         {
         this.finishedForkliftMove = true;
-        liftState = forkliftState.STAY_AT_POSITION;
+        liftState = ForkliftState.STAY_AT_POSITION;
         }
     return this.finishedForkliftMove;
 
@@ -214,9 +212,7 @@ public boolean setLiftPosition (double position)
 
 // ========================INTAKE FUNCTIONS========================
 
-/**
- * Cuts power to the intake motors
- */
+
 public double getIntakeAngle ()
 {
     return this.intakeDeployEncoder.get();
@@ -681,36 +677,72 @@ public void forkliftUpdate ()
     SmartDashboard.putString("Forklift State:", liftState + "");
     // System.out.println("Forklift State: " + liftState);
 
+    // main switch statement for the forklift state machine
     switch (liftState)
         {
         // Moves the forklift up
-        case MOVING_UP:
+        case MOVING_UP_MAX:
             this.finishedForkliftMove = false;
             if (// Math.abs(
             this.getForkliftHeight() >= FORKLIFT_MAX_HEIGHT)
                 {
-                this.liftState = forkliftState.STAY_AT_POSITION;
+                this.liftState = ForkliftState.STAY_AT_POSITION;
                 this.finishedForkliftMove = true;
                 }
             else
                 {
-                this.forkliftMotor.set(this.forkliftSpeedUp);
+                this.forkliftMotor.set(this.forkliftCurrentSpeedUp);
                 }
             break;
         // Moves the forklift down
-        case MOVING_DOWN:
+        case MOVING_DOWN_MIN:
             if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT
                     + LIFT_TOLERANCE)
                 {
-                this.liftState = forkliftState.AT_STARTING_POSITION;
+                this.liftState = ForkliftState.AT_STARTING_POSITION;
                 this.finishedForkliftMove = true;
                 }
             else
                 {
-                this.forkliftMotor.set(this.forkliftSpeedDown);
+                this.forkliftMotor.set(this.forkliftCurrentSpeedDown);
                 }
             this.finishedForkliftMove = false;
             break;
+
+        case MOVING_TO_POSITION:
+            // determine whether or not the forklift needs to go up or down
+            if (this.getForkliftHeight() < forkliftTargetHeight
+                    - LIFT_UNDERSHOOT_TOLERANCE)
+                {
+                forkliftDirection = ForkliftDirectionState.MOVING_UP;
+                }
+            else if (this.getForkliftHeight() > forkliftTargetHeight
+                    + LIFT_OVERSHOOT_TOLERANCE)
+                {
+                forkliftDirection = ForkliftDirectionState.MOVING_DOWN;
+                }
+            else
+                {
+                forkliftDirection = ForkliftDirectionState.AT_POSITION;
+                }
+
+            switch (forkliftDirection)
+                {
+                case MOVING_UP:
+                    this.forkliftMotor.set(forkliftCurrentSpeedUp);
+                    break;
+                case MOVING_DOWN:
+                    this.forkliftMotor.set(forkliftCurrentSpeedDown);
+                    break;
+                case AT_POSITION:
+                    break;
+                default:
+                    break;
+                }
+
+
+            break;
+
         // Make the cube "hover" by sending a constant small voltage to the
         // forklift motor.
         case STAY_AT_POSITION:
@@ -894,9 +926,22 @@ public void stopEverything ()
  * 
  * @author Becky Button
  */
-private static enum forkliftState
+private static enum ForkliftState
     {
-MOVING_UP, MOVING_DOWN, STAY_AT_POSITION, AT_STARTING_POSITION, INTAKE_IS_DEPLOYED
+MOVING_UP_MAX, MOVING_DOWN_MIN, MOVING_TO_POSITION, STAY_AT_POSITION, AT_STARTING_POSITION, AT_MAX_HEIGHT
+    }
+
+/**
+ * States used inside the MOVNG_TO_POSITION state (from ForkliftState) which way
+ * the forklift is
+ * moving
+ * 
+ * @author C.R.
+ *
+ */
+private static enum ForkliftDirectionState
+    {
+MOVING_UP, MOVING_DOWN, AT_POSITION
     }
 
 /**
@@ -941,15 +986,20 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
 
 // ================FORKLIFT================
 // Used in forkliftUpdate()
-private forkliftState liftState = forkliftState.AT_STARTING_POSITION;
+private ForkliftState liftState = ForkliftState.AT_STARTING_POSITION;
 
-private double forkliftHeightForMoveLiftDistance = 0;
+// used to tell the forklift which direction it should be moving
+private ForkliftDirectionState forkliftDirection = ForkliftDirectionState.AT_POSITION;
+
+private double forkliftTargetHeight = 0.0;
 
 private boolean finishedForkliftMove = false;
 
-private double forkliftSpeedUp = 0;
+private double forkliftTargetSpeed = 0.0;
 
-private double forkliftSpeedDown = 0;
+private double forkliftCurrentSpeedUp = 0;
+
+private double forkliftCurrentSpeedDown = 0;
 // ========================================
 
 // ================INTAKE==================
@@ -995,7 +1045,15 @@ private final double FORKLIFT_AT_STARTING_POSITION = 0;
 
 private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
+// TODO remove
 private final double LIFT_TOLERANCE = 3;
+
+
+// how far the lift is allowed to be over the target height
+private final double LIFT_OVERSHOOT_TOLERANCE = 1.0;
+
+// how far the lift is allowed to be under the target height
+private final double LIFT_UNDERSHOOT_TOLERANCE = 1.0;
 
 private final double SWITCH_HEIGHT = 30;
 
