@@ -30,6 +30,7 @@ import org.usfirst.frc.team339.vision.VisionProcessor;
 import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
@@ -66,6 +67,7 @@ public class Hardware
 // ---------------------------------------
 public static boolean onNessie = true;
 
+public static boolean on2018 = true;
 
 // **********************************************************
 // DIGITAL I/O CLASSES
@@ -208,7 +210,8 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // Gyro class
 // ------------------------------------
 
-public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+// P/N ADW22307
+public static AnalogGyro gyroAnalog = new AnalogGyro(0);
 
 // -------------------------------------
 // Potentiometers
@@ -219,9 +222,19 @@ public static RobotPotentiometer delayPot = new RobotPotentiometer(2,
 // -------------------------------------
 // Sonar/Ultrasonic
 // -------------------------------------
-public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(0);
+public static LVMaxSonarEZ frontUltraSonic = new LVMaxSonarEZ(3);
 
 public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
+
+// =====================================
+// SPI Bus
+// =====================================
+
+// -------------------------------------
+// Analog Interfaces
+// -------------------------------------
+
+public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
@@ -267,9 +280,6 @@ public static MomentarySwitch visionTestButton = new MomentarySwitch(
 
 public static MomentarySwitch climbButton = new MomentarySwitch(
         rightOperator, 5, false /* starting state */);
-
-public static MomentarySwitch deployIntakeButton = new MomentarySwitch(
-        leftOperator, 3, false /* starting state */);
 
 // **********************************************************
 // Kilroy's Ancillary classes
