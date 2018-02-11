@@ -16,6 +16,7 @@ package org.usfirst.frc.team339.Hardware;
 
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.DriveWithCamera;
+import org.usfirst.frc.team339.HardwareInterfaces.KilroySPIGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
@@ -29,7 +30,6 @@ import org.usfirst.frc.team339.Utils.ScaleAlignment;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -234,7 +234,7 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // Analog Interfaces
 // -------------------------------------
 
-public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
