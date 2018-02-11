@@ -239,11 +239,11 @@ public void robotInit ()
     // reset the MotorSafetyHelpers for each
     // of the drive motors
     // --------------------------------------
-    Hardware.leftDriveMotor.setSafetyEnabled(true);
-    Hardware.rightDriveMotor.setSafetyEnabled(true);
-    Hardware.liftingMotor.setSafetyEnabled(true);
-    Hardware.cubeIntakeMotor.setSafetyEnabled(true);
-    Hardware.intakeDeployArm.setSafetyEnabled(true);
+    Hardware.leftDriveMotor.setSafetyEnabled(false);
+    Hardware.rightDriveMotor.setSafetyEnabled(false);
+    Hardware.liftingMotor.setSafetyEnabled(false);
+    Hardware.cubeIntakeMotor.setSafetyEnabled(false);
+    Hardware.intakeDeployArm.setSafetyEnabled(false);
 
     // -------------------------------------
     // Manually sets encoders Distance per Pulse
