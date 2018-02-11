@@ -273,8 +273,8 @@ public void robotInit ()
         {
         Hardware.leftDriveMotor.setInverted(false);
         Hardware.rightDriveMotor.setInverted(false);
-        Hardware.transmission.setAllGearRatios(GEAR_1_SPEED_NESSIE,
-                GEAR_2_SPEED_NESSIE);
+        Hardware.transmission.setAllGearRatios(NESSIE_GEAR_1_SPEED,
+                NESSIE_GEAR_2_SPEED);
         } // if
     else
     // ----------------------------------
@@ -430,13 +430,13 @@ private static final double KILROY_XIX_GEAR_1_SPEED = .3;
 
 private static final double KILROY_XV_GEAR_1_SPEED = .4;
 
-private static final double GEAR_1_SPEED_NESSIE = .5;
+private static final double NESSIE_GEAR_1_SPEED = .5;
 
 public static final double KILROY_XIX_GEAR_2_SPEED = .4;
 
 public static final double KILROY_XV_GEAR_2_SPEED = .6;
 
-private static final double GEAR_2_SPEED_NESSIE = .5;
+private static final double NESSIE_GEAR_2_SPEED = .5;
 
 private static final double JOYSTICK_DEADBAND_RANGE = .2;
 
