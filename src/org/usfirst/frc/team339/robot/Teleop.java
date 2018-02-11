@@ -57,6 +57,16 @@ public static void init ()
 {
     // User code goes below here
 
+    // --------------------------------------
+    // reset the MotorSafetyHelpers for each
+    // of the drive motors
+    // --------------------------------------
+    Hardware.leftDriveMotor.setSafetyEnabled(false);
+    Hardware.rightDriveMotor.setSafetyEnabled(false);
+    Hardware.liftingMotor.setSafetyEnabled(false);
+    Hardware.cubeIntakeMotor.setSafetyEnabled(false);
+    Hardware.intakeDeployArm.setSafetyEnabled(false);
+
     // ---------------------------------
     // Encoder resetting
     // ---------------------------------
@@ -473,8 +483,8 @@ public static void printStatements ()
     // System.out.println("6 pos = "
     // + Hardware.autoSixPosSwitch.getPosition());
     // SmartDashboard.putNumber("6 Pos Switch",
-    // Hardware.leftFrontDriveEncoder.get());
-    //
+    // Hardware.autoSixPosSwitch.getPosition());
+
     // ---------------------------------
     // Encoders
     // ---------------------------------
@@ -585,11 +595,12 @@ public static void printStatements ()
     // ---------------------------------
 
     // System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
-    SmartDashboard.putNumber("AnalogGyro",
-            Hardware.gyroAnalog.getAngle());
+    // SmartDashboard.putNumber("AnalogGyro",
+    // Hardware.gyroAnalog.getAngle());
 
     // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+
 
     // ---------------------------------
     // Sonar/UltraSonic
@@ -618,6 +629,9 @@ public static void printStatements ()
     // -------------------------------------
     // Analog Interfaces
     // -------------------------------------
+
+    // System.out.println("Gyro: " + Hardware.gyro.getAngle());
+    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
     // =================================
     // Connection Items

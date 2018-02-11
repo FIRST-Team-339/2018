@@ -293,16 +293,14 @@ public double getCameraCenterValue ()
 // ================VISION CONSTANTS================
 // the distance in inches in which we drive the robot straight using the
 // ultrasonic
-private final double CAMERA_NO_LONGER_WORKS = 0;
-// 38 + 50;
+private final double CAMERA_NO_LONGER_WORKS = 38 + 50;
 // 24
 
 // the number in pixels that the center we are looking for can be off
 private final double CAMERA_DEADBAND = 7;
 
 // the distance from the wall (in inches) where we start stopping the robot
-private final double DISTANCE_FROM_WALL_TO_STOP = 0;
-// 20 + 50;
+private final double DISTANCE_FROM_WALL_TO_STOP = 20 + 50;
 // 6
 
 // TODO This is for nessie, test for the new robot
