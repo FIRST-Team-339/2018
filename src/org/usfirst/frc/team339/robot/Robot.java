@@ -230,7 +230,7 @@ public void robotInit ()
     Hardware.leftRearDriveEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     Hardware.liftingEncoder.reset();
-    Hardware.liftingEncoder.setReverseDirection(false);
+    Hardware.liftingEncoder.setReverseDirection(true);
     Hardware.intakeDeployEncoder.reset();
 
     // -------------------------------------

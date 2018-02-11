@@ -33,7 +33,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
-import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -145,12 +144,12 @@ public static void periodic ()
     // if (allowAlignment == false)
     // {
 
-    if (Math.abs(Hardware.rightOperator
-            .getY()) >= CubeManipulator.JOYSTICK_DEADBAND)
-        {
-        Hardware.cubeManipulator
-                .moveForkliftWithController(Hardware.rightOperator);
-        }
+    // if (Math.abs(Hardware.rightOperator
+    // .getY()) >= CubeManipulator.JOYSTICK_DEADBAND)
+    // {
+    // Hardware.cubeManipulator
+    // .moveForkliftWithController(Hardware.rightOperator);
+    // }
     // testing code for setting forklift height; temporary
     if (Hardware.rightOperator.getRawButton(6) == true)
         {
@@ -159,10 +158,10 @@ public static void periodic ()
 
     if (Hardware.rightOperator.getRawButton(7) == true)
         {
-        Hardware.cubeManipulator.setLiftPosition(30);
+        Hardware.cubeManipulator.setLiftPosition(30.0);
         }
 
-    if (Hardware.rightOperator.getRawButton(8))
+    if (Hardware.rightOperator.getRawButton(8) == true)
         {
         Hardware.cubeManipulator.setLiftPosition(40.0);
         }
@@ -410,8 +409,8 @@ public static void printStatements ()
     // SmartDashboard.putNumber("L Drive Motor",
     // Hardware.leftDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    // SmartDashboard.putNumber("Lifting Motor",
-    // Hardware.liftingMotor.get());
+    SmartDashboard.putNumber("Lifting Motor",
+            Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // SmartDashboard.putNumber("Cube Motor",
@@ -517,8 +516,8 @@ public static void printStatements ()
     // System.out.println(
     // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
-    // SmartDashboard.putNumber("Lift Encoder Inches",
-    // Hardware.liftingEncoder.getDistance());
+    SmartDashboard.putNumber("Lift Encoder Inches",
+            Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
