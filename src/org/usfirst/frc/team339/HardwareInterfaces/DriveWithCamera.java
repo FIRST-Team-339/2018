@@ -7,10 +7,9 @@ import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmiss
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
 import org.usfirst.frc.team339.vision.VisionProcessor;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay.Value;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
  * Contains all game specific vision code, including code to drive to the switch
@@ -34,7 +33,7 @@ private UltraSonic frontUltrasonic = null;
 
 private UltraSonic rearUltrasonic = null;
 
-private ADXRS450_Gyro gyro = null;
+private Gyro gyro = null;
 
 private VisionProcessor visionProcessor = null;
 
@@ -67,7 +66,7 @@ public DriveWithCamera (TransmissionBase transmission,
         Encoder leftFrontEncoder,
         Encoder rightFrontEncoder,
         Encoder leftRearEncoder, Encoder rightRearEncoder,
-        ADXRS450_Gyro gyro,
+        Gyro gyro,
         VisionProcessor visionProcessor)
 {
     super(transmission, leftFrontEncoder, rightFrontEncoder,
@@ -106,7 +105,7 @@ public DriveWithCamera (TransmissionBase transmission,
 public DriveWithCamera (TransmissionBase transmission,
         Encoder leftEncoder, Encoder rightEncoder,
         UltraSonic frontUltrasonic, UltraSonic rearUltrasonic,
-        ADXRS450_Gyro gyro, VisionProcessor visionProcessor)
+        Gyro gyro, VisionProcessor visionProcessor)
 {
     super(transmission, leftEncoder, rightEncoder, gyro);
 
@@ -149,7 +148,7 @@ public boolean driveToSwitch (double speed)
     else
         {
         // turn off the ring light
-        this.visionProcessor.setRelayValue(Value.kReverse);
+        this.visionProcessor.setRelayValue(Value.kOff);
 
         if (this.frontUltrasonic
                 .getDistanceFromNearestBumper() <= DISTANCE_FROM_WALL_TO_STOP)
@@ -167,7 +166,7 @@ public boolean driveToSwitch (double speed)
             // gets the position of the center
             double center = this.getCameraCenterValue();
             // turns on the ring light
-            this.visionProcessor.setRelayValue(Value.kForward);
+            this.visionProcessor.setRelayValue(Value.kOn);
             // if we are aligned the center, we will drive straight
             // if (center >= SWITCH_CAMERA_CENTER
             // - CAMERA_DEADBAND
@@ -294,23 +293,21 @@ public double getCameraCenterValue ()
 // ================VISION CONSTANTS================
 // the distance in inches in which we drive the robot straight using the
 // ultrasonic
-private final double CAMERA_NO_LONGER_WORKS = 0;
-// 38 + 50;
-// 24
+private final double CAMERA_NO_LONGER_WORKS = 24;
+//38 + 50;
 
 // the number in pixels that the center we are looking for can be off
 private final double CAMERA_DEADBAND = 7;
 
 // the distance from the wall (in inches) where we start stopping the robot
-private final double DISTANCE_FROM_WALL_TO_STOP = 0;
-// 20 + 50;
-// 6
+private final double DISTANCE_FROM_WALL_TO_STOP =  6;
+//20 + 50;
 
 // TODO This is for nessie, test for the new robot
 private final double SWITCH_CAMERA_CENTER = 160;
 // 160;
 
-private final double DRIVE_CORRECTION = .4;
+private final double DRIVE_CORRECTION = .2;
 
 // ================VISION TUNABLES================
 // Gets the center x value of the vision targets (average of the x values

@@ -16,6 +16,7 @@ package org.usfirst.frc.team339.Hardware;
 
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.DriveWithCamera;
+import org.usfirst.frc.team339.HardwareInterfaces.KilroySPIGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
@@ -29,7 +30,6 @@ import org.usfirst.frc.team339.Utils.ScaleAlignment;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -41,8 +41,8 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 
-// -------------------------------------------------------
 /**
+ * -------------------------------------------------------
  * puts all of the hardware declarations into one place. In addition, it makes
  * them available to both autonomous and teleop.
  *
@@ -233,8 +233,7 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // -------------------------------------
 // Analog Interfaces
 // -------------------------------------
-
-public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES
@@ -243,7 +242,7 @@ public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 // Axis/USB Camera class
 // -------------------------------------
 public static VisionProcessor axisCamera = new VisionProcessor(
-        "10.13.39.11", CameraModel.AXIS_M1013, ringLightRelay);
+        "10.3.39.11", CameraModel.AXIS_M1013, ringLightRelay);
 // @todo - add ring light relay as 3rd argument
 
 // -------------------------------------
@@ -309,7 +308,9 @@ public static TractionTransmission transmission = new TractionTransmission(
 // Drive system
 // ------------------------------------
 public static Drive autoDrive = new Drive(transmission,
-        leftFrontDriveEncoder, rightFrontDriveEncoder, gyro);
+        leftRearDriveEncoder,
+        rightRearDriveEncoder, leftFrontDriveEncoder,
+        rightFrontDriveEncoder, gyro);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 public static DriveWithCamera driveWithCamera = new DriveWithCamera(

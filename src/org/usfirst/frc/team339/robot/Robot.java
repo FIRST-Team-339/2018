@@ -4,7 +4,7 @@
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project. */
 /*----------------------------------------------------------------------------*/
-// ====================================================================
+// =======================================================a=============
 // FILE NAME: Kilroy.java (Team 339 - Kilroy)
 //
 // CREATED ON: Oct 19, 2012
@@ -71,27 +71,28 @@ import edu.wpi.first.wpilibj.Relay.Value;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-// -------------------------------------------------------
 /**
+ * -------------------------------------------------------
  * declares all the code necessary to extend the IterativeRobot class. These are
  * all the methods needed to run Kilroy during a match
  *
  * @author Bob Brown
- * @written Jan 2, 2011 -------------------------------------------------------
+ * @written Jan 2, 2011
+ *          -------------------------------------------------------
  */
 public class Robot extends IterativeRobot
 {
 // =================================================
 // private data for the class
 // =================================================
-// -------------------------------------------------------
-
 /**
+ * -------------------------------------------------------
  * Initialization code for autonomous mode should go here. Will be called
  * once when the robot enters autonomous mode.
  *
  * @author Bob Brown
  * @written Jan 2, 2011
+ * 
  *          -------------------------------------------------------
  */
 @Override
@@ -118,8 +119,8 @@ public void autonomousInit ()
     System.out.println("Completed AutonousInit().");
 } // end autonomousInit
 
-// -------------------------------------------------------
 /**
+ * -------------------------------------------------------
  * Non-User Periodic code for autonomous mode should go here. Will be called
  * periodically at a regular rate while the robot is in autonomous mode.
  * This in turn calls the Autonomous class's Periodic function, which is
@@ -127,6 +128,7 @@ public void autonomousInit ()
  *
  * @author Bob Brown
  * @written Jan 2, 2011
+ * 
  *          -------------------------------------------------------
  */
 @Override
@@ -140,9 +142,9 @@ public void autonomousPeriodic ()
     // User code goes above here
     // =========================================================
 }// end autonomousPeriodic
- // -------------------------------------------------------
 
 /**
+ * -------------------------------------------------------
  * Initialization code for disabled mode should go here. Will be called once
  * when the robot enters disabled mode.
  *
@@ -172,8 +174,8 @@ public void disabledInit ()
     System.out.println("Completed DisabledInit().");
 } // end disabledInit
 
-// -------------------------------------------------------
 /**
+ * -------------------------------------------------------
  * Periodic code for disabled mode should go here. Will be called
  * periodically at a regular rate while the robot is in disabled mode. Code
  * that can be "triggered" by a joystick button can go here. This can set up
@@ -194,9 +196,9 @@ public void disabledPeriodic ()
     // User code goes above here
     // =========================================================
 } // end disabledPeriodic
-  // -------------------------------------------------------
 
 /**
+ * -------------------------------------------------------
  * This function is run when the robot is first started up and should be
  * used for any initialization code for the robot.
  *
@@ -230,42 +232,50 @@ public void robotInit ()
     Hardware.leftRearDriveEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     Hardware.liftingEncoder.reset();
-    Hardware.liftingEncoder.setReverseDirection(false);
+    Hardware.liftingEncoder.setReverseDirection(true);
     Hardware.intakeDeployEncoder.reset();
+
+    // --------------------------------------
+    // reset the MotorSafetyHelpers for each
+    // of the drive motors
+    // --------------------------------------
+    Hardware.leftDriveMotor.setSafetyEnabled(false);
+    Hardware.rightDriveMotor.setSafetyEnabled(false);
+    Hardware.liftingMotor.setSafetyEnabled(false);
+    Hardware.cubeIntakeMotor.setSafetyEnabled(false);
+    Hardware.intakeDeployArm.setSafetyEnabled(false);
 
     // -------------------------------------
     // Manually sets encoders Distance per Pulse
     // -------------------------------------
     if (Hardware.on2018 == true)
         {
-        Hardware.leftFrontDriveEncoder
-                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-        Hardware.rightFrontDriveEncoder
-                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-        Hardware.leftRearDriveEncoder
-                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
-        Hardware.rightRearDriveEncoder
-                .setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.autoDrive.setEncoderDistancePerPulse(
+                KILROY_XIX_ENCODER_DPP,
+                MotorPosition.ALL);
+
         Hardware.liftingEncoder
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder
                 .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
-        }
+
+        Hardware.transmission.setAllGearRatios(KILROY_XIX_GEAR_1_SPEED,
+                KILROY_XIX_GEAR_2_SPEED);
+        } // end if
     else
         {
-        Hardware.leftFrontDriveEncoder
-                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
-        Hardware.rightFrontDriveEncoder
-                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
-        Hardware.leftRearDriveEncoder
-                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
-        Hardware.rightRearDriveEncoder
-                .setDistancePerPulse(KILROY_XV_ENCODER_DPP);
+        Hardware.autoDrive.setEncoderDistancePerPulse(
+                KILROY_XV_ENCODER_DPP,
+                MotorPosition.ALL);
+
         Hardware.liftingEncoder
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder
                 .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
-        }
+
+        Hardware.transmission.setAllGearRatios(KILROY_XV_GEAR_1_SPEED,
+                KILROY_XV_GEAR_2_SPEED);
+        } // else
 
     // ----------------------------------
     // For last years robot - do the following
@@ -274,8 +284,8 @@ public void robotInit ()
         {
         Hardware.leftDriveMotor.setInverted(false);
         Hardware.rightDriveMotor.setInverted(false);
-        Hardware.transmission.setAllGearRatios(GEAR_1_SPEED_NESSIE,
-                GEAR_2_SPEED_NESSIE);
+        Hardware.transmission.setAllGearRatios(NESSIE_GEAR_1_SPEED,
+                NESSIE_GEAR_2_SPEED);
         } // if
     else
     // ----------------------------------
@@ -284,21 +294,12 @@ public void robotInit ()
         {
         Hardware.leftDriveMotor.setInverted(false);
         Hardware.rightDriveMotor.setInverted(true);
-        Hardware.transmission.setAllGearRatios(GEAR_1_SPEED,
-                GEAR_2_SPEED);
         } // else
 
     // ---------------------------------
     // Sets joystick deadband
     // ---------------------------------
     Hardware.transmission.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
-
-    // ---------------------------------
-    // Sets all encoders Distance per pulse
-    // ---------------------------------
-    Hardware.autoDrive.setEncoderDistancePerPulse(
-            KILROY_XIX_ENCODER_DPP,
-            MotorPosition.ALL);
 
     // ---------------------------------
     // Sets the angle of the servo to 100
@@ -323,8 +324,8 @@ public void robotInit ()
             "Kilroy XIX is started.  All hardware items created.");
 } // end robotInit()
 
-// -------------------------------------------------------
 /**
+ * ------------------------------------------------------
  * Non-User initialization code for teleop mode should go here. Will be
  * called once when the robot enters teleop mode, and will call the Teleop
  * class's Init function, where the User code should be placed.
@@ -342,8 +343,11 @@ public void teleopInit ()
     // ---------------------------------------
     System.out.println("Started teleopInit().");
     // =========================================================
+    // User code goes below here
+    // =========================================================
     Teleop.init();
 
+    // =========================================================
     // User code goes above here
     // =========================================================
     // ---------------------------------------
@@ -353,8 +357,8 @@ public void teleopInit ()
     System.out.println("Completed TeleopInit().");
 } // end teleopInit
 
-// -------------------------------------------------------
 /**
+ * -------------------------------------------------------
  * Non-User Periodic code for teleop mode should go here. Will be called
  * periodically at a regular rate while the robot is in teleop mode, and
  * will in turn call the Teleop class's Periodic function.
@@ -381,15 +385,15 @@ public void teleopPeriodic ()
     // =========================================================
 
 } // end teleopPeriodic
-  // -------------------------------------------------------
 
 /**
+ * -------------------------------------------------------
  * Initialization code for test mode should go here. Will be called once
  * when the robot enters test mode.
  *
  * @author Bob Brown
  * @written Jan 2, 2015
- *          -------------------------------------------------------
+ *          ------------------------------------------------------
  */
 @Override
 public void testInit ()
@@ -403,9 +407,9 @@ public void testInit ()
     // =========================================================
 
 } // end testInit
-  // -------------------------------------------------------
 
 /**
+ * -------------------------------------------------------
  * Periodic code for test mode should go here. Will be called periodically
  * at a regular rate while the robot is in test mode.
  *
@@ -433,13 +437,17 @@ private static final double KILROY_XV_ENCODER_DPP = .0174;
 
 private static final double KILROY_XIX_ENCODER_DPP = 0.0346;
 
-private static final double GEAR_1_SPEED = .3;
+private static final double KILROY_XIX_GEAR_1_SPEED = .3;
 
-private static final double GEAR_1_SPEED_NESSIE = .5;
+private static final double KILROY_XV_GEAR_1_SPEED = .4;
 
-public static final double GEAR_2_SPEED = .4;
+private static final double NESSIE_GEAR_1_SPEED = .5;
 
-private static final double GEAR_2_SPEED_NESSIE = .5;
+public static final double KILROY_XIX_GEAR_2_SPEED = .4;
+
+public static final double KILROY_XV_GEAR_2_SPEED = .6;
+
+private static final double NESSIE_GEAR_2_SPEED = .5;
 
 private static final double JOYSTICK_DEADBAND_RANGE = .2;
 

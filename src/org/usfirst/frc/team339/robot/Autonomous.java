@@ -62,6 +62,16 @@ public class Autonomous
  */
 public static void init ()
 {
+    // --------------------------------------
+    // reset the MotorSafetyHelpers for each
+    // of the drive motors
+    // --------------------------------------
+    Hardware.leftDriveMotor.setSafetyEnabled(false);
+    Hardware.rightDriveMotor.setSafetyEnabled(false);
+    Hardware.liftingMotor.setSafetyEnabled(false);
+    Hardware.cubeIntakeMotor.setSafetyEnabled(false);
+    Hardware.intakeDeployArm.setSafetyEnabled(false);
+
     Hardware.leftFrontDriveEncoder.reset();
     Hardware.rightFrontDriveEncoder.reset();
     Hardware.leftRearDriveEncoder.reset();
@@ -155,6 +165,10 @@ public static void periodic ()
                 case 1:
                     // drives and sets up at scale
                     autoState = State.AUTOLINE_SCALE;
+                    if (Hardware.onNessie == true)
+                        {
+                        autoState = State.CENTER_SWITCH;
+                        }
                     break;
                 case 2:
                     // cross autoline, then go to the exchange
@@ -407,8 +421,16 @@ public static boolean autoLineScalePath ()
         case BRAKE1:
             // Brake after driving across the line
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
-                currentAutolineState = AutolinePathStates.FINISH;
+                currentAutolineState = AutolinePathStates.DEPLOY;
             break;
+
+        case DEPLOY:
+            if (Hardware.cubeManipulator.deployCubeIntake())
+                {
+                currentAutolineState = AutolinePathStates.FINISH;
+                }
+            break;
+
         default: // prints we reached the default case, then fall through to
                  // FINISH
             System.out.println(
@@ -433,7 +455,7 @@ public static leftExchangeState leftExchangeAuto = leftExchangeState.PATH_INIT;
  */
 public static enum leftExchangeState
     {
-PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_RIGHT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, DEPLOY, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_B4_TURN, TURN_90_DEGREES_RIGHT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, BRAKE_B4_DEPLOY, DEPLOY, DONE
     }
 
 
@@ -466,11 +488,18 @@ public static boolean leftAutoLineExchangePath ()
             // drives the necessary distance across the autoline then
             // changes the state to DRIVE_BACK_ACROSS_AUTOLINE
             if (Hardware.autoDrive.driveStraightInches(
-                    DISTANCE_TO_CROSS_AUTOLINE,
+                    DISTANCE_TO_CROSS_AUTOLINE - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
                 {
-                leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                leftExchangeAuto = leftExchangeState.BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE;
                 }
+            break;
+
+        case BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE:
+            // brakes after driving
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
@@ -482,12 +511,12 @@ public static boolean leftAutoLineExchangePath ()
                                     .getBrakeStoppingDistance(),
                     -DRIVE_SPEED) == true)
                 {
-                leftExchangeAuto = leftExchangeState.BRAKE_AFTER_STRAIGHT;
+                leftExchangeAuto = leftExchangeState.BRAKE_B4_TURN;
                 Hardware.autoDrive.resetAccelerate();
                 }
             break;
 
-        case BRAKE_AFTER_STRAIGHT:
+        case BRAKE_B4_TURN:
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
@@ -520,8 +549,15 @@ public static boolean leftAutoLineExchangePath ()
         case DRIVE_TO_EXCHANGE:
             // drives distance to the exchange and sets state to DONE
             if (Hardware.autoDrive.driveStraightInches(
-                    LEFT_DISTANCE_TO_EXCHANGE,
+                    LEFT_DISTANCE_TO_EXCHANGE - Hardware.autoDrive
+                            .getBrakeStoppingDistance(),
                     DRIVE_SPEED) == true)
+                leftExchangeAuto = leftExchangeState.BRAKE_B4_DEPLOY;
+            break;
+
+        case BRAKE_B4_DEPLOY:
+            // brake before deploying
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 leftExchangeAuto = leftExchangeState.DEPLOY;
             break;
 
@@ -551,7 +587,7 @@ public static rightExchangeState rightExchangeAuto = rightExchangeState.DRIVE_AC
  */
 public static enum rightExchangeState
     {
-PATH_INIT, DRIVE_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_LEFT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, DEPLOY, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_LEFT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, BRAKE_B4_DEPLOY, DEPLOY, DONE
     }
 
 
@@ -582,9 +618,14 @@ public static boolean rightAutoLineExchangePath ()
                     DISTANCE_TO_CROSS_AUTOLINE,
                     DRIVE_SPEED) == true)
                 {
-                rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                rightExchangeAuto = rightExchangeState.BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE;
                 Hardware.autoDrive.resetAccelerate();
                 }
+            break;
+        case BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE:
+            // brakes after driving
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
@@ -633,8 +674,14 @@ public static boolean rightAutoLineExchangePath ()
                     RIGHT_DISTANCE_TO_EXCHANGE,
                     DRIVE_SPEED) == true)
                 {
-                rightExchangeAuto = rightExchangeState.DEPLOY;
+                rightExchangeAuto = rightExchangeState.BRAKE_B4_DEPLOY;
                 }
+            break;
+
+        case BRAKE_B4_DEPLOY:
+            // brake before deploying
+            if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                leftExchangeAuto = leftExchangeState.DEPLOY;
             break;
 
         case DEPLOY:
@@ -665,14 +712,18 @@ public static boolean rightAutoLineExchangePath ()
  */
 public static boolean centerSwitchPath ()
 {
+    // System.out.println("We are in the " + visionAuto + " state.");
     switch (visionAuto)
         {
+        case CENTER_INIT:
+            Hardware.autoDrive.setDefaultAcceleration(CENTER_ACCEL);
+            visionAuto = centerState.DRIVE_TEN_INCHES;
+            break;
         case DRIVE_TEN_INCHES:
             // drive 10 inches to make the turn and sets state to BRAKE_1
+            // -Hardware.autoDrive.getBrakeStoppingDistance()
             if (Hardware.autoDrive.driveStraightInches(
-                    10 - Hardware.autoDrive
-                            .getBrakeStoppingDistance(),
-                    AUTO_SPEED_VISION) == true)
+                    10, AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_1;
                 }
@@ -770,7 +821,6 @@ public static boolean centerSwitchPath ()
                     visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
             break;
-
         case TURN_AGAIN_LEFT:
             // turns 90 to the left then brakes and sets the state to
             // DRIVE_WITH_CAMERA
@@ -779,7 +829,8 @@ public static boolean centerSwitchPath ()
                 {
                 if (Hardware.autoDrive
                         .brake(BrakeType.AFTER_TURN) == true)
-                    visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    visionAuto = centerState.LIFT; // TODO change back to
+                                                   // DRIVE_WITH_CAMERA
                 }
             break;
         case DRIVE_WITH_CAMERA:
@@ -802,28 +853,32 @@ public static boolean centerSwitchPath ()
             // it to start deploying, then it can be called again here to check
             // if it is finished
             // deploys cube intake and then sets state to MAKE_DEPOSIT
+            Hardware.transmission.stop();
             if (Hardware.cubeManipulator.deployCubeIntake() == true)
                 visionAuto = centerState.MAKE_DEPOSIT;
             break;
         case MAKE_DEPOSIT:
             // deposits cube on switch and sets state to DONE
+            Hardware.transmission.stop();
             if (Hardware.cubeManipulator.scoreSwitch() == true)
                 visionAuto = centerState.DONE;
             break;
         default: // prints that we reached the default case, then falls through
                  // to DONE
+            Hardware.transmission.stop();
             System.out.println(
                     "REACHED THE DEFAULT CASE FOR centerSwitchPath()");
         case DONE:
             // stops robot the robot, and return true so the main auto
             // switch machine knows this path is done
-            Hardware.transmission.stop();
+            Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE);
+            Hardware.autoDrive.driveInches(0, 0);
             return true;
         }
     return false;
 }
 
-public static centerState visionAuto = centerState.DRIVE_TEN_INCHES;
+public static centerState visionAuto = centerState.CENTER_INIT;
 
 /**
  * Possible states for center vision autonomous
@@ -833,7 +888,8 @@ public static centerState visionAuto = centerState.DRIVE_TEN_INCHES;
  */
 public static enum centerState
     {
-DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA,
+
+CENTER_INIT, DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA,
 /**
  * Left side auto, turns 90 degrees to the left
  */
@@ -901,7 +957,7 @@ DONE
 public static boolean switchOrScalePath (Position robotPosition)
 {
     // prints the current state for this autonomous path
-    // System.out.println("Current State: " + currentSwitchOrScaleState);
+    System.out.println("Current State: " + currentSwitchOrScaleState);
 
     switch (currentSwitchOrScaleState)
         {
@@ -1055,7 +1111,8 @@ public static boolean switchOrScalePath (Position robotPosition)
             break;
 
         case DRIVE3:
-            // Drive to the right scale position
+            // Drive to the right scale position (and even with the switch
+            // while still on the initial side we were on)
             if (Hardware.autoDrive.driveStraightInches(
                     SWITCH_OR_SCALE_DRIVE_DISTANCE[2]
                             - Hardware.autoDrive
@@ -1457,24 +1514,26 @@ private final static int RIGHT_SIDE_TURN_TOWARDS_EXCHANGE = -90;
 private final static int RIGHT_DISTANCE_TO_EXCHANGE = 130;
 
 // CENTER_SWITCH
-private final static int DRIVE_NO_CAMERA_LEFT = 73;
+private final static int DRIVE_NO_CAMERA_LEFT = 53;
 
-private final static int DRIVE_NO_CAMERA_RIGHT = 116;
+private final static int DRIVE_NO_CAMERA_RIGHT = 50;
+
+private final static double CENTER_ACCEL = .6;
 
 // TODO change for actual auto speed
 private final static double AUTO_SPEED_VISION = .5;
 
-// the constant we used to multiply one side's motors' speed by to correct
-// driving when driving using vision
-private final static double AUTO_COMPENSATION_VISION = 1.2;
-
-
 // SWITCH_OR_SCALE
 // array for storing the different driving distances in SWITH_OR_SCALE
 private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
+// distance to be perpendicular to the switch
     {(int) (AUTO_TESTING_SCALAR * 133),
+            // distance to drive to the middle of the platform zone
             (int) (AUTO_TESTING_SCALAR * 67),
+            // distance to drive in platform zone til you are in line with the
+            // scale
             (int) (AUTO_TESTING_SCALAR * 31),
+            // distance to drive across the platform zone
             (int) (AUTO_TESTING_SCALAR * 169)};
 
 
