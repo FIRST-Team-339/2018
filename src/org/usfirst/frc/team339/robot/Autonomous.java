@@ -371,7 +371,7 @@ public static boolean autolinePath ()
     return false;
 }
 
-// Enum for the states in the autolinePath and autolineScalePath autonomouses
+// enum for the states in the autolinePath and autolineScalePath autonomouses
 private static enum AutolinePathStates
     {
 PATH_INIT, DRIVE1, BRAKE1, FINISH, DEPLOY

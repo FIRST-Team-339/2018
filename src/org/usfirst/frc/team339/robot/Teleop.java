@@ -127,50 +127,7 @@ public static void periodic ()
 
 
 
-    if (Hardware.leftOperator.getRawButton(9) == true)
-        {
-        allowAlignment = true;
-        }
-    if (Hardware.leftOperator.getRawButton(10))
-        {
-        allowAlignment = false;
-        }
 
-    if (allowAlignment == true)
-        {
-        // Hardware.cubeManipulator.forkliftUpdate();
-        // Hardware.cubeManipulator.setLiftPosition(80, .9);
-        Hardware.transmission.setForAutonomous();
-        if (Hardware.scaleAlignment.alignToScale(.3, 3))
-            {
-            System.out.println("aligned to scale");
-            Hardware.transmission
-                    .setForTeleop(Robot.GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
-
-    if (Hardware.leftOperator.getRawButton(9) == true)
-        {
-        allowAlignment = true;
-        }
-    if (Hardware.leftOperator.getRawButton(10))
-        {
-        allowAlignment = false;
-        }
-
-    if (allowAlignment == true)
-        {
-        // Hardware.cubeManipulator.setLiftPosition(80, .9);
-        Hardware.transmission.setForAutonomous();
-        if (Hardware.scaleAlignment.alignToScale(.3, 3))
-            {
-            System.out.println("aligned to scale");
-            Hardware.transmission
-                    .setForTeleop(Robot.GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
 
     // -----------------------------------------
     // Deploy Intake controls
@@ -269,16 +226,18 @@ public static void periodic ()
     // display on the drivers station
     // ------------------------------------
     printStatements();
-
+    scaleTest();
     // -------------------------------------------
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    testingDrive();
+    // testingDrive();
 
     // beckyTest();
 
 } // end Periodic()
+
+private static boolean inAligning = true;
 
 private static boolean allowAlignment = false;
 
@@ -293,6 +252,58 @@ private static boolean isTestingPivotTurn = false;
 private static boolean isTesting2StepTurn = false;
 
 private static int driveState = 0;
+
+
+public static void scaleTest ()
+{
+    if (Hardware.leftOperator.getRawButton(9) == true)
+        {
+        allowAlignment = true;
+        }
+    if (Hardware.leftOperator.getRawButton(10))
+        {
+        allowAlignment = false;
+        }
+
+    if (allowAlignment == true)
+        {
+        System.out.println("allowing alignment");
+        // Hardware.cubeManipulator.forkliftUpdate();
+        Hardware.transmission.setForAutonomous();
+        if (Hardware.scaleAlignment.alignToScale(.2, 3))
+            {
+            System.out.println("aligned to scale");
+            Hardware.transmission
+                    .setForTeleop(Robot.GEAR_2_SPEED);
+            allowAlignment = false;
+            }
+        }
+
+    if (Hardware.leftOperator.getRawButton(9) == true)
+        {
+        allowAlignment = true;
+        }
+    if (Hardware.leftOperator.getRawButton(10))
+        {
+        allowAlignment = false;
+        }
+
+    if (allowAlignment == true /* && inAligning == true */)
+        {
+        inAligning = false;
+        Hardware.transmission.setForAutonomous();
+        if (Hardware.scaleAlignment.alignToScale(.3, 3))
+            {
+            System.out.println("aligned to scale");
+            Hardware.transmission
+                    .setForTeleop(Robot.GEAR_2_SPEED);
+            allowAlignment = false;
+            inAligning = true;
+            }
+        }
+
+
+}
 
 public static void beckyTest ()
 {

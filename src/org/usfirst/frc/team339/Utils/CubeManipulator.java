@@ -603,6 +603,7 @@ public boolean scoreSwitch ()
  */
 public boolean scoreScale ()
 {
+    System.out.println("scoring on the scale");
     switch (scaleState)
         {
         // If the intake has not been deployed already, then do so.
@@ -614,7 +615,7 @@ public boolean scoreScale ()
             break;
         // Move the lift to the scale height, and move on when it's finished
         case MOVE_LIFT:
-            // System.out.println("Moving lift");
+            System.out.println("Moving lift");
             if (setLiftPosition(SCALE_HEIGHT,
                     FORKLIFT_SPEED_UP) == true)
                 {
@@ -623,7 +624,7 @@ public boolean scoreScale ()
             break;
         // Eject the cube (onto the scale preferably)
         case SPIT_OUT_CUBE:
-            // System.out.println("Spitting out cube");
+            System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
                 scaleState = scoreScaleState.FINISHED;
