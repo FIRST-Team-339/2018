@@ -421,8 +421,16 @@ public static boolean autoLineScalePath ()
         case BRAKE1:
             // Brake after driving across the line
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
-                currentAutolineState = AutolinePathStates.FINISH;
+                currentAutolineState = AutolinePathStates.DEPLOY;
             break;
+
+        case DEPLOY:
+            if (Hardware.cubeManipulator.deployCubeIntake())
+                {
+                currentAutolineState = AutolinePathStates.FINISH;
+                }
+            break;
+
         default: // prints we reached the default case, then fall through to
                  // FINISH
             System.out.println(
@@ -821,7 +829,8 @@ public static boolean centerSwitchPath ()
                 {
                 if (Hardware.autoDrive
                         .brake(BrakeType.AFTER_TURN) == true)
-                    visionAuto = centerState.LIFT; // TODO change back to DRIVE_WITH_CAMERA
+                    visionAuto = centerState.LIFT; // TODO change back to
+                                                   // DRIVE_WITH_CAMERA
                 }
             break;
         case DRIVE_WITH_CAMERA:
