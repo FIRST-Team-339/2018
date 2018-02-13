@@ -191,7 +191,7 @@ public static void periodic ()
             .pushOutCubeTeleop(
                     Hardware.rightOperator.getRawButton(3));
 
-    // } // end if(allowAllignment == false) if statement
+    // end if(allowAllignment == false) if statement
     // Set Servo to position w/ Momentary Switch
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
@@ -240,7 +240,7 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    testingDrive();
+    // testingDrive();
 
     // beckyTest();
 
@@ -262,43 +262,58 @@ private static int driveState = 0;
 
 public static void beckyTest ()
 {
-    if (Hardware.onNessie == true)
+    if (Hardware.leftOperator.getRawButton(6))
         {
-        Hardware.ringLightRelay.set(Value.kForward);
-        // if (Hardware.visionTestButton.isOnCheckNow())
-        // {
-        // Hardware.transmission.setForAutonomous();
-        // if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
-        // {
-        // Hardware.autoDrive.driveInches(0, 0);
-        // }
+        Hardware.ringLightRelay.set(Value.kOn);
+        }
+    else
+        {
+        Hardware.ringLightRelay.set(Value.kOff);
+        }
+    // Hardware.ringLightRelay.set(Value.kForward);
+    if (Hardware.visionTestButton.isOnCheckNow())
+        {
+        Hardware.transmission.setForAutonomous();
+        if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
+            {
+            Hardware.autoDrive.driveInches(0, 0);
+            }
         // System.out.println("The center is: " +
         // Hardware.driveWithCamera.getCameraCenterValue());
-        // }
-
-        // Hardware.axisCamera.saveImage(ImageType.RAW);
-
-        // Hardware.driveWithCamera.getCameraCenterValue();
-        if (Hardware.onNessie == true)
-            {
-            isTestingGyroTurn = true;
-            }
-        // if (Hardware.visionTestButton.isOnCheckNow())
-        // {
-        // Hardware.axisCamera.processImage();
-        // Hardware.autoDrive.visionTest(1.3, .6);
-        // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-        // for (int i = 0; i < Hardware.axisCamera
-        // .getParticleReports().length; i++)
-        // {
-        // System.out.println("The center of " + i + " is: "
-        // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
-        // }
-        // System.out.println("The center is : " + (Hardware.axisCamera
-        // .getNthSizeBlob(0).center.x
-        // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
-        // }
         }
+
+
+    // if (Hardware.leftOperator.getRawButton(7))
+    // {
+    // Hardware.ringLightRelay.set(Value.kForward);
+    // }
+    // else
+    // {
+    // Hardware.ringLightRelay.set(Value.kReverse);
+    // }
+
+
+    // Hardware.axisCamera.saveImage(ImageType.RAW);
+
+    // Hardware.driveWithCamera.getCameraCenterValue();
+
+    isTestingGyroTurn = true;
+
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.axisCamera.processImage();
+    // Hardware.autoDrive.visionTest(1.3, .6);
+    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+    // for (int i = 0; i < Hardware.axisCamera
+    // .getParticleReports().length; i++)
+    // {
+    // System.out.println("The center of " + i + " is: "
+    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+    // }
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // }
 } // end beckyTest()
 
 private static void testingDrive ()
@@ -424,8 +439,8 @@ public static void printStatements ()
     // SmartDashboard.putNumber("L Drive Motor",
     // Hardware.leftDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    SmartDashboard.putNumber("Lifting Motor",
-            Hardware.liftingMotor.get());
+    // SmartDashboard.putNumber("Lifting Motor",
+    // Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // SmartDashboard.putNumber("Cube Motor",
@@ -490,49 +505,49 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Left Front Encoder Inches",
-    // Hardware.leftFrontDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Left Front Encoder Inches",
+            Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
-    // SmartDashboard.putNumber("Left Front Encoder Ticks",
-    // Hardware.leftFrontDriveEncoder.get());
+    SmartDashboard.putNumber("Left Front Encoder Ticks",
+            Hardware.leftFrontDriveEncoder.get());
 
     // System.out.println("Right Front Inches = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Right Front Encoder Inches",
-    // Hardware.rightFrontDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Right Front Encoder Inches",
+            Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
-    // SmartDashboard.putNumber("Right Front Encoder Ticks",
-    // Hardware.rightFrontDriveEncoder.get());
+    SmartDashboard.putNumber("Right Front Encoder Ticks",
+            Hardware.rightFrontDriveEncoder.get());
 
     // System.out.println("Left Rear Encoder Inches = "
     // + Hardware.leftRearDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Left Rear Encoder Inches",
-    // Hardware.leftRearDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Left Rear Encoder Inches",
+            Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
-    // SmartDashboard.putNumber("Left Rear Encoder Ticks",
-    // Hardware.leftRearDriveEncoder.get());
+    SmartDashboard.putNumber("Left Rear Encoder Ticks",
+            Hardware.leftRearDriveEncoder.get());
 
     // System.out.println("Right Rear Inches = "
     // + Hardware.rightRearDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Right Rear Encoder Inches",
-    // Hardware.rightRearDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Right Rear Encoder Inches",
+            Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
-    // SmartDashboard.putNumber("Right Rear Encoder Ticks",
-    // Hardware.rightRearDriveEncoder.get());
+    SmartDashboard.putNumber("Right Rear Encoder Ticks",
+            Hardware.rightRearDriveEncoder.get());
 
     // System.out.println(
     // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
-    SmartDashboard.putNumber("Lift Encoder Inches",
-            Hardware.liftingEncoder.getDistance());
+    // SmartDashboard.putNumber("Lift Encoder Inches",
+    // Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
@@ -541,8 +556,8 @@ public static void printStatements ()
 
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
-    // SmartDashboard.putNumber("Intake Deploy Encoder",
-    // Hardware.intakeDeployEncoder.getDistance());
+    SmartDashboard.putNumber("Intake Deploy Encoder",
+            Hardware.intakeDeployEncoder.getDistance());
 
     // System.out.println("Intake Deploy Encoder Ticks "
     // + Hardware.intakeDeployEncoder.get());
