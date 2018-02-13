@@ -55,7 +55,8 @@ public boolean alignToScale (double speed, double deadband)
         aligned = true;
         speed = 0;
         System.out.println("Speed: " + speed);
-        // Hardware.transmission.drive(0,0);
+        Hardware.leftDriveMotor.set(0);
+        Hardware.rightDriveMotor.set(0);
         // start the move forklift switch
 
         if (Hardware.cubeManipulator.scoreScale())

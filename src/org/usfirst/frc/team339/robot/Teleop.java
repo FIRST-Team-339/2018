@@ -402,6 +402,8 @@ public static void beckyTest ()
 
 private static void testingDrive ()
 {
+    System.out.println("forklift hight:"
+            + Hardware.cubeManipulator.getForkliftHeight());
     if (driveState == 1)
         {
         System.out.println("Gyro After Brake" +
