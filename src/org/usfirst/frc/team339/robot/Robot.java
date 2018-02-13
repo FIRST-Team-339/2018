@@ -253,6 +253,7 @@ public void robotInit ()
         Hardware.autoDrive.setEncoderDistancePerPulse(
                 KILROY_XIX_ENCODER_DPP,
                 MotorPosition.ALL);
+
         Hardware.liftingEncoder
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder

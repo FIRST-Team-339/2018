@@ -230,39 +230,37 @@ public void setEncoderDistancePerPulse (double value,
     switch (encoder)
         {
         case ALL:
-            // if we're using mecanum or tank drive then set distance
-            // per pulse to all the encoders
-            if (transmissionType == TransmissionType.MECANUM
-                    || transmissionType == TransmissionType.TANK)
-                {
+            if (leftFrontEncoder != null)
                 leftFrontEncoder.setDistancePerPulse(value);
+
+            if (leftRearEncoder != null)
+                leftRearEncoder.setDistancePerPulse(value);
+
+            if (rightFrontEncoder != null)
                 rightFrontEncoder.setDistancePerPulse(value);
-                leftRearEncoder.setDistancePerPulse(value);
+
+            if (rightRearEncoder != null)
                 rightRearEncoder.setDistancePerPulse(value);
-                }
-            // if we're using traction drive set pulse per encoder for both
-            // sides
-            else if (transmissionType == TransmissionType.TRACTION)
-                {
-                leftRearEncoder.setDistancePerPulse(value);
-                rightRearEncoder.setDistancePerPulse(value);
-                }
             break;
         case LEFT_FRONT:
             // set distance per pulse to the left front encoder
-            leftFrontEncoder.setDistancePerPulse(value);
+            if (leftFrontEncoder != null)
+                leftFrontEncoder.setDistancePerPulse(value);
             break;
         case RIGHT_FRONT:
             // set distance per pulse to the right front encoder
-            rightFrontEncoder.setDistancePerPulse(value);
+            if (rightFrontEncoder != null)
+                rightFrontEncoder.setDistancePerPulse(value);
             break;
         case LEFT_REAR:
             // set distance per pulse to the left rear encoder
-            leftRearEncoder.setDistancePerPulse(value);
+            if (leftRearEncoder != null)
+                leftRearEncoder.setDistancePerPulse(value);
             break;
         case RIGHT_REAR:
             // set distance per pulse to the right rear encoder
-            rightRearEncoder.setDistancePerPulse(value);
+            if (rightRearEncoder != null)
+                rightRearEncoder.setDistancePerPulse(value);
             break;
         default:
             break;
@@ -274,21 +272,17 @@ public void setEncoderDistancePerPulse (double value,
  */
 public void resetEncoders ()
 {
-    if (transmissionType == TransmissionType.MECANUM
-            || transmissionType == TransmissionType.TANK)
-        {
-        // set all four encoders back to zero
+    if (leftFrontEncoder != null)
         leftFrontEncoder.reset();
+
+    if (leftRearEncoder != null)
+        leftRearEncoder.reset();
+
+    if (rightFrontEncoder != null)
         rightFrontEncoder.reset();
-        leftRearEncoder.reset();
+
+    if (rightRearEncoder != null)
         rightRearEncoder.reset();
-        }
-    else if (transmissionType == TransmissionType.TRACTION)
-        {
-        // sets both sides encoders back to zero
-        leftRearEncoder.reset();
-        rightRearEncoder.reset();
-        }
 }
 
 /**
