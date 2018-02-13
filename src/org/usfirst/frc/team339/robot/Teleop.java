@@ -270,55 +270,50 @@ public static void beckyTest ()
         {
         Hardware.ringLightRelay.set(Value.kOff);
         }
-
-    if (Hardware.onNessie == true)
+    // Hardware.ringLightRelay.set(Value.kForward);
+    if (Hardware.visionTestButton.isOnCheckNow())
         {
-        // Hardware.ringLightRelay.set(Value.kForward);
-        // if (Hardware.visionTestButton.isOnCheckNow())
-        // {
-        // Hardware.transmission.setForAutonomous();
-        // if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
-        // {
-        // Hardware.autoDrive.driveInches(0, 0);
-        // }
+        Hardware.transmission.setForAutonomous();
+        if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
+            {
+            Hardware.autoDrive.driveInches(0, 0);
+            }
         // System.out.println("The center is: " +
         // Hardware.driveWithCamera.getCameraCenterValue());
-        // }
-
-
-        // if (Hardware.leftOperator.getRawButton(7))
-        // {
-        // Hardware.ringLightRelay.set(Value.kForward);
-        // }
-        // else
-        // {
-        // Hardware.ringLightRelay.set(Value.kReverse);
-        // }
-
-
-        // Hardware.axisCamera.saveImage(ImageType.RAW);
-
-        // Hardware.driveWithCamera.getCameraCenterValue();
-        if (Hardware.onNessie == true)
-            {
-            isTestingGyroTurn = true;
-            }
-        // if (Hardware.visionTestButton.isOnCheckNow())
-        // {
-        // Hardware.axisCamera.processImage();
-        // Hardware.autoDrive.visionTest(1.3, .6);
-        // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-        // for (int i = 0; i < Hardware.axisCamera
-        // .getParticleReports().length; i++)
-        // {
-        // System.out.println("The center of " + i + " is: "
-        // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
-        // }
-        // System.out.println("The center is : " + (Hardware.axisCamera
-        // .getNthSizeBlob(0).center.x
-        // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
-        // }
         }
+
+
+    // if (Hardware.leftOperator.getRawButton(7))
+    // {
+    // Hardware.ringLightRelay.set(Value.kForward);
+    // }
+    // else
+    // {
+    // Hardware.ringLightRelay.set(Value.kReverse);
+    // }
+
+
+    // Hardware.axisCamera.saveImage(ImageType.RAW);
+
+    // Hardware.driveWithCamera.getCameraCenterValue();
+
+    isTestingGyroTurn = true;
+
+    // if (Hardware.visionTestButton.isOnCheckNow())
+    // {
+    // Hardware.axisCamera.processImage();
+    // Hardware.autoDrive.visionTest(1.3, .6);
+    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+    // for (int i = 0; i < Hardware.axisCamera
+    // .getParticleReports().length; i++)
+    // {
+    // System.out.println("The center of " + i + " is: "
+    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+    // }
+    // System.out.println("The center is : " + (Hardware.axisCamera
+    // .getNthSizeBlob(0).center.x
+    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+    // }
 } // end beckyTest()
 
 private static void testingDrive ()
