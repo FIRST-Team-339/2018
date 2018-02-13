@@ -191,7 +191,7 @@ public static void periodic ()
             .pushOutCubeTeleop(
                     Hardware.rightOperator.getRawButton(3));
 
-    // } // end if(allowAllignment == false) if statement
+    // end if(allowAllignment == false) if statement
     // Set Servo to position w/ Momentary Switch
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
@@ -240,7 +240,7 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    testingDrive();
+    // testingDrive();
 
     // beckyTest();
 
@@ -262,9 +262,18 @@ private static int driveState = 0;
 
 public static void beckyTest ()
 {
+    if (Hardware.leftOperator.getRawButton(6))
+        {
+        Hardware.ringLightRelay.set(Value.kOn);
+        }
+    else
+        {
+        Hardware.ringLightRelay.set(Value.kOff);
+        }
+
     if (Hardware.onNessie == true)
         {
-        Hardware.ringLightRelay.set(Value.kForward);
+        // Hardware.ringLightRelay.set(Value.kForward);
         // if (Hardware.visionTestButton.isOnCheckNow())
         // {
         // Hardware.transmission.setForAutonomous();
@@ -275,6 +284,17 @@ public static void beckyTest ()
         // System.out.println("The center is: " +
         // Hardware.driveWithCamera.getCameraCenterValue());
         // }
+
+
+        // if (Hardware.leftOperator.getRawButton(7))
+        // {
+        // Hardware.ringLightRelay.set(Value.kForward);
+        // }
+        // else
+        // {
+        // Hardware.ringLightRelay.set(Value.kReverse);
+        // }
+
 
         // Hardware.axisCamera.saveImage(ImageType.RAW);
 
@@ -531,8 +551,8 @@ public static void printStatements ()
     // System.out.println(
     // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
-    SmartDashboard.putNumber("Lift Encoder Inches",
-            Hardware.liftingEncoder.getDistance());
+    // SmartDashboard.putNumber("Lift Encoder Inches",
+    // Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());

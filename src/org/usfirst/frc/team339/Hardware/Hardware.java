@@ -242,7 +242,7 @@ public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 // Axis/USB Camera class
 // -------------------------------------
 public static VisionProcessor axisCamera = new VisionProcessor(
-        "10.13.39.11", CameraModel.AXIS_M1013, ringLightRelay);
+        "10.3.39.11", CameraModel.AXIS_M1013, ringLightRelay);
 // @todo - add ring light relay as 3rd argument
 
 // -------------------------------------
