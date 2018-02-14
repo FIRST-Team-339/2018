@@ -136,50 +136,21 @@ public DriveWithCamera (TransmissionBase transmission,
  */
 public boolean driveToSwitch (double speed)
 {
-    // if the robot can still see the vision targets, drive by camera
-    if (this.frontUltrasonic
-            .getDistanceFromNearestBumper() > CAMERA_NO_LONGER_WORKS)
-        {
-        state = driveWithCameraState.DRIVE_WITH_CAMERA;
-        }
-
-    // if we can no longer see vision targets, drive by ultrasonic, turn off the
-    // relay
-    else
-        {
-        // turn off the ring light
-        this.visionProcessor.setRelayValue(Value.kOff);
-
-        if (this.frontUltrasonic
-                .getDistanceFromNearestBumper() <= DISTANCE_FROM_WALL_TO_STOP)
-            {
-            state = driveWithCameraState.STOP;
-            }
-        else
-            {
-            state = driveWithCameraState.DRIVE_WITH_US;
-            }
-        }
     switch (state)
         {
+        case INIT:
+            visionProcessor.setRelayValue(Value.kOn);
+            state = DriveWithCameraState.DRIVE_WITH_CAMERA;
+            break;
         case DRIVE_WITH_CAMERA:
             // gets the position of the center
-            double center = this.getCameraCenterValue();
+            double centerX = this.getCameraCenterValue();
             // turns on the ring light
             this.visionProcessor.setRelayValue(Value.kOn);
-            // if we are aligned the center, we will drive straight
-            // if (center >= SWITCH_CAMERA_CENTER
-            // - CAMERA_DEADBAND
-            // && center <= SWITCH_CAMERA_CENTER
-            // + CAMERA_DEADBAND)
-            // {
-            // driveStraight(speed, false);
-            // System.out.println("DRIVE STRAIGHT");
-            // }
-            // // if the switch center is to the right of our center set by the
-            // // SWITCH_CAMERA_CENTER, correct by driving faster on the left
-            // else
-            if (center >= SWITCH_CAMERA_CENTER)
+
+            // if the switch center is to the right of our center set by the
+            // SWITCH_CAMERA_CENTER, correct by driving faster on the left
+            if (centerX >= SWITCH_CAMERA_CENTER)
                 {
                 // the switch's center is too far right, drive faster on the
                 // left
@@ -197,27 +168,36 @@ public boolean driveToSwitch (double speed)
                 this.getTransmission().drive(speed - DRIVE_CORRECTION,
                         speed + DRIVE_CORRECTION);
                 }
+
+            if (this.frontUltrasonic
+                    .getDistanceFromNearestBumper() <= CAMERA_NO_LONGER_WORKS)
+                state = DriveWithCameraState.DRIVE_WITH_US;
             break;
+        case DRIVE_WITH_US:
+            visionProcessor.setRelayValue(Value.kOff);
+            driveStraight(speed, false);
+
+            if (this.frontUltrasonic
+                    .getDistanceFromNearestBumper() <= DISTANCE_FROM_WALL_TO_STOP)
+                state = DriveWithCameraState.STOP;
+
+            break;
+        default:
         case STOP:
             // if we are too close to the wall, brake, then set all motors to
             // zero, else drive by ultrasonic
             this.getTransmission().drive(0, 0);
+            state = DriveWithCameraState.INIT;
             return true;
-        case DRIVE_WITH_US:
-            driveStraight(speed, false);
-            break;
-        default:
-            this.getTransmission().drive(0, 0);
-            break;
         }
     return false;
 }
 
-private driveWithCameraState state;
+private DriveWithCameraState state = DriveWithCameraState.INIT;
 
-private enum driveWithCameraState
+private enum DriveWithCameraState
     {
-DRIVE_WITH_CAMERA, DRIVE_WITH_US, STOP
+INIT, DRIVE_WITH_CAMERA, DRIVE_WITH_US, STOP
     }
 
 
@@ -293,15 +273,15 @@ public double getCameraCenterValue ()
 // ================VISION CONSTANTS================
 // the distance in inches in which we drive the robot straight using the
 // ultrasonic
-private final double CAMERA_NO_LONGER_WORKS = 24;
-//38 + 50;
+private final double CAMERA_NO_LONGER_WORKS = 36;
+// 38 + 50;
 
 // the number in pixels that the center we are looking for can be off
 private final double CAMERA_DEADBAND = 7;
 
 // the distance from the wall (in inches) where we start stopping the robot
-private final double DISTANCE_FROM_WALL_TO_STOP =  6;
-//20 + 50;
+private final double DISTANCE_FROM_WALL_TO_STOP = 15;
+// 20 + 50;
 
 // TODO This is for nessie, test for the new robot
 private final double SWITCH_CAMERA_CENTER = 160;
