@@ -208,7 +208,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
     else
         {
         liftState = ForkliftState.STAY_AT_POSITION;
-        return liftState = ForkliftState.STAY_AT_POSITION;
+        return liftState == ForkliftState.STAY_AT_POSITION;
         }
 
 
