@@ -236,6 +236,9 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
+    Hardware.axisCamera
+            .takeLitPicture(Hardware.leftOperator.getRawButton(8));
+
     // =================================================================
     // DRIVING CODE
     // =================================================================
