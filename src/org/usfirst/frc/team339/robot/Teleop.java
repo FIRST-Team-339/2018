@@ -77,6 +77,7 @@ public static void init ()
     Hardware.leftRearDriveEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
 
+
     // ---------------------------------
     // setup motors
     // ---------------------------------
@@ -223,6 +224,7 @@ public static void periodic ()
 
         } // end if(allowAllignment == false) if statement
           // Set Servo to position w/ Momentary Switch
+
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
 
@@ -295,28 +297,8 @@ private static int driveState = 0;
 
 public static void scaleTest ()
 {
-    if (Hardware.leftOperator.getRawButton(9) == true)
-        {
-        allowAlignment = true;
-        }
-    if (Hardware.leftOperator.getRawButton(10))
-        {
-        allowAlignment = false;
-        }
-
-    if (allowAlignment == true)
-        {
-        System.out.println("allowing alignment");
-        // Hardware.cubeManipulator.forkliftUpdate();
-        Hardware.transmission.setForAutonomous();
-        if (Hardware.scaleAlignment.alignToScale(.2, 3))
-            {
-            System.out.println("aligned to scale");
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
+    SmartDashboard.putNumber("RearUltraSonic",
+            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
     if (Hardware.leftOperator.getRawButton(9) == true)
         {
@@ -402,8 +384,7 @@ public static void beckyTest ()
 
 private static void testingDrive ()
 {
-    System.out.println("forklift hight:"
-            + Hardware.cubeManipulator.getForkliftHeight());
+
     if (driveState == 1)
         {
         System.out.println("Gyro After Brake" +

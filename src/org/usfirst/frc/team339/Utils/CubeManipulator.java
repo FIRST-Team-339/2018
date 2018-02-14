@@ -1,5 +1,6 @@
 package org.usfirst.frc.team339.Utils;
 
+import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -187,6 +188,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
 
     // if the forklift is below the target position, set state to
     // MOVING_TO_POSITION
+
 
     forkliftTargetHeight = position;
     forkliftTargetSpeed = Math.abs(forkliftSpeed);
@@ -624,6 +626,7 @@ public boolean scoreScale ()
         {
         // If the intake has not been deployed already, then do so.
         case DEPLOY_INTAKE:
+            System.out.println("Deploying intake");
             if (deployCubeIntake() == true)
                 {
                 scaleState = scoreScaleState.MOVE_LIFT;
@@ -631,6 +634,8 @@ public boolean scoreScale ()
             break;
         // Move the lift to the scale height, and move on when it's finished
         case MOVE_LIFT:
+            System.out.println("forklift hight:"
+                    + Hardware.cubeManipulator.getForkliftHeight());
             System.out.println("Moving lift");
             if (setLiftPosition(SCALE_HEIGHT,
                     FORKLIFT_SPEED_UP) == true)
@@ -705,6 +710,7 @@ public void forkliftUpdate ()
         {
         // Moves the forklift up
         case MOVING_UP_MAX:
+
             if (// Math.abs(
             this.getForkliftHeight() >= FORKLIFT_MAX_HEIGHT)
                 {
@@ -729,7 +735,7 @@ public void forkliftUpdate ()
             break;
 
         case MOVING_TO_POSITION:
-
+            System.out.println("moving to position");
             // two if statements to prevent forkliftTargetHeight from being past
             // the min and max heights
 
@@ -757,11 +763,13 @@ public void forkliftUpdate ()
             else if (this.getForkliftHeight() > forkliftTargetHeight
                     + LIFT_OVERSHOOT_TOLERANCE)
                 {
+
                 forkliftCurrentSpeedDown = -forkliftTargetSpeed;
                 forkliftDirection = ForkliftDirectionState.MOVING_DOWN;
                 }
             else
                 {
+                System.out.println("at position");
                 forkliftDirection = ForkliftDirectionState.AT_POSITION;
                 }
 
@@ -769,10 +777,13 @@ public void forkliftUpdate ()
             // which direction we want it to go
             switch (forkliftDirection)
                 {
+
                 case MOVING_UP:
+
                     this.forkliftMotor.set(forkliftCurrentSpeedUp);
                     break;
                 case MOVING_DOWN:
+
                     this.forkliftMotor.set(forkliftCurrentSpeedDown);
                     break;
                 default: // if something goes wrong, print it out to console
@@ -1091,7 +1102,7 @@ private boolean isRunningPushOutCubeAuto = false;
 private boolean isRunningPushOutCubeTeleop = false;
 // ========================================
 
-private scoreScaleState scaleState = scoreScaleState.SPIT_OUT_CUBE;
+private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 
 private scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
 
