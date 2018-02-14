@@ -76,6 +76,7 @@ public static void init ()
     Hardware.leftRearDriveEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
 
+
     // ---------------------------------
     // setup motors
     // ---------------------------------
@@ -163,20 +164,25 @@ public static void periodic ()
                     .moveForkliftWithController(Hardware.rightOperator);
             }
         // testing code for setting forklift height; temporary
-        // if (Hardware.rightOperator.getRawButton(6) == true)
-        // {
-        // Hardware.cubeManipulator.setLiftPosition(0.0);
-        // }
-        //
-        // if (Hardware.rightOperator.getRawButton(7) == true)
-        // {
-        // Hardware.cubeManipulator.setLiftPosition(30);
-        // }
-        //
-        // if (Hardware.rightOperator.getRawButton(8))
-        // {
-        // Hardware.cubeManipulator.setLiftPosition(40.0);
-        // }
+        if (Hardware.rightOperator.getRawButton(6) == true)
+            {
+            Hardware.cubeManipulator.setLiftPosition(0.0, .5);
+            }
+
+        if (Hardware.rightOperator.getRawButton(7) == true)
+            {
+            Hardware.cubeManipulator.setLiftPosition(30, .5);
+            }
+
+        if (Hardware.rightOperator.getRawButton(8) == true)
+            {
+            Hardware.cubeManipulator.setLiftPosition(40.0, .5);
+            }
+
+        if (Hardware.rightOperator.getRawButton(9) == true)
+            {
+            Hardware.cubeManipulator.setLiftPosition(9000.0, .5);
+            }
 
 
         // Intake controls
@@ -222,6 +228,7 @@ public static void periodic ()
 
         } // end if(allowAllignment == false) if statement
           // Set Servo to position w/ Momentary Switch
+
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
 
@@ -234,6 +241,9 @@ public static void periodic ()
     // =================================================================
     // CAMERA CODE
     // =================================================================
+
+    Hardware.axisCamera
+            .takeLitPicture(Hardware.leftOperator.getRawButton(8));
 
     // =================================================================
     // DRIVING CODE
@@ -294,28 +304,8 @@ private static int driveState = 0;
 
 public static void scaleTest ()
 {
-    if (Hardware.leftOperator.getRawButton(9) == true)
-        {
-        allowAlignment = true;
-        }
-    if (Hardware.leftOperator.getRawButton(10))
-        {
-        allowAlignment = false;
-        }
-
-    if (allowAlignment == true)
-        {
-        System.out.println("allowing alignment");
-        // Hardware.cubeManipulator.forkliftUpdate();
-        Hardware.transmission.setForAutonomous();
-        if (Hardware.scaleAlignment.alignToScale(.2, 3))
-            {
-            System.out.println("aligned to scale");
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
+    SmartDashboard.putNumber("RearUltraSonic",
+            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
     if (Hardware.leftOperator.getRawButton(9) == true)
         {
@@ -401,7 +391,6 @@ private static void beckyTest ()
 
 private static void testingDrive ()
 {
-
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
         isTestingGyroTurn = true;
@@ -518,8 +507,8 @@ public static void printStatements ()
     // SmartDashboard.putNumber("L Drive Motor",
     // Hardware.leftDriveMotor.get());
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    // SmartDashboard.putNumber("Lifting Motor",
-    // Hardware.liftingMotor.get());
+    SmartDashboard.putNumber("Lifting Motor",
+            Hardware.liftingMotor.get());
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
     // SmartDashboard.putNumber("Cube Motor",
@@ -625,13 +614,13 @@ public static void printStatements ()
     // System.out.println(
     // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
-    // SmartDashboard.putNumber("Lift Encoder Inches",
-    // Hardware.liftingEncoder.getDistance());
+    SmartDashboard.putNumber("Lift Encoder Inches",
+            Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
     // SmartDashboard.putNumber("Lift Encoder Ticks",
-    // Hardware.liftingEncoder.getDistance());
+    // Hardware.liftingEncoder.get());
 
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
