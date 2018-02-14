@@ -34,7 +34,6 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -243,6 +242,9 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
+    Hardware.axisCamera
+            .takeLitPicture(Hardware.leftOperator.getRawButton(8));
+
     // =================================================================
     // DRIVING CODE
     // =================================================================
@@ -258,7 +260,7 @@ public static void periodic ()
     if (isTestingGyroTurn == false && allowAlignment == false
             && isTesting2StepTurn == false
             && isTestingPivotTurn == false
-            && isTestingEncoderTurn == false)
+            && isTestingEncoderTurn == false && isBeckyTest == false)
         Hardware.transmission.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
 
@@ -272,14 +274,14 @@ public static void periodic ()
     // display on the drivers station
     // ------------------------------------
     printStatements();
-    scaleTest();
+    // scaleTest();
     // -------------------------------------------
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
     // testingDrive();
 
-    // beckyTest();
+    beckyTest();
 
 } // end Periodic()
 
@@ -331,26 +333,28 @@ public static void scaleTest ()
 
 }
 
-public static void beckyTest ()
+
+private static boolean isBeckyTest = false;
+
+private static void beckyTest ()
 {
-    if (Hardware.leftOperator.getRawButton(6))
-        {
-        Hardware.ringLightRelay.set(Value.kOn);
-        }
-    else
-        {
-        Hardware.ringLightRelay.set(Value.kOff);
-        }
     // Hardware.ringLightRelay.set(Value.kForward);
-    if (Hardware.visionTestButton.isOnCheckNow())
+    if (Hardware.leftOperator.getRawButton(2) == true)
         {
         Hardware.transmission.setForAutonomous();
-        if (Hardware.driveWithCamera.driveToSwitch(.5) == true)
+        isBeckyTest = true;
+        }
+
+    if (isBeckyTest == true)
+        {
+
+        if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
             {
-            Hardware.autoDrive.driveInches(0, 0);
+            Hardware.transmission
+                    .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
+            isBeckyTest = false;
             }
-        // System.out.println("The center is: " +
-        // Hardware.driveWithCamera.getCameraCenterValue());
+
         }
 
 
@@ -367,8 +371,6 @@ public static void beckyTest ()
     // Hardware.axisCamera.saveImage(ImageType.RAW);
 
     // Hardware.driveWithCamera.getCameraCenterValue();
-
-    isTestingGyroTurn = true;
 
     // if (Hardware.visionTestButton.isOnCheckNow())
     // {
@@ -389,13 +391,6 @@ public static void beckyTest ()
 
 private static void testingDrive ()
 {
-
-    if (driveState == 1)
-        {
-        System.out.println("Gyro After Brake" +
-                Hardware.gyro.getAngle());
-        }
-
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
         isTestingGyroTurn = true;
@@ -430,23 +425,24 @@ private static void testingDrive ()
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if ((isTestingGyroTurn == true
                 || isTestingAnalogGyroTurn == true) && driveState == 0
-                && Hardware.autoDrive.turnDegreesGyro(90, .4) == true)
+                && Hardware.autoDrive.turnDegreesGyro(90, .25) == true)
             {
             System.out.println("Calling Brake");
             driveState++;
             }
         else if (isTestingEncoderTurn && driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .4) == true)
+                && Hardware.autoDrive.turnDegrees(90, .25) == true)
             {
             driveState++;
             }
         else if (isTestingPivotTurn && driveState == 0
-                && Hardware.autoDrive.pivotTurnDegrees(90, .4) == true)
+                && Hardware.autoDrive.pivotTurnDegrees(90, .25) == true)
             {
             driveState++;
             }
         else if (isTesting2StepTurn && driveState == 0
-                && Hardware.autoDrive.turnDegrees2Stage(90, .4) == true)
+                && Hardware.autoDrive.turnDegrees2Stage(90,
+                        .25) == true)
             {
             driveState++;
             }
@@ -694,8 +690,8 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // SmartDashboard.putNumber("Front Ultrasonic",
-    // Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    SmartDashboard.putNumber("Front Ultrasonic",
+            Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     // SmartDashboard.putNumber("Read Ultrasonic",

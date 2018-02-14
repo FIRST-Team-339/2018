@@ -1012,7 +1012,7 @@ public boolean turnDegrees (int angle, double speed)
     // if two wheel drive checks, one of each side(called rear of that side)
     if (this.getEncoderDistanceAverage(
             WheelGroups.ALL) > Math.toRadians(Math.abs(angle))
-                    * TURNING_RADIUS)
+                    * turningRadius)
         {
         // We have finished turning!
         this.getTransmission().stop();
@@ -1106,7 +1106,7 @@ public boolean pivotTurnDegrees (int degrees, double power)
         {
         // If the left side has reached it's calculated arc length, stop.
         if (this.getEncoderDistanceAverage(WheelGroups.LEFT_SIDE) > Math
-                .toRadians(Math.abs(degrees)) * (TURNING_RADIUS))
+                .toRadians(Math.abs(degrees)) * (turningRadius))
             {
             this.getTransmission().stop();
             pivotTurnDegreesInit = true;
@@ -1122,7 +1122,7 @@ public boolean pivotTurnDegrees (int degrees, double power)
         if (this.getEncoderDistanceAverage(
                 WheelGroups.RIGHT_SIDE) > Math
                         .toRadians(Math.abs(degrees))
-                        * (TURNING_RADIUS * 2))
+                        * (turningRadius * 2))
             {
             this.getTransmission().stop();
             pivotTurnDegreesInit = true;
@@ -1185,6 +1185,17 @@ public boolean turnDegrees2Stage (int degrees, double power)
     return false;
 }
 
+/**
+ * Sets the distance from the wheel to the turning center point.
+ * 
+ * @param radius
+ *            Distance, in inches.
+ */
+public void setTurningRadius (double radius)
+{
+    turningRadius = radius;
+}
+
 private boolean turnDegrees2StageInit = true;
 
 private double turnDegreesTriggerStage = 40;// Degrees
@@ -1206,7 +1217,7 @@ private static final int COLLECTION_TIME = 100;
 // The distance from the left side wheel to the right-side wheel divided by
 // 2, in inches. Used in turnDegrees.
 // Nov 4 changed from 16 to 17
-private static final double TURNING_RADIUS = 11 - .35;
+private static double turningRadius = 11 - .35;
 
 private static final int INIT_TIMEOUT = 300;// Milliseconds until the
                                             // initialization should reset.
