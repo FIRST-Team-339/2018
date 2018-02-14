@@ -208,6 +208,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
     else
         {
         liftState = ForkliftState.STAY_AT_POSITION;
+        return liftState = ForkliftState.STAY_AT_POSITION;
         }
 
 
@@ -850,6 +851,7 @@ public void forkliftUpdate ()
                     "Reached default in the liftState switch in "
                             + "forkliftUpdate in CubeManipulator");
         case STAY_AT_POSITION:
+            System.out.println("Staying at position");
             // gives the forklift motor the appropriate voltage for it
             // to hold its position; which voltage we use is dependent
             // on whether or not we have a cube
@@ -857,6 +859,7 @@ public void forkliftUpdate ()
             // if the forklift doesn't have cube and is close enough to the
             // minimum height, assume the operator wants the forklift to go back
             // so zero, so "drift" back to the floor
+
             if (this.hasCube() == false && this
                     .getForkliftHeight() < FORKLIFT_MIN_HEIGHT_NO_CUBE
                             + LIFT_OVERSHOOT_TOLERANCE)
