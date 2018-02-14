@@ -505,20 +505,20 @@ public static void printStatements ()
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
 
-//     SmartDashboard.putNumber("L Drive Motor",
-//     Hardware.leftDriveMotor.get());
-//     System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-//     SmartDashboard.putNumber("Lifting Motor",
-//     Hardware.liftingMotor.get());
+    // SmartDashboard.putNumber("L Drive Motor",
+    // Hardware.leftDriveMotor.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // SmartDashboard.putNumber("Lifting Motor",
+    // Hardware.liftingMotor.get());
 
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-//     SmartDashboard.putNumber("Cube Motor",
-//     Hardware.cubeIntakeMotor.get());
+    // SmartDashboard.putNumber("Cube Motor",
+    // Hardware.cubeIntakeMotor.get());
     // System.out.println(
     // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-//     SmartDashboard.putNumber("Intake Deploy Motor",
-//     Hardware.intakeDeployArm.get());
+    // SmartDashboard.putNumber("Intake Deploy Motor",
+    // Hardware.intakeDeployArm.get());
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -616,8 +616,8 @@ public static void printStatements ()
     // System.out.println(
     // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
-    SmartDashboard.putNumber("Lift Encoder Inches",
-            Hardware.liftingEncoder.getDistance());
+    // SmartDashboard.putNumber("Lift Encoder Inches",
+    // Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
@@ -692,8 +692,8 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    SmartDashboard.putNumber("Front Ultrasonic",
-            Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    // SmartDashboard.putNumber("Front Ultrasonic",
+    // Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     // SmartDashboard.putNumber("Read Ultrasonic",
