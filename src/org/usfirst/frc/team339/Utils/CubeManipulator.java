@@ -695,9 +695,9 @@ public void masterUpdate ()
  */
 public void forkliftUpdate ()
 {
-    SmartDashboard.putString("Forklift State:", liftState + "");
-    SmartDashboard.putString("Forklift Direction State",
-            "" + forkliftDirection);
+//    SmartDashboard.putString("Forklift State:", liftState + "");
+//    SmartDashboard.putString("Forklift Direction State",
+//            "" + forkliftDirection);
     // System.out.println("Forklift State: " + liftState);
 
     // main switch statement for the forklift state machine
