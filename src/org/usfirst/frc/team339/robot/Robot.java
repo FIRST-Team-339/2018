@@ -62,6 +62,7 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
@@ -261,6 +262,9 @@ public void robotInit ()
 
         Hardware.transmission.setAllGearRatios(KILROY_XIX_GEAR_1_SPEED,
                 KILROY_XIX_GEAR_2_SPEED);
+
+        Hardware.autoDrive.setTurningRadius(KILROY_XIX_TURNING_RADIUS);
+        Hardware.autoDrive.setBrakePower(KILROY_XIX_BRAKE_POWER);
         } // end if
     else
         {
@@ -275,6 +279,8 @@ public void robotInit ()
 
         Hardware.transmission.setAllGearRatios(KILROY_XV_GEAR_1_SPEED,
                 KILROY_XV_GEAR_2_SPEED);
+        Hardware.autoDrive.setTurningRadius(KILROY_XV_TURNING_RADIUS);
+        Hardware.ringLightRelay.setDirection(Direction.kForward);
         } // else
 
     // ----------------------------------
@@ -309,7 +315,7 @@ public void robotInit ()
     // ---------------------------------
     // sets the ring light to off
     // ---------------------------------
-    Hardware.ringLightRelay.set(Value.kReverse);
+    Hardware.ringLightRelay.set(Value.kOff);
 
 
     Hardware.gyro.calibrate();
@@ -454,5 +460,13 @@ private static final double JOYSTICK_DEADBAND_RANGE = .2;
 private static final double KILROY_XIX_LIFT_ENCODER_DPP = .1;
 
 private static final double KILROY_XIX_DEPLOY_ENCODER_DPP = .1;
+
+private static final double KILROY_XIX_TURNING_RADIUS = 11.75 - .35;
+
+private static final double KILROY_XV_TURNING_RADIUS = 11 - .35;
+
+// Brake stuff
+private static final double KILROY_XIX_BRAKE_POWER = .3;
+
 } // end class
 

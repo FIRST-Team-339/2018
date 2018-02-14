@@ -462,6 +462,27 @@ public void saveImage (ImageType type)
     CameraServer.getInstance().getVideo("Vision Camera")
             .grabFrame(tempImage);
 
+    if (tempImage.empty() == true)
+        {
+        // redo taking photo
+        CameraServer.getInstance().getVideo("Vision Camera")
+                .grabFrame(tempImage);
+        // this is a temporary test {Craig}
+
+        if (tempImage.empty() == true)
+            {
+            System.out.println("this photo is empty");
+            }
+
+        else
+            {
+            System.out.println("Photo taken");
+
+            }
+
+
+        }
+
     // Choses which type of image will be saved: raw or processed.
     switch (type)
         {
@@ -492,7 +513,7 @@ public void saveImage (ImageType type)
     // Save the image to the folder specified with the name specified
 
     // TODO this is what is printing Cole's problem
-    // if (tempImage.empty() == false)
+
     Imgcodecs.imwrite(SAVE_IMAGE_PATH + fileName, tempImage);
     // else
     // System.out.println("saveImage: Image was empty; was not saved");
@@ -611,7 +632,10 @@ public void setRelayValue (Value ringLightValue)
  */
 public void turnRingLightOn (boolean button)
 {
-
+    // if(button == true)
+    // {
+    // this.setRelayValue(Value.kForward);
+    // }
 } // end turnRingLightOn()
 
 // =====================USER ACCESSABLE METHODS========================

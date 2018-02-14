@@ -2,6 +2,7 @@ package org.usfirst.frc.team339.Utils;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ScaleAlignment
 {
@@ -15,6 +16,8 @@ private UltraSonic rearUltrasonic = null;
  *
  * @param ultrasonic
  *            The sensor that finds distance using sound
+ * 
+ * @author Conner McKevitt
  */
 public ScaleAlignment (UltraSonic ultrasonic)
 {
@@ -34,6 +37,7 @@ public ScaleAlignment (UltraSonic ultrasonic)
  * 
  * @param deadband
  * 
+ * @author Conner McKevitt
  */
 
 public boolean alignToScale (double speed, double deadband)
@@ -55,32 +59,36 @@ public boolean alignToScale (double speed, double deadband)
         aligned = true;
         speed = 0;
         System.out.println("Speed: " + speed);
-        // Hardware.transmission.drive(0,0);
+        Hardware.leftDriveMotor.set(0);
+        Hardware.rightDriveMotor.set(0);
+        System.out.println("Has set motors power to 0");
         // start the move forklift switch
-
         if (Hardware.cubeManipulator.scoreScale())
             {
             return true;
             }
-        System.out.println("Hi");
+        SmartDashboard.putString("Hi", "Hi");
+
         Hardware.cubeManipulator.scoreScale();
         }
     // if to far from scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
-                    - deadband)
+                    - deadband
+            && aligned == false)
         {
-        System.out.println("Speed: " + speed);
-        System.out.println("We are too far from the scale");
+        SmartDashboard.putNumber("Speed", speed);
+        SmartDashboard.putString("Relative to scale", "Too far");
 
         Hardware.transmission.drive(speed, speed);
         }
     // if to close to scale
     else if (this.rearUltrasonic
-            .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE)
+            .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
+            && aligned == false)
         {
-        System.out.println("Speed: " + speed);
-        System.out.println("We are to close to the scale");
+        SmartDashboard.putNumber("Speed", speed);
+        SmartDashboard.putString("Relative to scale", "Too close");
 
         Hardware.transmission.drive(-speed, -speed);
         }
