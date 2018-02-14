@@ -188,7 +188,6 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
     forkliftTargetHeight = position;
     forkliftTargetSpeed = Math.abs(forkliftSpeed);
 
-
     if (this.getForkliftHeight() < forkliftTargetHeight
             - LIFT_UNDERSHOOT_TOLERANCE)
         {
@@ -207,8 +206,6 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
         {
         liftState = ForkliftState.STAY_AT_POSITION;
         }
-
-
     // return true is we are done moving, false is we are still going
     return liftState == ForkliftState.STAY_AT_POSITION;
 
@@ -705,6 +702,30 @@ public void forkliftUpdate ()
 
 
     double SLOW_LIFT_SPEED = .3;
+
+    // TODO Stuff Cole wanted to recheck
+    // if (this.getForkliftHeight() < forkliftTargetHeight
+    // - LIFT_UNDERSHOOT_TOLERANCE)
+    // {
+    // liftState = ForkliftState.MOVING_TO_POSITION;
+    // }
+    // // if the forklift is above the target position, set state to
+    // // MOVING_TO_POSITION
+    // else if (this.getForkliftHeight() > forkliftTargetHeight
+    // + LIFT_OVERSHOOT_TOLERANCE)
+    // {
+    // liftState = ForkliftState.MOVING_TO_POSITION;
+    // }
+    // // if the forklift is close enough to the target position, then set state
+    // to
+    // // STAY_AT_POSITION
+    // else
+    // {
+    // liftState = ForkliftState.STAY_AT_POSITION;
+    // }
+    // TODO End Stuff Cole wanted to recheck
+
+
 
     // main switch statement for the forklift state machine
     switch (liftState)
