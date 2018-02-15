@@ -293,6 +293,6 @@ private final double DRIVE_CORRECTION = .1;
 // Gets the center x value of the vision targets (average of the x values
 // of both vision targets, or of the only one if there is only one blob: see
 // getCameraCenterValue())
-private double center = 115;
+private double center = 160;
 
 }
