@@ -514,7 +514,6 @@ public boolean brake (BrakeType type)
 
     if (System.currentTimeMillis() - previousBrakeTime > INIT_TIMEOUT)
         {
-        BRAKE_ITERATIONS = 0;
         prevEncoderValues = new double[4];
 
         // Get the direction of the motor values on the first start.
@@ -531,7 +530,6 @@ public boolean brake (BrakeType type)
                     .signum(rightFrontEncoder.getRate());
             }
         }
-    BRAKE_ITERATIONS++;
 
     int[] brakeDeltas = new int[4];
     // sets values of brakeDelta array to the change in encoder ticks
@@ -608,8 +606,6 @@ public boolean brake (BrakeType type)
     return false;
 }
 
-public static int BRAKE_ITERATIONS = 0;
-
 private long previousBrakeTime = 0; // milliseconds
 
 private int[] brakeMotorDirection = new int[4];
@@ -633,10 +629,23 @@ private int totalBrakeIterations = 3;
  * 
  * @param ticks
  *            Ticks on the encoder, not distance.
+ * @param type
+ *            What kind of turn this is being called after
  */
-public void setBrakeDeadband (int ticks)
+public void setBrakeDeadband (int ticks, BrakeType type)
 {
-    this.brakeDriveDeadband = ticks;
+    switch (type)
+        {
+        case AFTER_DRIVE:
+            this.brakeDriveDeadband = ticks;
+            break;
+        case AFTER_TURN:
+            this.brakeTurnDeadband = ticks;
+            break;
+        default:
+            break;
+        }
+
 }
 
 /**
@@ -644,10 +653,22 @@ public void setBrakeDeadband (int ticks)
  * 
  * @param power
  *            percentage (0.0 to 1.0)
+ * @param type
+ *            What kind of turn this is being called after
  */
-public void setBrakePower (double power)
+public void setBrakePower (double power, BrakeType type)
 {
-    this.brakeDrivePower = power;
+    switch (type)
+        {
+        case AFTER_DRIVE:
+            this.brakeDrivePower = power;
+            break;
+        case AFTER_TURN:
+            this.brakeTurnPower = power;
+            break;
+        default:
+            break;
+        }
 }
 
 /**
@@ -1200,7 +1221,7 @@ private boolean turnDegrees2StageInit = true;
 
 private double turnDegreesTriggerStage = 40;// Degrees
 
-private double turnDegrees2ndStagePower = .15;
+private double turnDegrees2ndStagePower = .1;
 
 // ---------------------------------
 // THis is the distance we expect to move

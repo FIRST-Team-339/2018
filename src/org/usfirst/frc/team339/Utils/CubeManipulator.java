@@ -701,11 +701,11 @@ public void masterUpdate ()
 public void forkliftUpdate ()
 {
 
-//    SmartDashboard.putString("Forklift State:", liftState + "");
-//    SmartDashboard.putString("Forklift Direction State",
-//            "" + forkliftDirection);
-//    SmartDashboard.putString("Target Height ",
-//            forkliftTargetHeight + "");
+    // SmartDashboard.putString("Forklift State:", liftState + "");
+    // SmartDashboard.putString("Forklift Direction State",
+    // "" + forkliftDirection);
+    // SmartDashboard.putString("Target Height ",
+    // forkliftTargetHeight + "");
 
 
     double SLOW_LIFT_SPEED = .3;
@@ -765,7 +765,6 @@ public void forkliftUpdate ()
         // break;
 
         case MOVING_TO_POSITION:
-            System.out.println("moving to position");
             // two if statements to prevent forkliftTargetHeight from being past
             // the min and max heights
 
@@ -872,7 +871,6 @@ public void forkliftUpdate ()
                     "Reached default in the liftState switch in "
                             + "forkliftUpdate in CubeManipulator");
         case STAY_AT_POSITION:
-            System.out.println("Staying at position");
             // gives the forklift motor the appropriate voltage for it
             // to hold its position; which voltage we use is dependent
             // on whether or not we have a cube

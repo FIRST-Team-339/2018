@@ -279,9 +279,9 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    // testingDrive();
+    testingDrive();
 
-    beckyTest();
+    // beckyTest();
 
 } // end Periodic()
 
@@ -427,7 +427,6 @@ private static void testingDrive ()
                 || isTestingAnalogGyroTurn == true) && driveState == 0
                 && Hardware.autoDrive.turnDegreesGyro(90, .25) == true)
             {
-            System.out.println("Calling Brake");
             driveState++;
             }
         else if (isTestingEncoderTurn && driveState == 0
@@ -472,7 +471,6 @@ private static void testingDrive ()
     if (Hardware.leftDriver.getRawButton(8) == true)
         {
         Hardware.gyro.reset();
-        Hardware.gyroAnalog.reset();
         }
 
 } // end of testingDrive()
@@ -505,20 +503,20 @@ public static void printStatements ()
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
 
-//     SmartDashboard.putNumber("L Drive Motor",
-//     Hardware.leftDriveMotor.get());
-//     System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-//     SmartDashboard.putNumber("Lifting Motor",
-//     Hardware.liftingMotor.get());
+    // SmartDashboard.putNumber("L Drive Motor",
+    // Hardware.leftDriveMotor.get());
+    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+    // SmartDashboard.putNumber("Lifting Motor",
+    // Hardware.liftingMotor.get());
 
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-//     SmartDashboard.putNumber("Cube Motor",
-//     Hardware.cubeIntakeMotor.get());
+    // SmartDashboard.putNumber("Cube Motor",
+    // Hardware.cubeIntakeMotor.get());
     // System.out.println(
     // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-//     SmartDashboard.putNumber("Intake Deploy Motor",
-//     Hardware.intakeDeployArm.get());
+    // SmartDashboard.putNumber("Intake Deploy Motor",
+    // Hardware.intakeDeployArm.get());
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -575,8 +573,8 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Left Front Encoder Inches",
-    // Hardware.leftFrontDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Left Front Encoder Inches",
+            Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
@@ -585,8 +583,8 @@ public static void printStatements ()
 
     // System.out.println("Right Front Inches = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Right Front Encoder Inches",
-    // Hardware.rightFrontDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Right Front Encoder Inches",
+            Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
@@ -616,8 +614,8 @@ public static void printStatements ()
     // System.out.println(
     // "Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
-    SmartDashboard.putNumber("Lift Encoder Inches",
-            Hardware.liftingEncoder.getDistance());
+    // SmartDashboard.putNumber("Lift Encoder Inches",
+    // Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
@@ -684,7 +682,7 @@ public static void printStatements ()
     // Hardware.gyroAnalog.getAngle());
 
     // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
 
     // ---------------------------------
@@ -692,8 +690,8 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    SmartDashboard.putNumber("Front Ultrasonic",
-            Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    // SmartDashboard.putNumber("Front Ultrasonic",
+    // Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     // SmartDashboard.putNumber("Read Ultrasonic",

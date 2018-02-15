@@ -60,6 +60,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay.Direction;
@@ -263,8 +264,20 @@ public void robotInit ()
         Hardware.transmission.setAllGearRatios(KILROY_XIX_GEAR_1_SPEED,
                 KILROY_XIX_GEAR_2_SPEED);
 
+        // Drive Functions
+
         Hardware.autoDrive.setTurningRadius(KILROY_XIX_TURNING_RADIUS);
-        Hardware.autoDrive.setBrakePower(KILROY_XIX_BRAKE_POWER);
+
+        // Braking constants
+        Hardware.autoDrive.setBrakePower(KILROY_XIX_BRAKE_DRIVE_POWER,
+                BrakeType.AFTER_DRIVE);
+        Hardware.autoDrive.setBrakePower(KILROY_XIX_BRAKE_TURN_POWER,
+                BrakeType.AFTER_TURN);
+
+        Hardware.autoDrive.setBrakeDeadband(
+                KILROY_XIX_BRAKE_DRIVE_DEADBAND, BrakeType.AFTER_DRIVE);
+        Hardware.autoDrive.setBrakeDeadband(
+                KILROY_XIX_BRAKE_TURN_DEADBAND, BrakeType.AFTER_TURN);
         } // end if
     else
         {
@@ -461,12 +474,18 @@ private static final double KILROY_XIX_LIFT_ENCODER_DPP = .1;
 
 private static final double KILROY_XIX_DEPLOY_ENCODER_DPP = .1;
 
-private static final double KILROY_XIX_TURNING_RADIUS = 11.75 - .35;
+private static final double KILROY_XIX_TURNING_RADIUS = 11.5 - .35;
 
 private static final double KILROY_XV_TURNING_RADIUS = 11 - .35;
 
 // Brake stuff
-private static final double KILROY_XIX_BRAKE_POWER = .3;
+private static final double KILROY_XIX_BRAKE_DRIVE_POWER = .2;
+
+private static final double KILROY_XIX_BRAKE_TURN_POWER = .3;
+
+private static final int KILROY_XIX_BRAKE_TURN_DEADBAND = 15;
+
+private static final int KILROY_XIX_BRAKE_DRIVE_DEADBAND = 23;
 
 } // end class
 
