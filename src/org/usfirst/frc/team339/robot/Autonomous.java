@@ -1053,11 +1053,8 @@ public static boolean switchOrScalePath (Position robotPosition)
             break;
         case EJECT_CUBE:
             // Eject the cube onto the switch platform.
-            Hardware.cubeIntakeMotor.set(-INTAKE_SPEED);
-            if (Hardware.autoTimer.get() > INTAKE_EJECT_TIME)
+            if (Hardware.cubeManipulator.pushOutCubeAuto())
                 {
-                Hardware.cubeManipulator.stopIntake();
-                Hardware.autoTimer.stop();
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
                 }
 
@@ -1414,11 +1411,8 @@ public static boolean offsetSwitchPath ()
             break;
         case EJECT:
             // Eject the cube we currently have into the switch :)
-            Hardware.cubeIntakeMotor.set(-INTAKE_SPEED);
-            if (Hardware.autoTimer.get() > INTAKE_EJECT_TIME)
+            if (Hardware.cubeManipulator.pushOutCubeAuto())
                 {
-                Hardware.autoTimer.stop();
-                Hardware.cubeIntakeMotor.stopMotor();
                 currentOffsetSwitchState = OffsetSwitchPath.FINISH;
                 }
             break;

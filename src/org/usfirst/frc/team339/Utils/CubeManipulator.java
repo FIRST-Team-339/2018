@@ -857,7 +857,6 @@ public void forkliftUpdate ()
                         {
                         this.forkliftMotor
                                 .set(FORKLIFT_STAY_UP_WITH_CUBE);
-
                         }
                     else
                         {
