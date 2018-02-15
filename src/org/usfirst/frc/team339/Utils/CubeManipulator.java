@@ -102,36 +102,58 @@ public double getForkliftHeight ()
  * 
  * @param operatorJoystick
  *            the joystick used when operting the forklift
+ * @param overrideButton
+ *            the button that, if helf, activates forklift override
  * 
  * @author C.R.
  */
-public void moveForkliftWithController (Joystick operatorJoystick)
+public void moveForkliftWithController (Joystick operatorJoystick,
+        boolean overrideButton)
 {
-    // If we move the forklift up with the joystick, only do so if we are below
-    // the max height.
-    if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND
-            && this.getForkliftHeight() <= FORKLIFT_MAX_HEIGHT)
+    if (overrideButton == false) // non override version
         {
-        // this.liftState = ForkliftState.MOVING_UP_MAX;
-        this.setLiftPosition(FORKLIFT_MAX_HEIGHT, .5);
+        // If we move the forklift up with the joystick, only do so if we are
+        // below the max height.
+        if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND
+                && this.getForkliftHeight() <= FORKLIFT_MAX_HEIGHT)
+            {
+            // this.liftState = ForkliftState.MOVING_UP_MAX;
+            this.setLiftPosition(FORKLIFT_MAX_HEIGHT,
+                    FORKLIFT_DEFAULT_JOYSTICK_SPEED_UP);
+            }
+        // If we move the forklift down with the joystick, only do so if we are
+        // above the min height; we use the no cube version because it is lower,
+        // and if we have a cube the setLiftPosition code will automatically use
+        // the with cube mininimum height anyway
+        else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND
+                && this.getForkliftHeight() >= FORKLIFT_MIN_HEIGHT_NO_CUBE)
+            {
+            // this.liftState = ForkliftState.MOVING_DOWN_MIN;
+            this.setLiftPosition(FORKLIFT_MIN_HEIGHT_NO_CUBE, .5);
+            }
+        // If we are not moving the forklift, and it is above the starting
+        // position,
+        // then stay there with a little voltage.
+        else
+            {
+            this.liftState = ForkliftState.STAY_AT_POSITION;
+            }
         }
-    // If we move the forklift down with the joystick, only do so if we are
-    // above the min height; we use the no cube version because it is lower, and
-    // if we have a cube the setLiftPosition code will automatically use the
-    // with cube mininimum height anyway
-    else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND
-            && this.getForkliftHeight() >= FORKLIFT_MIN_HEIGHT_NO_CUBE)
+    else // if we are using override
         {
-        // this.liftState = ForkliftState.MOVING_DOWN_MIN;
-        this.setLiftPosition(FORKLIFT_MIN_HEIGHT_NO_CUBE, .5);
+        if (operatorJoystick.getY() <= -JOYSTICK_DEADBAND)
+            {
+            liftState = ForkliftState.OVERRIDE_UP;
+            }
+        else if (operatorJoystick.getY() >= JOYSTICK_DEADBAND)
+            {
+            liftState = ForkliftState.OVERRIDE_DOWN;
+            }
+        else
+            {
+            liftState = ForkliftState.STAY_AT_POSITION;
+            }
         }
-    // If we are not moving the forklift, and it is above the starting position,
-    // then stay there with a little voltage.
-    else
-        {
-        this.liftState = ForkliftState.STAY_AT_POSITION;
-        }
-
 
 }
 
@@ -228,25 +250,29 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
  */
 public boolean setLiftPosition (double position)
 {
+    double defaultSpeed = 0.0;
     // If the requested position is greater than the current position, set the
     // state machine to go up.
     if (this.getForkliftHeight() < position)
         {
-        setLiftPosition(position, Math.abs(FORKLIFT_DEFAULT_SPEED_UP));
+        defaultSpeed = FORKLIFT_DEFAULT_SPEED_UP;
         }
     // Else, we are going down.
     else
         {
-        setLiftPosition(position,
-                Math.abs(FORKLIFT_DEFAULT_SPEED_DOWN));
+        defaultSpeed = FORKLIFT_DEFAULT_SPEED_DOWN;
         }
-    // TODO CHANGE WHAT THIS IS RETURNING!!!!!
-    return true;
+
+    return setLiftPosition(position, defaultSpeed);
 }
 
 // ========================INTAKE FUNCTIONS========================
 
-
+/**
+ * Get the angle (in ticks) that the intakeDeployEncoder is reading
+ * 
+ * @return the ticks of the intakeDeployEncoder
+ */
 public double getIntakeAngle ()
 {
     return this.intakeDeployEncoder.get();
@@ -314,7 +340,6 @@ public boolean deployRetractIntakeByButtons (boolean deployButton,
         boolean retractButton,
         boolean overrideButton)
 {
-
     if (overrideButton == false) // run the non-overriden deploy and retract
                                  // functions
         {
@@ -559,6 +584,77 @@ public boolean hasCube ()
     return this.intakeSwitch.isOn();
 }
 
+
+/**
+ * master intake button method that should set up all the intake, deploy and
+ * override buttons
+ * 
+ * @author Ashley Espeland
+ * 
+ * @param intakeButton
+ *            the button for intaking the cube, alone it is the regular
+ *            function
+ * 
+ * @param pushOutCubeButton
+ *            the button for pushing out the cube, alone it is the
+ *            regular function
+ * 
+ * @param overrideButton
+ *            the button when combined with the intakeButton uses the
+ *            override function for intake
+ */
+
+public void intakePushOutCubeByButtons (
+        boolean intakeButton, boolean pushOutCubeButton,
+        boolean overrideButton)
+{
+    // TODO GONE OVER AGAIN @ANE
+    // non override functions
+    if (overrideButton == false)
+        {
+        // if only the intake button is pressed and not the override
+        // as well, then intake the cube normally
+        if (intakeButton == true)
+            {
+            this.intakeCube(intakeButton);
+            }
+        // if only the pushOutCubeButton is pressed and not override
+        // as well, then push out cube normally
+        if (pushOutCubeButton == true)
+            {
+            this.pushOutCubeTeleop(pushOutCubeButton);
+            }
+        // if neither the override, the intake button, nor the
+        // pushOutButton is pressed then the intake motor does nothing
+        else
+            {
+            this.stopIntake();
+            }
+        }
+    else
+        {
+        // if the intake button and the override button is pressed then
+        // use the override intake method
+        if (intakeButton == true)
+            {
+            this.intakeCubeOverride(intakeButton);
+            }
+        // if the pushOutCubeButton and the override button is pressed
+        // the push out cube
+        if (pushOutCubeButton == true)
+            {
+            this.pushOutCubeTeleop(pushOutCubeButton);
+            }
+        else
+        // if only the override button is pressed stop the intake motor
+            {
+            this.stopIntake();
+            }
+        }
+}
+
+
+
 /**
  * Autonomously scores a cube on the switch using the forklift, intake and
  * intake deploy
@@ -701,12 +797,20 @@ public void masterUpdate ()
 public void forkliftUpdate ()
 {
 
-//    SmartDashboard.putString("Forklift State:", liftState + "");
-//    SmartDashboard.putString("Forklift Direction State",
-//            "" + forkliftDirection);
-//    SmartDashboard.putString("Target Height ",
-//            forkliftTargetHeight + "");
+    // SmartDashboard.putString("Forklift State:", liftState + "");
+    // SmartDashboard.putString("Forklift Direction State",
+    // "" + forkliftDirection);
+    // SmartDashboard.putString("Target Height ",
+    // forkliftTargetHeight + "");
+    // SmartDashboard.putString("Actual Height ",
+    // this.getForkliftHeight() + "");
 
+    // System.out.println("Forklift State: " + liftState);
+    // System.out.println("Forklift Direction State: "
+    // + forkliftDirection);
+    // System.out.println("Target Height: " +
+    // forkliftTargetHeight);
+    // System.out.println("Forklift Height: " + this.getForkliftHeight());
 
     double SLOW_LIFT_SPEED = .3;
 
@@ -736,36 +840,8 @@ public void forkliftUpdate ()
     // main switch statement for the forklift state machine
     switch (liftState)
         {
-        // Moves the forklift up
-
-
-        // case MOVING_UP_MAX:
-        // if (// Math.abs(
-        // this.getForkliftHeight() >= FORKLIFT_MAX_HEIGHT)
-        // {
-        // this.liftState = ForkliftState.STAY_AT_POSITION;
-        // }
-        // else
-        // {
-        // this.forkliftMotor.set(this.forkliftCurrentSpeedUp);
-        // }
-        // break;
-
-        // Moves the forklift down
-        // case MOVING_DOWN_MIN:
-        // if (this.getForkliftHeight() <= FORKLIFT_MIN_HEIGHT_NO_CUBE
-        // + LIFT_TOLERANCE)
-        // {
-        // this.liftState = ForkliftState.STAY_AT_POSITION;
-        // }
-        // else
-        // {
-        // this.forkliftMotor.set(this.forkliftCurrentSpeedDown);
-        // }
-        // break;
 
         case MOVING_TO_POSITION:
-            System.out.println("moving to position");
             // two if statements to prevent forkliftTargetHeight from being past
             // the min and max heights
 
@@ -850,17 +926,26 @@ public void forkliftUpdate ()
                     // on whether or not we have a cube
                     if (this.hasCube() == true)
                         {
-                        this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
+                        this.forkliftMotor
+                                .set(FORKLIFT_STAY_UP_WITH_CUBE);
                         }
                     else
                         {
-                        this.forkliftMotor
-                                .set(FORKLIFT_STAY_UP_WITH_CUBE);
+                        this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
                         }
                     liftState = ForkliftState.STAY_AT_POSITION;
                     break;
                 } // end the forkliftDirection switch statement
 
+            break;
+
+
+        case OVERRIDE_UP:
+            this.forkliftMotor.set(forkliftTargetSpeed);
+            break;
+
+        case OVERRIDE_DOWN:
+            this.forkliftMotor.set(-forkliftTargetSpeed);
             break;
 
         // Make the cube "hover" by sending a constant small voltage to the
@@ -872,7 +957,6 @@ public void forkliftUpdate ()
                     "Reached default in the liftState switch in "
                             + "forkliftUpdate in CubeManipulator");
         case STAY_AT_POSITION:
-            System.out.println("Staying at position");
             // gives the forklift motor the appropriate voltage for it
             // to hold its position; which voltage we use is dependent
             // on whether or not we have a cube
@@ -906,6 +990,7 @@ public void forkliftUpdate ()
 
         }
 }
+
 
 
 /**
@@ -1076,7 +1161,7 @@ public void stopEverything ()
  */
 private static enum ForkliftState
     {
-MOVING_TO_POSITION, STAY_AT_POSITION
+MOVING_TO_POSITION, STAY_AT_POSITION, OVERRIDE_UP, OVERRIDE_DOWN
     }
 
 /**
@@ -1191,6 +1276,11 @@ private final double FORKLIFT_DEFAULT_SPEED_UP = .9;
 
 private final double FORKLIFT_DEFAULT_SPEED_DOWN = .4;
 
+private final double FORKLIFT_DEFAULT_JOYSTICK_SPEED_UP = .5;
+
+private final double FORKLIFT_DEFAULT_JOYSTICK_SPEED_DOWN = .5;
+
+
 private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = 0.0;
@@ -1199,12 +1289,8 @@ private final double FORKLIFT_STAY_UP_WITH_CUBE = 0.0;
 // it back to the bottom/ starting position
 private final double FORKLIFT_DRIFT_DOWN_SPEED = 0.0;
 
-// TODO remove
-private final double LIFT_TOLERANCE = 3;
-
-
 // how far the lift is allowed to be over the target height
-private final double LIFT_OVERSHOOT_TOLERANCE = 5.0;
+private final double LIFT_OVERSHOOT_TOLERANCE = 7.0;
 
 // how far the lift is allowed to be under the target height
 private final double LIFT_UNDERSHOOT_TOLERANCE = 1.0;
@@ -1218,7 +1304,6 @@ private final double SCALE_HEIGHT = 80;
 // =========================================
 
 // ================INTAKE===================
-
 
 private final double INTAKE_SPEED = .5;
 
