@@ -559,6 +559,77 @@ public boolean hasCube ()
     return this.intakeSwitch.isOn();
 }
 
+
+/**
+ * master intake button method that should set up all the intake, deploy and
+ * override buttons
+ * 
+ * @author Ashley Espeland
+ * 
+ * @param intakeButton
+ *            the button for intaking the cube, alone it is the regular
+ *            function
+ * 
+ * @param pushOutCubeButton
+ *            the button for pushing out the cube, alone it is the
+ *            regular function
+ * 
+ * @param overrideButton
+ *            the button when combined with the intakeButton uses the
+ *            override function for intake
+ */
+
+public void intakePushOutCubeByButtons (
+        boolean intakeButton, boolean pushOutCubeButton,
+        boolean overrideButton)
+{
+    // TODO GONE OVER AGAIN @ANE
+    // non override functions
+    if (overrideButton == false)
+        {
+        // if only the intake button is pressed and not the override
+        // as well, then intake the cube normally
+        if (intakeButton == true)
+            {
+            this.intakeCube(intakeButton);
+            }
+        // if only the pushOutCubeButton is pressed and not override
+        // as well, then push out cube normally
+        if (pushOutCubeButton == true)
+            {
+            this.pushOutCubeTeleop(pushOutCubeButton);
+            }
+        // if neither the override, the intake button, nor the
+        // pushOutButton is pressed then the intake motor does nothing
+        else
+            {
+            this.stopIntake();
+            }
+        }
+    else
+        {
+        // if the intake button and the override button is pressed then
+        // use the override intake method
+        if (intakeButton == true)
+            {
+            this.intakeCubeOverride(intakeButton);
+            }
+        // if the pushOutCubeButton and the override button is pressed
+        // the push out cube
+        if (pushOutCubeButton == true)
+            {
+            this.pushOutCubeTeleop(pushOutCubeButton);
+            }
+        else
+        // if only the override button is pressed stop the intake motor
+            {
+            this.stopIntake();
+            }
+        }
+}
+
+
+
 /**
  * Autonomously scores a cube on the switch using the forklift, intake and
  * intake deploy
@@ -909,6 +980,7 @@ public void forkliftUpdate ()
 }
 
 
+
 /**
  * Update method for the deployIntake functions. Allows the deployIntake
  * code to use their state machine. deployIntake and related functions
@@ -1219,7 +1291,6 @@ private final double SCALE_HEIGHT = 80;
 // =========================================
 
 // ================INTAKE===================
-
 
 private final double INTAKE_SPEED = .5;
 
