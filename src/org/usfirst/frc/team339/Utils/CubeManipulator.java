@@ -701,11 +701,11 @@ public void masterUpdate ()
 public void forkliftUpdate ()
 {
 
-//    SmartDashboard.putString("Forklift State:", liftState + "");
-//    SmartDashboard.putString("Forklift Direction State",
-//            "" + forkliftDirection);
-//    SmartDashboard.putString("Target Height ",
-//            forkliftTargetHeight + "");
+    // SmartDashboard.putString("Forklift State:", liftState + "");
+    // SmartDashboard.putString("Forklift Direction State",
+    // "" + forkliftDirection);
+    // SmartDashboard.putString("Target Height ",
+    // forkliftTargetHeight + "");
 
 
     double SLOW_LIFT_SPEED = .3;
@@ -850,12 +850,13 @@ public void forkliftUpdate ()
                     // on whether or not we have a cube
                     if (this.hasCube() == true)
                         {
-                        this.forkliftMotor.set(FORKLIFT_STAY_UP_SPEED);
+                        this.forkliftMotor
+                                .set(FORKLIFT_STAY_UP_WITH_CUBE);
                         }
                     else
                         {
                         this.forkliftMotor
-                                .set(FORKLIFT_STAY_UP_WITH_CUBE);
+                                .set(FORKLIFT_STAY_UP_SPEED);
                         }
                     liftState = ForkliftState.STAY_AT_POSITION;
                     break;
