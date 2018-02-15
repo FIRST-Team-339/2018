@@ -161,7 +161,8 @@ public static void periodic ()
                 .getY()) >= CubeManipulator.JOYSTICK_DEADBAND)
             {
             Hardware.cubeManipulator
-                    .moveForkliftWithController(Hardware.rightOperator);
+                    .moveForkliftWithController(Hardware.rightOperator,
+                            Hardware.rightOperator.getRawButton(5));
             }
         // testing code for setting forklift height; temporary
         if (Hardware.rightOperator.getRawButton(6) == true)
@@ -611,8 +612,7 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Right Rear Encoder Ticks",
     // Hardware.rightRearDriveEncoder.get());
 
-    // System.out.println(
-    // "Lift Encoder Inches = "
+    // System.out.println("Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
     // SmartDashboard.putNumber("Lift Encoder Inches",
     // Hardware.liftingEncoder.getDistance());
