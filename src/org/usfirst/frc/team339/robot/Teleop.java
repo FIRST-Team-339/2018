@@ -84,8 +84,9 @@ public static void init ()
     Hardware.rightDriveMotor.set(0);
     Hardware.leftDriveMotor.set(0);
 
-    // Hardware.gyro.calibrate();
-    Hardware.gyro.reset();
+    SmartDashboard.putNumber("Deadband", 0);
+    SmartDashboard.putNumber("Power", 0);
+
 } // end Init
 
 // tune pid loop
@@ -258,10 +259,11 @@ public static void periodic ()
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
 
-    if (isTestingGyroTurn == false && allowAlignment == false
+    if (isTestingDrive == false && allowAlignment == false
             && isTesting2StepTurn == false
             && isTestingPivotTurn == false
-            && isTestingEncoderTurn == false && isBeckyTest == false)
+            && isTestingEncoderTurn == false && isBeckyTest == false
+            && Hardware.leftDriver.getTrigger() == false)
         Hardware.transmission.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
 
@@ -290,7 +292,7 @@ private static boolean inAligning = true;
 
 private static boolean allowAlignment = false;
 
-private static boolean isTestingGyroTurn = false;
+private static boolean isTestingDrive = false;
 
 private static boolean isTestingAnalogGyroTurn = false;
 
@@ -392,63 +394,31 @@ private static void beckyTest ()
 
 private static void testingDrive ()
 {
+    Hardware.autoDrive.setBrakeDeadband(
+            (int) SmartDashboard.getNumber("Deadband", 0),
+            BrakeType.AFTER_DRIVE);
+    Hardware.autoDrive
+            .setBrakePower(SmartDashboard.getNumber("Power", 0),
+                    BrakeType.AFTER_DRIVE);
+
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
-        isTestingGyroTurn = true;
-        }
-    else if (Hardware.leftDriver.getRawButton(7) == true)
-        {
-        isTestingEncoderTurn = true;
-        }
-    else if (Hardware.leftDriver.getRawButton(12))
-        {
-        isTestingPivotTurn = true;
-        }
-    else if (Hardware.leftDriver.getRawButton(11))
-        {
-        isTesting2StepTurn = true;
-        }
-    else if (Hardware.leftDriver.getRawButton(5) == true)
-        {
-        Hardware.autoDrive.setGyro(Hardware.gyroAnalog);
-        }
-    else if (Hardware.leftDriver.getRawButton(6) == true)
-        {
-        Hardware.autoDrive.setGyro(Hardware.gyro);
+        isTestingDrive = true;
         }
 
-    if (isTestingGyroTurn == true || isTestingEncoderTurn == true
-            || isTestingPivotTurn == true
-            || isTesting2StepTurn == true
-            || isTestingAnalogGyroTurn == true)
+    if (isTestingDrive == true)
         {
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
-        if ((isTestingGyroTurn == true
-                || isTestingAnalogGyroTurn == true) && driveState == 0
-                && Hardware.autoDrive.turnDegreesGyro(90, .25) == true)
-            {
-            driveState++;
-            }
-        else if (isTestingEncoderTurn && driveState == 0
-                && Hardware.autoDrive.turnDegrees(90, .25) == true)
-            {
-            driveState++;
-            }
-        else if (isTestingPivotTurn && driveState == 0
-                && Hardware.autoDrive.pivotTurnDegrees(90, .25) == true)
-            {
-            driveState++;
-            }
-        else if (isTesting2StepTurn && driveState == 0
-                && Hardware.autoDrive.turnDegrees2Stage(90,
-                        .25) == true)
+        if (isTestingDrive == true && driveState == 0
+                && Hardware.autoDrive.driveStraightInches(48,
+                        .3) == true)
             {
             driveState++;
             }
         else if (driveState == 1
                 && Hardware.autoDrive
-                        .brake(BrakeType.AFTER_TURN) == true)
+                        .brake(BrakeType.AFTER_DRIVE) == true)
             {
             driveState++;
             }
@@ -461,7 +431,7 @@ private static void testingDrive ()
             Hardware.transmission
                     .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
             Hardware.autoDrive.reset();
-            isTestingGyroTurn = false;
+            isTestingDrive = false;
             isTestingEncoderTurn = false;
             isTestingPivotTurn = false;
             isTesting2StepTurn = false;
@@ -574,8 +544,8 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Left Front Encoder Inches",
-            Hardware.leftFrontDriveEncoder.getDistance());
+    // SmartDashboard.putNumber("Left Front Encoder Inches",
+    // Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
@@ -584,8 +554,8 @@ public static void printStatements ()
 
     // System.out.println("Right Front Inches = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Right Front Encoder Inches",
-            Hardware.rightFrontDriveEncoder.getDistance());
+    // SmartDashboard.putNumber("Right Front Encoder Inches",
+    // Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
@@ -682,7 +652,7 @@ public static void printStatements ()
     // Hardware.gyroAnalog.getAngle());
 
     // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
 
     // ---------------------------------

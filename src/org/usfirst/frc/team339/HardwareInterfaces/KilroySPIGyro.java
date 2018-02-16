@@ -31,7 +31,7 @@ public class KilroySPIGyro implements Gyro
 {
 private final ADXRS450_Gyro gyro;
 
-private boolean hasGyro = true;
+private boolean hasGyro;
 
 /**
  * Creates the Gyro object. If we input that the gyro is not connected, then do
@@ -43,6 +43,7 @@ private boolean hasGyro = true;
  */
 public KilroySPIGyro (boolean hasGyro)
 {
+    this.hasGyro = hasGyro;
     if (hasGyro)
         {
         this.gyro = new ADXRS450_Gyro();

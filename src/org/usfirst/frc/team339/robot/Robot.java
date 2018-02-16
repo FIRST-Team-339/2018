@@ -278,6 +278,8 @@ public void robotInit ()
                 KILROY_XIX_BRAKE_DRIVE_DEADBAND, BrakeType.AFTER_DRIVE);
         Hardware.autoDrive.setBrakeDeadband(
                 KILROY_XIX_BRAKE_TURN_DEADBAND, BrakeType.AFTER_TURN);
+        Hardware.autoDrive.setDriveStraightConstant(
+                KILROY_XIX_DRIVESTRAIGHT_CONSTANT);
         } // end if
     else
         {
@@ -479,13 +481,16 @@ private static final double KILROY_XIX_TURNING_RADIUS = 11.5 - .35;
 private static final double KILROY_XV_TURNING_RADIUS = 11 - .35;
 
 // Brake stuff
-private static final double KILROY_XIX_BRAKE_DRIVE_POWER = .2;
+private static final double KILROY_XIX_BRAKE_DRIVE_POWER = .3;
 
-private static final double KILROY_XIX_BRAKE_TURN_POWER = .3;
+private static final double KILROY_XIX_BRAKE_TURN_POWER = .2;
 
 private static final int KILROY_XIX_BRAKE_TURN_DEADBAND = 15;
 
-private static final int KILROY_XIX_BRAKE_DRIVE_DEADBAND = 23;
+private static final int KILROY_XIX_BRAKE_DRIVE_DEADBAND = 10;
+
+// Drive Straight
+private static final double KILROY_XIX_DRIVESTRAIGHT_CONSTANT = .016;
 
 } // end class
 

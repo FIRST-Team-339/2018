@@ -233,7 +233,7 @@ public static LVMaxSonarEZ rearUltraSonic = new LVMaxSonarEZ(1);
 // -------------------------------------
 // Analog Interfaces
 // -------------------------------------
-public static KilroySPIGyro gyro = new KilroySPIGyro(true);
+public static KilroySPIGyro gyro = new KilroySPIGyro(false);
 
 // **********************************************************
 // roboRIO CONNECTIONS CLASSES

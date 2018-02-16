@@ -34,6 +34,7 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * An Autonomous class.
@@ -340,8 +341,16 @@ SWITCH, SCALE
 // TODO @ANE add in brake to your auto methods
 public static boolean autolinePath ()
 {
-    System.out.println("autoline path state : " + currentAutolineState);
+    // System.out.println("autoline path state : " + currentAutolineState);
+    SmartDashboard.putNumber("Left Encoder",
+            Hardware.leftFrontDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Right Encoder",
+            Hardware.rightFrontDriveEncoder.getDistance());
 
+    SmartDashboard.putNumber("Left Motor",
+            Hardware.leftDriveMotor.get());
+    SmartDashboard.putNumber("Right Motor",
+            Hardware.rightDriveMotor.get());
     // autoline switch statement
     switch (currentAutolineState)
         {
@@ -1454,9 +1463,9 @@ private static final double AUTO_TESTING_SCALAR = .5; // percent
 
 private static final double DRIVE_STRAIGHT_ACCELERATION_TIME = .6; // seconds
 
-private static final double DRIVE_SPEED = .5; // percent
+private static final double DRIVE_SPEED = .3; // percent
 
-private static final double TURN_SPEED = .4; // percent
+private static final double TURN_SPEED = .25; // percent
 
 // ==========
 
