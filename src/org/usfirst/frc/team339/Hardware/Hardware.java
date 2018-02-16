@@ -32,6 +32,7 @@ import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -110,7 +111,10 @@ public static Servo climbingMechanismServo = new Servo(5);
 // ====================================
 // Relay classes
 // ====================================
-public static Relay ringLightRelay = new Relay(0);
+public static Relay ringLightRelay = new Relay(1);
+
+// JANKY temporary fix until wpi gets their crap together with the Relay class.
+public static DigitalOutput tempRelay = new DigitalOutput(0);
 
 // ====================================
 // Digital Inputs
@@ -313,9 +317,15 @@ public static Drive autoDrive = new Drive(transmission,
         rightFrontDriveEncoder, gyro);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
+// TODO change back to this once relays actually work
+// public static DriveWithCamera driveWithCamera = new DriveWithCamera(
+// transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
+// frontUltraSonic, rearUltraSonic, gyro, axisCamera);
+
+//this is a janky fix for the ringlight not working
 public static DriveWithCamera driveWithCamera = new DriveWithCamera(
         transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
-        frontUltraSonic, rearUltraSonic, gyro, axisCamera);
+        frontUltraSonic, rearUltraSonic, gyro, axisCamera, tempRelay);
 
 // -------------------
 // Assembly classes (e.g. forklift)

@@ -34,6 +34,8 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import edu.wpi.first.wpilibj.Relay.Direction;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -243,8 +245,8 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
-    Hardware.axisCamera
-            .takeLitPicture(Hardware.leftOperator.getRawButton(8));
+    // Hardware.axisCamera
+    // .takeLitPicture(Hardware.leftOperator.getRawButton(8));
 
     // =================================================================
     // DRIVING CODE
@@ -280,9 +282,10 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    testingDrive();
+    // testingDrive();
 
-    // beckyTest();
+
+     beckyTest();
 
 } // end Periodic()
 
@@ -340,7 +343,7 @@ private static boolean isBeckyTest = false;
 private static void beckyTest ()
 {
     // Hardware.ringLightRelay.set(Value.kForward);
-    if (Hardware.leftOperator.getRawButton(2) == true)
+    if (Hardware.rightOperator.getRawButton(2) == true)
         {
         Hardware.transmission.setForAutonomous();
         isBeckyTest = true;
@@ -349,7 +352,7 @@ private static void beckyTest ()
     if (isBeckyTest == true)
         {
 
-        if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
+        if (Hardware.driveWithCamera.jankyDriveToSwitch(.3) == true)
             {
             Hardware.transmission
                     .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
@@ -357,6 +360,25 @@ private static void beckyTest ()
             }
 
         }
+    
+    // if (Hardware.rightOperator.getRawButton(2))
+    // {
+    // Hardware.tempRelay.set(true);
+    // }
+    // else
+    // {
+    // Hardware.tempRelay.set(false);
+    // }
+    //
+    // if(Hardware.rightOperator.getRawButton(3))
+    // {
+    // Hardware.ringLightRelay.setDirection(Direction.kForward);
+    // }
+    // else
+    // {
+    // Hardware.ringLightRelay.setDirection(Direction.kReverse);
+    // }
+
 
 
     // if (Hardware.leftOperator.getRawButton(7))
