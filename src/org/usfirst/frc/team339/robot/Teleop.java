@@ -284,8 +284,8 @@ public static void periodic ()
     // -------------------------------------------
     // testingDrive();
 
-
-     beckyTest();
+    Hardware.tempRelay.set(true);
+    beckyTest();
 
 } // end Periodic()
 
@@ -352,7 +352,7 @@ private static void beckyTest ()
     if (isBeckyTest == true)
         {
 
-        if (Hardware.driveWithCamera.jankyDriveToSwitch(.3) == true)
+        if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
             {
             Hardware.transmission
                     .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
@@ -360,7 +360,7 @@ private static void beckyTest ()
             }
 
         }
-    
+
     // if (Hardware.rightOperator.getRawButton(2))
     // {
     // Hardware.tempRelay.set(true);

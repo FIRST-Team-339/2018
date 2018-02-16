@@ -318,14 +318,14 @@ public static Drive autoDrive = new Drive(transmission,
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 // TODO change back to this once relays actually work
-// public static DriveWithCamera driveWithCamera = new DriveWithCamera(
-// transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
-// frontUltraSonic, rearUltraSonic, gyro, axisCamera);
-
-//this is a janky fix for the ringlight not working
 public static DriveWithCamera driveWithCamera = new DriveWithCamera(
         transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
-        frontUltraSonic, rearUltraSonic, gyro, axisCamera, tempRelay);
+        frontUltraSonic, rearUltraSonic, gyro, axisCamera);
+
+// this is a janky fix for the ringlight not working
+// public static DriveWithCamera driveWithCamera = new DriveWithCamera(
+// transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
+// frontUltraSonic, rearUltraSonic, gyro, axisCamera, tempRelay);
 
 // -------------------
 // Assembly classes (e.g. forklift)
