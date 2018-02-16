@@ -263,6 +263,8 @@ public void robotInit ()
 
         Hardware.transmission.setAllGearRatios(KILROY_XIX_GEAR_1_SPEED,
                 KILROY_XIX_GEAR_2_SPEED);
+        
+//        Hardware.ringLightRelay.setDirection(Direction.kForward);
 
         // Drive Functions
 
@@ -295,7 +297,7 @@ public void robotInit ()
         Hardware.transmission.setAllGearRatios(KILROY_XV_GEAR_1_SPEED,
                 KILROY_XV_GEAR_2_SPEED);
         Hardware.autoDrive.setTurningRadius(KILROY_XV_TURNING_RADIUS);
-        Hardware.ringLightRelay.setDirection(Direction.kForward);
+//        Hardware.ringLightRelay.setDirection(Direction.kReverse);
         } // else
 
     // ----------------------------------
@@ -330,7 +332,7 @@ public void robotInit ()
     // ---------------------------------
     // sets the ring light to off
     // ---------------------------------
-    Hardware.ringLightRelay.set(Value.kOff);
+//    Hardware.ringLightRelay.set(Value.kOff);
 
 
     Hardware.gyro.calibrate();

@@ -7,6 +7,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmiss
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
 import org.usfirst.frc.team339.vision.VisionProcessor;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -38,6 +39,8 @@ private Gyro gyro = null;
 private VisionProcessor visionProcessor = null;
 
 private final TransmissionType transmissionType;
+
+private DigitalOutput ringlight;
 
 /**
  * Creates the drive with camera object. If a sensor listed is not used (except
@@ -116,6 +119,44 @@ public DriveWithCamera (TransmissionBase transmission,
     this.leftRearEncoder = leftEncoder;
     this.rightRearEncoder = rightEncoder;
     this.gyro = gyro;
+}
+
+/**
+ * Creates drive with camera object
+ * 
+ * @param transmission
+ *            The robot's transmission object
+ * @param leftEncoder
+ *            The left encoder
+ * @param rightEncoder
+ *            The right encoder
+ * @param frontUltrasonic
+ *            The robot's front ultrasonic
+ * @param rearUltrasonic
+ *            The robots's read ultrasonic
+ * @param gyro
+ *            A sensor that uses a spinning disk to measure rotation.
+ * @param visionProcessor
+ *            The camera's vision processing code, as a sensor.
+ * @param ringlightRelay 
+ *            The janky fix for relay not working           
+ * 
+ */
+public DriveWithCamera (TransmissionBase transmission,
+        Encoder leftEncoder, Encoder rightEncoder,
+        UltraSonic frontUltrasonic, UltraSonic rearUltrasonic,
+        Gyro gyro, VisionProcessor visionProcessor, DigitalOutput ringlightRelay)
+{
+    super(transmission, leftEncoder, rightEncoder, gyro);
+
+    this.frontUltrasonic = frontUltrasonic;
+    this.rearUltrasonic = rearUltrasonic;
+    this.visionProcessor = visionProcessor;
+    this.transmissionType = transmission.getType();
+    this.leftRearEncoder = leftEncoder;
+    this.rightRearEncoder = rightEncoder;
+    this.gyro = gyro;
+    this.ringlight = ringlightRelay;
 }
 
 
@@ -200,6 +241,80 @@ private enum DriveWithCameraState
 INIT, DRIVE_WITH_CAMERA, DRIVE_WITH_US, STOP
     }
 
+/**
+ * Drives using the camera until it hits CAMERA_NO_LONGER_WORKS inches, where it
+ * then drives using the ultrasonic, uses the janky relay fix
+ * 
+ * Multiply the compensationFactor by speed to determine what values we are
+ * sending to the motor controller
+ * 
+ * @param compensationFactor
+ *            have the compensation factor greater than 1 and less than 1.8
+ * @param speed
+ *            have the speed greater than 0 and less than 1
+ * @return true if the robot has driven all the way to the front of the scale,
+ *         and false if it hasn't
+ */
+public boolean jankyDriveToSwitch (double speed)
+{
+    switch (jankyState)
+        {
+        case INIT:
+            this.ringlight.set(true);
+            state = DriveWithCameraState.DRIVE_WITH_CAMERA;
+            break;
+        case DRIVE_WITH_CAMERA:
+            // gets the position of the center
+            double centerX = this.getCameraCenterValue();
+            // turns on the ring light
+            this.visionProcessor.setRelayValue(Value.kOn);
+
+            // if the switch center is to the right of our center set by the
+            // SWITCH_CAMERA_CENTER, correct by driving faster on the left
+            if (centerX >= SWITCH_CAMERA_CENTER)
+                {
+                // the switch's center is too far right, drive faster on the
+                // left
+                // System.out.println("WE ARE TOO RIGHT");
+                this.getTransmission().drive(speed + DRIVE_CORRECTION,
+                        speed - DRIVE_CORRECTION);
+                }
+            // if the switch center is to the left of our center set by the
+            // SWITCH_CAMERA_CENTER, correct by driving faster on the right
+            else
+                {
+                // the switch's center is too far left, drive faster on the
+                // right
+                // System.out.println("WE ARE TOO LEFT");
+                this.getTransmission().drive(speed - DRIVE_CORRECTION,
+                        speed + DRIVE_CORRECTION);
+                }
+
+            if (this.frontUltrasonic
+                    .getDistanceFromNearestBumper() <= CAMERA_NO_LONGER_WORKS)
+                state = DriveWithCameraState.DRIVE_WITH_US;
+            break;
+        case DRIVE_WITH_US:
+            this.ringlight.set(false);
+            driveStraight(speed, false);
+
+            if (this.frontUltrasonic
+                    .getDistanceFromNearestBumper() <= DISTANCE_FROM_WALL_TO_STOP)
+                state = DriveWithCameraState.STOP;
+
+            break;
+        default:
+        case STOP:
+            // if we are too close to the wall, brake, then set all motors to
+            // zero, else drive by ultrasonic
+            this.getTransmission().drive(0, 0);
+            state = DriveWithCameraState.INIT;
+            return true;
+        }
+    return false;
+}
+
+private DriveWithCameraState jankyState = DriveWithCameraState.INIT;
 
 /**
  * Method to test the vision code without the ultrasonic
