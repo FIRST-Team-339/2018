@@ -282,7 +282,7 @@ public static MomentarySwitch visionTestButton = new MomentarySwitch(
         leftOperator, 2, false /* starting state */);
 
 public static MomentarySwitch climbButton = new MomentarySwitch(
-        rightOperator, 5, false /* starting state */);
+        rightOperator, 10, false /* starting state */);
 
 // **********************************************************
 // Kilroy's Ancillary classes
