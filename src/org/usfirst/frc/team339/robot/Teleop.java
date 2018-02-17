@@ -393,6 +393,7 @@ private static void testingDrive ()
  */
 public static void printStatements ()
 {
+
     // =================================
     // Motor
     // Prints the value of motors

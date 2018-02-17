@@ -116,24 +116,31 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-
+    // TODO make work
+    SmartDashboard.putString("Overall Auto state",
+            autoState.toString());
+    SmartDashboard.putString("Vision auto state",
+            visionAuto.toString());
     // calls the forklift to update itself, allowing us to use the
     // forklift state machine; necessary for the forklift to work properly
-    Hardware.cubeManipulator.masterUpdate();
+    // Hardware.cubeManipulator.masterUpdate();
     // prints the main state of autonomous (as a whole) we're in
     // System.out.println("Main State: " + autoState);
     // calls the print statements from Teleop
     Teleop.printStatements();
     // Main switch statement of auto
+
     switch (autoState)
         {
         case INIT:
+
             // Reset and start the delay timer
             Hardware.autoTimer.reset();
             Hardware.autoTimer.start();
             autoState = State.DELAY;
             break;
         case DELAY:
+
             // Delay using the potentiometer, from 0 to 5 seconds
             // once finished, stop the timer and go to the next state
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
@@ -157,6 +164,8 @@ public static void periodic ()
              */
             // decide which auto path we're using based off of the two auto
             // switches
+
+
             switch (Hardware.autoSixPosSwitch.getPosition())
                 {
                 case 0:
@@ -181,6 +190,7 @@ public static void periodic ()
                         autoState = State.AUTOLINE_EXCHANGE_R;
                     break;
                 case 3:
+                    System.out.println("Center Switch selected");
                     // start in the middle between the two switch sides;
                     // use vision and gamedata to drive to the correct switch
                     // side and drop off the cube
@@ -201,6 +211,7 @@ public static void periodic ()
                     autoState = State.OFFSET_SWITCH;
                     break;
                 default:
+
                     // If for some reason we failed to properly set the auto
                     // State, then print we reached the default case and
                     // disable.
@@ -255,6 +266,7 @@ public static void periodic ()
                 autoState = State.FINISH;
             break;
         case FINISH:
+
             // end of autonomous; stops and resets the autotimer
             Hardware.transmission.stop();
             Hardware.autoTimer.stop();
@@ -262,6 +274,7 @@ public static void periodic ()
             break;
 
         default:
+
             // if something goes wrong, stop autonomous and go straight
             // to FINISH
             Hardware.transmission.stop();
@@ -830,7 +843,8 @@ public static boolean centerSwitchPath ()
                 {
                 if (Hardware.autoDrive
                         .brake(BrakeType.AFTER_TURN) == true)
-                    visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    // TODO DRIVE_WITH_CAMERA
+                    visionAuto = centerState.LIFT;
                 }
             break;
         case TURN_AGAIN_LEFT:
@@ -841,8 +855,7 @@ public static boolean centerSwitchPath ()
                 {
                 if (Hardware.autoDrive
                         .brake(BrakeType.AFTER_TURN) == true)
-                    visionAuto = centerState.LIFT; // TODO change back to
-                                                   // DRIVE_WITH_CAMERA
+                    visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
             break;
         case DRIVE_WITH_CAMERA:
@@ -972,6 +985,7 @@ public static boolean switchOrScalePath (Position robotPosition)
 
             // if we've finished driving this segment
             if (Hardware.autoDrive.driveStraightInches(
+
                     SWITCH_OR_SCALE_DRIVE_DISTANCE[0]
                             - Hardware.autoDrive
                                     .getBrakeStoppingDistance(),
