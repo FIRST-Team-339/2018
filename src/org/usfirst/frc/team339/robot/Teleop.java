@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -127,9 +128,11 @@ public static void periodic ()
                     Hardware.rightOperator.getRawButton(5));
 
     if (Hardware.rightOperator.getRawButton(6) == true)
-        Hardware.cubeManipulator.setLiftPosition(80, .6);
+        Hardware.cubeManipulator
+                .setLiftPosition(CubeManipulator.SCALE_HEIGHT, .6);
     else if (Hardware.rightOperator.getRawButton(7) == true)
-        Hardware.cubeManipulator.setLiftPosition(30, .6);
+        Hardware.cubeManipulator
+                .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
 
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
@@ -167,7 +170,6 @@ public static void periodic ()
 
     Hardware.transmission.drive(Hardware.leftDriver,
             Hardware.rightDriver);
-
     // update
 
     // ------------------------------------
@@ -211,26 +213,39 @@ public static void scaleTest ()
     SmartDashboard.putNumber("RearUltraSonic",
             Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
-    if (Hardware.leftOperator.getRawButton(9) == true)
+    if (Hardware.leftOperator.getRawButton(4) == true)
         {
         allowAlignment = true;
+        Hardware.scaleAlignment.alignOverride = false;
         }
-    if (Hardware.leftOperator.getRawButton(10))
+    if (Hardware.leftOperator.getRawButton(5))
         {
         allowAlignment = false;
+        Hardware.scaleAlignment.alignOverride = true;
+        Hardware.transmission
+                .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+        System.out.println("Stopped scale alignment");
         }
 
     if (allowAlignment == true)
         {
 
         Hardware.transmission.setForAutonomous();
-        if (Hardware.scaleAlignment.alignToScale(.3, 3))
+        if (Hardware.scaleAlignment.alignToScale(.3, 3)
+                && Hardware.scaleAlignment.alignOverride == false)
             {
             System.out.println("aligned to scale");
             Hardware.transmission
                     .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
             allowAlignment = false;
-            inAligning = true;
+            }
+        else if (Hardware.scaleAlignment.alignToScale(.3, 3) == false
+                && Hardware.scaleAlignment.alignOverride == true)
+            {
+            System.out.println("Overrode align to scale");
+            Hardware.transmission
+                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+            allowAlignment = false;
             }
         }
 

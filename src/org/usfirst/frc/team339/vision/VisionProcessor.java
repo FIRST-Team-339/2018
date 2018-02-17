@@ -198,7 +198,8 @@ private int DEFAULT_CAMERA_BRIGHTNESS = 50;
 
 // ========OBJECTS FOR TAKE LIT IMAGE========
 // relay that controls the ringLight (turns it on or off)
-private DigitalOutput ringLightRelay = null;
+
+private DigitalOutput tempRingLight = null;
 
 // timer used in the takeLitPicture function to delay taking an image until
 // after the ringLight turned on
@@ -249,7 +250,8 @@ public VisionProcessor (String ip, CameraModel camera)
  * @param camera
  *            the brand / model of the camera
  * @param ringlightRelay
- *            camera ringlight to pick up retro-reflective tape
+ *            camera ringlight to pick up retro-reflective tape: this is the
+ *            janky fix
  * 
  */
 public VisionProcessor (String ip, CameraModel camera,
@@ -281,9 +283,8 @@ public VisionProcessor (String ip, CameraModel camera,
         } // end switch
 
     this.pictureTimer.reset();
-    this.ringLightRelay = ringlightRelay;
+    this.tempRingLight = ringlightRelay;
 } // end VisionProcessor()
-
 
 /**
  * Creates the object and starts the camera server
@@ -353,9 +354,10 @@ public VisionProcessor (int usbPort, CameraModel camera,
             this.horizontalFieldOfView = 1;
             this.verticalFieldOfView = 1;
         } // end switch
-    this.ringLightRelay = ringlightRelay;
+    this.tempRingLight = ringlightRelay;
     this.pictureTimer.reset();
 } // end VisionProcessor()
+
 
 // ==========================END INIT===================================
 
@@ -576,8 +578,9 @@ public void takeLitPicture (boolean button)
         // turns on the ring light
         if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
+            {
             this.setRelayValue(true);
-
+            }
         // if the timer expires, save the picture , reset booleans, turns off
         // the ring light
         if (this.pictureTimer.get() >= TAKE_PICTURE_DELAY)
@@ -590,7 +593,6 @@ public void takeLitPicture (boolean button)
             this.saveImageSafely(false, ImageType.RAW);
 
             this.setRelayValue(false);
-
             this.pictureTimer.stop();
             this.pictureTimer.reset();
             } // end if
@@ -611,8 +613,19 @@ private final double TAKE_PICTURE_DELAY = 0.1;
  */
 public boolean getRelayValue ()
 {
-    return this.ringLightRelay.get();
+    return this.tempRingLight.get();
 } // end getRelayValue()
+
+/**
+ * Gets the value of the ring light relay as a Digital Output
+ * 
+ * @return the value of the camera ring light relay; see the get() function
+ *         in the Digital Output class for more information
+ */
+public boolean getDigitalOutputValue ()
+{
+    return this.tempRingLight.get();
+} // end getDigitalOutputValue ()
 
 /**
  * Set the ring light to a value
@@ -622,8 +635,19 @@ public boolean getRelayValue ()
  */
 public void setRelayValue (boolean ringLightValue)
 {
-    this.ringLightRelay.set(ringLightValue);
+    this.tempRingLight.set(ringLightValue);
 } // end setRelayValue()
+
+/**
+ * Set the ring light to a value
+ * 
+ * @param ringLightValue
+ *            use true to turn the relay on
+ */
+public void setDigitalOutputValue (boolean ringLightValue)
+{
+    this.tempRingLight.set(ringLightValue);
+} // end setDigitalOutputValue
 
 /**
  * Turns on the ring light

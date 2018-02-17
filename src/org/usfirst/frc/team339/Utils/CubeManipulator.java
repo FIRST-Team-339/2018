@@ -240,7 +240,8 @@ public boolean deployCubeIntake (boolean override)
         }
     // advances the deploy intake state machine if it hasn't already been
     // deployed/ is deploying
-    if (deployIntakeState == DeployState.NOT_DEPLOYED)
+    if (deployIntakeState == DeployState.NOT_DEPLOYED
+            || deployIntakeState == DeployState.STOPPED)
         {
         deployIntakeState = DeployState.DEPLOYING;
         }
@@ -276,7 +277,8 @@ public boolean retractCubeIntake (boolean override)
         }
     // tells the deployIntake state machine to retract if the cube intake
     // mechanism was already deployed
-    if (deployIntakeState == DeployState.DEPLOYED)
+    if (deployIntakeState == DeployState.DEPLOYED
+            || deployIntakeState == DeployState.STOPPED)
         {
         deployIntakeState = DeployState.RETRACTING;
         }
@@ -440,7 +442,14 @@ public boolean scoreScale ()
             break;
         // Move the lift to the scale height, and move on when it's finished
         case MOVE_LIFT:
+
+            if (Hardware.scaleAlignment.alignOverride == true)
+                {
+                scaleState = scoreScaleState.FINISHED;
+                }
+
             System.out.println("forklift hight:"
+
                     + Hardware.cubeManipulator.getForkliftHeight());
             System.out.println("Moving lift");
             if (setLiftPosition(SCALE_HEIGHT,
@@ -451,12 +460,18 @@ public boolean scoreScale ()
             break;
         // Eject the cube (onto the scale preferably)
         case SPIT_OUT_CUBE:
+            if (Hardware.scaleAlignment.alignOverride == true)
+                {
+                scaleState = scoreScaleState.FINISHED;
+                }
+
             System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
                 scaleState = scoreScaleState.FINISHED;
                 }
             break;
+
         // If we have an undefined state input, for debugging
         default:
             System.out.println("Error finding state " + scaleState
@@ -485,6 +500,9 @@ public boolean scoreScale ()
  */
 public void masterUpdate ()
 {
+    SmartDashboard.putString("Forklift Update", liftState.toString());
+    SmartDashboard.putString("Deploy State", deployIntakeState + "");
+    SmartDashboard.putString("Intake State", intakeState + "");
 
     // update the forklift state machine
     forkliftUpdate();
@@ -506,7 +524,7 @@ public void masterUpdate ()
  */
 public void forkliftUpdate ()
 {
-    SmartDashboard.putString("Forklift Update", liftState.toString());
+
 
     // If we don't have a cube or the override is enabled, then set the min to
     // the lower position, to grab cubes.
@@ -811,7 +829,7 @@ INIT, PUSH_OUT, DONE
  */
 private static enum scoreScaleState
     {
-MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
+MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED, OVERRIDE
     }
 
 // --------------------VARIABLES--------------------
@@ -875,7 +893,9 @@ private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 
-private final double SCALE_HEIGHT = 80;
+public final static double SWITCH_HEIGHT = 30.0;
+
+public final static double SCALE_HEIGHT = 80.0;
 // =========================================
 
 // ================INTAKE===================
@@ -891,7 +911,7 @@ private final double INTAKE_DEPLOY_TICKS = 190;
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 10.0;
 
-private final double INTAKE_DEPLOY_SPEED = .3;
+private final double INTAKE_DEPLOY_SPEED = .5;
 
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED = -INTAKE_DEPLOY_SPEED;
