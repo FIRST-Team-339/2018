@@ -12,6 +12,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.VideoCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
@@ -197,7 +198,7 @@ private int DEFAULT_CAMERA_BRIGHTNESS = 50;
 
 // ========OBJECTS FOR TAKE LIT IMAGE========
 // relay that controls the ringLight (turns it on or off)
-private Relay ringLightRelay = null;
+private DigitalOutput ringLightRelay = null;
 
 // timer used in the takeLitPicture function to delay taking an image until
 // after the ringLight turned on
@@ -252,7 +253,7 @@ public VisionProcessor (String ip, CameraModel camera)
  * 
  */
 public VisionProcessor (String ip, CameraModel camera,
-        Relay ringlightRelay)
+        DigitalOutput ringlightRelay)
 {
     // Adds the camera to the cscore CameraServer, in order to grab the
     // stream.
@@ -329,7 +330,7 @@ public VisionProcessor (int usbPort, CameraModel camera)
  *            camera ringlight to pick up retro-reflective tape
  */
 public VisionProcessor (int usbPort, CameraModel camera,
-        Relay ringlightRelay)
+        DigitalOutput ringlightRelay)
 {
     // Adds the camera to the cscore CameraServer, in order to grab the
     // stream.
@@ -575,7 +576,7 @@ public void takeLitPicture (boolean button)
         // turns on the ring light
         if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
-            this.setRelayValue(Value.kForward);
+            this.setRelayValue(true);
 
         // if the timer expires, save the picture , reset booleans, turns off
         // the ring light
@@ -588,7 +589,7 @@ public void takeLitPicture (boolean button)
 
             this.saveImageSafely(false, ImageType.RAW);
 
-            this.setRelayValue(Value.kReverse);
+            this.setRelayValue(false);
 
             this.pictureTimer.stop();
             this.pictureTimer.reset();
@@ -608,7 +609,7 @@ private final double TAKE_PICTURE_DELAY = 0.1;
  * @return the value of the camera ring light relay; see the get() function
  *         in the Relay class for more information
  */
-public Value getRelayValue ()
+public boolean getRelayValue ()
 {
     return this.ringLightRelay.get();
 } // end getRelayValue()
@@ -619,7 +620,7 @@ public Value getRelayValue ()
  * @param ringLightValue
  *            use kForward or kReverse to set the ring light
  */
-public void setRelayValue (Value ringLightValue)
+public void setRelayValue (boolean ringLightValue)
 {
     this.ringLightRelay.set(ringLightValue);
 } // end setRelayValue()
