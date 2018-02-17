@@ -48,12 +48,18 @@ public boolean alignToScale (double speed, double deadband)
     // checks if in proper distance
 
     // ROBOT_TO_SCALE_DISTANCE 72-36 =36
+    if (alignOverride == true)
+        {
+        aligned = false;
+        return false;
+        }
     if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
 
             && this.rearUltrasonic
                     .getDistanceFromNearestBumper() >= ROBOT_TO_SCALE_DISTANCE
-                            - deadband)
+                            - deadband
+            && alignOverride == false)
         {
         System.out.println("Our distance to the scale is correct");
         aligned = true;
@@ -65,6 +71,7 @@ public boolean alignToScale (double speed, double deadband)
         // start the move forklift switch
         if (Hardware.cubeManipulator.scoreScale())
             {
+            aligned = false;
             return true;
             }
         SmartDashboard.putString("Hi", "Hi");
@@ -75,7 +82,7 @@ public boolean alignToScale (double speed, double deadband)
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
                     - deadband
-            && aligned == false)
+            && aligned == false && alignOverride == false)
         {
         SmartDashboard.putNumber("Speed", speed);
         SmartDashboard.putString("Relative to scale", "Too far");
@@ -85,7 +92,7 @@ public boolean alignToScale (double speed, double deadband)
     // if to close to scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
-            && aligned == false)
+            && aligned == false && alignOverride == false)
         {
         SmartDashboard.putNumber("Speed", speed);
         SmartDashboard.putString("Relative to scale", "Too close");
@@ -94,6 +101,8 @@ public boolean alignToScale (double speed, double deadband)
         }
     return false;
 }
+
+public boolean alignOverride = false;
 
 private static boolean aligned = false;
 
