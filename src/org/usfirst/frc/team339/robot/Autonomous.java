@@ -80,9 +80,9 @@ public static void init ()
     Hardware.liftingEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     // Disable auto
-    // TODO uncomment the below lines before switching back to Kilroy XIX
-    // if (Hardware.disableAutonomousSwitch.isOn() == true)
-    // autoState = State.FINISH;
+
+    if (Hardware.disableAutonomousSwitch.isOn() == true)
+        autoState = State.FINISH;
 
     Hardware.transmission.setForAutonomous();
     Hardware.autoDrive
@@ -117,7 +117,7 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-    // TODO make work
+
     SmartDashboard.putString("Overall Auto state",
             autoState.toString());
     SmartDashboard.putString("Vision auto state",
@@ -130,7 +130,6 @@ public static void periodic ()
     // calls the print statements from Teleop
     Teleop.printStatements();
     // Main switch statement of auto
-    System.out.println("Main auto state: " + autoState);
     switch (autoState)
         {
         case INIT:
@@ -736,7 +735,7 @@ public static boolean rightAutoLineExchangePath ()
  */
 public static boolean centerSwitchPath ()
 {
-    // System.out.println("We are in the " + visionAuto + " state.");
+    // System.out.println("Vision Auto state: " + visionAuto);
     switch (visionAuto)
         {
         case CENTER_INIT:
