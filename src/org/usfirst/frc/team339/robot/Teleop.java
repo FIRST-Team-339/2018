@@ -185,6 +185,7 @@ public static void periodic ()
     // scaleTest();
     // Hardware.tempRelay.set(true);
     // beckyTest();
+    liftTest();
 
 } // end Periodic()
 
