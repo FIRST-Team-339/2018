@@ -126,7 +126,10 @@ public void moveForkliftWithController (double speed,
                 || Math.abs(speed) < JOYSTICK_DEADBAND)
             return;
         // Move the forklift the desired speed
-        forkliftTargetSpeed = speed;
+        if (speed > 0)
+            forkliftTargetSpeed = speed * FORKLIFT_UP_JOYSTICK_SCALAR;
+        else
+            forkliftTargetSpeed = speed * FORKLIFT_DOWN_JOYSTICK_SCALAR;
         this.liftState = ForkliftState.MOVE_JOY;
         }
 
@@ -880,6 +883,10 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 
 // ================FORKLIFT================
 private final double FORKLIFT_MAX_HEIGHT = 100;
+
+private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .25;
+
+private final double FORKLIFT_UP_JOYSTICK_SCALAR = .5;
 
 private final double FORKLIFT_WITH_CUBE_MIN_HEIGHT = 5.0;
 

@@ -80,6 +80,7 @@ public static void init ()
     Hardware.liftingEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     // Disable auto
+
     if (Hardware.disableAutonomousSwitch.isOn() == true)
         autoState = State.FINISH;
 
@@ -116,7 +117,7 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-    // TODO make work
+
     SmartDashboard.putString("Overall Auto state",
             autoState.toString());
     SmartDashboard.putString("Vision auto state",
@@ -129,7 +130,6 @@ public static void periodic ()
     // calls the print statements from Teleop
     Teleop.printStatements();
     // Main switch statement of auto
-
     switch (autoState)
         {
         case INIT:
@@ -143,6 +143,7 @@ public static void periodic ()
 
             // Delay using the potentiometer, from 0 to 5 seconds
             // once finished, stop the timer and go to the next state
+
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
                     5.0))
                 {
@@ -166,7 +167,7 @@ public static void periodic ()
             // switches
 
 
-            switch (Hardware.autoSixPosSwitch.getPosition())
+            switch (/* Hardware.autoSixPosSwitch.getPosition() */3)
                 {
                 case 0:
                     // drive across autoline
@@ -734,7 +735,7 @@ public static boolean rightAutoLineExchangePath ()
  */
 public static boolean centerSwitchPath ()
 {
-    // System.out.println("We are in the " + visionAuto + " state.");
+    // System.out.println("Vision Auto state: " + visionAuto);
     switch (visionAuto)
         {
         case CENTER_INIT:

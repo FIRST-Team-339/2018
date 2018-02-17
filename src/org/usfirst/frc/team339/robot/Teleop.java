@@ -152,9 +152,9 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
-    Hardware.axisCamera
-            .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-                    && Hardware.leftOperator.getRawButton(7));
+    // Hardware.axisCamera
+    // .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+    // && Hardware.leftOperator.getRawButton(7));
 
     // =================================================================
     // DRIVING CODE
@@ -191,7 +191,8 @@ public static void periodic ()
     // testingDrive();
 
     // scaleTest();
-    // Hardware.tempRelay.set(true);
+
+    // liftTest();
     // beckyTest();
     // liftTest();
 
