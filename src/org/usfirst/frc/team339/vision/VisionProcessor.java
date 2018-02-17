@@ -198,9 +198,8 @@ private int DEFAULT_CAMERA_BRIGHTNESS = 50;
 
 // ========OBJECTS FOR TAKE LIT IMAGE========
 // relay that controls the ringLight (turns it on or off)
-private DigitalOutput tempRingLight = null;
 
-private Relay ringLightRelay = null;
+private DigitalOutput tempRingLight = null;
 
 // timer used in the takeLitPicture function to delay taking an image until
 // after the ringLight turned on
@@ -290,52 +289,6 @@ public VisionProcessor (String ip, CameraModel camera,
 /**
  * Creates the object and starts the camera server
  * 
- * @param ip
- *            the IP of the the axis camera (usually 10.3.39.11)
- * @param camera
- *            the brand / model of the camera
- * @param ringlightRelay
- *            camera ringlight to pick up retro-reflective tape: this is not the
- *            janky fix
- * 
- */
-public VisionProcessor (String ip, CameraModel camera,
-        Relay ringlightRelay)
-{
-    // Adds the camera to the cscore CameraServer, in order to grab the
-    // stream.
-    this.camera = CameraServer.getInstance()
-            .addAxisCamera("Vision Camera", ip);
-
-    // Based on the selected camera type, set the field of views and focal
-    // length.
-    this.cameraModel = camera;
-    switch (this.cameraModel)
-        {
-        case AXIS_M1011:
-            this.horizontalFieldOfView = M1011_HORIZ_FOV;
-            this.verticalFieldOfView = M1011_VERT_FOV;
-            break;
-        case AXIS_M1013:
-            this.horizontalFieldOfView = M1013_HORIZ_FOV;
-            this.verticalFieldOfView = M1013_VERT_FOV;
-            break;
-
-        default: // Data will default to one to avoid any "divide by zero"
-                 // errors.
-            this.horizontalFieldOfView = 1;
-            this.verticalFieldOfView = 1;
-        } // end switch
-
-    this.pictureTimer.reset();
-    this.ringLightRelay = ringlightRelay;
-} // end VisionProcessor()
-
-
-
-/**
- * Creates the object and starts the camera server
- * 
  * @param usbPort
  *            The USB camera port number. '0' for default.
  * @param camera
@@ -402,44 +355,6 @@ public VisionProcessor (int usbPort, CameraModel camera,
             this.verticalFieldOfView = 1;
         } // end switch
     this.tempRingLight = ringlightRelay;
-    this.pictureTimer.reset();
-} // end VisionProcessor()
-
-/**
- * Creates the object and starts the camera server
- * 
- * @param usbPort
- *            The USB camera port number. '0' for default.
- * @param camera
- *            the brand / model of the camera
- * @param ringlightRelay
- *            camera ringlight to pick up retro-reflective tape
- */
-public VisionProcessor (int usbPort, CameraModel camera,
-        Relay ringlightRelay)
-{
-    // Adds the camera to the cscore CameraServer, in order to grab the
-    // stream.
-    this.camera = CameraServer.getInstance()
-            .startAutomaticCapture("Vision Camera", usbPort);
-
-    // Based on the selected camera type, set the field of views and focal
-    // length.
-    this.cameraModel = camera;
-    switch (this.cameraModel)
-        {
-        // case LIFECAM: //Not enough information to properly find this data.
-        // see above.
-        // this.horizontalFieldOfView =
-        // this.verticalFieldOfView =
-        // this.focalLength =
-        // break;
-        default: // Data will default to one to avoid any "divide by zero"
-                 // errors.
-            this.horizontalFieldOfView = 1;
-            this.verticalFieldOfView = 1;
-        } // end switch
-    this.ringLightRelay = ringlightRelay;
     this.pictureTimer.reset();
 } // end VisionProcessor()
 
@@ -663,8 +578,9 @@ public void takeLitPicture (boolean button)
         // turns on the ring light
         if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
-            this.setDigitalOutputValue(true);
-
+            {
+            this.setRelayValue(true);
+            }
         // if the timer expires, save the picture , reset booleans, turns off
         // the ring light
         if (this.pictureTimer.get() >= TAKE_PICTURE_DELAY)
@@ -676,8 +592,7 @@ public void takeLitPicture (boolean button)
 
             this.saveImageSafely(false, ImageType.RAW);
 
-            this.setDigitalOutputValue(false);
-
+            this.setRelayValue(false);
             this.pictureTimer.stop();
             this.pictureTimer.reset();
             } // end if
@@ -696,9 +611,9 @@ private final double TAKE_PICTURE_DELAY = 0.1;
  * @return the value of the camera ring light relay; see the get() function
  *         in the Relay class for more information
  */
-public Value getRelayValue ()
+public boolean getRelayValue ()
 {
-    return this.ringLightRelay.get();
+    return this.tempRingLight.get();
 } // end getRelayValue()
 
 /**
@@ -718,9 +633,9 @@ public boolean getDigitalOutputValue ()
  * @param ringLightValue
  *            use kForward or kReverse to set the ring light
  */
-public void setRelayValue (Value ringLightValue)
+public void setRelayValue (boolean ringLightValue)
 {
-    this.ringLightRelay.set(ringLightValue);
+    this.tempRingLight.set(ringLightValue);
 } // end setRelayValue()
 
 /**

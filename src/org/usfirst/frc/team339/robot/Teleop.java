@@ -87,13 +87,6 @@ public static void init ()
     SmartDashboard.putNumber("Deadband", 0);
     SmartDashboard.putNumber("Power", 0);
 
-    // lift test init
-    SmartDashboard.putNumber("Lifting motor speed", 0);
-
-    SmartDashboard.putNumber("Cube intake speed", 0);
-
-    SmartDashboard.putNumber("Intake deploy speed", 0);
-
 } // end Init
 
 // tune pid loop
@@ -149,7 +142,6 @@ public static void periodic ()
     // machines
     Hardware.cubeManipulator.masterUpdate();
 
-
     // =================================================================
     // CAMERA CODE
     // =================================================================
@@ -196,6 +188,7 @@ public static void periodic ()
 
     // liftTest();
     // beckyTest();
+    // liftTest();
 
 } // end Periodic()
 
@@ -403,17 +396,7 @@ private static void liftTest ()
     Hardware.intakeDeployArm
             .set(SmartDashboard.getNumber("Intake deploy speed", 0));
 
-    if (Hardware.leftOperator.getRawButton(3))
-        {
-        Hardware.tempRelay.set(true);
-        }
-    else
-        {
-        Hardware.tempRelay.set(false);
-        }
-
 }
-
 
 /**
  * stores print statements for future use in the print "bank", statements
@@ -432,7 +415,6 @@ private static void liftTest ()
  */
 public static void printStatements ()
 {
-
     // =================================
     // Motor
     // Prints the value of motors
@@ -716,6 +698,5 @@ public static void printStatements ()
 // Constants
 // ================================
 public static final int CLIMBING_SERVO_ANGLE = 78;
-
 
 } // end class
