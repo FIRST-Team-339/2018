@@ -240,7 +240,8 @@ public boolean deployCubeIntake (boolean override)
         }
     // advances the deploy intake state machine if it hasn't already been
     // deployed/ is deploying
-    if (deployIntakeState == DeployState.NOT_DEPLOYED)
+    if (deployIntakeState == DeployState.NOT_DEPLOYED
+            || deployIntakeState == DeployState.STOPPED)
         {
         deployIntakeState = DeployState.DEPLOYING;
         }
@@ -276,7 +277,8 @@ public boolean retractCubeIntake (boolean override)
         }
     // tells the deployIntake state machine to retract if the cube intake
     // mechanism was already deployed
-    if (deployIntakeState == DeployState.DEPLOYED)
+    if (deployIntakeState == DeployState.DEPLOYED
+            || deployIntakeState == DeployState.STOPPED)
         {
         deployIntakeState = DeployState.RETRACTING;
         }
@@ -878,7 +880,9 @@ private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 
-private final double SCALE_HEIGHT = 80;
+public final static double SWITCH_HEIGHT = 30.0;
+
+public final static double SCALE_HEIGHT = 80.0;
 // =========================================
 
 // ================INTAKE===================
@@ -894,7 +898,7 @@ private final double INTAKE_DEPLOY_TICKS = 190;
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 10.0;
 
-private final double INTAKE_DEPLOY_SPEED = .3;
+private final double INTAKE_DEPLOY_SPEED = .5;
 
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED = -INTAKE_DEPLOY_SPEED;

@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -127,9 +128,11 @@ public static void periodic ()
                     Hardware.rightOperator.getRawButton(5));
 
     if (Hardware.rightOperator.getRawButton(6) == true)
-        Hardware.cubeManipulator.setLiftPosition(80, .6);
+        Hardware.cubeManipulator
+                .setLiftPosition(CubeManipulator.SCALE_HEIGHT, .6);
     else if (Hardware.rightOperator.getRawButton(7) == true)
-        Hardware.cubeManipulator.setLiftPosition(30, .6);
+        Hardware.cubeManipulator
+                .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
 
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
@@ -669,5 +672,6 @@ public static void printStatements ()
 // Constants
 // ================================
 public static final int CLIMBING_SERVO_ANGLE = 78;
+
 
 } // end class
