@@ -482,6 +482,11 @@ public boolean scoreScale ()
             break;
         // Move the lift to the scale height, and move on when it's finished
         case MOVE_LIFT:
+            if (Hardware.scaleAlignment.alignOverride == true)
+                {
+                scaleState = scoreScaleState.FINISHED;
+                }
+
             System.out.println("forklift hight:"
                     + Hardware.cubeManipulator.getForkliftHeight());
             System.out.println("Moving lift");
@@ -493,12 +498,18 @@ public boolean scoreScale ()
             break;
         // Eject the cube (onto the scale preferably)
         case SPIT_OUT_CUBE:
+            if (Hardware.scaleAlignment.alignOverride == true)
+                {
+                scaleState = scoreScaleState.FINISHED;
+                }
+
             System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
                 scaleState = scoreScaleState.FINISHED;
                 }
             break;
+
         // If we have an undefined state input, for debugging
         default:
             System.out.println("Error finding state " + scaleState
@@ -823,7 +834,7 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
  */
 private static enum scoreScaleState
     {
-MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
+MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED, OVERRIDE
     }
 
 // --------------------VARIABLES--------------------
