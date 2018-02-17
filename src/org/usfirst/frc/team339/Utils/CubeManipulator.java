@@ -691,6 +691,7 @@ public void deployIntakeUpdate ()
                 // stops the intake deploy motor if we've turned far enough;
                 // FINISHED does this as well, but doing it here helps
                 // keep the motor from overshooting too much
+                this.setLiftPosition(FORKLIFT_WITH_CUBE_MIN_HEIGHT);
                 this.intakeDeployMotor.set(0.0);
                 deployIntakeState = DeployState.DEPLOYED;
                 }
@@ -924,9 +925,9 @@ private final double FORKLIFT_WITH_CUBE_MIN_HEIGHT = 5.0;
 
 private final double FORKLIFT_NO_CUBE_MIN_HEIGHT = 1.0;
 
-private final double FORKLIFT_DEFAULT_SPEED_UP = .9;
+private final double FORKLIFT_DEFAULT_SPEED_UP = .3;
 
-private final double FORKLIFT_DEFAULT_SPEED_DOWN = .4;
+private final double FORKLIFT_DEFAULT_SPEED_DOWN = .3;
 
 private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
