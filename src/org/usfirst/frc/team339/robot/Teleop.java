@@ -87,6 +87,13 @@ public static void init ()
     SmartDashboard.putNumber("Deadband", 0);
     SmartDashboard.putNumber("Power", 0);
 
+    // lift test init
+    SmartDashboard.putNumber("Lifting motor speed", 0);
+
+    SmartDashboard.putNumber("Cube intake speed", 0);
+
+    SmartDashboard.putNumber("Intake deploy speed", 0);
+
 } // end Init
 
 // tune pid loop
@@ -171,11 +178,7 @@ public static void periodic ()
 
     Hardware.transmission.drive(Hardware.leftDriver,
             Hardware.rightDriver);
-
     // update
-
-
-
 
     // ------------------------------------
     // print out any information needed to
@@ -190,7 +193,8 @@ public static void periodic ()
     // testingDrive();
 
     // scaleTest();
-    // Hardware.tempRelay.set(true);
+
+    liftTest();
     // beckyTest();
 
 } // end Periodic()
@@ -372,6 +376,32 @@ private static void testingDrive ()
 
 } // end of testingDrive()
 
+private static void liftTest ()
+{
+    // SmartDashboard.putNumber("throttle value : ",
+    // Hardware.leftOperator.getThrottle());
+
+    Hardware.liftingMotor
+            .set(SmartDashboard.getNumber("Lifting motor speed", 0));
+
+    Hardware.cubeIntakeMotor
+            .set(SmartDashboard.getNumber("Cube intake speed", 0));
+
+    Hardware.intakeDeployArm
+            .set(SmartDashboard.getNumber("Intake deploy speed", 0));
+
+    if (Hardware.leftOperator.getRawButton(3))
+        {
+        Hardware.tempRelay.set(true);
+        }
+    else
+        {
+        Hardware.tempRelay.set(false);
+        }
+
+}
+
+
 /**
  * stores print statements for future use in the print "bank", statements
  * are commented out when not in use, when you write a new print statement,
@@ -439,8 +469,8 @@ public static void printStatements ()
     // else
     // System.out.println(
     // "Disable = on");
-    // SmartDashboard.putBoolean("Disable SW",
-    // Hardware.disableAutonomousSwitch.isOn());
+    SmartDashboard.putBoolean("Disable SW",
+            Hardware.disableAutonomousSwitch.isOn());
 
     // if (Hardware.leftAutoSwitch.isOn() == false)
     // System.out.println(
@@ -448,8 +478,8 @@ public static void printStatements ()
     // else
     // System.out.println(
     // "Left = on");
-    // SmartDashboard.putBoolean("L Auto SW",
-    // Hardware.leftAutoSwitch.isOn());
+    SmartDashboard.putBoolean("L Auto SW",
+            Hardware.leftAutoSwitch.isOn());
     //
     // if (Hardware.rightAutoSwitch.isOn() == false)
     // System.out.println(
@@ -457,56 +487,56 @@ public static void printStatements ()
     // else
     // System.out.println(
     // "Right = on");
-    // SmartDashboard.putBoolean("R Auto SW",
-    // Hardware.rightAutoSwitch.isOn());
+    SmartDashboard.putBoolean("R Auto SW",
+            Hardware.rightAutoSwitch.isOn());
     //
     // System.out.println("6 pos = "
     // + Hardware.autoSixPosSwitch.getPosition());
-    // SmartDashboard.putNumber("6 Pos Switch",
-    // Hardware.autoSixPosSwitch.getPosition());
+    SmartDashboard.putNumber("6 Pos Switch",
+            Hardware.autoSixPosSwitch.getPosition());
 
     // ---------------------------------
     // Encoders
     // ---------------------------------
     // System.out.println("Left Front Encoder Inches = "
     // + Hardware.leftFrontDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Left Front Encoder Inches",
-    // Hardware.leftFrontDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Left Front Encoder Inches",
+            Hardware.leftFrontDriveEncoder.getDistance());
 
     // System.out.println("Left Front Encoder Ticks "
     // + Hardware.leftFrontDriveEncoder.get());
-    // SmartDashboard.putNumber("Left Front Encoder Ticks",
-    // Hardware.leftFrontDriveEncoder.get());
+    SmartDashboard.putNumber("Left Front Encoder Ticks",
+            Hardware.leftFrontDriveEncoder.get());
 
     // System.out.println("Right Front Inches = "
     // + Hardware.rightFrontDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Right Front Encoder Inches",
-    // Hardware.rightFrontDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Right Front Encoder Inches",
+            Hardware.rightFrontDriveEncoder.getDistance());
 
     // System.out.println("Right Front Ticks "
     // + Hardware.rightFrontDriveEncoder.get());
-    // SmartDashboard.putNumber("Right Front Encoder Ticks",
-    // Hardware.rightFrontDriveEncoder.get());
+    SmartDashboard.putNumber("Right Front Encoder Ticks",
+            Hardware.rightFrontDriveEncoder.get());
 
     // System.out.println("Left Rear Encoder Inches = "
     // + Hardware.leftRearDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Left Rear Encoder Inches",
-    // Hardware.leftRearDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Left Rear Encoder Inches",
+            Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
-    // SmartDashboard.putNumber("Left Rear Encoder Ticks",
-    // Hardware.leftRearDriveEncoder.get());
+    SmartDashboard.putNumber("Left Rear Encoder Ticks",
+            Hardware.leftRearDriveEncoder.get());
 
     // System.out.println("Right Rear Inches = "
     // + Hardware.rightRearDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Right Rear Encoder Inches",
-    // Hardware.rightRearDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Right Rear Encoder Inches",
+            Hardware.rightRearDriveEncoder.getDistance());
 
     // System.out.println("Right Rear Ticks "
     // + Hardware.rightRearDriveEncoder.get());
-    // SmartDashboard.putNumber("Right Rear Encoder Ticks",
-    // Hardware.rightRearDriveEncoder.get());
+    SmartDashboard.putNumber("Right Rear Encoder Ticks",
+            Hardware.rightRearDriveEncoder.get());
 
     // System.out.println("Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
@@ -515,13 +545,13 @@ public static void printStatements ()
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
-    // SmartDashboard.putNumber("Lift Encoder Ticks",
-    // Hardware.liftingEncoder.get());
+    SmartDashboard.putNumber("Lift Encoder Ticks",
+            Hardware.liftingEncoder.get());
 
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
-    // SmartDashboard.putNumber("Intake Deploy Encoder",
-    // Hardware.intakeDeployEncoder.getDistance());
+    SmartDashboard.putNumber("Intake Deploy Encoder",
+            Hardware.intakeDeployEncoder.getDistance());
 
     // System.out.println("Intake Deploy Encoder Ticks "
     // + Hardware.intakeDeployEncoder.get());
@@ -566,8 +596,8 @@ public static void printStatements ()
     // ---------------------------------
     // System.out
     // .println("Delay Pot " + Hardware.delayPot.get(0, 5));
-    // SmartDashboard.putNumber("Delay Pot",
-    // Hardware.delayPot.get(0, 5));
+    SmartDashboard.putNumber("Delay Pot",
+            Hardware.delayPot.get(0, 5));
 
     // ---------------------------------
     // GYRO

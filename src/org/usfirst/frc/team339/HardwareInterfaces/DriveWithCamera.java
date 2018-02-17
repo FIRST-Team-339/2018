@@ -180,14 +180,14 @@ public boolean driveToSwitch (double speed)
     switch (state)
         {
         case INIT:
-            visionProcessor.setRelayValue(Value.kOn);
+            visionProcessor.setDigitalOutputValue(true);
             state = DriveWithCameraState.DRIVE_WITH_CAMERA;
             break;
         case DRIVE_WITH_CAMERA:
             // gets the position of the center
             double centerX = this.getCameraCenterValue();
             // turns on the ring light
-            this.visionProcessor.setRelayValue(Value.kOn);
+            this.visionProcessor.setDigitalOutputValue(true);
 
             // if the switch center is to the right of our center set by the
             // SWITCH_CAMERA_CENTER, correct by driving faster on the left
@@ -215,7 +215,7 @@ public boolean driveToSwitch (double speed)
                 state = DriveWithCameraState.DRIVE_WITH_US;
             break;
         case DRIVE_WITH_US:
-            visionProcessor.setRelayValue(Value.kOff);
+            visionProcessor.setDigitalOutputValue(true);
             driveStraight(speed, false);
 
             if (this.frontUltrasonic
@@ -267,7 +267,7 @@ public boolean jankyDriveToSwitch (double speed)
             // gets the position of the center
             double centerX = this.getCameraCenterValue();
             // turns on the ring light
-            this.visionProcessor.setRelayValue(Value.kOn);
+            this.visionProcessor.setDigitalOutputValue(true);
 
             // if the switch center is to the right of our center set by the
             // SWITCH_CAMERA_CENTER, correct by driving faster on the left
