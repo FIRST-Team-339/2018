@@ -163,7 +163,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
     return false;
 }
 
-private boolean setLiftPositionInit = false;
+private boolean setLiftPositionInit = true;
 
 /**
  * Moves the arm to the the position input, FORKLIFT_MAX_HEIGHT being the
@@ -582,6 +582,7 @@ public void forkliftUpdate ()
 
             break;
         case MOVE_JOY:
+            setLiftPositionInit = true;
             this.forkliftMotor.set(forkliftTargetSpeed);
             // IF we are no longer holding the joystick, then it will
             // automatically stay at position.
@@ -605,6 +606,7 @@ public void forkliftUpdate ()
                 }
             // Reset the direction for next move-to-position.
             forkliftDirection = ForkliftDirectionState.NEUTRAL;
+            setLiftPositionInit = true;
         }
 }
 
@@ -639,7 +641,7 @@ public void deployIntakeUpdate ()
 
             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
 
-            if (this.getIntakeAngle() >= INTAKE_DEPLOY_ANGLE)
+            if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS)
                 {
                 // stops the intake deploy motor if we've turned far enough;
                 // FINISHED does this as well, but doing it here helps
@@ -662,7 +664,7 @@ public void deployIntakeUpdate ()
         case RETRACTING:
             this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
             if (this.intakeDeployEncoder
-                    .get() <= INTAKE_RETRACT_ANGLE)
+                    .get() <= INTAKE_RETRACT_TICKS)
                 {
                 // brings back in the intake mechanism until the intake
                 // deploy
@@ -887,12 +889,12 @@ private final double INTAKE_STOP_WITH_CUBE = .1;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
-private final double INTAKE_DEPLOY_ANGLE = 75;
+private final double INTAKE_DEPLOY_TICKS = 190;
 
 // the encoder value that counts as the intake being retracted
-private final double INTAKE_RETRACT_ANGLE = 10.0;
+private final double INTAKE_RETRACT_TICKS = 10.0;
 
-private final double INTAKE_DEPLOY_SPEED = .2;
+private final double INTAKE_DEPLOY_SPEED = .3;
 
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED = -INTAKE_DEPLOY_SPEED;
