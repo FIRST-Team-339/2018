@@ -440,7 +440,7 @@ public boolean scoreScale ()
             break;
         // Move the lift to the scale height, and move on when it's finished
         case MOVE_LIFT:
-            System.out.println("forklift hight:"
+            System.out.println("forklift height:"
                     + Hardware.cubeManipulator.getForkliftHeight());
             System.out.println("Moving lift");
             if (setLiftPosition(SCALE_HEIGHT,
@@ -485,6 +485,9 @@ public boolean scoreScale ()
  */
 public void masterUpdate ()
 {
+    SmartDashboard.putString("Forklift Update", liftState.toString());
+    SmartDashboard.putString("Deploy State", deployIntakeState + "");
+    SmartDashboard.putString("Intake State", intakeState + "");
 
     // update the forklift state machine
     forkliftUpdate();
@@ -506,7 +509,7 @@ public void masterUpdate ()
  */
 public void forkliftUpdate ()
 {
-    SmartDashboard.putString("Forklift Update", liftState.toString());
+
 
     // If we don't have a cube or the override is enabled, then set the min to
     // the lower position, to grab cubes.
