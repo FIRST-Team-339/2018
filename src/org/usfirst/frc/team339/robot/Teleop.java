@@ -575,13 +575,13 @@ public static void printStatements ()
 
     // System.out.println("Left Rear Encoder Inches = "
     // + Hardware.leftRearDriveEncoder.getDistance());
-    // SmartDashboard.putNumber("Left Rear Encoder Inches",
-    // Hardware.leftRearDriveEncoder.getDistance());
+    SmartDashboard.putNumber("Left Rear Encoder Inches",
+            Hardware.leftRearDriveEncoder.getDistance());
 
     // System.out.println("Left Rear Encoder Ticks "
     // + Hardware.leftRearDriveEncoder.get());
-    // SmartDashboard.putNumber("Left Rear Encoder Ticks",
-    // Hardware.leftRearDriveEncoder.get());
+    SmartDashboard.putNumber("Left Rear Encoder Ticks",
+            Hardware.leftRearDriveEncoder.get());
 
     // System.out.println("Right Rear Inches = "
     // + Hardware.rightRearDriveEncoder.getDistance());
@@ -600,18 +600,18 @@ public static void printStatements ()
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
-    // SmartDashboard.putNumber("Lift Encoder Ticks",
-    // Hardware.liftingEncoder.get());
+    SmartDashboard.putNumber("Lift Encoder Ticks",
+            Hardware.liftingEncoder.get());
 
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
-    // SmartDashboard.putNumber("Intake Deploy Encoder",
-    // Hardware.intakeDeployEncoder.getDistance());
+    SmartDashboard.putNumber("Intake Deploy Encoder",
+            Hardware.intakeDeployEncoder.getDistance());
 
     // System.out.println("Intake Deploy Encoder Ticks "
     // + Hardware.intakeDeployEncoder.get());
-    // SmartDashboard.putNumber("Intake Deploy Ticks",
-    // Hardware.intakeDeployEncoder.get());
+    SmartDashboard.putNumber("Intake Deploy Ticks",
+            Hardware.intakeDeployEncoder.get());
 
     // ---------------------------------
     // Red Light/IR Sensors
