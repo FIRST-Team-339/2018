@@ -762,6 +762,7 @@ public void stopEverything ()
  * List of states used when updating the forklift position
  * 
  * @author Becky Button
+ * @edited C.R. and Ryan McGee
  */
 private static enum ForkliftState
     {
@@ -774,9 +775,8 @@ BEGIN_MOVE, PUSH_OUT, PULL_IN, STOP
     }
 
 /**
- * States used inside the MOVNG_TO_POSITION state (from ForkliftState) which way
- * the forklift is
- * moving
+ * States used inside the MOVNG_TO_POSITION state (from ForkliftState) for
+ * representing which way the forklift is moving
  * 
  * @author C.R.
  *
@@ -872,8 +872,6 @@ private final double FORKLIFT_DEFAULT_SPEED_DOWN = .3;
 private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
-
-private final double SWITCH_HEIGHT = 30;
 
 private final double SCALE_HEIGHT = 80;
 // =========================================
