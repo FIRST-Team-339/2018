@@ -170,6 +170,7 @@ public void moveForkliftWithController (Joystick operatorJoystick,
  */
 public boolean setLiftPosition (double position, double forkliftSpeed)
 {
+    System.out.println("setLiftPosition" + liftState);
     // this.finishedForkliftMove = false;
     //
     // // If the requested position is above the forklift height, then
@@ -229,7 +230,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
     else
         {
         liftState = ForkliftState.STAY_AT_POSITION;
-        return liftState == ForkliftState.STAY_AT_POSITION;
+        return true;
         }
     // return true is we are done moving, false is we are still going
     return liftState == ForkliftState.STAY_AT_POSITION;

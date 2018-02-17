@@ -34,8 +34,6 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
-import edu.wpi.first.wpilibj.Relay.Direction;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -102,55 +100,60 @@ public static void init ()
 public static void periodic ()
 {
 
+
+
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
 
 
 
-    // if (Hardware.leftOperator.getRawButton(6) == true)
-    // Hardware.cubeManipulator.deployCubeIntake();
-    //
-    // if (Hardware.leftOperator.getRawButton(7) == true)
-    // Hardware.cubeManipulator.retractCubeIntake();
+    if (Hardware.leftOperator.getRawButton(6) == true)
 
 
 
-    // NOT WORKING IN cubeManipulator
-    // scoreScale
-    // scoreSwitch
+        // Hardware.cubeManipulator.deployCubeIntake();
+        //
+        // if (Hardware.leftOperator.getRawButton(7) == true)
+        // Hardware.cubeManipulator.retractCubeIntake();
 
 
 
-    // if (isTestingForklift == true)
-    // {
-    // System.out.println("lifting motor position: "
-    // + Hardware.liftingMotor.getPosition());
-    // System.out.println("lifting motor speed: "
-    // + Hardware.liftingMotor.getSpeed());
-    // System.out.println("Forklift height: "
-    // + Hardware.cubeManipulator.getForkliftHeight());
-    //
-    // if (Hardware.cubeManipulator.deployCubeIntake()
-    // && forkliftState == 0)
-    // {
-    // isTestingForklift = false;
-    // }
-    // }
+        // NOT WORKING IN cubeManipulator
+        // scoreScale
+        // scoreSwitch
+
+
+
+        // if (isTestingForklift == true)
+        // {
+        // System.out.println("lifting motor position: "
+        // + Hardware.liftingMotor.getPosition());
+        // System.out.println("lifting motor speed: "
+        // + Hardware.liftingMotor.getSpeed());
+        // System.out.println("Forklift height: "
+        // + Hardware.cubeManipulator.getForkliftHeight());
+        //
+        // if (Hardware.cubeManipulator.deployCubeIntake()
+        // && forkliftState == 0)
+        // {
+        // isTestingForklift = false;
+        // }
+        // }
 
 
 
 
 
-    // -----------------------------------------
-    // Deploy Intake controls
-    // -----------------------------------------
+        // -----------------------------------------
+        // Deploy Intake controls
+        // -----------------------------------------
 
 
-    Hardware.cubeManipulator.deployRetractIntakeByButtons(
-            Hardware.leftOperator.getRawButton(4),
-            Hardware.leftOperator.getRawButton(5),
-            Hardware.leftOperator.getRawButton(2));
+        Hardware.cubeManipulator.deployRetractIntakeByButtons(
+                Hardware.leftOperator.getRawButton(4),
+                Hardware.leftOperator.getRawButton(5),
+                Hardware.leftOperator.getRawButton(2));
 
 
     // -----------------------------------------
@@ -279,13 +282,14 @@ public static void periodic ()
     // display on the drivers station
     // ------------------------------------
     printStatements();
-    // scaleTest();
+
     // -------------------------------------------
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
     // testingDrive();
 
+    scaleTest();
     Hardware.tempRelay.set(true);
     beckyTest();
 
@@ -322,9 +326,9 @@ public static void scaleTest ()
         allowAlignment = false;
         }
 
-    if (allowAlignment == true /* && inAligning == true */)
+    if (allowAlignment == true)
         {
-        inAligning = false;
+
         Hardware.transmission.setForAutonomous();
         if (Hardware.scaleAlignment.alignToScale(.3, 3))
             {
