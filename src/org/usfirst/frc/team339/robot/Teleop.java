@@ -135,7 +135,13 @@ public static void periodic ()
                 .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
 
     if (Hardware.climbButton.isOnCheckNow() == true)
+        {
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+        }
+    else
+        {
+        Hardware.climbingMechanismServo.setAngle(0);
+        }
 
 
     // update for the cube manipulator (forklift, intake, etc.) and its state
@@ -187,7 +193,7 @@ public static void periodic ()
     // scaleTest();
     // Hardware.tempRelay.set(true);
     // beckyTest();
-    liftTest();
+    // liftTest();
 
 } // end Periodic()
 
@@ -611,12 +617,21 @@ public static void printStatements ()
     // ---------------------------------
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // SmartDashboard.putNumber("Front Ultrasonic",
-    // Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    SmartDashboard.putNumber("Front Ultrasonic",
+            Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+
+    SmartDashboard.putNumber("Front Ultrasonic Raw",
+            Hardware.frontUltraSonic.getRefinedDistanceValue());
+
+    SmartDashboard.putNumber("Front ultrasonic bumper",
+            Hardware.frontUltraSonic
+                    .getOffsetDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-    // SmartDashboard.putNumber("Read Ultrasonic",
-    // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    SmartDashboard.putNumber("Rear Ultrasonic",
+            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    SmartDashboard.putNumber("Rear Ultrasonic Raw",
+            Hardware.rearUltraSonic.getRefinedDistanceValue());
 
     // =========================
     // Servos
