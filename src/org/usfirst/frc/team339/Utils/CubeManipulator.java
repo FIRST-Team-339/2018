@@ -99,12 +99,12 @@ public double getForkliftHeight ()
 /**
  * Moves the forklift up and down based on joystick input, for teleop.
  * 
- * @param operatorJoystick
- *            the joystick used when operting the forklift
  * @param overrideButton
  *            the button that, if helf, activates forklift override
- * 
+ * @param speed
+ *            How fast the forklift should be moving, in percent.
  * @author C.R.
+ * 
  */
 public void moveForkliftWithController (double speed,
         boolean overrideButton)
@@ -210,7 +210,7 @@ public double getIntakeAngle ()
  * Tell the intake motor to stop by setting it to zero. Should be changed to
  * private because NO ONE SHOULD BE USING THIS OUTSIDE OF THE STATE MACHINE
  */
-public void stopIntake ()
+private void stopIntake ()
 {
     this.intakeMotor.set(0);
 }
@@ -226,10 +226,18 @@ public void stopIntake ()
  * If the override boolean for this function is true, will call the override
  * code to always move the deployIntake down
  * 
+ * @param override
+ *            Whether or not we want to ignore the encoder
+ * 
  * @return true if the arm is down, false if it is still moving
  */
-public boolean deployCubeIntake ()
+public boolean deployCubeIntake (boolean override)
 {
+    if (override)
+        {
+        deployIntakeState = DeployState.OVERRIDE_DEPLOY;
+        return true;
+        }
     // advances the deploy intake state machine if it hasn't already been
     // deployed/ is deploying
     if (deployIntakeState == DeployState.NOT_DEPLOYED)
@@ -251,13 +259,21 @@ public boolean deployCubeIntake ()
  * Draws the cube intake mechanism back into the robot if it the mechanism
  * is not already deployed
  * 
+ * @param override
+ *            Whether or not we want to ignore the encoder.
  * @return true if the mechanism is retracted/ in the robot, false is otherwise
  *         (hasn't finished retracting)
  * 
  * @author Cole Ramos
+ * 
  */
-public boolean retractCubeIntake ()
+public boolean retractCubeIntake (boolean override)
 {
+    if (override)
+        {
+        deployIntakeState = DeployState.OVERRIDE_RETRACT;
+        return true;
+        }
     // tells the deployIntake state machine to retract if the cube intake
     // mechanism was already deployed
     if (deployIntakeState == DeployState.DEPLOYED)
@@ -295,58 +311,50 @@ public boolean isIntakeDeployed ()
  * 
  * @param button
  *            Button/buttons used when intaking a cube
- * 
- * @return true if we are in control of a cube
+ * @param pullInOverride
+ *            Override if the cubeSensor stops working, for pulling in the cube
+ * @param pushOutOverride
+ *            Override if the cubeSensor stops working, for pushing out the cube
  */
-public boolean intakeCube (boolean button)
+public void intakeCube (boolean button, boolean pullInOverride,
+        boolean pushOutOverride)
 {
-    // Button is pressed? tell the state machine we are intaking the cube
-    if (button)
+    // Override the 'pull in', ignoring the photoswitch
+    if (pullInOverride == true)
         {
-        this.isRunningIntakeCube = true;
-        // is the cube sensor triggered? No? then continue intaking.
-        if (this.intakeSwitch.isOn() == false)
-            {
-            this.intakeMotor.set(INTAKE_SPEED);
-            return false;
-            }
-        // Cube sensor is triggered? Yes? then stop the motors and return true.
-        this.intakeMotor.set(0);
-        return true;
+        intakeState = IntakeState.PULL_IN;
+        intakeOverride = true;
+        return;
         }
-    // Button not pressed? we are not intaking cube. Return false.
-    this.isRunningIntakeCube = false;
-    return false;
+    // Override the 'push out', ignoring the photoswitch
+    if (pushOutOverride == true)
+        {
+        intakeState = IntakeState.PUSH_OUT;
+        return;
+        }
+    // Only run the override if the button is pressed
+    intakeOverride = false;
+
+    // If it's the buttons first run, then figure out if we will be pulling the
+    // cube in or pushing it out
+    if (button == true && lastIntakeButtonStatus == false)
+        {
+        isPullingIn = hasCube() == false;
+        }
+    // If it's not the buttons first run but the button is still being pressed,
+    // then continue what we were doing previously.
+    else if (button == true)
+        {
+        if (isPullingIn == true)
+            intakeState = IntakeState.PULL_IN;
+        else
+            intakeState = IntakeState.PUSH_OUT;
+        }
+
+    // Reset the 'button's first run?' status
+    lastIntakeButtonStatus = button;
 
 }
-
-private boolean intakeOverride = false;
-
-
-
-/**
- * Ejects the cube using a button.
- * 
- * @param button
- *            a button on a joystick
- */
-public void pushOutCubeTeleop (boolean button)
-{
-    // If button is pressed, then push out the cube.
-    if (button)
-        {
-        this.isRunningPushOutCubeTeleop = true;
-        this.intakeMotor.set(-INTAKE_SPEED);
-        }
-    // If not pressed, then don't.
-    else
-        {
-        this.isRunningPushOutCubeTeleop = false;
-        }
-
-}
-
-
 
 /**
  * Pushes out the cube. For use in autonomous only
@@ -382,8 +390,8 @@ public boolean pushOutCubeAuto ()
             break;
         // Stop motors and reset state machine for future uses.
         default:
-            // System.out.println("Error finding state " + pushState
-            // + " in CubeManipulator.pushOutCubeAuto()");
+            System.out.println("Error finding state " + pushState
+                    + " in CubeManipulator.pushOutCubeAuto()");
         case DONE:
             this.intakeMotor.set(0);
             this.pushState = pushOutState.INIT;
@@ -407,56 +415,6 @@ public boolean hasCube ()
 }
 
 
-/**
- * Autonomously scores a cube on the switch using the forklift, intake and
- * intake deploy
- * 
- * Not currently working
- * 
- * @return true if a cube has been scored in the switch
- */
-public boolean scoreSwitch ()
-{
-    switch (switchState)
-        {
-        // If the intake has not been deployed already, then do so.
-        case DEPLOY_INTAKE:
-            if (deployCubeIntake() == true)
-                {
-                switchState = scoreSwitchState.MOVE_LIFT;
-                }
-            break;
-        // Move the lift to the switch height, and move on when it's finished
-        case MOVE_LIFT:
-            // System.out.println("Moving lift");
-            if (setLiftPosition(SWITCH_HEIGHT,
-                    FORKLIFT_DEFAULT_SPEED_UP) == true)
-                {
-                switchState = scoreSwitchState.SPIT_OUT_CUBE;
-                }
-            break;
-        // Eject the cube (onto the switch preferably)
-        case SPIT_OUT_CUBE:
-            // System.out.println("Spitting out cube");
-            if (pushOutCubeAuto() == true)
-                {
-                switchState = scoreSwitchState.FINISHED;
-                }
-            break;
-        // If we have an undefined state input, for debugging
-        default:
-            System.out.println("Error finding state " + switchState
-                    + " in CubeManipulator.scoreSwitch()");
-            // We have finished (hopefully) scoring on the switch! Hurrah!
-        case FINISHED:
-            stopEverything();
-            this.switchState = scoreSwitchState.MOVE_LIFT;
-            return true;
-        }
-    // We have not yet finished scoring the switch
-    return false;
-}
-
 
 // TODO make sure this works
 /**
@@ -475,7 +433,7 @@ public boolean scoreScale ()
         // If the intake has not been deployed already, then do so.
         case DEPLOY_INTAKE:
             System.out.println("Deploying intake");
-            if (deployCubeIntake() == true)
+            if (deployCubeIntake(false) == true)
                 {
                 scaleState = scoreScaleState.MOVE_LIFT;
                 }
@@ -544,7 +502,7 @@ public void masterUpdate ()
     // update the deployIntake state machine
     deployIntakeUpdate();
     // update the intake/ PushOut cube state machines
-    intakePushOutCubeUpdate();
+    intakeUpdate();
 }
 
 
@@ -694,6 +652,7 @@ public void deployIntakeUpdate ()
                 // stops the intake deploy motor if we've turned far enough;
                 // FINISHED does this as well, but doing it here helps
                 // keep the motor from overshooting too much
+                this.setLiftPosition(FORKLIFT_WITH_CUBE_MIN_HEIGHT);
                 this.intakeDeployMotor.set(0.0);
                 deployIntakeState = DeployState.DEPLOYED;
                 }
@@ -748,20 +707,50 @@ public void deployIntakeUpdate ()
  * called
  * 
  * @author Cole Ramos
+ * @edited Ryan McGee
  */
-public void intakePushOutCubeUpdate ()
+public void intakeUpdate ()
 {
-    // checks if any of the specified functions wants to move the intake
-    // motor
-    this.stopIntake = !(isRunningIntakeCube
-            || isRunningIntakeCubeOverride ||
-            isRunningPushOutCubeAuto || isRunningPushOutCubeTeleop);
-
-    // if none of the functions from above want to run the intake, then
-    // stop the intake motor
-    if (stopIntake == true)
+    // If we are autonomously pushing out the cube, then don't run this.
+    if (isRunningPushOutCubeAuto == true)
         {
-        this.stopIntake();
+        isRunningPushOutCubeAuto = false;
+        return;
+        }
+
+    switch (intakeState)
+        {
+        case PULL_IN:
+            // We have a cube? stop pulling in.
+            if (hasCube() == true && intakeOverride == false)
+                this.intakeMotor.stopMotor();
+            // Don't have a cube? keep pulling in.
+            else
+                this.intakeMotor.set(INTAKE_SPEED);
+
+            // Set to stop when they stop hitting the button.
+            intakeState = IntakeState.STOP;
+            break;
+        case PUSH_OUT:
+            this.intakeMotor.set(-INTAKE_SPEED);
+            // Set to stop when they stop hitting the button.
+            intakeState = IntakeState.STOP;
+            break;
+        default:
+            System.out.println("Unknown case in intakeUpdate()");
+        case STOP:
+            // If we have a cube, send a constant voltage to make sure it
+            // doesn't come out.
+            if (hasCube() == true)
+                {
+                this.intakeMotor.set(INTAKE_STOP_WITH_CUBE);
+                }
+            else
+            // No cube? stop the motor.
+                {
+                this.intakeMotor.stopMotor();
+                }
+            break;
         }
 }
 
@@ -784,16 +773,21 @@ public void stopEverything ()
  * List of states used when updating the forklift position
  * 
  * @author Becky Button
+ * @edited C.R. and Ryan McGee
  */
 private static enum ForkliftState
     {
 MOVING_TO_POSITION, STAY_AT_POSITION, MOVE_JOY
     }
 
+private static enum IntakeState
+    {
+BEGIN_MOVE, PUSH_OUT, PULL_IN, STOP
+    }
+
 /**
- * States used inside the MOVNG_TO_POSITION state (from ForkliftState) which way
- * the forklift is
- * moving
+ * States used inside the MOVNG_TO_POSITION state (from ForkliftState) for
+ * representing which way the forklift is moving
  * 
  * @author C.R.
  *
@@ -819,14 +813,6 @@ NOT_DEPLOYED, DEPLOYING, DEPLOYED, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT
 private static enum pushOutState
     {
 INIT, PUSH_OUT, DONE
-    }
-
-/**
- * List of states used when scoring a cube on the switch
- */
-private static enum scoreSwitchState
-    {
-MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
     }
 
 /**
@@ -865,23 +851,19 @@ private DeployState deployIntakeState = DeployState.NOT_DEPLOYED;
 
 private pushOutState pushState = pushOutState.INIT;
 
-// determines whether or not the intake motor should be stopped
-private boolean stopIntake = false;
+private IntakeState intakeState = IntakeState.STOP;
 
-// the following booleans are for determining functions are using the intake
+private boolean isPullingIn = true;
 
-private boolean isRunningIntakeCube = false;
+private boolean lastIntakeButtonStatus = false;
 
-private boolean isRunningIntakeCubeOverride = false;
+private boolean intakeOverride = false;
 
 private boolean isRunningPushOutCubeAuto = false;
 
-private boolean isRunningPushOutCubeTeleop = false;
 // ========================================
 
 private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
-
-private scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
 
 // -------------------------------------------------
 
@@ -894,15 +876,13 @@ private final double FORKLIFT_WITH_CUBE_MIN_HEIGHT = 5.0;
 
 private final double FORKLIFT_NO_CUBE_MIN_HEIGHT = 1.0;
 
-private final double FORKLIFT_DEFAULT_SPEED_UP = .9;
+private final double FORKLIFT_DEFAULT_SPEED_UP = .3;
 
-private final double FORKLIFT_DEFAULT_SPEED_DOWN = .4;
+private final double FORKLIFT_DEFAULT_SPEED_DOWN = .3;
 
 private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
-
-private final double SWITCH_HEIGHT = 30;
 
 private final double SCALE_HEIGHT = 80;
 // =========================================
@@ -911,17 +891,14 @@ private final double SCALE_HEIGHT = 80;
 
 private final double INTAKE_SPEED = .5;
 
+private final double INTAKE_STOP_WITH_CUBE = .1;
+
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
 private final double INTAKE_DEPLOY_ANGLE = 75;
 
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_ANGLE = 10.0;
-
-// constant SUBTRACTED from the INTAKE_RETRACT_ANGLE to help keep us from over
-// or under shooting; needs to be tuned on the new robot; if you want the intake
-// motor to be stopping earlier, should be negative
-private final double INTAKE_RETRACT_COMPENSATION = -10.0;
 
 private final double INTAKE_DEPLOY_SPEED = .2;
 
@@ -930,13 +907,9 @@ private final double INTAKE_RETRACT_SPEED = -INTAKE_DEPLOY_SPEED;
 
 private final double EJECT_TIME = 2.0;
 
-// is set elsewhere in the code to OVERRIDE_DEPLOY or OVERRIDE_RETRACT,
-// depending on which one was used last; used in the OVERRIDE_END state in the
-// deploy/retract intake state machine
-private DeployState lastOverride = DeployState.OVERRIDE_DEPLOY;
 // =========================================
 
-public static final double JOYSTICK_DEADBAND = .2;
+private static final double JOYSTICK_DEADBAND = .2;
 
 // ---------------------------------------------
 }
