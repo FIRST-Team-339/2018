@@ -80,8 +80,9 @@ public static void init ()
     Hardware.liftingEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     // Disable auto
-    if (Hardware.disableAutonomousSwitch.isOn() == true)
-        autoState = State.FINISH;
+    // TODO uncomment the below lines before switching back to Kilroy XIX
+    // if (Hardware.disableAutonomousSwitch.isOn() == true)
+    // autoState = State.FINISH;
 
     Hardware.transmission.setForAutonomous();
     Hardware.autoDrive
@@ -129,7 +130,7 @@ public static void periodic ()
     // calls the print statements from Teleop
     Teleop.printStatements();
     // Main switch statement of auto
-
+    System.out.println("Main auto state: " + autoState);
     switch (autoState)
         {
         case INIT:
@@ -143,6 +144,7 @@ public static void periodic ()
 
             // Delay using the potentiometer, from 0 to 5 seconds
             // once finished, stop the timer and go to the next state
+
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
                     5.0))
                 {
@@ -166,7 +168,7 @@ public static void periodic ()
             // switches
 
 
-            switch (Hardware.autoSixPosSwitch.getPosition())
+            switch (/* Hardware.autoSixPosSwitch.getPosition() */3)
                 {
                 case 0:
                     // drive across autoline
