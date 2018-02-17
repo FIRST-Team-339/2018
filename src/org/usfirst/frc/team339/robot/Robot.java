@@ -474,7 +474,7 @@ private static final double NESSIE_GEAR_2_SPEED = .5;
 
 private static final double JOYSTICK_DEADBAND_RANGE = .2;
 
-private static final double KILROY_XIX_LIFT_ENCODER_DPP = .1;
+private static final double KILROY_XIX_LIFT_ENCODER_DPP = 0.0210084;
 
 private static final double KILROY_XIX_DEPLOY_ENCODER_DPP = .1;
 

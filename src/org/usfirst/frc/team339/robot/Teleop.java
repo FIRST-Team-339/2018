@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -123,7 +124,7 @@ public static void periodic ()
 
     Hardware.cubeManipulator
             .moveForkliftWithController(
-                    Hardware.rightOperator.getY(),
+                    Hardware.rightOperator.getY() * .5,
                     Hardware.rightOperator.getRawButton(5));
 
     if (Hardware.rightOperator.getRawButton(6) == true)
@@ -144,10 +145,19 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
-    Hardware.axisCamera
-            .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-                    && Hardware.leftOperator.getRawButton(7));
+    // Hardware.axisCamera
+    // .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+    // && Hardware.leftOperator.getRawButton(7));
+    Hardware.axisCamera.saveImageSafely(
+            Hardware.leftOperator.getRawButton(6)
+                    && Hardware.leftOperator.getRawButton(7),
+            ImageType.RAW);
 
+    if (Hardware.leftOperator.getRawButton(6)
+            && Hardware.leftOperator.getRawButton(7))
+        Hardware.tempRelay.set(true);
+    else
+        Hardware.tempRelay.set(false);
     // =================================================================
     // DRIVING CODE
     // =================================================================
@@ -507,13 +517,13 @@ public static void printStatements ()
 
     // System.out.println("Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
-    // SmartDashboard.putNumber("Lift Encoder Inches",
-    // Hardware.liftingEncoder.getDistance());
+    SmartDashboard.putNumber("Lift Encoder Inches",
+            Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
-    // SmartDashboard.putNumber("Lift Encoder Ticks",
-    // Hardware.liftingEncoder.get());
+    SmartDashboard.putNumber("Lift Encoder Ticks",
+            Hardware.liftingEncoder.get());
 
     // System.out.println("Intake Deploy Encoder "
     // + Hardware.intakeDeployEncoder.getDistance());
