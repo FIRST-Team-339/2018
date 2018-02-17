@@ -210,7 +210,7 @@ public double getIntakeAngle ()
  * Tell the intake motor to stop by setting it to zero. Should be changed to
  * private because NO ONE SHOULD BE USING THIS OUTSIDE OF THE STATE MACHINE
  */
-public void stopIntake ()
+private void stopIntake ()
 {
     this.intakeMotor.set(0);
 }
@@ -414,56 +414,6 @@ public boolean hasCube ()
     return this.intakeSwitch.isOn();
 }
 
-
-/**
- * Autonomously scores a cube on the switch using the forklift, intake and
- * intake deploy
- * 
- * Not currently working
- * 
- * @return true if a cube has been scored in the switch
- */
-public boolean scoreSwitch ()
-{
-    switch (switchState)
-        {
-        // If the intake has not been deployed already, then do so.
-        case DEPLOY_INTAKE:
-            if (deployCubeIntake(false) == true)
-                {
-                switchState = scoreSwitchState.MOVE_LIFT;
-                }
-            break;
-        // Move the lift to the switch height, and move on when it's finished
-        case MOVE_LIFT:
-            // System.out.println("Moving lift");
-            if (setLiftPosition(SWITCH_HEIGHT,
-                    FORKLIFT_DEFAULT_SPEED_UP) == true)
-                {
-                switchState = scoreSwitchState.SPIT_OUT_CUBE;
-                }
-            break;
-        // Eject the cube (onto the switch preferably)
-        case SPIT_OUT_CUBE:
-            // System.out.println("Spitting out cube");
-            if (pushOutCubeAuto() == true)
-                {
-                switchState = scoreSwitchState.FINISHED;
-                }
-            break;
-        // If we have an undefined state input, for debugging
-        default:
-            System.out.println("Error finding state " + switchState
-                    + " in CubeManipulator.scoreSwitch()");
-            // We have finished (hopefully) scoring on the switch! Hurrah!
-        case FINISHED:
-            stopEverything();
-            this.switchState = scoreSwitchState.MOVE_LIFT;
-            return true;
-        }
-    // We have not yet finished scoring the switch
-    return false;
-}
 
 
 // TODO make sure this works
@@ -814,6 +764,7 @@ public void stopEverything ()
  * List of states used when updating the forklift position
  * 
  * @author Becky Button
+ * @edited C.R. and Ryan McGee
  */
 private static enum ForkliftState
     {
@@ -826,9 +777,8 @@ BEGIN_MOVE, PUSH_OUT, PULL_IN, STOP
     }
 
 /**
- * States used inside the MOVNG_TO_POSITION state (from ForkliftState) which way
- * the forklift is
- * moving
+ * States used inside the MOVNG_TO_POSITION state (from ForkliftState) for
+ * representing which way the forklift is moving
  * 
  * @author C.R.
  *
@@ -854,14 +804,6 @@ NOT_DEPLOYED, DEPLOYING, DEPLOYED, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT
 private static enum pushOutState
     {
 INIT, PUSH_OUT, DONE
-    }
-
-/**
- * List of states used when scoring a cube on the switch
- */
-private static enum scoreSwitchState
-    {
-MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED
     }
 
 /**
@@ -914,8 +856,6 @@ private boolean isRunningPushOutCubeAuto = false;
 
 private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 
-private scoreSwitchState switchState = scoreSwitchState.MOVE_LIFT;
-
 // -------------------------------------------------
 
 // --------------------CONSTANTS--------------------
@@ -934,8 +874,6 @@ private final double FORKLIFT_DEFAULT_SPEED_DOWN = .3;
 private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
-
-private final double SWITCH_HEIGHT = 30;
 
 private final double SCALE_HEIGHT = 80;
 // =========================================
