@@ -375,7 +375,7 @@ public static boolean autolinePath ()
                 currentAutolineState = AutolinePathStates.DEPLOY;
             break;
         case DEPLOY:
-            if (Hardware.cubeManipulator.deployCubeIntake())
+            if (Hardware.cubeManipulator.deployCubeIntake(false))
                 {
                 currentAutolineState = AutolinePathStates.FINISH;
                 }
@@ -434,7 +434,7 @@ public static boolean autoLineScalePath ()
             break;
 
         case DEPLOY:
-            if (Hardware.cubeManipulator.deployCubeIntake())
+            if (Hardware.cubeManipulator.deployCubeIntake(false))
                 {
                 currentAutolineState = AutolinePathStates.FINISH;
                 }
@@ -572,7 +572,7 @@ public static boolean leftAutoLineExchangePath ()
 
         case DEPLOY:
             // deploys the cube intake DONE
-            Hardware.cubeManipulator.deployCubeIntake();
+            Hardware.cubeManipulator.deployCubeIntake(false);
             leftExchangeAuto = leftExchangeState.DONE;
             break;
         default:
@@ -695,7 +695,7 @@ public static boolean rightAutoLineExchangePath ()
 
         case DEPLOY:
             // deploys the cube intake DONE
-            Hardware.cubeManipulator.deployCubeIntake();
+            Hardware.cubeManipulator.deployCubeIntake(false);
             rightExchangeAuto = rightExchangeState.DONE;
             break;
 
@@ -858,12 +858,14 @@ public static boolean centerSwitchPath ()
             break;
         case DEPLOY_ARM:
             // TODO this might be able to go before LIFT, or at the same time
-            // as LIFT; also deployCubeIntake() can be called once early to get
+            // as LIFT; also deployCubeIntake(false) can be called once early to
+            // get
             // it to start deploying, then it can be called again here to check
             // if it is finished
             // deploys cube intake and then sets state to MAKE_DEPOSIT
             Hardware.transmission.stop();
-            if (Hardware.cubeManipulator.deployCubeIntake() == true)
+            if (Hardware.cubeManipulator
+                    .deployCubeIntake(false) == true)
                 visionAuto = centerState.MAKE_DEPOSIT;
             break;
         case MAKE_DEPOSIT:
@@ -975,7 +977,7 @@ public static boolean switchOrScalePath (Position robotPosition)
             // does not wait for the intake to finish deploying before moving
             // onto the next state
             currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE1;
-            Hardware.cubeManipulator.deployCubeIntake();
+            Hardware.cubeManipulator.deployCubeIntake(false);
             break;
         case DRIVE1:
             // FIRST driveInches: drive forward to switch
@@ -1262,7 +1264,7 @@ public static boolean offsetSwitchPath ()
                     DRIVE_STRAIGHT_ACCELERATION_TIME);
             currentOffsetSwitchState = OffsetSwitchPath.DRIVE1;
             // tell the cube intake mechanism to deploy
-            Hardware.cubeManipulator.deployCubeIntake();
+            Hardware.cubeManipulator.deployCubeIntake(false);
             break;
 
         case DRIVE1:

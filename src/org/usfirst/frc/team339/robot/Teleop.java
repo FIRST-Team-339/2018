@@ -98,128 +98,33 @@ public static void init ()
  */
 public static void periodic ()
 {
-
-
-
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
 
+    Hardware.cubeManipulator.intakeCube(
+            Hardware.rightOperator.getTrigger(),
+            Hardware.rightOperator.getRawButton(2),
+            Hardware.rightOperator.getRawButton(3));
 
+    // -----------------------------------------
+    // Deploy Intake controls
+    // -----------------------------------------
+    // Button 11 to deploy, 10 to retract, and 9 for override for both.
+    if (Hardware.leftOperator.getRawButton(11))
+        Hardware.cubeManipulator.deployCubeIntake(
+                Hardware.leftOperator.getRawButton(9));
+    else if (Hardware.leftOperator.getRawButton(10))
+        Hardware.cubeManipulator.retractCubeIntake(
+                Hardware.leftOperator.getRawButton(9));
+    // -----------------------------------------
+    // Forklift (not Cube Manipulator) controls
+    // -----------------------------------------
 
-    if (Hardware.leftOperator.getRawButton(6) == true)
-
-
-
-        // Hardware.cubeManipulator.deployCubeIntake();
-        //
-        // if (Hardware.leftOperator.getRawButton(7) == true)
-        // Hardware.cubeManipulator.retractCubeIntake();
-
-
-
-        // NOT WORKING IN cubeManipulator
-        // scoreScale
-        // scoreSwitch
-
-
-
-        // if (isTestingForklift == true)
-        // {
-        // System.out.println("lifting motor position: "
-        // + Hardware.liftingMotor.getPosition());
-        // System.out.println("lifting motor speed: "
-        // + Hardware.liftingMotor.getSpeed());
-        // System.out.println("Forklift height: "
-        // + Hardware.cubeManipulator.getForkliftHeight());
-        //
-        // if (Hardware.cubeManipulator.deployCubeIntake()
-        // && forkliftState == 0)
-        // {
-        // isTestingForklift = false;
-        // }
-        // }
-
-
-
-
-
-        // -----------------------------------------
-        // Deploy Intake controls
-        // -----------------------------------------
-
-        // -----------------------------------------
-        // Forklift (not Cube Manipulator) controls
-        // -----------------------------------------
-
-        if (allowAlignment == false)
-            {
-
-            Hardware.cubeManipulator
-                    .moveForkliftWithController(
-                            Hardware.rightOperator.getY(),
-                            Hardware.rightOperator.getRawButton(5));
-
-            // testing code for setting forklift height; temporary
-            if (Hardware.rightOperator.getRawButton(6) == true)
-                {
-                Hardware.cubeManipulator.setLiftPosition(3, .5);
-                }
-
-            if (Hardware.rightOperator.getRawButton(7) == true)
-                {
-                Hardware.cubeManipulator.setLiftPosition(30, .5);
-                }
-
-            if (Hardware.rightOperator.getRawButton(8) == true)
-                {
-                Hardware.cubeManipulator.setLiftPosition(40.0, .5);
-                }
-
-            if (Hardware.rightOperator.getRawButton(9) == true)
-                {
-                Hardware.cubeManipulator.setLiftPosition(9000.0, .5);
-                }
-
-
-            // Intake controls
-            Hardware.cubeManipulator
-                    .intakeCube(Hardware.rightOperator.getRawButton(2));
-
-            // if (allowAlignment == false)
-            // {
-
-            // if (Math.abs(Hardware.rightOperator
-            // .getY()) >= CubeManipulator.JOYSTICK_DEADBAND)
-            // {
-            // Hardware.cubeManipulator
-            // .moveForkliftWithController(Hardware.rightOperator);
-            // }
-            // testing code for setting forklift height; temporary
-            // TODO use the two parameter version
-            // if (Hardware.rightOperator.getRawButton(6) == true)
-            // {
-            // Hardware.cubeManipulator.setLiftPosition(0.0);
-            // }
-            //
-            // if (Hardware.rightOperator.getRawButton(7) == true)
-            // {
-            // Hardware.cubeManipulator.setLiftPosition(30.0);
-            // }
-            //
-            // if (Hardware.rightOperator.getRawButton(8) == true)
-            // {
-            // Hardware.cubeManipulator.setLiftPosition(40.0);
-            // }
-
-            // Push out the cube
-            Hardware.cubeManipulator
-                    .pushOutCubeTeleop(
-                            Hardware.rightOperator.getRawButton(3));
-
-
-            } // end if(allowAllignment == false) if statement
-              // Set Servo to position w/ Momentary Switch
+    Hardware.cubeManipulator
+            .moveForkliftWithController(
+                    Hardware.rightOperator.getY(),
+                    Hardware.rightOperator.getRawButton(5));
 
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
@@ -248,14 +153,15 @@ public static void periodic ()
 
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
+    //
+    // if (isTestingDrive == false && allowAlignment == false
+    // && isTesting2StepTurn == false
+    // && isTestingPivotTurn == false
+    // && isTestingEncoderTurn == false && isBeckyTest == false
+    // && Hardware.leftDriver.getTrigger() == false)
 
-    if (isTestingDrive == false && allowAlignment == false
-            && isTesting2StepTurn == false
-            && isTestingPivotTurn == false
-            && isTestingEncoderTurn == false && isBeckyTest == false
-            && Hardware.leftDriver.getTrigger() == false)
-        Hardware.transmission.drive(Hardware.leftDriver,
-                Hardware.rightDriver);
+    Hardware.transmission.drive(Hardware.leftDriver,
+            Hardware.rightDriver);
 
     // update
 
@@ -274,7 +180,7 @@ public static void periodic ()
     // -------------------------------------------
     // testingDrive();
 
-    scaleTest();
+    // scaleTest();
     Hardware.tempRelay.set(true);
     // beckyTest();
 
@@ -595,8 +501,8 @@ public static void printStatements ()
 
     // System.out.println("Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
-    SmartDashboard.putNumber("Lift Encoder Inches",
-            Hardware.liftingEncoder.getDistance());
+    // SmartDashboard.putNumber("Lift Encoder Inches",
+    // Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
@@ -610,8 +516,8 @@ public static void printStatements ()
 
     // System.out.println("Intake Deploy Encoder Ticks "
     // + Hardware.intakeDeployEncoder.get());
-    // SmartDashboard.putNumber("Intake Deploy Ticks",
-    // Hardware.intakeDeployEncoder.get());
+    SmartDashboard.putNumber("Intake Deploy Ticks",
+            Hardware.intakeDeployEncoder.get());
 
     // ---------------------------------
     // Red Light/IR Sensors
