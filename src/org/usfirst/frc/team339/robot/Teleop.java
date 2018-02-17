@@ -33,9 +33,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
-import org.usfirst.frc.team339.Utils.CubeManipulator;
-import edu.wpi.first.wpilibj.Relay.Direction;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -147,12 +144,6 @@ public static void periodic ()
     // -----------------------------------------
 
 
-    Hardware.cubeManipulator.deployRetractIntakeByButtons(
-            Hardware.leftOperator.getRawButton(4),
-            Hardware.leftOperator.getRawButton(5),
-            Hardware.leftOperator.getRawButton(2));
-
-
     // -----------------------------------------
     // Forklift (not Cube Manipulator) controls
     // -----------------------------------------
@@ -160,17 +151,15 @@ public static void periodic ()
     if (allowAlignment == false)
         {
 
-        if (Math.abs(Hardware.rightOperator
-                .getY()) >= CubeManipulator.JOYSTICK_DEADBAND)
-            {
-            Hardware.cubeManipulator
-                    .moveForkliftWithController(Hardware.rightOperator,
-                            Hardware.rightOperator.getRawButton(5));
-            }
+        Hardware.cubeManipulator
+                .moveForkliftWithController(
+                        Hardware.rightOperator.getY(),
+                        Hardware.rightOperator.getRawButton(5));
+
         // testing code for setting forklift height; temporary
         if (Hardware.rightOperator.getRawButton(6) == true)
             {
-            Hardware.cubeManipulator.setLiftPosition(0.0, .5);
+            Hardware.cubeManipulator.setLiftPosition(3, .5);
             }
 
         if (Hardware.rightOperator.getRawButton(7) == true)
@@ -218,11 +207,6 @@ public static void periodic ()
         // {
         // Hardware.cubeManipulator.setLiftPosition(40.0);
         // }
-
-
-        Hardware.cubeManipulator
-                .intakeCubeOverride(
-                        Hardware.rightOperator.getRawButton(4));
 
         // Push out the cube
         Hardware.cubeManipulator
@@ -287,7 +271,7 @@ public static void periodic ()
     // testingDrive();
 
     Hardware.tempRelay.set(true);
-    beckyTest();
+    // beckyTest();
 
 } // end Periodic()
 
@@ -606,8 +590,8 @@ public static void printStatements ()
 
     // System.out.println("Lift Encoder Inches = "
     // + Hardware.liftingEncoder.getDistance());
-    // SmartDashboard.putNumber("Lift Encoder Inches",
-    // Hardware.liftingEncoder.getDistance());
+    SmartDashboard.putNumber("Lift Encoder Inches",
+            Hardware.liftingEncoder.getDistance());
 
     // System.out.println(
     // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
