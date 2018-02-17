@@ -163,7 +163,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
     return false;
 }
 
-private boolean setLiftPositionInit = false;
+private boolean setLiftPositionInit = true;
 
 /**
  * Moves the arm to the the position input, FORKLIFT_MAX_HEIGHT being the
@@ -240,7 +240,8 @@ public boolean deployCubeIntake (boolean override)
         }
     // advances the deploy intake state machine if it hasn't already been
     // deployed/ is deploying
-    if (deployIntakeState == DeployState.NOT_DEPLOYED)
+    if (deployIntakeState == DeployState.NOT_DEPLOYED
+            || deployIntakeState == DeployState.STOPPED)
         {
         deployIntakeState = DeployState.DEPLOYING;
         }
@@ -276,7 +277,8 @@ public boolean retractCubeIntake (boolean override)
         }
     // tells the deployIntake state machine to retract if the cube intake
     // mechanism was already deployed
-    if (deployIntakeState == DeployState.DEPLOYED)
+    if (deployIntakeState == DeployState.DEPLOYED
+            || deployIntakeState == DeployState.STOPPED)
         {
         deployIntakeState = DeployState.RETRACTING;
         }
@@ -440,12 +442,14 @@ public boolean scoreScale ()
             break;
         // Move the lift to the scale height, and move on when it's finished
         case MOVE_LIFT:
+
             if (Hardware.scaleAlignment.alignOverride == true)
                 {
                 scaleState = scoreScaleState.FINISHED;
                 }
 
             System.out.println("forklift hight:"
+
                     + Hardware.cubeManipulator.getForkliftHeight());
             System.out.println("Moving lift");
             if (setLiftPosition(SCALE_HEIGHT,
@@ -496,6 +500,9 @@ public boolean scoreScale ()
  */
 public void masterUpdate ()
 {
+    SmartDashboard.putString("Forklift Update", liftState.toString());
+    SmartDashboard.putString("Deploy State", deployIntakeState + "");
+    SmartDashboard.putString("Intake State", intakeState + "");
 
     // update the forklift state machine
     forkliftUpdate();
@@ -517,7 +524,7 @@ public void masterUpdate ()
  */
 public void forkliftUpdate ()
 {
-    SmartDashboard.putString("Forklift Update", liftState.toString());
+
 
     // If we don't have a cube or the override is enabled, then set the min to
     // the lower position, to grab cubes.
@@ -590,6 +597,7 @@ public void forkliftUpdate ()
 
             break;
         case MOVE_JOY:
+            setLiftPositionInit = true;
             this.forkliftMotor.set(forkliftTargetSpeed);
             // IF we are no longer holding the joystick, then it will
             // automatically stay at position.
@@ -613,6 +621,7 @@ public void forkliftUpdate ()
                 }
             // Reset the direction for next move-to-position.
             forkliftDirection = ForkliftDirectionState.NEUTRAL;
+            setLiftPositionInit = true;
         }
 }
 
@@ -647,7 +656,7 @@ public void deployIntakeUpdate ()
 
             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
 
-            if (this.getIntakeAngle() >= INTAKE_DEPLOY_ANGLE)
+            if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS)
                 {
                 // stops the intake deploy motor if we've turned far enough;
                 // FINISHED does this as well, but doing it here helps
@@ -670,7 +679,7 @@ public void deployIntakeUpdate ()
         case RETRACTING:
             this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
             if (this.intakeDeployEncoder
-                    .get() <= INTAKE_RETRACT_ANGLE)
+                    .get() <= INTAKE_RETRACT_TICKS)
                 {
                 // brings back in the intake mechanism until the intake
                 // deploy
@@ -884,7 +893,9 @@ private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 
-private final double SCALE_HEIGHT = 80;
+public final static double SWITCH_HEIGHT = 30.0;
+
+public final static double SCALE_HEIGHT = 80.0;
 // =========================================
 
 // ================INTAKE===================
@@ -895,12 +906,12 @@ private final double INTAKE_STOP_WITH_CUBE = .1;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
-private final double INTAKE_DEPLOY_ANGLE = 75;
+private final double INTAKE_DEPLOY_TICKS = 190;
 
 // the encoder value that counts as the intake being retracted
-private final double INTAKE_RETRACT_ANGLE = 10.0;
+private final double INTAKE_RETRACT_TICKS = 10.0;
 
-private final double INTAKE_DEPLOY_SPEED = .2;
+private final double INTAKE_DEPLOY_SPEED = .5;
 
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED = -INTAKE_DEPLOY_SPEED;

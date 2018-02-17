@@ -12,6 +12,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.VideoCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
@@ -197,6 +198,8 @@ private int DEFAULT_CAMERA_BRIGHTNESS = 50;
 
 // ========OBJECTS FOR TAKE LIT IMAGE========
 // relay that controls the ringLight (turns it on or off)
+private DigitalOutput tempRingLight = null;
+
 private Relay ringLightRelay = null;
 
 // timer used in the takeLitPicture function to delay taking an image until
@@ -248,7 +251,52 @@ public VisionProcessor (String ip, CameraModel camera)
  * @param camera
  *            the brand / model of the camera
  * @param ringlightRelay
- *            camera ringlight to pick up retro-reflective tape
+ *            camera ringlight to pick up retro-reflective tape: this is the
+ *            janky fix
+ * 
+ */
+public VisionProcessor (String ip, CameraModel camera,
+        DigitalOutput ringlightRelay)
+{
+    // Adds the camera to the cscore CameraServer, in order to grab the
+    // stream.
+    this.camera = CameraServer.getInstance()
+            .addAxisCamera("Vision Camera", ip);
+
+    // Based on the selected camera type, set the field of views and focal
+    // length.
+    this.cameraModel = camera;
+    switch (this.cameraModel)
+        {
+        case AXIS_M1011:
+            this.horizontalFieldOfView = M1011_HORIZ_FOV;
+            this.verticalFieldOfView = M1011_VERT_FOV;
+            break;
+        case AXIS_M1013:
+            this.horizontalFieldOfView = M1013_HORIZ_FOV;
+            this.verticalFieldOfView = M1013_VERT_FOV;
+            break;
+
+        default: // Data will default to one to avoid any "divide by zero"
+                 // errors.
+            this.horizontalFieldOfView = 1;
+            this.verticalFieldOfView = 1;
+        } // end switch
+
+    this.pictureTimer.reset();
+    this.tempRingLight = ringlightRelay;
+} // end VisionProcessor()
+
+/**
+ * Creates the object and starts the camera server
+ * 
+ * @param ip
+ *            the IP of the the axis camera (usually 10.3.39.11)
+ * @param camera
+ *            the brand / model of the camera
+ * @param ringlightRelay
+ *            camera ringlight to pick up retro-reflective tape: this is not the
+ *            janky fix
  * 
  */
 public VisionProcessor (String ip, CameraModel camera,
@@ -282,6 +330,7 @@ public VisionProcessor (String ip, CameraModel camera,
     this.pictureTimer.reset();
     this.ringLightRelay = ringlightRelay;
 } // end VisionProcessor()
+
 
 
 /**
@@ -329,6 +378,44 @@ public VisionProcessor (int usbPort, CameraModel camera)
  *            camera ringlight to pick up retro-reflective tape
  */
 public VisionProcessor (int usbPort, CameraModel camera,
+        DigitalOutput ringlightRelay)
+{
+    // Adds the camera to the cscore CameraServer, in order to grab the
+    // stream.
+    this.camera = CameraServer.getInstance()
+            .startAutomaticCapture("Vision Camera", usbPort);
+
+    // Based on the selected camera type, set the field of views and focal
+    // length.
+    this.cameraModel = camera;
+    switch (this.cameraModel)
+        {
+        // case LIFECAM: //Not enough information to properly find this data.
+        // see above.
+        // this.horizontalFieldOfView =
+        // this.verticalFieldOfView =
+        // this.focalLength =
+        // break;
+        default: // Data will default to one to avoid any "divide by zero"
+                 // errors.
+            this.horizontalFieldOfView = 1;
+            this.verticalFieldOfView = 1;
+        } // end switch
+    this.tempRingLight = ringlightRelay;
+    this.pictureTimer.reset();
+} // end VisionProcessor()
+
+/**
+ * Creates the object and starts the camera server
+ * 
+ * @param usbPort
+ *            The USB camera port number. '0' for default.
+ * @param camera
+ *            the brand / model of the camera
+ * @param ringlightRelay
+ *            camera ringlight to pick up retro-reflective tape
+ */
+public VisionProcessor (int usbPort, CameraModel camera,
         Relay ringlightRelay)
 {
     // Adds the camera to the cscore CameraServer, in order to grab the
@@ -355,6 +442,7 @@ public VisionProcessor (int usbPort, CameraModel camera,
     this.ringLightRelay = ringlightRelay;
     this.pictureTimer.reset();
 } // end VisionProcessor()
+
 
 // ==========================END INIT===================================
 
@@ -575,7 +663,7 @@ public void takeLitPicture (boolean button)
         // turns on the ring light
         if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
-            this.setRelayValue(Value.kForward);
+            this.setDigitalOutputValue(true);
 
         // if the timer expires, save the picture , reset booleans, turns off
         // the ring light
@@ -588,7 +676,7 @@ public void takeLitPicture (boolean button)
 
             this.saveImageSafely(false, ImageType.RAW);
 
-            this.setRelayValue(Value.kReverse);
+            this.setDigitalOutputValue(false);
 
             this.pictureTimer.stop();
             this.pictureTimer.reset();
@@ -614,6 +702,17 @@ public Value getRelayValue ()
 } // end getRelayValue()
 
 /**
+ * Gets the value of the ring light relay as a Digital Output
+ * 
+ * @return the value of the camera ring light relay; see the get() function
+ *         in the Digital Output class for more information
+ */
+public boolean getDigitalOutputValue ()
+{
+    return this.tempRingLight.get();
+} // end getDigitalOutputValue ()
+
+/**
  * Set the ring light to a value
  * 
  * @param ringLightValue
@@ -623,6 +722,17 @@ public void setRelayValue (Value ringLightValue)
 {
     this.ringLightRelay.set(ringLightValue);
 } // end setRelayValue()
+
+/**
+ * Set the ring light to a value
+ * 
+ * @param ringLightValue
+ *            use true to turn the relay on
+ */
+public void setDigitalOutputValue (boolean ringLightValue)
+{
+    this.tempRingLight.set(ringLightValue);
+} // end setDigitalOutputValue
 
 /**
  * Turns on the ring light
