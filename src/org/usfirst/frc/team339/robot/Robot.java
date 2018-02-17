@@ -63,8 +63,6 @@ import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Relay.Direction;
-import edu.wpi.first.wpilibj.Relay.Value;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -165,7 +163,7 @@ public void disabledInit ()
     // =========================================================
     // User code goes below here
     // =========================================================
-
+    Hardware.tempRelay.set(false);
     // =========================================================
     // User code goes above here
     // =========================================================
@@ -247,6 +245,8 @@ public void robotInit ()
     Hardware.cubeIntakeMotor.setSafetyEnabled(false);
     Hardware.intakeDeployArm.setSafetyEnabled(false);
 
+    Hardware.intakeDeployArm.setInverted(true);
+
     // -------------------------------------
     // Manually sets encoders Distance per Pulse
     // -------------------------------------
@@ -263,8 +263,8 @@ public void robotInit ()
 
         Hardware.transmission.setAllGearRatios(KILROY_XIX_GEAR_1_SPEED,
                 KILROY_XIX_GEAR_2_SPEED);
-        
-//        Hardware.ringLightRelay.setDirection(Direction.kForward);
+
+        // Hardware.ringLightRelay.setDirection(Direction.kForward);
 
         // Drive Functions
 
@@ -297,7 +297,7 @@ public void robotInit ()
         Hardware.transmission.setAllGearRatios(KILROY_XV_GEAR_1_SPEED,
                 KILROY_XV_GEAR_2_SPEED);
         Hardware.autoDrive.setTurningRadius(KILROY_XV_TURNING_RADIUS);
-//        Hardware.ringLightRelay.setDirection(Direction.kReverse);
+        // Hardware.ringLightRelay.setDirection(Direction.kReverse);
         } // else
 
     // ----------------------------------
@@ -332,7 +332,7 @@ public void robotInit ()
     // ---------------------------------
     // sets the ring light to off
     // ---------------------------------
-//    Hardware.ringLightRelay.set(Value.kOff);
+    // Hardware.ringLightRelay.set(Value.kOff);
 
 
     Hardware.gyro.calibrate();

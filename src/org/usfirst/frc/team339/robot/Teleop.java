@@ -126,6 +126,11 @@ public static void periodic ()
                     Hardware.rightOperator.getY(),
                     Hardware.rightOperator.getRawButton(5));
 
+    if (Hardware.rightOperator.getRawButton(6) == true)
+        Hardware.cubeManipulator.setLiftPosition(80, .6);
+    else if (Hardware.rightOperator.getRawButton(7) == true)
+        Hardware.cubeManipulator.setLiftPosition(30, .6);
+
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
 
@@ -139,8 +144,9 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
-    // Hardware.axisCamera
-    // .takeLitPicture(Hardware.leftOperator.getRawButton(8));
+    Hardware.axisCamera
+            .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+                    && Hardware.leftOperator.getRawButton(7));
 
     // =================================================================
     // DRIVING CODE
@@ -181,7 +187,7 @@ public static void periodic ()
     // testingDrive();
 
     // scaleTest();
-    Hardware.tempRelay.set(true);
+    // Hardware.tempRelay.set(true);
     // beckyTest();
 
 } // end Periodic()
