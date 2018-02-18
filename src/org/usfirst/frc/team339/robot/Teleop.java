@@ -176,6 +176,7 @@ public static void periodic ()
     // print out any information needed to
     // display on the drivers station
     // ------------------------------------
+
     printStatements();
 
     // -------------------------------------------
@@ -210,6 +211,9 @@ private static int driveState = 0;
 
 public static void scaleTest ()
 {
+    SmartDashboard.putString("Relative to scale",
+            Hardware.scaleAlignment.RelativeScale);
+
     SmartDashboard.putNumber("RearUltraSonic",
             Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
@@ -597,6 +601,9 @@ public static void printStatements ()
     // ---------------------------------
     // Sonar/UltraSonic
     // ---------------------------------
+    SmartDashboard.putNumber("Rear Ultrasonic distance",
+            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     // SmartDashboard.putNumber("Front Ultrasonic",

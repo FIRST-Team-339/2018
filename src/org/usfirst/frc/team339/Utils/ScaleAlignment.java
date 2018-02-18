@@ -55,62 +55,71 @@ public boolean alignToScale (double speed, double deadband)
         }
     if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
+                    - deadband
 
             && this.rearUltrasonic
                     .getDistanceFromNearestBumper() >= ROBOT_TO_SCALE_DISTANCE
-                            - deadband
+                            - (deadband * 2)
             && alignOverride == false)
         {
-        System.out.println("Our distance to the scale is correct");
+        RelativeScale = "correct";
         aligned = true;
         speed = 0;
         System.out.println("Speed: " + speed);
         Hardware.leftDriveMotor.set(0);
         Hardware.rightDriveMotor.set(0);
-        System.out.println("Has set motors power to 0");
+
         // start the move forklift switch
         if (Hardware.cubeManipulator.scoreScale())
             {
             aligned = false;
             return true;
             }
-        SmartDashboard.putString("Hi", "Hi");
+
 
         Hardware.cubeManipulator.scoreScale();
         }
     // if to far from scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
-                    - deadband
+                    - (deadband * 2)
             && aligned == false && alignOverride == false)
         {
         SmartDashboard.putNumber("Speed", speed);
-        SmartDashboard.putString("Relative to scale", "Too far");
+        RelativeScale = "Too Far";
 
         Hardware.transmission.drive(speed, speed);
         }
     // if to close to scale
     else if (this.rearUltrasonic
             .getDistanceFromNearestBumper() > ROBOT_TO_SCALE_DISTANCE
+                    - deadband
             && aligned == false && alignOverride == false)
         {
         SmartDashboard.putNumber("Speed", speed);
-        SmartDashboard.putString("Relative to scale", "Too close");
+
+        RelativeScale = "Too close";
 
         Hardware.transmission.drive(-speed, -speed);
         }
     return false;
 }
 
+public String RelativeScale;
+
 public boolean alignOverride = false;
 
 private static boolean aligned = false;
 
-private static final double SCALE_TO_WALL_DISTANCE = 68;
+private static final double SCALE_TO_WALL_DISTANCE = 72;
 
-private static final double ROBOT_LENGTH = 36;// TODO 38 on the 2018 robot
+// 35 is robot length with bumber
+// 13 is cube length
+private static final double ROBOT_LENGTH_WITH_CUBE = 48;
 
+// 72- 48
+// 24
 private static final double ROBOT_TO_SCALE_DISTANCE = SCALE_TO_WALL_DISTANCE
-        - ROBOT_LENGTH;
+        - ROBOT_LENGTH_WITH_CUBE;
 
 }
