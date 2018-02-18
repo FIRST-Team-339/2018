@@ -82,9 +82,10 @@ public static void init ()
     Hardware.rightDriveMotor.set(0);
     Hardware.leftDriveMotor.set(0);
 
-    SmartDashboard.putNumber("Deadband", 0);
-    SmartDashboard.putNumber("Power", 0);
-
+    // SmartDashboard.putNumber("Deadband", 0);
+    // SmartDashboard.putNumber("Power", 0);
+    SmartDashboard.putNumber("Intake Speed: ", 0);
+    SmartDashboard.putNumber("Outake Speed: ", 0);
 } // end Init
 
 // tune pid loop
@@ -182,25 +183,12 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-
-    if (Hardware.leftDriver.getY() < -.2
-            || Hardware.leftDriver.getY() > .2 &&
-                    Hardware.rightDriver.getY() > .2
-            || Hardware.rightDriver.getY() < -.2)
-        {
-        testingDrive();
-        }
-    else
-        {
-
-        allowAlignment = false;
-        }
+    // testingDrive();
 
     // scaleTest();
 
     // liftTest();
     // beckyTest();
-    // liftTest();
 
 } // end Periodic()
 
@@ -391,15 +379,14 @@ private static void liftTest ()
     // SmartDashboard.putNumber("throttle value : ",
     // Hardware.leftOperator.getThrottle());
 
-    Hardware.liftingMotor
-            .set(SmartDashboard.getNumber("Lifting motor speed", 0));
-
-    Hardware.cubeIntakeMotor
-            .set(SmartDashboard.getNumber("Cube intake speed", 0));
-
-    Hardware.intakeDeployArm
-            .set(SmartDashboard.getNumber("Intake deploy speed", 0));
-
+    // Hardware.liftingMotor
+    // .set(SmartDashboard.getNumber("Lifting motor speed", 0));
+    //
+    // Hardware.cubeIntakeMotor
+    // .set(SmartDashboard.getNumber("Cube intake speed", 0));
+    //
+    // Hardware.cubeIntakeMotor
+    // .set(SmartDashboard.getNumber("Intake Speed: ", 0));
 }
 
 /**
