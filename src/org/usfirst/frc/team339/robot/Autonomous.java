@@ -737,6 +737,7 @@ public static boolean rightAutoLineExchangePath ()
 public static boolean centerSwitchPath ()
 {
     // System.out.println("Vision Auto state: " + visionAuto);
+    SmartDashboard.putString("Vision States", visionAuto.toString());
     switch (visionAuto)
         {
         case CENTER_INIT:
@@ -837,7 +838,9 @@ public static boolean centerSwitchPath ()
                 {
                 if (Hardware.autoDrive
                         .brake(BrakeType.AFTER_DRIVE) == true)
+                    {
                     visionAuto = centerState.TURN_AGAIN_RIGHT;
+                    }
                 }
             break;
         case TURN_AGAIN_RIGHT:
@@ -847,8 +850,9 @@ public static boolean centerSwitchPath ()
                 {
                 if (Hardware.autoDrive
                         .brake(BrakeType.AFTER_TURN) == true)
-                    // TODO DRIVE_WITH_CAMERA
+                    {
                     visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    }
                 }
             break;
         case TURN_AGAIN_LEFT:
