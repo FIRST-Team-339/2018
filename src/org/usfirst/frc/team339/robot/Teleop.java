@@ -688,6 +688,15 @@ public static void printStatements ()
     // timers
     // what time does the timer have now
     // ---------------------------------
+
+    // ---------------------------------
+    // Final SmartDasboard
+    // code values we want on the final dashboard layout we use during matches
+    // ---------------------------------
+    SmartDashboard.putBoolean("Has Cube",
+            Hardware.cubeManipulator.hasCube());
+
+
     SmartDashboard.updateValues();
 } // end printStatements()
 
