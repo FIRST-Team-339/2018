@@ -209,6 +209,19 @@ public double getIntakeAngle ()
     return this.intakeDeployEncoder.get();
 }
 
+
+/**
+ * Gets the speed the motor is being SET TO (in the code, not what is physically
+ * happening on the robot)
+ * 
+ * @return the value being sent to motor
+ */
+public double getIntakeMotorSpeed ()
+{
+    return this.intakeMotor.get();
+}
+
+
 /**
  * Tell the intake motor to stop by setting it to zero. Should be changed to
  * private because NO ONE SHOULD BE USING THIS OUTSIDE OF THE STATE MACHINE
@@ -889,7 +902,7 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 // --------------------CONSTANTS--------------------
 
 // ================FORKLIFT================
-private final double FORKLIFT_MAX_HEIGHT = 73;
+private final double FORKLIFT_MAX_HEIGHT = 76.5;
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .25;
 
@@ -914,7 +927,7 @@ public final static double SCALE_HEIGHT = 72;
 
 private final double INTAKE_SPEED = .5;
 
-private final double INTAKE_STOP_WITH_CUBE = .1;
+public final double INTAKE_STOP_WITH_CUBE = .1;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed

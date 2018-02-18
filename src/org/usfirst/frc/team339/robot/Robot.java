@@ -263,9 +263,11 @@ public void robotInit ()
 
         Hardware.transmission.setAllGearRatios(KILROY_XIX_GEAR_1_SPEED,
                 KILROY_XIX_GEAR_2_SPEED);
-        
-        Hardware.frontUltraSonic.setOffsetDistanceFromNearestBumper(KILROY_XIX_US_DISTANCE_FROM_BUMPER);
-        Hardware.rearUltraSonic.setOffsetDistanceFromNearestBumper(KILROY_XIX_US_DISTANCE_FROM_BUMPER);
+
+        Hardware.frontUltraSonic.setOffsetDistanceFromNearestBumper(
+                KILROY_XIX_US_DISTANCE_FROM_BUMPER);
+        Hardware.rearUltraSonic.setOffsetDistanceFromNearestBumper(
+                KILROY_XIX_US_DISTANCE_FROM_BUMPER);
         // Hardware.ringLightRelay.setDirection(Direction.kForward);
 
         // Drive Functions
@@ -345,6 +347,8 @@ public void robotInit ()
     // done setup - tell the user we are complete
     // setup
     // ---------------------------------------
+    Teleop.printStatements();
+
     System.out.println(
             "Kilroy XIX is started.  All hardware items created.");
 } // end robotInit()
