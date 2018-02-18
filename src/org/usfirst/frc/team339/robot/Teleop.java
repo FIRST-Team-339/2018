@@ -192,9 +192,27 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
+
+
+
+    testingDrive();
+
+    if (Hardware.leftDriver.getY() < -.2
+            || Hardware.leftDriver.getY() > .2 &&
+                    Hardware.rightDriver.getY() > .2
+            || Hardware.rightDriver.getY() < -.2)
+        {
+        alignScale();
+        }
+    else
+        {
+
+        allowAlignment = false;
+        }
+
     // testingDrive();
 
-    // scaleTest();
+
 
     // liftTest();
     // beckyTest();
@@ -212,7 +230,7 @@ private static boolean isTestingEncoderTurn = false;
 private static int driveState = 0;
 
 
-public static void scaleTest ()
+public static void alignScale ()
 {
     SmartDashboard.putString("Relative to scale",
             Hardware.scaleAlignment.RelativeScale);
