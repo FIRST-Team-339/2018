@@ -123,7 +123,7 @@ public static void periodic ()
             visionAuto.toString());
     // calls the forklift to update itself, allowing us to use the
     // forklift state machine; necessary for the forklift to work properly
-    // Hardware.cubeManipulator.masterUpdate();
+    Hardware.cubeManipulator.masterUpdate();
     // prints the main state of autonomous (as a whole) we're in
     // System.out.println("Main State: " + autoState);
     // calls the print statements from Teleop

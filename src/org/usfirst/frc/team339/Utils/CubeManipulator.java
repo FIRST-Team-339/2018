@@ -243,8 +243,7 @@ public boolean deployCubeIntake (boolean override)
         }
     // advances the deploy intake state machine if it hasn't already been
     // deployed/ is deploying
-    if (deployIntakeState == DeployState.NOT_DEPLOYED
-            || deployIntakeState == DeployState.STOPPED)
+    if (deployIntakeState == DeployState.NOT_DEPLOYED)
         {
         deployIntakeState = DeployState.DEPLOYING;
         }
@@ -280,8 +279,7 @@ public boolean retractCubeIntake (boolean override)
         }
     // tells the deployIntake state machine to retract if the cube intake
     // mechanism was already deployed
-    if (deployIntakeState == DeployState.DEPLOYED
-            || deployIntakeState == DeployState.STOPPED)
+    if (deployIntakeState == DeployState.DEPLOYED)
         {
         deployIntakeState = DeployState.RETRACTING;
         }
@@ -321,7 +319,7 @@ public boolean isIntakeDeployed ()
  * @param pushOutOverride
  *            Override if the cubeSensor stops working, for pushing out the cube
  */
-public void intakeCube (boolean button, boolean pullInOverride,
+public void runIntake (boolean button, boolean pullInOverride,
         boolean pushOutOverride)
 {
     // Override the 'pull in', ignoring the photoswitch
@@ -359,6 +357,33 @@ public void intakeCube (boolean button, boolean pullInOverride,
     // Reset the 'button's first run?' status
     lastIntakeButtonStatus = button;
 
+}
+
+/**
+ * Intakes the cube on a single button and an override.
+ * 
+ * @param button
+ *            If the button is pressed, run the intake in.
+ * @param override
+ *            Intakes the cube if the button is pressed, and the override is
+ *            pressed, regardless of the photoswitch
+ */
+public void intakeCube (boolean button, boolean override)
+{
+    if ((button && override) || (button && !hasCube()))
+        this.intakeState = IntakeState.PULL_IN;
+}
+
+/**
+ * Ejects the cube based on a button.
+ * 
+ * @param button
+ *            If the button is pressed, then eject the cube.
+ */
+public void ejectCube (boolean button)
+{
+    if (button)
+        this.intakeState = IntakeState.PUSH_OUT;
 }
 
 /**
@@ -527,21 +552,6 @@ public void masterUpdate ()
  */
 public void forkliftUpdate ()
 {
-
-
-    // If we don't have a cube or the override is enabled, then set the min to
-    // the lower position, to grab cubes.
-    if (hasCube() == false || this.intakeOverride == true)
-        {
-        this.currentMinLiftPosition = FORKLIFT_NO_CUBE_MIN_HEIGHT;
-        }
-    // If we have a cube set the minimum to higher, to make sure we don't drag
-    // the cube on the ground.
-    else
-        {
-        this.currentMinLiftPosition = FORKLIFT_WITH_CUBE_MIN_HEIGHT;
-        }
-
     // main switch statement for the forklift state machine
     switch (liftState)
         {
@@ -625,6 +635,7 @@ public void forkliftUpdate ()
             // Reset the direction for next move-to-position.
             forkliftDirection = ForkliftDirectionState.NEUTRAL;
             setLiftPositionInit = true;
+            break;
         }
 }
 
@@ -664,7 +675,6 @@ public void deployIntakeUpdate ()
                 // stops the intake deploy motor if we've turned far enough;
                 // FINISHED does this as well, but doing it here helps
                 // keep the motor from overshooting too much
-                this.setLiftPosition(FORKLIFT_WITH_CUBE_MIN_HEIGHT);
                 this.intakeDeployMotor.set(0.0);
                 deployIntakeState = DeployState.DEPLOYED;
                 }
@@ -733,12 +743,12 @@ public void intakeUpdate ()
     switch (intakeState)
         {
         case PULL_IN:
-            // We have a cube? stop pulling in.
-            if (hasCube() == true && intakeOverride == false)
-                this.intakeMotor.stopMotor();
-            // Don't have a cube? keep pulling in.
-            else
-                this.intakeMotor.set(INTAKE_SPEED);
+            // // We have a cube? stop pulling in.
+            // if (hasCube() == true && intakeOverride == false)
+            // this.intakeMotor.stopMotor();
+            // // Don't have a cube? keep pulling in.
+            // else
+            this.intakeMotor.set(INTAKE_SPEED);
 
             // Set to stop when they stop hitting the button.
             intakeState = IntakeState.STOP;
@@ -789,7 +799,7 @@ public void stopEverything ()
  */
 private static enum ForkliftState
     {
-MOVING_TO_POSITION, STAY_AT_POSITION, MOVE_JOY
+MOVING_TO_POSITION, STAY_AT_POSITION, MOVE_JOY, AVOID_DRAG
     }
 
 private static enum IntakeState
@@ -882,27 +892,25 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 // --------------------CONSTANTS--------------------
 
 // ================FORKLIFT================
-private final double FORKLIFT_MAX_HEIGHT = 100;
+private final double FORKLIFT_MAX_HEIGHT = 73;
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .25;
 
-private final double FORKLIFT_UP_JOYSTICK_SCALAR = .5;
+private final double FORKLIFT_UP_JOYSTICK_SCALAR = .7;
 
-private final double FORKLIFT_WITH_CUBE_MIN_HEIGHT = 5.0;
+private final double FORKLIFT_NO_CUBE_MIN_HEIGHT = 0;
 
-private final double FORKLIFT_NO_CUBE_MIN_HEIGHT = 1.0;
+private final double FORKLIFT_DEFAULT_SPEED_UP = .6;
 
-private final double FORKLIFT_DEFAULT_SPEED_UP = .3;
-
-private final double FORKLIFT_DEFAULT_SPEED_DOWN = .3;
+private final double FORKLIFT_DEFAULT_SPEED_DOWN = .4;
 
 private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 
-public final static double SWITCH_HEIGHT = 30.0;
+public final static double SWITCH_HEIGHT = 33.0;
 
-public final static double SCALE_HEIGHT = 80.0;
+public final static double SCALE_HEIGHT = 72;
 // =========================================
 
 // ================INTAKE===================

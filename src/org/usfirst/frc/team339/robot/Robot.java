@@ -462,11 +462,11 @@ private static final double KILROY_XIX_ENCODER_DPP = 0.0346;
 
 private static final double KILROY_XIX_GEAR_1_SPEED = .3;
 
-private static final double KILROY_XV_GEAR_1_SPEED = .4;
+private static final double KILROY_XV_GEAR_1_SPEED = .3;
 
 private static final double NESSIE_GEAR_1_SPEED = .5;
 
-public static final double KILROY_XIX_GEAR_2_SPEED = .4;
+public static final double KILROY_XIX_GEAR_2_SPEED = .5;
 
 public static final double KILROY_XV_GEAR_2_SPEED = .6;
 
@@ -474,7 +474,7 @@ private static final double NESSIE_GEAR_2_SPEED = .5;
 
 private static final double JOYSTICK_DEADBAND_RANGE = .2;
 
-private static final double KILROY_XIX_LIFT_ENCODER_DPP = 0.0210084;
+private static final double KILROY_XIX_LIFT_ENCODER_DPP = 0.02;
 
 private static final double KILROY_XIX_DEPLOY_ENCODER_DPP = .1;
 

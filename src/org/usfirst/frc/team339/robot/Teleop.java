@@ -74,8 +74,6 @@ public static void init ()
     Hardware.leftFrontDriveEncoder.reset();
     Hardware.rightRearDriveEncoder.reset();
     Hardware.leftRearDriveEncoder.reset();
-    Hardware.intakeDeployEncoder.reset();
-
 
     // ---------------------------------
     // setup motors
@@ -105,8 +103,9 @@ public static void periodic ()
 
     Hardware.cubeManipulator.intakeCube(
             Hardware.rightOperator.getTrigger(),
-            Hardware.rightOperator.getRawButton(2),
-            Hardware.rightOperator.getRawButton(3));
+            Hardware.rightOperator.getRawButton(2));
+    Hardware.cubeManipulator
+            .ejectCube(Hardware.leftOperator.getTrigger());
 
     // -----------------------------------------
     // Deploy Intake controls
@@ -136,6 +135,8 @@ public static void periodic ()
 
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+    else
+        Hardware.climbingMechanismServo.setAngle(0);
 
 
     // update for the cube manipulator (forklift, intake, etc.) and its state
@@ -162,14 +163,12 @@ public static void periodic ()
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
     //
-    // if (isTestingDrive == false && allowAlignment == false
-    // && isTesting2StepTurn == false
-    // && isTestingPivotTurn == false
-    // && isTestingEncoderTurn == false && isBeckyTest == false
-    // && Hardware.leftDriver.getTrigger() == false)
+    if (isTestingDrive == false && allowAlignment == false
+            && isBeckyTest == false
+            && Hardware.leftDriver.getTrigger() == false)
 
-    Hardware.transmission.drive(Hardware.leftDriver,
-            Hardware.rightDriver);
+        Hardware.transmission.drive(Hardware.leftDriver,
+                Hardware.rightDriver);
     // update
 
     // ------------------------------------
@@ -182,7 +181,7 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    // testingDrive();
+    testingDrive();
 
     // scaleTest();
 
@@ -330,13 +329,6 @@ private static void beckyTest ()
 
 private static void testingDrive ()
 {
-    Hardware.autoDrive.setBrakeDeadband(
-            (int) SmartDashboard.getNumber("Deadband", 0),
-            BrakeType.AFTER_DRIVE);
-    Hardware.autoDrive
-            .setBrakePower(SmartDashboard.getNumber("Power", 0),
-                    BrakeType.AFTER_DRIVE);
-
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
         isTestingDrive = true;
@@ -347,7 +339,7 @@ private static void testingDrive ()
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
         if (isTestingDrive == true && driveState == 0
-                && Hardware.autoDrive.driveStraightInches(48,
+                && Hardware.autoDrive.driveStraightInches(60,
                         .3) == true)
             {
             driveState++;
@@ -368,16 +360,12 @@ private static void testingDrive ()
                     .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
             Hardware.autoDrive.reset();
             isTestingDrive = false;
-            isTestingEncoderTurn = false;
-            isTestingPivotTurn = false;
-            isTesting2StepTurn = false;
-            isTestingAnalogGyroTurn = false;
             }
         }
 
     if (Hardware.leftDriver.getRawButton(8) == true)
         {
-        Hardware.gyro.reset();
+        Hardware.autoDrive.resetEncoders();
         }
 
 } // end of testingDrive()
