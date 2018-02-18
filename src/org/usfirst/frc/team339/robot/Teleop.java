@@ -197,18 +197,12 @@ public static void periodic ()
 
     testingDrive();
 
-    if (Hardware.leftDriver.getY() < -.2
-            || Hardware.leftDriver.getY() > .2 &&
-                    Hardware.rightDriver.getY() > .2
-            || Hardware.rightDriver.getY() < -.2)
-        {
-        alignScale();
-        }
-    else
-        {
 
-        allowAlignment = false;
-        }
+    alignScale();
+
+
+
+
 
     // testingDrive();
 
@@ -243,6 +237,7 @@ public static void alignScale ()
         allowAlignment = true;
         Hardware.scaleAlignment.alignOverride = false;
         }
+    // override
     if (Hardware.leftOperator.getRawButton(5))
         {
         allowAlignment = false;
