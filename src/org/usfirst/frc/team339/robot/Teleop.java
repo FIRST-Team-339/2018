@@ -175,13 +175,26 @@ public static void periodic ()
     // print out any information needed to
     // display on the drivers station
     // ------------------------------------
+
     printStatements();
 
     // -------------------------------------------
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    testingDrive();
+
+    if (Hardware.leftDriver.getY() < -.2
+            || Hardware.leftDriver.getY() > .2 &&
+                    Hardware.rightDriver.getY() > .2
+            || Hardware.rightDriver.getY() < -.2)
+        {
+        testingDrive();
+        }
+    else
+        {
+
+        allowAlignment = false;
+        }
 
     // scaleTest();
 
@@ -210,6 +223,9 @@ private static int driveState = 0;
 
 public static void scaleTest ()
 {
+    SmartDashboard.putString("Relative to scale",
+            Hardware.scaleAlignment.RelativeScale);
+
     SmartDashboard.putNumber("RearUltraSonic",
             Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
@@ -598,6 +614,9 @@ public static void printStatements ()
     // ---------------------------------
     // Sonar/UltraSonic
     // ---------------------------------
+    SmartDashboard.putNumber("Rear Ultrasonic distance",
+            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     // SmartDashboard.putNumber("Front Ultrasonic",

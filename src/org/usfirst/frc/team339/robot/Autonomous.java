@@ -169,7 +169,7 @@ public static void periodic ()
             // switches
 
 
-            switch (/* Hardware.autoSixPosSwitch.getPosition() */3)
+            switch (Hardware.autoSixPosSwitch.getPosition())
                 {
                 case 0:
                     // drive across autoline
