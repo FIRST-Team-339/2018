@@ -1626,7 +1626,7 @@ private final static int DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE = 207;
 // AUTOLINE_EXCHANGE
 // distance required to drive back across the autoline before turning to go
 // towards the exchange
-private final static double DELAY_FOR_BRAKE_TIME = 4.0;
+private final static double DELAY_FOR_BRAKE_TIME = .2;
 
 private final static int DISTANCE_BACK_ACROSS_AUTOLINE = 100;
 
