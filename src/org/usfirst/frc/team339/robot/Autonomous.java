@@ -1533,7 +1533,7 @@ private final static int DRIVE_NO_CAMERA_RIGHT = 50;
 private final static double CENTER_ACCEL = .6;
 
 // TODO change for actual auto speed
-private final static double AUTO_SPEED_VISION = .3;
+private final static double AUTO_SPEED_VISION = .25;
 
 // SWITCH_OR_SCALE
 // array for storing the different driving distances in SWITH_OR_SCALE
