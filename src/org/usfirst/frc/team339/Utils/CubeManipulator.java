@@ -296,6 +296,18 @@ public boolean retractCubeIntake (boolean override)
 }
 
 /**
+ * Angles the deploy to the 45 degree angle while the button is held, and holds
+ * it at that position for placing on the scale.
+ */
+public void angleDeployForScale ()
+{
+    if (deployIntakeState != DeployState.STOPPED
+            && deployIntakeState != DeployState.OVERRIDE_DEPLOY
+            && deployIntakeState != DeployState.OVERRIDE_RETRACT)
+        deployIntakeState = DeployState.POSITION_45;
+}
+
+/**
  * Checks whether the intake is deployed
  * 
  * @return true if the arm is deployed, and false if it isn't
@@ -712,6 +724,29 @@ public void deployIntakeUpdate ()
             // If the override is let go, then stop the deploy
             deployIntakeState = DeployState.STOPPED;
             break;
+
+        case POSITION_45:
+            // If the deploy has reached the position, send constant voltage
+            if (intakeDeployEncoder.get() < DEPLOY_45_POSITION_TICKS)
+                {
+                intakeDeployMotor.set(DEPLOY_HOLDING_VOLTAGE);
+                }
+            // If we have gone too far
+            else if (intakeDeployEncoder
+                    .get() < DEPLOY_45_POSITION_TICKS
+                            - DEPLOY_45_POSITION_DEADBAND)
+                {
+                intakeDeployMotor.stopMotor();
+                }
+            // We are still retracting.
+            else
+                {
+                intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
+                }
+
+            // Only set it while we are holding the button.
+            deployIntakeState = DeployState.DEPLOYING;
+            break;
         default:
             System.out.println(
                     "Unkown case found in deployIntakeUpdate(). Stopping deploy.");
@@ -826,7 +861,7 @@ MOVING_UP, MOVING_DOWN, NEUTRAL
  */
 private static enum DeployState
     {
-NOT_DEPLOYED, DEPLOYING, DEPLOYED, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, STOPPED
+NOT_DEPLOYED, DEPLOYING, DEPLOYED, POSITION_45, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, STOPPED
     }
 
 /**
@@ -892,7 +927,7 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 // --------------------CONSTANTS--------------------
 
 // ================FORKLIFT================
-private final double FORKLIFT_MAX_HEIGHT = 73;
+private final double FORKLIFT_MAX_HEIGHT = 76.5;
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .25;
 
@@ -910,7 +945,7 @@ private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 
 public final static double SWITCH_HEIGHT = 33.0;
 
-public final static double SCALE_HEIGHT = 72;
+public final static double SCALE_HEIGHT = 76.5;
 // =========================================
 
 // ================INTAKE===================
@@ -931,7 +966,14 @@ private final double INTAKE_DEPLOY_SPEED = .5;
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED = -INTAKE_DEPLOY_SPEED;
 
+private final double DEPLOY_HOLDING_VOLTAGE = -.15;
+
 private final double EJECT_TIME = 2.0;
+
+private final double DEPLOY_45_POSITION_TICKS = INTAKE_DEPLOY_TICKS
+        / 2.0;
+
+private final int DEPLOY_45_POSITION_DEADBAND = 20;
 
 // =========================================
 
