@@ -82,10 +82,16 @@ public static void init ()
     Hardware.rightDriveMotor.set(0);
     Hardware.leftDriveMotor.set(0);
 
-    // SmartDashboard.putNumber("Deadband", 0);
-    // SmartDashboard.putNumber("Power", 0);
-    SmartDashboard.putNumber("Intake Speed: ", 0);
-    SmartDashboard.putNumber("Outake Speed: ", 0);
+    // SmartDashboard.putNumber("Turn Power", 0);
+    // SmartDashboard.putNumber("Turn Brake Power", 0);
+    // SmartDashboard.putNumber("Turn Brake Deadband", 0);
+    // SmartDashboard.putNumber("Drive Power", 0);
+    // SmartDashboard.putNumber("Drive Brake Power", 0);
+    // SmartDashboard.putNumber("Drive Brake Deadband", 0);
+    //
+    // SmartDashboard.putNumber("Turn Degrees", 0);
+    // SmartDashboard.putNumber("Drive Distance", 0);
+
 } // end Init
 
 // tune pid loop
@@ -118,6 +124,10 @@ public static void periodic ()
     else if (Hardware.leftOperator.getRawButton(10))
         Hardware.cubeManipulator.retractCubeIntake(
                 Hardware.leftOperator.getRawButton(9));
+
+    if (Hardware.leftOperator.getRawButton(2))
+        Hardware.cubeManipulator.angleDeployForScale();
+
     // -----------------------------------------
     // Forklift (not Cube Manipulator) controls
     // -----------------------------------------
@@ -166,8 +176,7 @@ public static void periodic ()
     //
     if (isTestingDrive == false && allowAlignment == false
             && isBeckyTest == false
-            && Hardware.leftDriver.getTrigger() == false)
-
+            && isTestingEncoderTurn == false)
         Hardware.transmission.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
     // update
@@ -183,9 +192,27 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
+
+
+
+    testingDrive();
+
+    if (Hardware.leftDriver.getY() < -.2
+            || Hardware.leftDriver.getY() > .2 &&
+                    Hardware.rightDriver.getY() > .2
+            || Hardware.rightDriver.getY() < -.2)
+        {
+        alignScale();
+        }
+    else
+        {
+
+        allowAlignment = false;
+        }
+
     // testingDrive();
 
-    // scaleTest();
+
 
     // liftTest();
     // beckyTest();
@@ -198,18 +225,12 @@ private static boolean allowAlignment = false;
 
 private static boolean isTestingDrive = false;
 
-private static boolean isTestingAnalogGyroTurn = false;
-
 private static boolean isTestingEncoderTurn = false;
-
-private static boolean isTestingPivotTurn = false;
-
-private static boolean isTesting2StepTurn = false;
 
 private static int driveState = 0;
 
 
-public static void scaleTest ()
+public static void alignScale ()
 {
     SmartDashboard.putString("Relative to scale",
             Hardware.scaleAlignment.RelativeScale);
@@ -333,26 +354,61 @@ private static void beckyTest ()
 
 private static void testingDrive ()
 {
+    Hardware.autoDrive.setBrakeDeadband(
+            (int) SmartDashboard.getNumber("Turn Brake Deadband", 0),
+            BrakeType.AFTER_TURN);
+    Hardware.autoDrive.setBrakePower(
+            SmartDashboard.getNumber("Turn Brake Power", 0),
+            BrakeType.AFTER_TURN);
+
+    Hardware.autoDrive.setBrakeDeadband(
+            (int) SmartDashboard.getNumber("Drive Brake Deadband", 0),
+            BrakeType.AFTER_DRIVE);
+    Hardware.autoDrive.setBrakePower(
+            SmartDashboard.getNumber("Drive Brake Power", 0),
+            BrakeType.AFTER_DRIVE);
+
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
         isTestingDrive = true;
+        }
+    else if (Hardware.leftDriver.getRawButton(7) == true)
+        {
+        isTestingEncoderTurn = true;
         }
 
     if (isTestingDrive == true)
         {
         Hardware.transmission.setForAutonomous();
         Hardware.autoDrive.setDefaultAcceleration(.5);
+
         if (isTestingDrive == true && driveState == 0
-                && Hardware.autoDrive.driveStraightInches(60,
-                        .3) == true)
+                && Hardware.autoDrive.driveStraightInches(
+                        SmartDashboard.getNumber("Drive Distance", 0),
+                        SmartDashboard.getNumber("Drive Power",
+                                0)) == true)
             {
-            driveState++;
+            driveState = 1;
+            }
+        else if (isTestingEncoderTurn == true && driveState == 0
+                && Hardware.autoDrive.turnDegrees(
+                        (int) SmartDashboard.getNumber("Turn Degrees",
+                                0),
+                        SmartDashboard.getNumber("Turn Power",
+                                0)) == true)
+            {
+            driveState = 3;
             }
         else if (driveState == 1
                 && Hardware.autoDrive
                         .brake(BrakeType.AFTER_DRIVE) == true)
             {
-            driveState++;
+            driveState = 2;
+            }
+        else if (driveState == 3
+                && Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
+            {
+            driveState = 2;
             }
 
         if (Hardware.leftDriver.getRawButton(10) == true

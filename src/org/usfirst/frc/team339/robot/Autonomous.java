@@ -178,10 +178,6 @@ public static void periodic ()
                 case 1:
                     // drives and sets up at scale
                     autoState = State.AUTOLINE_SCALE;
-                    if (Hardware.onNessie == true)
-                        {
-                        autoState = State.CENTER_SWITCH;
-                        }
                     break;
                 case 2:
                     // cross autoline, then go to the exchange
