@@ -477,8 +477,7 @@ public boolean scoreScale ()
                 scaleState = scoreScaleState.FINISHED;
                 }
 
-            // TODO setLiftPosition to scale height variable
-            if (setLiftPosition(30,
+            if (setLiftPosition(SCALE_HEIGHT,
                     FORKLIFT_DEFAULT_SPEED_UP) == true)
                 {
                 scaleState = scoreScaleState.SPIT_OUT_CUBE;
