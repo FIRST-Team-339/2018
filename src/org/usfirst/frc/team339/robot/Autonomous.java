@@ -195,7 +195,7 @@ public static void periodic ()
                 case 3:
                     System.out.println("Center Switch selected");
                     // start in the middle between the two switch sides;
-                    // use vision and gamedata to drive to the correct switch
+                    // use vision and game data to drive to the correct switch
                     // side and drop off the cube
                     autoState = State.CENTER_SWITCH;
                     break;
@@ -479,7 +479,7 @@ public static leftExchangeState leftExchangeAuto = leftExchangeState.PATH_INIT;
  */
 public static enum leftExchangeState
     {
-PATH_INIT, DRIVE_ACROSS_AUTOLINE, BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_B4_TURN, TURN_90_DEGREES_RIGHT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, BRAKE_B4_DEPLOY, DEPLOY, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE, TIMER_DELAY_ONE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_B4_TURN, TIMER_DELAY_TWO, TURN_90_DEGREES_RIGHT, BRAKE_AFTER_TURN, TIMER_DELAY_THREE, DRIVE_TO_EXCHANGE, BRAKE_B4_DEPLOY, TIMER_DELAY_FOUR, DEPLOY, DONE
     }
 
 
@@ -495,8 +495,9 @@ PATH_INIT, DRIVE_ACROSS_AUTOLINE, BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE, DRIVE_BAC
 public static boolean leftAutoLineExchangePath ()
 {
     // prints the left auto switch state
-    System.out.println("LeftExchangeAuto" + leftExchangeAuto);
-
+    // System.out.println("LeftExchangeAuto" + leftExchangeAuto);
+    SmartDashboard.putString("leftAutolineExchange state : ",
+            leftExchangeAuto.toString());
     // left auto switch statement
     switch (leftExchangeAuto)
         {
@@ -523,7 +524,21 @@ public static boolean leftAutoLineExchangePath ()
         case BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE:
             // brakes after driving
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                {
+                Hardware.delayForBrakeTimer.reset();
+                Hardware.delayForBrakeTimer.start();
+                leftExchangeAuto = leftExchangeState.TIMER_DELAY_ONE;
+                }
+            break;
+
+        case TIMER_DELAY_ONE:
+            // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
+            if (Hardware.delayForBrakeTimer
+                    .get() > DELAY_FOR_BRAKE_TIME)
+                {
+                Hardware.delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                }
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
@@ -543,7 +558,21 @@ public static boolean leftAutoLineExchangePath ()
         case BRAKE_B4_TURN:
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                {
+                Hardware.delayForBrakeTimer.reset();
+                Hardware.delayForBrakeTimer.start();
+                leftExchangeAuto = leftExchangeState.TIMER_DELAY_TWO;
+                }
+            break;
+
+        case TIMER_DELAY_TWO:
+            // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
+            if (Hardware.delayForBrakeTimer
+                    .get() > DELAY_FOR_BRAKE_TIME)
+                {
+                Hardware.delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
+                }
             break;
 
         case TURN_90_DEGREES_RIGHT:
@@ -566,6 +595,18 @@ public static boolean leftAutoLineExchangePath ()
                 System.out.println(
                         "RightFront: " + Hardware.rightFrontDriveEncoder
                                 .getDistance());
+                Hardware.delayForBrakeTimer.reset();
+                Hardware.delayForBrakeTimer.start();
+                leftExchangeAuto = leftExchangeState.TIMER_DELAY_THREE;
+                }
+            break;
+
+        case TIMER_DELAY_THREE:
+            // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
+            if (Hardware.delayForBrakeTimer
+                    .get() > DELAY_FOR_BRAKE_TIME)
+                {
+                Hardware.delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.DRIVE_TO_EXCHANGE;
                 }
             break;
@@ -582,7 +623,21 @@ public static boolean leftAutoLineExchangePath ()
         case BRAKE_B4_DEPLOY:
             // brake before deploying
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                {
+                Hardware.delayForBrakeTimer.reset();
+                Hardware.delayForBrakeTimer.start();
                 leftExchangeAuto = leftExchangeState.DEPLOY;
+                }
+            break;
+
+        case TIMER_DELAY_FOUR:
+            // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
+            if (Hardware.delayForBrakeTimer
+                    .get() > DELAY_FOR_BRAKE_TIME)
+                {
+                Hardware.delayForBrakeTimer.stop();
+                leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
+                }
             break;
 
         case DEPLOY:
@@ -611,7 +666,7 @@ public static rightExchangeState rightExchangeAuto = rightExchangeState.DRIVE_AC
  */
 public static enum rightExchangeState
     {
-PATH_INIT, DRIVE_ACROSS_AUTOLINE, BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TURN_90_DEGREES_LEFT, BRAKE_AFTER_TURN, DRIVE_TO_EXCHANGE, BRAKE_B4_DEPLOY, DEPLOY, DONE
+PATH_INIT, DRIVE_ACROSS_AUTOLINE, BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE, TIMER_DELAY_ONE, DRIVE_BACK_ACROSS_AUTOLINE, BRAKE_AFTER_STRAIGHT, TIMER_DELAY_TWO, TURN_90_DEGREES_LEFT, BRAKE_AFTER_TURN, TIMER_DELAY_THREE, DRIVE_TO_EXCHANGE, BRAKE_B4_DEPLOY, TIMER_DELAY_FOUR, DEPLOY, DONE
     }
 
 
@@ -626,6 +681,8 @@ PATH_INIT, DRIVE_ACROSS_AUTOLINE, BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE, DRIVE_BAC
  */
 public static boolean rightAutoLineExchangePath ()
 {
+    SmartDashboard.putString("rightAutolineExchange state : ",
+            rightExchangeAuto.toString());
     switch (rightExchangeAuto)
         {
         case PATH_INIT:
@@ -649,7 +706,21 @@ public static boolean rightAutoLineExchangePath ()
         case BRAKE_B4_DRIVE_BACK_ACROSS_AUTOLINE:
             // brakes after driving
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
-                leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                {
+                Hardware.delayForBrakeTimer.reset();
+                Hardware.delayForBrakeTimer.start();
+                rightExchangeAuto = rightExchangeState.TIMER_DELAY_ONE;
+                }
+            break;
+
+        case TIMER_DELAY_ONE:
+            // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
+            if (Hardware.delayForBrakeTimer
+                    .get() > DELAY_FOR_BRAKE_TIME)
+                {
+                Hardware.delayForBrakeTimer.stop();
+                rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
+                }
             break;
 
         case DRIVE_BACK_ACROSS_AUTOLINE:
@@ -665,7 +736,22 @@ public static boolean rightAutoLineExchangePath ()
         case BRAKE_AFTER_STRAIGHT:
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
+                {
+                Hardware.delayForBrakeTimer.reset();
+                Hardware.delayForBrakeTimer.start();
+                rightExchangeAuto = rightExchangeState.TIMER_DELAY_TWO;
+                }
+            break;
+
+        case TIMER_DELAY_TWO:
+            // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
+            if (Hardware.delayForBrakeTimer
+                    .get() > DELAY_FOR_BRAKE_TIME)
+                {
+                Hardware.delayForBrakeTimer.stop();
                 rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
+                ;
+                }
             break;
 
         case TURN_90_DEGREES_LEFT:
@@ -688,6 +774,18 @@ public static boolean rightAutoLineExchangePath ()
                 System.out.println(
                         "RightFront: " + Hardware.rightFrontDriveEncoder
                                 .getDistance());
+                Hardware.delayForBrakeTimer.reset();
+                Hardware.delayForBrakeTimer.start();
+                rightExchangeAuto = rightExchangeState.TIMER_DELAY_THREE;
+                }
+            break;
+
+        case TIMER_DELAY_THREE:
+            // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
+            if (Hardware.delayForBrakeTimer
+                    .get() > DELAY_FOR_BRAKE_TIME)
+                {
+                Hardware.delayForBrakeTimer.stop();
                 rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
                 }
             break;
@@ -705,7 +803,21 @@ public static boolean rightAutoLineExchangePath ()
         case BRAKE_B4_DEPLOY:
             // brake before deploying
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
-                leftExchangeAuto = leftExchangeState.DEPLOY;
+                {
+                Hardware.delayForBrakeTimer.reset();
+                Hardware.delayForBrakeTimer.start();
+                rightExchangeAuto = rightExchangeState.TIMER_DELAY_FOUR;
+                }
+            break;
+
+        case TIMER_DELAY_FOUR:
+            // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
+            if (Hardware.delayForBrakeTimer
+                    .get() > DELAY_FOR_BRAKE_TIME)
+                {
+                Hardware.delayForBrakeTimer.stop();
+                rightExchangeAuto = rightExchangeState.DEPLOY;
+                }
             break;
 
         case DEPLOY:
@@ -1514,6 +1626,8 @@ private final static int DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE = 207;
 // AUTOLINE_EXCHANGE
 // distance required to drive back across the autoline before turning to go
 // towards the exchange
+private final static double DELAY_FOR_BRAKE_TIME = 4.0;
+
 private final static int DISTANCE_BACK_ACROSS_AUTOLINE = 100;
 
 private final static int LEFT_DISTANCE_TO_EXCHANGE = 58;

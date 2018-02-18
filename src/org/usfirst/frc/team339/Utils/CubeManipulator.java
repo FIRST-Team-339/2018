@@ -892,7 +892,7 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 // --------------------CONSTANTS--------------------
 
 // ================FORKLIFT================
-private final double FORKLIFT_MAX_HEIGHT = 73;
+private final double FORKLIFT_MAX_HEIGHT = 76.5;
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .25;
 
