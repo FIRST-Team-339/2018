@@ -209,6 +209,19 @@ public double getIntakeAngle ()
     return this.intakeDeployEncoder.get();
 }
 
+
+/**
+ * Gets the speed the motor is being SET TO (in the code, not what is physically
+ * happening on the robot)
+ * 
+ * @return the value being sent to motor
+ */
+public double getIntakeMotorSpeed ()
+{
+    return this.intakeMotor.get();
+}
+
+
 /**
  * Tell the intake motor to stop by setting it to zero. Should be changed to
  * private because NO ONE SHOULD BE USING THIS OUTSIDE OF THE STATE MACHINE
@@ -421,7 +434,7 @@ public boolean pushOutCubeAuto ()
             // EJECT_TIME seconds has not elapsed? run motors.
             if (this.switchTimer.get() < EJECT_TIME)
                 {
-                this.intakeMotor.set(-this.INTAKE_SPEED);
+                this.intakeMotor.set(this.EJECT_SPEED);
                 }
             // Time has elapsed? stop timer and move to next state.
             else
@@ -950,7 +963,9 @@ public final static double SCALE_HEIGHT = 76.5;
 
 private final double INTAKE_SPEED = .5;
 
-private final double INTAKE_STOP_WITH_CUBE = .1;
+private final double EJECT_SPEED = -.8;
+
+public final double INTAKE_STOP_WITH_CUBE = .1;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed

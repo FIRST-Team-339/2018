@@ -82,15 +82,15 @@ public static void init ()
     Hardware.rightDriveMotor.set(0);
     Hardware.leftDriveMotor.set(0);
 
-    SmartDashboard.putNumber("Turn Power", 0);
-    SmartDashboard.putNumber("Turn Brake Power", 0);
-    SmartDashboard.putNumber("Turn Brake Deadband", 0);
-    SmartDashboard.putNumber("Drive Power", 0);
-    SmartDashboard.putNumber("Drive Brake Power", 0);
-    SmartDashboard.putNumber("Drive Brake Deadband", 0);
-
-    SmartDashboard.putNumber("Turn Degrees", 0);
-    SmartDashboard.putNumber("Drive Distance", 0);
+    // SmartDashboard.putNumber("Turn Power", 0);
+    // SmartDashboard.putNumber("Turn Brake Power", 0);
+    // SmartDashboard.putNumber("Turn Brake Deadband", 0);
+    // SmartDashboard.putNumber("Drive Power", 0);
+    // SmartDashboard.putNumber("Drive Brake Power", 0);
+    // SmartDashboard.putNumber("Drive Brake Deadband", 0);
+    //
+    // SmartDashboard.putNumber("Turn Degrees", 0);
+    // SmartDashboard.putNumber("Drive Distance", 0);
 
 } // end Init
 
@@ -192,25 +192,12 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-
-    if (Hardware.leftDriver.getY() < -.2
-            || Hardware.leftDriver.getY() > .2 &&
-                    Hardware.rightDriver.getY() > .2
-            || Hardware.rightDriver.getY() < -.2)
-        {
-        testingDrive();
-        }
-    else
-        {
-
-        allowAlignment = false;
-        }
+    // testingDrive();
 
     // scaleTest();
 
     // liftTest();
     // beckyTest();
-    // liftTest();
 
 } // end Periodic()
 
@@ -430,15 +417,14 @@ private static void liftTest ()
     // SmartDashboard.putNumber("throttle value : ",
     // Hardware.leftOperator.getThrottle());
 
-    Hardware.liftingMotor
-            .set(SmartDashboard.getNumber("Lifting motor speed", 0));
-
-    Hardware.cubeIntakeMotor
-            .set(SmartDashboard.getNumber("Cube intake speed", 0));
-
-    Hardware.intakeDeployArm
-            .set(SmartDashboard.getNumber("Intake deploy speed", 0));
-
+    // Hardware.liftingMotor
+    // .set(SmartDashboard.getNumber("Lifting motor speed", 0));
+    //
+    // Hardware.cubeIntakeMotor
+    // .set(SmartDashboard.getNumber("Cube intake speed", 0));
+    //
+    // Hardware.cubeIntakeMotor
+    // .set(SmartDashboard.getNumber("Intake Speed: ", 0));
 }
 
 /**
@@ -746,6 +732,26 @@ public static void printStatements ()
     // timers
     // what time does the timer have now
     // ---------------------------------
+
+    // ---------------------------------
+    // Final SmartDasboard
+    // code values we want on the final dashboard layout we use during matches
+    // ---------------------------------
+    if (Hardware.cubeManipulator.hasCube() == true
+            || Hardware.cubeManipulator
+                    .getIntakeMotorSpeed() > Hardware.cubeManipulator.INTAKE_STOP_WITH_CUBE
+                            + .1 /*
+                                  * the .1 here is just a magic number that
+                                  * wasn't worth making a constant for; is meant
+                                  * to prevent false positives in cases where
+                                  * the getIntakeMotorSpeed is returning
+                                  * .2000001 or something
+                                  */)
+        {
+        SmartDashboard.putBoolean("Has Cube",
+                Hardware.cubeManipulator.hasCube());
+        }
+
     SmartDashboard.updateValues();
 } // end printStatements()
 
