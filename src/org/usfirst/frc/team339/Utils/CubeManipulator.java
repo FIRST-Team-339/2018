@@ -457,7 +457,8 @@ public boolean hasCube ()
  */
 public boolean scoreScale ()
 {
-    System.out.println("scoring on the scale");
+    SmartDashboard.putString("scoreScale states",
+            scaleState.toString());
     switch (scaleState)
         {
         // If the intake has not been deployed already, then do so.
@@ -476,11 +477,8 @@ public boolean scoreScale ()
                 scaleState = scoreScaleState.FINISHED;
                 }
 
-            System.out.println("forklift hight:"
-
-                    + Hardware.cubeManipulator.getForkliftHeight());
-            System.out.println("Moving lift");
-            if (setLiftPosition(SCALE_HEIGHT,
+            // TODO setLiftPosition to scale height variable
+            if (setLiftPosition(30,
                     FORKLIFT_DEFAULT_SPEED_UP) == true)
                 {
                 scaleState = scoreScaleState.SPIT_OUT_CUBE;
@@ -892,7 +890,7 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 // --------------------CONSTANTS--------------------
 
 // ================FORKLIFT================
-private final double FORKLIFT_MAX_HEIGHT = 73;
+private final double FORKLIFT_MAX_HEIGHT = 76.5;
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .25;
 
