@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -118,6 +119,7 @@ public static State autoState = State.INIT;
 public static void periodic ()
 {
 
+    Hardware.cubeManipulator.masterUpdate();
     SmartDashboard.putString("Overall Auto state",
             autoState.toString());
     SmartDashboard.putString("Vision auto state",
@@ -726,7 +728,7 @@ public static boolean rightAutoLineExchangePath ()
 }
 
 /**
- * Left Plan: Drive ten inches, brake, turn 90 degrees to left, drive 73 inches,
+ * Left Plan: Drive ten inches, brake, turn 90 degrees to left, drive 53 inches,
  * turn 90 degrees to right, drive 54 inches with camera, drive 24 inches with
  * ultrasonic
  * 
@@ -743,6 +745,8 @@ public static boolean centerSwitchPath ()
             // start deploying the intake mechanism; will keep running in
             // background
             Hardware.cubeManipulator.deployCubeIntake(false);
+            Hardware.cubeManipulator
+                    .setLiftPosition(CubeManipulator.SWITCH_HEIGHT);
             visionAuto = centerState.DRIVE_TEN_INCHES;
             break;
         case DRIVE_TEN_INCHES:
@@ -845,7 +849,7 @@ public static boolean centerSwitchPath ()
                 if (Hardware.autoDrive
                         .brake(BrakeType.AFTER_TURN) == true)
                     // TODO DRIVE_WITH_CAMERA
-                    visionAuto = centerState.LIFT;
+                    visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
             break;
         case TURN_AGAIN_LEFT:
@@ -1529,7 +1533,7 @@ private final static int DRIVE_NO_CAMERA_RIGHT = 50;
 private final static double CENTER_ACCEL = .6;
 
 // TODO change for actual auto speed
-private final static double AUTO_SPEED_VISION = .5;
+private final static double AUTO_SPEED_VISION = .3;
 
 // SWITCH_OR_SCALE
 // array for storing the different driving distances in SWITH_OR_SCALE

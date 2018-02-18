@@ -126,7 +126,7 @@ public static SingleThrowSwitch leftAutoSwitch = new SingleThrowSwitch(
         20);
 
 public static SingleThrowSwitch rightAutoSwitch = new SingleThrowSwitch(
-        21);
+        25);
 
 public static DoubleThrowSwitch disableAutonomousSwitch = new DoubleThrowSwitch(
         leftAutoSwitch, rightAutoSwitch);
