@@ -354,7 +354,6 @@ SWITCH, SCALE
  *         Whether or not the path has finished.
  */
 
-// TODO @ANE add in brake to your auto methods
 public static boolean autolinePath ()
 {
     // System.out.println("autoline path state : " + currentAutolineState);
@@ -410,7 +409,7 @@ public static boolean autolinePath ()
     return false;
 }
 
-// enum for the states in the autolinePath and autolineScalePath autonomouses
+// enum for the states in the autolinePath and autolineScalePath autonomi
 private static enum AutolinePathStates
     {
 PATH_INIT, DRIVE1, BRAKE1, FINISH, DEPLOY
