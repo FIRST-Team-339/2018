@@ -750,19 +750,29 @@ public static void printStatements ()
     // Final SmartDasboard
     // code values we want on the final dashboard layout we use during matches
     // ---------------------------------
-    if (Hardware.cubeManipulator.hasCube() == true
-            || Hardware.cubeManipulator
-                    .getIntakeMotorSpeed() > Hardware.cubeManipulator.INTAKE_STOP_WITH_CUBE
-                            + .1 /*
-                                  * the .1 here is just a magic number that
-                                  * wasn't worth making a constant for; is meant
-                                  * to prevent false positives in cases where
-                                  * the getIntakeMotorSpeed is returning
-                                  * .2000001 or something
-                                  */)
+    if (Hardware.cubeManipulator.hasCube() == true)
         {
-        SmartDashboard.putBoolean("Has Cube",
-                Hardware.cubeManipulator.hasCube());
+        SmartDashboard.putBoolean("Has Cube", true);
+        SmartDashboard.putBoolean("Has Cube ", false);
+
+        }
+    else if (Hardware.cubeManipulator
+            .getIntakeMotorSpeed() > Hardware.cubeManipulator.INTAKE_STOP_WITH_CUBE
+                    + .1 /*
+                          * the .1 here is just a magic number that
+                          * wasn't worth making a constant for; is meant
+                          * to prevent false positives in cases where
+                          * the getIntakeMotorSpeed is returning
+                          * .2000001 or something
+                          */)
+        {
+        SmartDashboard.putBoolean("Has Cube", false);
+        SmartDashboard.putBoolean("Has Cube ", true);
+        }
+    else
+        {
+        SmartDashboard.putBoolean("Has Cube", false);
+        SmartDashboard.putBoolean("Has Cube ", false);
         }
 
     SmartDashboard.updateValues();
