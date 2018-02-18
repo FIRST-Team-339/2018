@@ -580,8 +580,8 @@ public static void printStatements ()
     // ---------------------------------
     // System.out
     // .println("Delay Pot " + Hardware.delayPot.get(0, 5));
-    SmartDashboard.putNumber("Delay Pot",
-            Hardware.delayPot.get(0, 5));
+    // SmartDashboard.putNumber("Delay Pot",
+    // Hardware.delayPot.get(0, 5));
 
     // ---------------------------------
     // GYRO
@@ -602,10 +602,19 @@ public static void printStatements ()
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     // SmartDashboard.putNumber("Front Ultrasonic",
     // Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    //
+    // SmartDashboard.putNumber("Front Ultrasonic Raw",
+    // Hardware.frontUltraSonic.getRefinedDistanceValue());
+    //
+    // SmartDashboard.putNumber("Front ultrasonic bumper",
+    // Hardware.frontUltraSonic
+    // .getOffsetDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-    // SmartDashboard.putNumber("Read Ultrasonic",
+    // SmartDashboard.putNumber("Rear Ultrasonic",
     // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    // SmartDashboard.putNumber("Rear Ultrasonic Raw",
+    // Hardware.rearUltraSonic.getRefinedDistanceValue());
 
     // =========================
     // Servos

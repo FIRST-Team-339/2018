@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -80,6 +81,7 @@ public static void init ()
     Hardware.liftingEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     // Disable auto
+
     if (Hardware.disableAutonomousSwitch.isOn() == true)
         autoState = State.FINISH;
 
@@ -116,7 +118,8 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-    // TODO make work
+
+    Hardware.cubeManipulator.masterUpdate();
     SmartDashboard.putString("Overall Auto state",
             autoState.toString());
     SmartDashboard.putString("Vision auto state",
@@ -129,7 +132,6 @@ public static void periodic ()
     // calls the print statements from Teleop
     Teleop.printStatements();
     // Main switch statement of auto
-
     switch (autoState)
         {
         case INIT:
@@ -143,6 +145,7 @@ public static void periodic ()
 
             // Delay using the potentiometer, from 0 to 5 seconds
             // once finished, stop the timer and go to the next state
+
             if (Hardware.autoTimer.get() >= Hardware.delayPot.get(0.0,
                     5.0))
                 {
@@ -166,7 +169,7 @@ public static void periodic ()
             // switches
 
 
-            switch (Hardware.autoSixPosSwitch.getPosition())
+            switch (/* Hardware.autoSixPosSwitch.getPosition() */3)
                 {
                 case 0:
                     // drive across autoline
@@ -351,7 +354,6 @@ SWITCH, SCALE
  *         Whether or not the path has finished.
  */
 
-// TODO @ANE add in brake to your auto methods
 public static boolean autolinePath ()
 {
     // System.out.println("autoline path state : " + currentAutolineState);
@@ -407,7 +409,7 @@ public static boolean autolinePath ()
     return false;
 }
 
-// enum for the states in the autolinePath and autolineScalePath autonomouses
+// enum for the states in the autolinePath and autolineScalePath autonomi
 private static enum AutolinePathStates
     {
 PATH_INIT, DRIVE1, BRAKE1, FINISH, DEPLOY
@@ -725,7 +727,7 @@ public static boolean rightAutoLineExchangePath ()
 }
 
 /**
- * Left Plan: Drive ten inches, brake, turn 90 degrees to left, drive 73 inches,
+ * Left Plan: Drive ten inches, brake, turn 90 degrees to left, drive 53 inches,
  * turn 90 degrees to right, drive 54 inches with camera, drive 24 inches with
  * ultrasonic
  * 
@@ -734,7 +736,7 @@ public static boolean rightAutoLineExchangePath ()
  */
 public static boolean centerSwitchPath ()
 {
-    // System.out.println("We are in the " + visionAuto + " state.");
+    // System.out.println("Vision Auto state: " + visionAuto);
     switch (visionAuto)
         {
         case CENTER_INIT:
@@ -742,6 +744,8 @@ public static boolean centerSwitchPath ()
             // start deploying the intake mechanism; will keep running in
             // background
             Hardware.cubeManipulator.deployCubeIntake(false);
+            Hardware.cubeManipulator
+                    .setLiftPosition(CubeManipulator.SWITCH_HEIGHT);
             visionAuto = centerState.DRIVE_TEN_INCHES;
             break;
         case DRIVE_TEN_INCHES:
@@ -844,7 +848,7 @@ public static boolean centerSwitchPath ()
                 if (Hardware.autoDrive
                         .brake(BrakeType.AFTER_TURN) == true)
                     // TODO DRIVE_WITH_CAMERA
-                    visionAuto = centerState.LIFT;
+                    visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
             break;
         case TURN_AGAIN_LEFT:
@@ -1528,7 +1532,7 @@ private final static int DRIVE_NO_CAMERA_RIGHT = 50;
 private final static double CENTER_ACCEL = .6;
 
 // TODO change for actual auto speed
-private final static double AUTO_SPEED_VISION = .5;
+private final static double AUTO_SPEED_VISION = .25;
 
 // SWITCH_OR_SCALE
 // array for storing the different driving distances in SWITH_OR_SCALE

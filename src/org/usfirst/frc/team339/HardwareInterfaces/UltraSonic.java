@@ -330,7 +330,7 @@ public int getDistanceFromNearestBumper ()
         } // end if
 
     return (normalizedDistance);
-} // end getKilroyDistanceValue()
+} // end getDistanceFromNearestBumper()
 
 // -------------------------------------------------------
 /**
@@ -509,7 +509,7 @@ public int getNumberOfItemsToCheckBackwardForValidity ()
  * @written Jan 14, 2012
  *          -------------------------------------------------------
  */
-public int getOffsetDistanceFromNearestBummper ()
+public int getOffsetDistanceFromNearestBumper ()
 {
     return (this.distanceFromNearestBumper);
 } // end getOffsetDistanceFromNearestBummper()
@@ -797,11 +797,11 @@ public int setNumberOfItemsToCheckBackwardForValidity (int newValue)
  * @written Jan 14, 2012
  *          -------------------------------------------------------
  */
-public int setOffsetDistanceFromNearestBummper (int newDistance)
+public int setOffsetDistanceFromNearestBumper (int newDistance)
 {
     this.distanceFromNearestBumper = newDistance;
-    return (this.getOffsetDistanceFromNearestBummper());
-} // end setOffsetDistanceFromNearestBummper()
+    return (this.getOffsetDistanceFromNearestBumper());
+} // end setOffsetDistanceFromNearestBumper()
 
 // -------------------------------------------------------
 
