@@ -5,7 +5,6 @@ import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Class for forklift and intake subsystems which includes a Forklift,
@@ -478,8 +477,8 @@ public boolean hasCube ()
  */
 public boolean scoreScale ()
 {
-    SmartDashboard.putString("scoreScale states",
-            scaleState.toString());
+    // SmartDashboard.putString("scoreScale states",
+    // scaleState.toString());
     switch (scaleState)
         {
 
@@ -504,7 +503,7 @@ public boolean scoreScale ()
                 scaleState = scoreScaleState.FINISHED;
                 }
 
-            System.out.println("Spitting out cube");
+            // System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
                 scaleState = scoreScaleState.FINISHED;
@@ -537,9 +536,9 @@ public boolean scoreScale ()
  */
 public void masterUpdate ()
 {
-    SmartDashboard.putString("Forklift Update", liftState.toString());
-    SmartDashboard.putString("Deploy State", deployIntakeState + "");
-    SmartDashboard.putString("Intake State", intakeState + "");
+    // SmartDashboard.putString("Forklift Update", liftState.toString());
+    // SmartDashboard.putString("Deploy State", deployIntakeState + "");
+    // SmartDashboard.putString("Intake State", intakeState + "");
 
     // update the forklift state machine
     forkliftUpdate();
@@ -914,7 +913,7 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 // --------------------CONSTANTS--------------------
 
 // ================FORKLIFT================
-private final double FORKLIFT_MAX_HEIGHT = 76.5;
+private final double FORKLIFT_MAX_HEIGHT = 70;
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .25;
 
@@ -932,7 +931,7 @@ private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 
 public final static double SWITCH_HEIGHT = 33.0;
 
-public final static double SCALE_HEIGHT = 76.5;
+public final static double SCALE_HEIGHT = 70;
 // =========================================
 
 // ================INTAKE===================
@@ -945,7 +944,7 @@ public final double INTAKE_STOP_WITH_CUBE = .1;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
-private final double INTAKE_DEPLOY_TICKS = 190;
+private final double INTAKE_DEPLOY_TICKS = 245;
 
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 10.0;

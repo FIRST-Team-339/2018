@@ -642,7 +642,8 @@ public static boolean leftAutoLineExchangePath ()
             leftExchangeAuto = leftExchangeState.DONE;
             break;
         default:
-        System.out.println("REACHED THE DEFAULT CASE OF LEFT EXCHANGE");
+            System.out.println(
+                    "REACHED THE DEFAULT CASE OF LEFT EXCHANGE");
         case DONE:
             // robot stops and does nothing until teleop; returns true
             // so the main autonomous state machine knows this is done
@@ -824,7 +825,8 @@ public static boolean rightAutoLineExchangePath ()
             break;
 
         default:
-        System.out.println("REACHED THE DEFAULT CASE OF RIGHT EXCHANGE");
+            System.out.println(
+                    "REACHED THE DEFAULT CASE OF RIGHT EXCHANGE");
         case DONE:
             // robot stops and does nothing until teleop; returns true
             // so the main autonomous state machine knows this is done
@@ -847,7 +849,7 @@ public static boolean rightAutoLineExchangePath ()
 public static boolean centerSwitchPath ()
 {
     // System.out.println("Vision Auto state: " + visionAuto);
-    SmartDashboard.putString("Vision States", visionAuto.toString());
+    // SmartDashboard.putString("Vision States", visionAuto.toString());
     switch (visionAuto)
         {
         case CENTER_INIT:
@@ -1147,7 +1149,7 @@ DONE
 public static boolean switchOrScalePath (Position robotPosition)
 {
     // prints the current state for this autonomous path
-    System.out.println("Current State: " + currentSwitchOrScaleState);
+    // System.out.println("Current State: " + currentSwitchOrScaleState);
 
     switch (currentSwitchOrScaleState)
         {
@@ -1515,7 +1517,7 @@ public static boolean offsetSwitchPath ()
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.TURN2;
             break;
-            
+
         case TURN2:
             // Turn after driving parallel to the driver station wall
             if (grabData(GameDataType.SWITCH) == Position.LEFT)
@@ -1538,7 +1540,7 @@ public static boolean offsetSwitchPath ()
             if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.RAISE_ARM;
             break;
-            
+
         case RAISE_ARM:
 
             // tell the forklift to start raising up so we can drop off
@@ -1547,7 +1549,7 @@ public static boolean offsetSwitchPath ()
                     FORKLIFT_SPEED);
             currentOffsetSwitchState = OffsetSwitchPath.DRIVE3;
             break;
-            
+
         case DRIVE3:
             // Drive to the middle of the end of the switch
             if (Hardware.autoDrive.driveStraightInches(
@@ -1584,7 +1586,7 @@ public static boolean offsetSwitchPath ()
             if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 currentOffsetSwitchState = OffsetSwitchPath.DRIVE_WITH_ULTRSNC;
             break;
-            
+
         case DRIVE_WITH_ULTRSNC:
             // Drive towards the switch using the ultrasonic
             Hardware.autoDrive.driveStraight(DRIVE_SPEED, true);
@@ -1595,7 +1597,7 @@ public static boolean offsetSwitchPath ()
                 currentOffsetSwitchState = OffsetSwitchPath.BRAKE_B4_EJECT;
                 }
             break;
-            
+
         case BRAKE_B4_EJECT:
             // Brake after driving with the ultrasonic, before we eject the cube
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
