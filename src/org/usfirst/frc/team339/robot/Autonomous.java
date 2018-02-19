@@ -961,11 +961,7 @@ public static boolean centerSwitchPath ()
             if (Hardware.autoDrive.turnDegrees(90,
                     AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive
-                        .brake(BrakeType.AFTER_TURN) == true)
-                    {
-                    visionAuto = centerState.DRIVE_WITH_CAMERA;
-                    }
+                visionAuto = centerState.BRAKE_AFTER_RIGHT_TURN_2;
                 }
             break;
         case TURN_AGAIN_LEFT:
@@ -974,9 +970,43 @@ public static boolean centerSwitchPath ()
             if (Hardware.autoDrive.turnDegrees(90,
                     AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive
-                        .brake(BrakeType.AFTER_TURN) == true)
+                visionAuto = centerState.BRAKE_AFTER_LEFT_TURN_2;
+                }
+            break;
+        case BRAKE_AFTER_LEFT_TURN_2:
+            if (Hardware.autoDrive
+                    .brake(BrakeType.AFTER_TURN) == true)
+                {
+                // if we are using the camera, go into the drive with camera
+                // state
+                if (usingAutoCamera == true)
+                    {
                     visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    }
+                else
+                    {
+                    // if we are using the camera, drive to the switch with no
+                    // camera
+                    visionAuto = centerState.DRIVE_STRAIGHT_NO_CAMERA;
+                    }
+                }
+            break;
+        case BRAKE_AFTER_RIGHT_TURN_2:
+            if (Hardware.autoDrive
+                    .brake(BrakeType.AFTER_TURN) == true)
+                {
+                // if we are using the camera, go into the drive with camera
+                // state
+                if (usingAutoCamera == true)
+                    {
+                    visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    }
+                else
+                    {
+                    // if we are using the camera, drive to the switch with no
+                    // camera
+                    visionAuto = centerState.DRIVE_STRAIGHT_NO_CAMERA;
+                    }
                 }
             break;
         case DRIVE_WITH_CAMERA:
@@ -984,7 +1014,19 @@ public static boolean centerSwitchPath ()
             // sets state to LIFT
             if (Hardware.driveWithCamera.driveToSwitch(
                     AUTO_SPEED_VISION) == true)
+                {
+                Hardware.transmission.stop();
                 visionAuto = centerState.LIFT;
+                }
+            break;
+        case DRIVE_STRAIGHT_NO_CAMERA:
+            Hardware.autoDrive.driveStraight(AUTO_SPEED_VISION, false);
+            if (Hardware.frontUltraSonic
+                    .getDistanceFromNearestBumper() <= 15)
+                {
+                Hardware.transmission.stop();
+                visionAuto = centerState.LIFT;
+                }
             break;
         case LIFT:
             // moves the forklift to the scale height and holds it there
@@ -992,7 +1034,9 @@ public static boolean centerSwitchPath ()
             Hardware.transmission.stop();
             if (Hardware.cubeManipulator.setLiftPosition(
                     SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED) == true)
+                {
                 visionAuto = centerState.MAKE_DEPOSIT;
+                }
             break;
         case MAKE_DEPOSIT:
             // deposits cube on switch and sets state to DONE
@@ -1002,20 +1046,21 @@ public static boolean centerSwitchPath ()
             break;
         default: // prints that we reached the default case, then falls through
                  // to DONE
-            Hardware.transmission.stop();
             System.out.println(
                     "REACHED THE DEFAULT CASE FOR centerSwitchPath()");
         case DONE:
             // stops robot the robot, and return true so the main auto
             // switch machine knows this path is done
             Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE);
-            Hardware.autoDrive.driveInches(0, 0);
+            Hardware.transmission.stop();
             return true;
         }
     return false;
 }
 
 public static centerState visionAuto = centerState.CENTER_INIT;
+
+public static boolean usingAutoCamera = false;
 
 /**
  * Possible states for center vision autonomous
@@ -1067,11 +1112,11 @@ TURN_AGAIN_LEFT,
 /**
  * Right side auto, turn 90 degrees to the left
  */
-TURN_AGAIN_RIGHT,
+BRAKE_AFTER_LEFT_TURN_2, BRAKE_AFTER_RIGHT_TURN_2, TURN_AGAIN_RIGHT,
 /**
  * Drives with camera, then stops see driveToSwitch() in drive.
  */
-DRIVE_WITH_CAMERA,
+DRIVE_WITH_CAMERA, DRIVE_STRAIGHT_NO_CAMERA,
 /**
  * Raises the lift SWITCH_LIFT_HEIGHT
  */
