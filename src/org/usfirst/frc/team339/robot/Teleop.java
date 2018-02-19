@@ -195,20 +195,20 @@ public static void periodic ()
 
 
 
-    testingDrive();
+    // testingDrive();
 
-    if (Hardware.leftDriver.getY() < -.2
-            || Hardware.leftDriver.getY() > .2 &&
-                    Hardware.rightDriver.getY() > .2
-            || Hardware.rightDriver.getY() < -.2)
-        {
-        alignScale();
-        }
-    else
-        {
-
-        allowAlignment = false;
-        }
+    // if (Hardware.leftDriver.getY() < -.2
+    // || Hardware.leftDriver.getY() > .2 &&
+    // Hardware.rightDriver.getY() > .2
+    // || Hardware.rightDriver.getY() < -.2)
+    // {
+    // alignScale();
+    // }
+    // else
+    // {
+    //
+    // allowAlignment = false;
+    // }
 
     // testingDrive();
 

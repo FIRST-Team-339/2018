@@ -799,7 +799,7 @@ public void intakeUpdate ()
             intakeState = IntakeState.STOP;
             break;
         case PUSH_OUT:
-            this.intakeMotor.set(-INTAKE_SPEED);
+            this.intakeMotor.set(EJECT_SPEED);
             // Set to stop when they stop hitting the button.
             intakeState = IntakeState.STOP;
             break;
