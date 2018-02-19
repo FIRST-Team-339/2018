@@ -35,6 +35,7 @@ import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -520,18 +521,18 @@ public static boolean leftAutoLineExchangePath ()
             // brakes after driving
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 leftExchangeAuto = leftExchangeState.TIMER_DELAY_ONE;
                 }
             break;
 
         case TIMER_DELAY_ONE:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
                 }
             break;
@@ -554,18 +555,18 @@ public static boolean leftAutoLineExchangePath ()
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 leftExchangeAuto = leftExchangeState.TIMER_DELAY_TWO;
                 }
             break;
 
         case TIMER_DELAY_TWO:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
                 }
             break;
@@ -590,18 +591,18 @@ public static boolean leftAutoLineExchangePath ()
                 System.out.println(
                         "RightFront: " + Hardware.rightFrontDriveEncoder
                                 .getDistance());
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 leftExchangeAuto = leftExchangeState.TIMER_DELAY_THREE;
                 }
             break;
 
         case TIMER_DELAY_THREE:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.DRIVE_TO_EXCHANGE;
                 }
             break;
@@ -619,18 +620,18 @@ public static boolean leftAutoLineExchangePath ()
             // brake before deploying
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 leftExchangeAuto = leftExchangeState.DEPLOY;
                 }
             break;
 
         case TIMER_DELAY_FOUR:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
                 }
             break;
@@ -702,18 +703,18 @@ public static boolean rightAutoLineExchangePath ()
             // brakes after driving
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 rightExchangeAuto = rightExchangeState.TIMER_DELAY_ONE;
                 }
             break;
 
         case TIMER_DELAY_ONE:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
                 }
             break;
@@ -732,18 +733,18 @@ public static boolean rightAutoLineExchangePath ()
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 rightExchangeAuto = rightExchangeState.TIMER_DELAY_TWO;
                 }
             break;
 
         case TIMER_DELAY_TWO:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
                 ;
                 }
@@ -769,18 +770,18 @@ public static boolean rightAutoLineExchangePath ()
                 System.out.println(
                         "RightFront: " + Hardware.rightFrontDriveEncoder
                                 .getDistance());
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 rightExchangeAuto = rightExchangeState.TIMER_DELAY_THREE;
                 }
             break;
 
         case TIMER_DELAY_THREE:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
                 }
             break;
@@ -799,18 +800,18 @@ public static boolean rightAutoLineExchangePath ()
             // brake before deploying
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 rightExchangeAuto = rightExchangeState.TIMER_DELAY_FOUR;
                 }
             break;
 
         case TIMER_DELAY_FOUR:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 rightExchangeAuto = rightExchangeState.DEPLOY;
                 }
             break;
@@ -930,10 +931,13 @@ public static boolean centerSwitchPath ()
                             .getBrakeStoppingDistance(),
                     AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive
-                        .brake(BrakeType.AFTER_DRIVE) == true)
-                    visionAuto = centerState.TURN_AGAIN_LEFT;
+                visionAuto = centerState.BRAKE_3_L;
                 }
+            break;
+        case BRAKE_3_L:
+            if (Hardware.autoDrive
+                    .brake(BrakeType.AFTER_DRIVE) == true)
+                visionAuto = centerState.TURN_AGAIN_LEFT;
             break;
         case DRIVE_STRAIGHT_TO_SWITCH_RIGHT:
             // drive straight, switch is on the right then brakes
@@ -943,11 +947,14 @@ public static boolean centerSwitchPath ()
                             .getBrakeStoppingDistance(),
                     AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive
-                        .brake(BrakeType.AFTER_DRIVE) == true)
-                    {
-                    visionAuto = centerState.TURN_AGAIN_RIGHT;
-                    }
+                visionAuto = centerState.BRAKE_3_R;
+                }
+            break;
+        case BRAKE_3_R:
+            if (Hardware.autoDrive
+                    .brake(BrakeType.AFTER_DRIVE) == true)
+                {
+                visionAuto = centerState.TURN_AGAIN_RIGHT;
                 }
             break;
         case TURN_AGAIN_RIGHT:
@@ -955,11 +962,7 @@ public static boolean centerSwitchPath ()
             if (Hardware.autoDrive.turnDegrees(90,
                     AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive
-                        .brake(BrakeType.AFTER_TURN) == true)
-                    {
-                    visionAuto = centerState.DRIVE_WITH_CAMERA;
-                    }
+                visionAuto = centerState.BRAKE_AFTER_RIGHT_TURN_2;
                 }
             break;
         case TURN_AGAIN_LEFT:
@@ -968,9 +971,43 @@ public static boolean centerSwitchPath ()
             if (Hardware.autoDrive.turnDegrees(90,
                     AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive
-                        .brake(BrakeType.AFTER_TURN) == true)
+                visionAuto = centerState.BRAKE_AFTER_LEFT_TURN_2;
+                }
+            break;
+        case BRAKE_AFTER_LEFT_TURN_2:
+            if (Hardware.autoDrive
+                    .brake(BrakeType.AFTER_TURN) == true)
+                {
+                // if we are using the camera, go into the drive with camera
+                // state
+                if (usingAutoCamera == true)
+                    {
                     visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    }
+                else
+                    {
+                    // if we are using the camera, drive to the switch with no
+                    // camera
+                    visionAuto = centerState.DRIVE_STRAIGHT_NO_CAMERA;
+                    }
+                }
+            break;
+        case BRAKE_AFTER_RIGHT_TURN_2:
+            if (Hardware.autoDrive
+                    .brake(BrakeType.AFTER_TURN) == true)
+                {
+                // if we are using the camera, go into the drive with camera
+                // state
+                if (usingAutoCamera == true)
+                    {
+                    visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    }
+                else
+                    {
+                    // if we are using the camera, drive to the switch with no
+                    // camera
+                    visionAuto = centerState.DRIVE_STRAIGHT_NO_CAMERA;
+                    }
                 }
             break;
         case DRIVE_WITH_CAMERA:
@@ -978,7 +1015,19 @@ public static boolean centerSwitchPath ()
             // sets state to LIFT
             if (Hardware.driveWithCamera.driveToSwitch(
                     AUTO_SPEED_VISION) == true)
+                {
+                Hardware.transmission.stop();
                 visionAuto = centerState.LIFT;
+                }
+            break;
+        case DRIVE_STRAIGHT_NO_CAMERA:
+            Hardware.autoDrive.driveStraight(AUTO_SPEED_VISION, false);
+            if (Hardware.frontUltraSonic
+                    .getDistanceFromNearestBumper() <= 15)
+                {
+                Hardware.transmission.stop();
+                visionAuto = centerState.LIFT;
+                }
             break;
         case LIFT:
             // moves the forklift to the scale height and holds it there
@@ -986,7 +1035,9 @@ public static boolean centerSwitchPath ()
             Hardware.transmission.stop();
             if (Hardware.cubeManipulator.setLiftPosition(
                     SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED) == true)
+                {
                 visionAuto = centerState.MAKE_DEPOSIT;
+                }
             break;
         case MAKE_DEPOSIT:
             // deposits cube on switch and sets state to DONE
@@ -996,20 +1047,21 @@ public static boolean centerSwitchPath ()
             break;
         default: // prints that we reached the default case, then falls through
                  // to DONE
-            Hardware.transmission.stop();
             System.out.println(
                     "REACHED THE DEFAULT CASE FOR centerSwitchPath()");
         case DONE:
             // stops robot the robot, and return true so the main auto
             // switch machine knows this path is done
             Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE);
-            Hardware.autoDrive.driveInches(0, 0);
+            Hardware.transmission.stop();
             return true;
         }
     return false;
 }
 
 public static centerState visionAuto = centerState.CENTER_INIT;
+
+public static boolean usingAutoCamera = false;
 
 /**
  * Possible states for center vision autonomous
@@ -1029,6 +1081,7 @@ TURN_TOWARDS_LEFT_SIDE,
  * Right side auto, turns 90 degrees to the right
  */
 TURN_TOWARDS_RIGHT_SIDE,
+
 /**
  * Left side auto, brakes
  */
@@ -1046,17 +1099,25 @@ DRIVE_STRAIGHT_TO_SWITCH_LEFT,
  */
 DRIVE_STRAIGHT_TO_SWITCH_RIGHT,
 /**
+ * Brakes after DRIVE_STRAIGHT_TO_SWITCH_LEFT
+ */
+BRAKE_3_L,
+/**
+ * Brakes after DRIVE_STRAIGHT_TO_SWITCH_RIGHT
+ */
+BRAKE_3_R,
+/**
  * Left side auto, turn 90 degrees to the right
  */
 TURN_AGAIN_LEFT,
 /**
  * Right side auto, turn 90 degrees to the left
  */
-TURN_AGAIN_RIGHT,
+BRAKE_AFTER_LEFT_TURN_2, BRAKE_AFTER_RIGHT_TURN_2, TURN_AGAIN_RIGHT,
 /**
  * Drives with camera, then stops see driveToSwitch() in drive.
  */
-DRIVE_WITH_CAMERA,
+DRIVE_WITH_CAMERA, DRIVE_STRAIGHT_NO_CAMERA,
 /**
  * Raises the lift SWITCH_LIFT_HEIGHT
  */
@@ -1625,6 +1686,9 @@ private final static int DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE = 207;
 // AUTOLINE_EXCHANGE
 // distance required to drive back across the autoline before turning to go
 // towards the exchange
+
+public static final Timer delayForBrakeTimer = new Timer();
+
 private final static double DELAY_FOR_BRAKE_TIME = .2;
 
 private final static int DISTANCE_BACK_ACROSS_AUTOLINE = 100;

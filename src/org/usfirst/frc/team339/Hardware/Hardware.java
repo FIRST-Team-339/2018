@@ -302,7 +302,6 @@ public static MomentarySwitch climbButton = new MomentarySwitch(
 // ------------------------------------
 public static final Timer autoTimer = new Timer();
 
-public static final Timer delayForBrakeTimer = new Timer();
 
 
 
