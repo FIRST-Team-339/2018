@@ -111,26 +111,28 @@ public static void periodic ()
     // Align to scale
     if (Hardware.leftOperator.getRawButton(4) == true)
         {
+        Hardware.transmission.setForAutonomous();
         allowAlignment = true;
         Hardware.scaleAlignment.alignOverride = false;
 
-        if (Hardware.scaleAlignment.alignToScale(.3, 3))
+        if (Hardware.scaleAlignment.alignToScale(.3, 3,
+                Hardware.leftOperator.getRawButton(5)))
             {
-
+            Hardware.transmission
+                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+            allowAlignment = false;
             }
-        Hardware.transmission
-                .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-        allowAlignment = false;
+        else if (Hardware.scaleAlignment.alignToScale(.3, 3,
+                Hardware.leftOperator.getRawButton(5))
+                && Hardware.scaleAlignment.alignOverride == true)
+            {
+            Hardware.transmission
+                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+            allowAlignment = false;
+            }
         }
-    // override
-    if (Hardware.leftOperator.getRawButton(5))
-        {
-        allowAlignment = false;
-        Hardware.scaleAlignment.alignOverride = true;
-        Hardware.transmission
-                .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-        }
-    // End align to scale
+
+
 
     Hardware.cubeManipulator.intakeCube(
             Hardware.rightOperator.getTrigger(),
@@ -181,9 +183,9 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
-     Hardware.axisCamera
-     .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-     && Hardware.leftOperator.getRawButton(7));
+    Hardware.axisCamera
+            .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+                    && Hardware.leftOperator.getRawButton(7));
 
     // =================================================================
     // DRIVING CODE

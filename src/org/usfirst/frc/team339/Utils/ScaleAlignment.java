@@ -2,6 +2,7 @@ package org.usfirst.frc.team339.Utils;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
+import org.usfirst.frc.team339.robot.Robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ScaleAlignment
@@ -35,7 +36,8 @@ public ScaleAlignment (UltraSonic ultrasonic)
  * @author Conner McKevitt
  */
 
-public boolean alignToScale (double speed, double deadband)
+public boolean alignToScale (double speed, double deadband,
+        boolean override)
 {
     // Started align to scale
     // todo optimize deadband to distance
@@ -43,8 +45,14 @@ public boolean alignToScale (double speed, double deadband)
     // checks if in proper distance
 
     // ROBOT_TO_SCALE_DISTANCE 72-36 =36
+    if (override == true)
+        {
+        alignOverride = true;
+        }
     if (alignOverride == true)
         {
+        Hardware.transmission
+                .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
         aligned = false;
         return false;
         }
