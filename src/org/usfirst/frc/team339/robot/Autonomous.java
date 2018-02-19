@@ -931,10 +931,13 @@ public static boolean centerSwitchPath ()
                             .getBrakeStoppingDistance(),
                     AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive
-                        .brake(BrakeType.AFTER_DRIVE) == true)
-                    visionAuto = centerState.TURN_AGAIN_LEFT;
+                visionAuto = centerState.BRAKE_3_L;
                 }
+            break;
+        case BRAKE_3_L:
+            if (Hardware.autoDrive
+                    .brake(BrakeType.AFTER_DRIVE) == true)
+                visionAuto = centerState.TURN_AGAIN_LEFT;
             break;
         case DRIVE_STRAIGHT_TO_SWITCH_RIGHT:
             // drive straight, switch is on the right then brakes
@@ -944,11 +947,14 @@ public static boolean centerSwitchPath ()
                             .getBrakeStoppingDistance(),
                     AUTO_SPEED_VISION) == true)
                 {
-                if (Hardware.autoDrive
-                        .brake(BrakeType.AFTER_DRIVE) == true)
-                    {
-                    visionAuto = centerState.TURN_AGAIN_RIGHT;
-                    }
+                visionAuto = centerState.BRAKE_3_R;
+                }
+            break;
+        case BRAKE_3_R:
+            if (Hardware.autoDrive
+                    .brake(BrakeType.AFTER_DRIVE) == true)
+                {
+                visionAuto = centerState.TURN_AGAIN_RIGHT;
                 }
             break;
         case TURN_AGAIN_RIGHT:
@@ -1030,6 +1036,7 @@ TURN_TOWARDS_LEFT_SIDE,
  * Right side auto, turns 90 degrees to the right
  */
 TURN_TOWARDS_RIGHT_SIDE,
+
 /**
  * Left side auto, brakes
  */
@@ -1046,6 +1053,14 @@ DRIVE_STRAIGHT_TO_SWITCH_LEFT,
  * Right side auto, Drive the right side distance of (yet to be calculated)
  */
 DRIVE_STRAIGHT_TO_SWITCH_RIGHT,
+/**
+ * Brakes after DRIVE_STRAIGHT_TO_SWITCH_LEFT
+ */
+BRAKE_3_L,
+/**
+ * Brakes after DRIVE_STRAIGHT_TO_SWITCH_RIGHT
+ */
+BRAKE_3_R,
 /**
  * Left side auto, turn 90 degrees to the right
  */
