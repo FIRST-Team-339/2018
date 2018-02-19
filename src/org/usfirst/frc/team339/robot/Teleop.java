@@ -145,9 +145,9 @@ public static void periodic ()
                 .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
 
     if (Hardware.climbButton.isOnCheckNow() == true)
-        Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+        Hardware.climbingMechanismServo.set(1.0);
     else
-        Hardware.climbingMechanismServo.setAngle(0);
+        Hardware.climbingMechanismServo.set(0.0);
 
     // update for the cube manipulator (forklift, intake, etc.) and its state
     // machines
