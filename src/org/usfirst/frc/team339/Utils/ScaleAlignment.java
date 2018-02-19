@@ -78,7 +78,6 @@ public boolean alignToScale (double speed, double deadband,
             aligned = false;
             return true;
             }
-
         Hardware.cubeManipulator.scoreScale();
         }
     // if to far from scale
