@@ -99,7 +99,7 @@ public boolean alignToScale (double speed, double deadband)
     return false;
 }
 
-public String RelativeScale;
+public String RelativeScale = "";
 
 public boolean alignOverride = false;
 
