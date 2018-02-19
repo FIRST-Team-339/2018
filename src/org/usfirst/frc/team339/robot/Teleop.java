@@ -468,12 +468,12 @@ public static void printStatements ()
     // =================================
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    // SmartDashboard.putNumber("R Drive Motor",
-    // Hardware.rightDriveMotor.get());
+    SmartDashboard.putNumber("R Drive Motor",
+            Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    // SmartDashboard.putNumber("L Drive Motor",
-    // Hardware.leftDriveMotor.get());
+    SmartDashboard.putNumber("L Drive Motor",
+            Hardware.leftDriveMotor.get());
 
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     SmartDashboard.putNumber("Lifting Motor",
@@ -512,8 +512,8 @@ public static void printStatements ()
     // else
     // System.out.println(
     // "Disable = on");
-    SmartDashboard.putBoolean("Disable SW",
-            Hardware.disableAutonomousSwitch.isOn());
+    // SmartDashboard.putBoolean("Disable SW",
+    // Hardware.disableAutonomousSwitch.isOn());
 
     // if (Hardware.leftAutoSwitch.isOn() == false)
     // System.out.println(
@@ -521,8 +521,8 @@ public static void printStatements ()
     // else
     // System.out.println(
     // "Left = on");
-    SmartDashboard.putBoolean("L Auto SW",
-            Hardware.leftAutoSwitch.isOn());
+    // SmartDashboard.putBoolean("L Auto SW",
+    // Hardware.leftAutoSwitch.isOn());
     //
     // if (Hardware.rightAutoSwitch.isOn() == false)
     // System.out.println(
@@ -530,13 +530,13 @@ public static void printStatements ()
     // else
     // System.out.println(
     // "Right = on");
-    SmartDashboard.putBoolean("R Auto SW",
-            Hardware.rightAutoSwitch.isOn());
+    // SmartDashboard.putBoolean("R Auto SW",
+    // Hardware.rightAutoSwitch.isOn());
     //
     // System.out.println("6 pos = "
     // + Hardware.autoSixPosSwitch.getPosition());
-    SmartDashboard.putNumber("6 Pos Switch",
-            Hardware.autoSixPosSwitch.getPosition());
+    // SmartDashboard.putNumber("6 Pos Switch",
+    // Hardware.autoSixPosSwitch.getPosition());
 
     // ---------------------------------
     // Encoders
@@ -657,8 +657,8 @@ public static void printStatements ()
     // ---------------------------------
     // Sonar/UltraSonic
     // ---------------------------------
-    SmartDashboard.putNumber("Rear Ultrasonic distance",
-            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    // SmartDashboard.putNumber("Rear Ultrasonic distance",
+    // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
@@ -753,11 +753,26 @@ public static void printStatements ()
 
     // ---------------------------------
     // Final SmartDasboard
-    // code values we want on the final dashboard layout we use during matches
+    // code for values we want on the final dashboard layout we use during
+    // matches
     // ---------------------------------
+
+    // set of if elses to properly set the two boolean boxes on the
+    // SmartDashboard that are used to track the status of the cube. On the
+    // actual SmartDashboard, the boolean boxes are layered so between the two
+    // of them, the layered box is green when we have a cube, red when we are
+    // intaking a cube, and transparent if we don't have a cube and are not
+    // intaking
     if (Hardware.cubeManipulator.hasCube() == true)
         {
+        // SmartDashboard value that is used to tell whether or not we have a
+        // cube; true sets the boolean box to green; false sets the boolean box
+        // to transparent
         SmartDashboard.putBoolean("Has Cube", true);
+        // SmartDashboard value that tracks if the intake is intaking; has the
+        // the same key as the cube one, except with a space at the end, for
+        // aesthetic reasons when it shows up on the SmartDashboard; true sets
+        // the box to red; false sets the box to transparent
         SmartDashboard.putBoolean("Has Cube ", false);
 
         }
@@ -771,12 +786,16 @@ public static void printStatements ()
                           * .2000001 or something
                           */)
         {
+        // sets the boolean box to transparent
         SmartDashboard.putBoolean("Has Cube", false);
+        // sets the other boolean box to red
         SmartDashboard.putBoolean("Has Cube ", true);
         }
     else
         {
+        // sets the boolean box to transparent
         SmartDashboard.putBoolean("Has Cube", false);
+        // sets the other boolean box to transparent
         SmartDashboard.putBoolean("Has Cube ", false);
         }
 
