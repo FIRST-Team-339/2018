@@ -197,18 +197,9 @@ public static void periodic ()
 
     // testingDrive();
 
-    // if (Hardware.leftDriver.getY() < -.2
-    // || Hardware.leftDriver.getY() > .2 &&
-    // Hardware.rightDriver.getY() > .2
-    // || Hardware.rightDriver.getY() < -.2)
-    // {
+
     // alignScale();
-    // }
-    // else
-    // {
-    //
-    // allowAlignment = false;
-    // }
+
 
     // testingDrive();
 
