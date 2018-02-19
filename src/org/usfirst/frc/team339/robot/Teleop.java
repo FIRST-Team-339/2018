@@ -149,7 +149,6 @@ public static void periodic ()
     else
         Hardware.climbingMechanismServo.setAngle(0);
 
-
     // update for the cube manipulator (forklift, intake, etc.) and its state
     // machines
     Hardware.cubeManipulator.masterUpdate();
@@ -192,28 +191,12 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-
-
-
     testingDrive();
-
-
     alignScale();
-
-
-
-
-
-    // testingDrive();
-
-
-
     // liftTest();
     // beckyTest();
 
 } // end Periodic()
-
-private static boolean inAligning = true;
 
 private static boolean allowAlignment = false;
 
@@ -223,15 +206,8 @@ private static boolean isTestingEncoderTurn = false;
 
 private static int driveState = 0;
 
-
 public static void alignScale ()
 {
-    SmartDashboard.putString("Relative to scale",
-            Hardware.scaleAlignment.RelativeScale);
-
-    SmartDashboard.putNumber("RearUltraSonic",
-            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-
     if (Hardware.leftOperator.getRawButton(4) == true)
         {
         allowAlignment = true;
@@ -268,10 +244,7 @@ public static void alignScale ()
             allowAlignment = false;
             }
         }
-
-
 }
-
 
 private static boolean isBeckyTest = false;
 
@@ -314,8 +287,6 @@ private static void beckyTest ()
     // Hardware.ringLightRelay.setDirection(Direction.kReverse);
     // }
 
-
-
     // if (Hardware.leftOperator.getRawButton(7))
     // {
     // Hardware.ringLightRelay.set(Value.kForward);
@@ -324,7 +295,6 @@ private static void beckyTest ()
     // {
     // Hardware.ringLightRelay.set(Value.kReverse);
     // }
-
 
     // Hardware.axisCamera.saveImage(ImageType.RAW);
 
@@ -457,6 +427,15 @@ private static void liftTest ()
  */
 public static void printStatements ()
 {
+    // ==================================
+    // Scale Alignment
+    // ==================================
+    SmartDashboard.putString("Relative to scale",
+            Hardware.scaleAlignment.RelativeScale);
+
+    SmartDashboard.putNumber("RearUltraSonic",
+            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+
     // =================================
     // Motor
     // Prints the value of motors

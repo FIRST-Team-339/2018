@@ -9,8 +9,6 @@ public class ScaleAlignment
 
 private UltraSonic rearUltrasonic = null;
 
-
-
 /**
  * Creates AlignToScale object
  *
@@ -21,10 +19,7 @@ private UltraSonic rearUltrasonic = null;
  */
 public ScaleAlignment (UltraSonic ultrasonic)
 {
-
-
     this.rearUltrasonic = ultrasonic;
-
 }
 
 /**
@@ -76,7 +71,6 @@ public boolean alignToScale (double speed, double deadband)
             return true;
             }
 
-
         Hardware.cubeManipulator.scoreScale();
         }
     // if to far from scale
@@ -121,5 +115,4 @@ private static final double ROBOT_LENGTH_WITH_CUBE = 48;
 // 24
 private static final double ROBOT_TO_SCALE_DISTANCE = SCALE_TO_WALL_DISTANCE
         - ROBOT_LENGTH_WITH_CUBE;
-
 }
