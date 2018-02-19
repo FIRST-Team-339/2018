@@ -62,6 +62,7 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
+import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**
@@ -286,6 +287,13 @@ public void robotInit ()
                 KILROY_XIX_BRAKE_TURN_DEADBAND, BrakeType.AFTER_TURN);
         Hardware.autoDrive.setDriveStraightConstant(
                 KILROY_XIX_DRIVESTRAIGHT_CONSTANT);
+
+        Hardware.USBCam.setResolution(320, 240);
+        Hardware.USBCam.setFPS(20);
+        Hardware.USBCam.setPixelFormat(VideoMode.PixelFormat.kYUYV);
+        Hardware.USBCamUp.setResolution(320, 240);
+        Hardware.USBCamUp.setFPS(20);
+        Hardware.USBCamUp.setPixelFormat(VideoMode.PixelFormat.kYUYV);
         } // end if
     else
         {
