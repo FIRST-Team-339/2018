@@ -257,6 +257,13 @@ public static VisionProcessor axisCamera = new VisionProcessor(
 public static UsbCamera USBCam = CameraServer.getInstance()
         .startAutomaticCapture(0);
 
+// -------------------------------------
+// declare the USB camera server and the
+// USB camera it serves at the same time
+// -------------------------------------
+public static UsbCamera USBCamUp = CameraServer.getInstance()
+        .startAutomaticCapture(1);
+
 // **********************************************************
 // DRIVER STATION CLASSES
 // **********************************************************
