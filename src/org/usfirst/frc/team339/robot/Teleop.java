@@ -462,11 +462,11 @@ public static void printStatements ()
     // ==================================
     // Scale Alignment
     // ==================================
-    SmartDashboard.putString("Relative to scale",
-            Hardware.scaleAlignment.RelativeScale);
+    // SmartDashboard.putString("Relative to scale",
+    // Hardware.scaleAlignment.RelativeScale);
 
-    SmartDashboard.putNumber("RearUltraSonic",
-            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+    // SmartDashboard.putNumber("RearUltraSonic",
+    // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
     // =================================
     // Motor
@@ -474,25 +474,25 @@ public static void printStatements ()
     // =================================
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    SmartDashboard.putNumber("R Drive Motor",
-            Hardware.rightDriveMotor.get());
+    // SmartDashboard.putNumber("R Drive Motor",
+    // Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    SmartDashboard.putNumber("L Drive Motor",
-            Hardware.leftDriveMotor.get());
+    // SmartDashboard.putNumber("L Drive Motor",
+    // Hardware.leftDriveMotor.get());
 
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    SmartDashboard.putNumber("Lifting Motor",
-            Hardware.liftingMotor.get());
+    // SmartDashboard.putNumber("Lifting Motor",
+    // Hardware.liftingMotor.get());
 
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    SmartDashboard.putNumber("Cube Motor",
-            Hardware.cubeIntakeMotor.get());
+    // SmartDashboard.putNumber("Cube Motor",
+    // Hardware.cubeIntakeMotor.get());
     // System.out.println(
     // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-    SmartDashboard.putNumber("Intake Deploy Motor",
-            Hardware.intakeDeployArm.get());
+    // SmartDashboard.putNumber("Intake Deploy Motor",
+    // Hardware.intakeDeployArm.get());
     // =================================
     // CAN items
     // prints value of the CAN controllers
@@ -620,8 +620,8 @@ public static void printStatements ()
     // Hardware.leftRedLight.isOn());
     // System.out.println(
     // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
-    SmartDashboard.putBoolean("Photo SW",
-            Hardware.cubePhotoSwitch.isOn());
+    // SmartDashboard.putBoolean("Photo SW",
+    // Hardware.cubePhotoSwitch.isOn());
 
     // =================================
     // Pneumatics
