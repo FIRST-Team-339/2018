@@ -482,14 +482,7 @@ public boolean scoreScale ()
             scaleState.toString());
     switch (scaleState)
         {
-        // If the intake has not been deployed already, then do so.
-        case DEPLOY_INTAKE:
-            System.out.println("Deploying intake");
-            if (deployCubeIntake(false) == true)
-                {
-                scaleState = scoreScaleState.MOVE_LIFT;
-                }
-            break;
+
         // Move the lift to the scale height, and move on when it's finished
         case MOVE_LIFT:
 

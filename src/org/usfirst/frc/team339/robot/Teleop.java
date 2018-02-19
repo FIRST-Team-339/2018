@@ -108,6 +108,30 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
+    // Align to scale
+    if (Hardware.leftOperator.getRawButton(4) == true)
+        {
+        allowAlignment = true;
+        Hardware.scaleAlignment.alignOverride = false;
+
+        if (Hardware.scaleAlignment.alignToScale(.3, 3))
+            {
+
+            }
+        Hardware.transmission
+                .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+        allowAlignment = false;
+        }
+    // override
+    if (Hardware.leftOperator.getRawButton(5))
+        {
+        allowAlignment = false;
+        Hardware.scaleAlignment.alignOverride = true;
+        Hardware.transmission
+                .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+        }
+    // End align to scale
+
     Hardware.cubeManipulator.intakeCube(
             Hardware.rightOperator.getTrigger(),
             Hardware.rightOperator.getRawButton(2));
@@ -145,9 +169,9 @@ public static void periodic ()
                 .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
 
     if (Hardware.climbButton.isOnCheckNow() == true)
-        Hardware.climbingMechanismServo.setAngle(CLIMBING_SERVO_ANGLE);
+        Hardware.climbingMechanismServo.set(1.0);
     else
-        Hardware.climbingMechanismServo.setAngle(0);
+        Hardware.climbingMechanismServo.set(0.0);
 
     // update for the cube manipulator (forklift, intake, etc.) and its state
     // machines
@@ -192,20 +216,11 @@ public static void periodic ()
     // code will not be a part of the final teleop
     // -------------------------------------------
 
-
-
-
     // testingDrive();
-
 
     alignScale();
 
-
     // testingDrive();
-
-
-
-
     // liftTest();
     // beckyTest();
 
@@ -221,42 +236,42 @@ private static int driveState = 0;
 
 public static void alignScale ()
 {
-    if (Hardware.leftOperator.getRawButton(4) == true)
-        {
-        allowAlignment = true;
-        Hardware.scaleAlignment.alignOverride = false;
-        }
-    // override
-    if (Hardware.leftOperator.getRawButton(5))
-        {
-        allowAlignment = false;
-        Hardware.scaleAlignment.alignOverride = true;
-        Hardware.transmission
-                .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-        System.out.println("Stopped scale alignment");
-        }
-
-    if (allowAlignment == true)
-        {
-
-        Hardware.transmission.setForAutonomous();
-        if (Hardware.scaleAlignment.alignToScale(.3, 3)
-                && Hardware.scaleAlignment.alignOverride == false)
-            {
-            System.out.println("aligned to scale");
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        else if (Hardware.scaleAlignment.alignToScale(.3, 3) == false
-                && Hardware.scaleAlignment.alignOverride == true)
-            {
-            System.out.println("Overrode align to scale");
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
+    // if (Hardware.leftOperator.getRawButton(4) == true)
+    // {
+    // allowAlignment = true;
+    // Hardware.scaleAlignment.alignOverride = false;
+    // }
+    // // override
+    // if (Hardware.leftOperator.getRawButton(5))
+    // {
+    // allowAlignment = false;
+    // Hardware.scaleAlignment.alignOverride = true;
+    // Hardware.transmission
+    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+    // System.out.println("Stopped scale alignment");
+    // }
+    //
+    // if (allowAlignment == true)
+    // {
+    //
+    // Hardware.transmission.setForAutonomous();
+    // if (Hardware.scaleAlignment.alignToScale(.3, 3)
+    // && Hardware.scaleAlignment.alignOverride == false)
+    // {
+    // System.out.println("aligned to scale");
+    // Hardware.transmission
+    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // else if (Hardware.scaleAlignment.alignToScale(.3, 3) == false
+    // && Hardware.scaleAlignment.alignOverride == true)
+    // {
+    // System.out.println("Overrode align to scale");
+    // Hardware.transmission
+    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // }
 }
 
 private static boolean isBeckyTest = false;
