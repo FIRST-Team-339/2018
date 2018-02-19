@@ -331,7 +331,7 @@ public void robotInit ()
     // ---------------------------------
     // Sets the angle of the servo to 100
     // ---------------------------------
-    Hardware.climbingMechanismServo.set(1.0);
+    Hardware.climbingMechanismServo.set(CLIMB_SERVO_INIT_POSITION);
 
     // ---------------------------------
     // sets the ring light to off
@@ -501,6 +501,14 @@ private static final int KILROY_XIX_BRAKE_DRIVE_DEADBAND = 10;
 private static final double KILROY_XIX_DRIVESTRAIGHT_CONSTANT = .016;
 
 private static final int KILROY_XIX_US_DISTANCE_FROM_BUMPER = 3;
+
+
+// Servo Constants
+// position the climb servo starts in
+public static final double CLIMB_SERVO_INIT_POSITION = 1.0;
+
+// position the climb servo goes to when the root is climbing
+public static final double CLIMB_SERVO_CLIMB_POISITION = 0.0;
 
 } // end class
 

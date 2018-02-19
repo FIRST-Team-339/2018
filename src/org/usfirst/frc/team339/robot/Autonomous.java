@@ -35,6 +35,7 @@ import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -520,18 +521,18 @@ public static boolean leftAutoLineExchangePath ()
             // brakes after driving
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 leftExchangeAuto = leftExchangeState.TIMER_DELAY_ONE;
                 }
             break;
 
         case TIMER_DELAY_ONE:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
                 }
             break;
@@ -554,18 +555,18 @@ public static boolean leftAutoLineExchangePath ()
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 leftExchangeAuto = leftExchangeState.TIMER_DELAY_TWO;
                 }
             break;
 
         case TIMER_DELAY_TWO:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
                 }
             break;
@@ -590,18 +591,18 @@ public static boolean leftAutoLineExchangePath ()
                 System.out.println(
                         "RightFront: " + Hardware.rightFrontDriveEncoder
                                 .getDistance());
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 leftExchangeAuto = leftExchangeState.TIMER_DELAY_THREE;
                 }
             break;
 
         case TIMER_DELAY_THREE:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.DRIVE_TO_EXCHANGE;
                 }
             break;
@@ -619,18 +620,18 @@ public static boolean leftAutoLineExchangePath ()
             // brake before deploying
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 leftExchangeAuto = leftExchangeState.DEPLOY;
                 }
             break;
 
         case TIMER_DELAY_FOUR:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 leftExchangeAuto = leftExchangeState.TURN_90_DEGREES_RIGHT;
                 }
             break;
@@ -702,18 +703,18 @@ public static boolean rightAutoLineExchangePath ()
             // brakes after driving
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 rightExchangeAuto = rightExchangeState.TIMER_DELAY_ONE;
                 }
             break;
 
         case TIMER_DELAY_ONE:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 rightExchangeAuto = rightExchangeState.DRIVE_BACK_ACROSS_AUTOLINE;
                 }
             break;
@@ -732,18 +733,18 @@ public static boolean rightAutoLineExchangePath ()
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 rightExchangeAuto = rightExchangeState.TIMER_DELAY_TWO;
                 }
             break;
 
         case TIMER_DELAY_TWO:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 rightExchangeAuto = rightExchangeState.TURN_90_DEGREES_LEFT;
                 ;
                 }
@@ -769,18 +770,18 @@ public static boolean rightAutoLineExchangePath ()
                 System.out.println(
                         "RightFront: " + Hardware.rightFrontDriveEncoder
                                 .getDistance());
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 rightExchangeAuto = rightExchangeState.TIMER_DELAY_THREE;
                 }
             break;
 
         case TIMER_DELAY_THREE:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 rightExchangeAuto = rightExchangeState.DRIVE_TO_EXCHANGE;
                 }
             break;
@@ -799,18 +800,18 @@ public static boolean rightAutoLineExchangePath ()
             // brake before deploying
             if (Hardware.autoDrive.brake(BrakeType.AFTER_DRIVE) == true)
                 {
-                Hardware.delayForBrakeTimer.reset();
-                Hardware.delayForBrakeTimer.start();
+                delayForBrakeTimer.reset();
+                delayForBrakeTimer.start();
                 rightExchangeAuto = rightExchangeState.TIMER_DELAY_FOUR;
                 }
             break;
 
         case TIMER_DELAY_FOUR:
             // wait for the timer to be greater than the DELAY_FOR_BRAKE_TIME
-            if (Hardware.delayForBrakeTimer
+            if (delayForBrakeTimer
                     .get() > DELAY_FOR_BRAKE_TIME)
                 {
-                Hardware.delayForBrakeTimer.stop();
+                delayForBrakeTimer.stop();
                 rightExchangeAuto = rightExchangeState.DEPLOY;
                 }
             break;
@@ -1685,6 +1686,9 @@ private final static int DISTANCE_TO_CROSS_AUTOLINE_AND_GO_TO_SCALE = 207;
 // AUTOLINE_EXCHANGE
 // distance required to drive back across the autoline before turning to go
 // towards the exchange
+
+public static final Timer delayForBrakeTimer = new Timer();
+
 private final static double DELAY_FOR_BRAKE_TIME = .2;
 
 private final static int DISTANCE_BACK_ACROSS_AUTOLINE = 100;
