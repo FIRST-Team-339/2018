@@ -191,8 +191,21 @@ public static void periodic ()
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
     // -------------------------------------------
-    testingDrive();
+
+
+
+
+    // testingDrive();
+
+
     alignScale();
+
+
+    // testingDrive();
+
+
+
+
     // liftTest();
     // beckyTest();
 
