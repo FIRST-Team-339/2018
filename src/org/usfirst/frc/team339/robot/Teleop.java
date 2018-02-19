@@ -169,9 +169,9 @@ public static void periodic ()
                 .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
 
     if (Hardware.climbButton.isOnCheckNow() == true)
-        Hardware.climbingMechanismServo.set(1.0);
-    else
         Hardware.climbingMechanismServo.set(0.0);
+    else
+        Hardware.climbingMechanismServo.set(1.0);
 
     // update for the cube manipulator (forklift, intake, etc.) and its state
     // machines
@@ -181,9 +181,9 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
-     Hardware.axisCamera
-     .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-     && Hardware.leftOperator.getRawButton(7));
+    Hardware.axisCamera
+            .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+                    && Hardware.leftOperator.getRawButton(7));
 
     // =================================================================
     // DRIVING CODE

@@ -331,7 +331,7 @@ public void robotInit ()
     // ---------------------------------
     // Sets the angle of the servo to 100
     // ---------------------------------
-    Hardware.climbingMechanismServo.set(0.0);
+    Hardware.climbingMechanismServo.set(1.0);
 
     // ---------------------------------
     // sets the ring light to off
