@@ -198,7 +198,7 @@ public static void periodic ()
     // testingDrive();
 
 
-    // alignScale();
+    alignScale();
 
 
     // testingDrive();
