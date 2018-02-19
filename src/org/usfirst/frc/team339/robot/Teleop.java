@@ -538,7 +538,7 @@ public static void printStatements ()
     // "Right = on");
     // SmartDashboard.putBoolean("R Auto SW",
     // Hardware.rightAutoSwitch.isOn());
-    //
+
     // System.out.println("6 pos = "
     // + Hardware.autoSixPosSwitch.getPosition());
     // SmartDashboard.putNumber("6 Pos Switch",
