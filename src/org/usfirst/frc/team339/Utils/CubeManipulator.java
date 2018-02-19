@@ -914,7 +914,7 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 // --------------------CONSTANTS--------------------
 
 // ================FORKLIFT================
-private final double FORKLIFT_MAX_HEIGHT = 76.5;
+private final double FORKLIFT_MAX_HEIGHT = 70;
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .25;
 
@@ -932,7 +932,7 @@ private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 
 public final static double SWITCH_HEIGHT = 33.0;
 
-public final static double SCALE_HEIGHT = 76.5;
+public final static double SCALE_HEIGHT = 70;
 // =========================================
 
 // ================INTAKE===================
@@ -945,7 +945,7 @@ public final double INTAKE_STOP_WITH_CUBE = .1;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
-private final double INTAKE_DEPLOY_TICKS = 190;
+private final double INTAKE_DEPLOY_TICKS = 245;
 
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 10.0;
