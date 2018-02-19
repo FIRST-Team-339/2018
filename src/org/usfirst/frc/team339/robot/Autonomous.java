@@ -189,7 +189,6 @@ public static void periodic ()
                         autoState = State.AUTOLINE_EXCHANGE_R;
                     break;
                 case 3:
-                    System.out.println("Center Switch selected");
                     // start in the middle between the two switch sides;
                     // use vision and game data to drive to the correct switch
                     // side and drop off the cube
