@@ -109,28 +109,28 @@ public static void periodic ()
     // =================================================================
 
     // Align to scale
-    if (Hardware.leftOperator.getRawButton(4) == true)
-        {
-        Hardware.transmission.setForAutonomous();
-        allowAlignment = true;
-        Hardware.scaleAlignment.alignOverride = false;
-
-        if (Hardware.scaleAlignment.alignToScale(.3, 3,
-                Hardware.leftOperator.getRawButton(5)))
-            {
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        else if (Hardware.scaleAlignment.alignToScale(.3, 3,
-                Hardware.leftOperator.getRawButton(5))
-                && Hardware.scaleAlignment.alignOverride == true)
-            {
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
+    // if (Hardware.leftOperator.getRawButton(4) == true)
+    // {
+    // Hardware.transmission.setForAutonomous();
+    // allowAlignment = true;
+    // Hardware.scaleAlignment.alignOverride = false;
+    //
+    // if (Hardware.scaleAlignment.alignToScale(.3, 3,
+    // Hardware.leftOperator.getRawButton(5)))
+    // {
+    // Hardware.transmission
+    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // else if (Hardware.scaleAlignment.alignToScale(.3, 3,
+    // Hardware.leftOperator.getRawButton(5))
+    // && Hardware.scaleAlignment.alignOverride == true)
+    // {
+    // Hardware.transmission
+    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // }
 
 
 
@@ -201,11 +201,11 @@ public static void periodic ()
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
     //
-    if (isTestingDrive == false && allowAlignment == false
-            && isBeckyTest == false
-            && isTestingEncoderTurn == false)
-        Hardware.transmission.drive(Hardware.leftDriver,
-                Hardware.rightDriver);
+    // if (isTestingDrive == false && allowAlignment == false
+    // && isBeckyTest == false
+    // && isTestingEncoderTurn == false)
+    Hardware.transmission.drive(Hardware.leftDriver,
+            Hardware.rightDriver);
     // update
 
     // ------------------------------------
@@ -222,7 +222,7 @@ public static void periodic ()
 
     // testingDrive();
 
-    alignScale();
+    // alignScale();
 
     // testingDrive();
     // liftTest();
