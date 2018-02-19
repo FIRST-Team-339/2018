@@ -149,7 +149,6 @@ public static void periodic ()
     else
         Hardware.climbingMechanismServo.setAngle(0);
 
-
     // update for the cube manipulator (forklift, intake, etc.) and its state
     // machines
     Hardware.cubeManipulator.masterUpdate();
@@ -195,22 +194,15 @@ public static void periodic ()
 
 
 
-    testingDrive();
-
-    if (Hardware.leftDriver.getY() < -.2
-            || Hardware.leftDriver.getY() > .2 &&
-                    Hardware.rightDriver.getY() > .2
-            || Hardware.rightDriver.getY() < -.2)
-        {
-        alignScale();
-        }
-    else
-        {
-
-        allowAlignment = false;
-        }
 
     // testingDrive();
+
+
+    alignScale();
+
+
+    // testingDrive();
+
 
 
 
@@ -218,8 +210,6 @@ public static void periodic ()
     // beckyTest();
 
 } // end Periodic()
-
-private static boolean inAligning = true;
 
 private static boolean allowAlignment = false;
 
@@ -229,20 +219,14 @@ private static boolean isTestingEncoderTurn = false;
 
 private static int driveState = 0;
 
-
 public static void alignScale ()
 {
-    SmartDashboard.putString("Relative to scale",
-            Hardware.scaleAlignment.RelativeScale);
-
-    SmartDashboard.putNumber("RearUltraSonic",
-            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-
     if (Hardware.leftOperator.getRawButton(4) == true)
         {
         allowAlignment = true;
         Hardware.scaleAlignment.alignOverride = false;
         }
+    // override
     if (Hardware.leftOperator.getRawButton(5))
         {
         allowAlignment = false;
@@ -273,10 +257,7 @@ public static void alignScale ()
             allowAlignment = false;
             }
         }
-
-
 }
-
 
 private static boolean isBeckyTest = false;
 
@@ -319,8 +300,6 @@ private static void beckyTest ()
     // Hardware.ringLightRelay.setDirection(Direction.kReverse);
     // }
 
-
-
     // if (Hardware.leftOperator.getRawButton(7))
     // {
     // Hardware.ringLightRelay.set(Value.kForward);
@@ -329,7 +308,6 @@ private static void beckyTest ()
     // {
     // Hardware.ringLightRelay.set(Value.kReverse);
     // }
-
 
     // Hardware.axisCamera.saveImage(ImageType.RAW);
 
@@ -462,6 +440,15 @@ private static void liftTest ()
  */
 public static void printStatements ()
 {
+    // ==================================
+    // Scale Alignment
+    // ==================================
+    SmartDashboard.putString("Relative to scale",
+            Hardware.scaleAlignment.RelativeScale);
+
+    SmartDashboard.putNumber("RearUltraSonic",
+            Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+
     // =================================
     // Motor
     // Prints the value of motors

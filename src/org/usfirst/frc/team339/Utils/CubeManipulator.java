@@ -132,7 +132,6 @@ public void moveForkliftWithController (double speed,
             forkliftTargetSpeed = speed * FORKLIFT_DOWN_JOYSTICK_SCALAR;
         this.liftState = ForkliftState.MOVE_JOY;
         }
-
 }
 
 /**
@@ -209,7 +208,6 @@ public double getIntakeAngle ()
     return this.intakeDeployEncoder.get();
 }
 
-
 /**
  * Gets the speed the motor is being SET TO (in the code, not what is physically
  * happening on the robot)
@@ -270,7 +268,6 @@ public boolean deployCubeIntake (boolean override)
     return false; // returns false if we haven't finished deploying
 }
 
-
 /**
  * Draws the cube intake mechanism back into the robot if it the mechanism
  * is not already deployed
@@ -329,7 +326,6 @@ public boolean isIntakeDeployed ()
 {
     return deployIntakeState == DeployState.DEPLOYED;
 }
-
 
 /**
  * Intakes the cube if the light sensor finds we don't have a cube. If we do,
@@ -536,8 +532,6 @@ public boolean scoreScale ()
     return false;
 }
 
-
-
 // ===================== Update Methods ========================
 
 /**
@@ -561,7 +555,6 @@ public void masterUpdate ()
     // update the intake/ PushOut cube state machines
     intakeUpdate();
 }
-
 
 /**
  * For use in teleop and autonomous periodic.
@@ -661,8 +654,6 @@ public void forkliftUpdate ()
         }
 }
 
-
-
 /**
  * Update method for the deployIntake functions. Allows the deployIntake
  * code to use their state machine. deployIntake and related functions
@@ -707,7 +698,6 @@ public void deployIntakeUpdate ()
         case DEPLOYED:
             this.intakeDeployMotor.set(0.0);
             break;
-
 
         // brings the intake mechanism back into the robot, and sets the
         // state to NOT_DEPLOYED
@@ -764,7 +754,6 @@ public void deployIntakeUpdate ()
             this.intakeDeployMotor.stopMotor();
             break;
         }
-
 }
 
 /**
@@ -799,7 +788,7 @@ public void intakeUpdate ()
             intakeState = IntakeState.STOP;
             break;
         case PUSH_OUT:
-            this.intakeMotor.set(-INTAKE_SPEED);
+            this.intakeMotor.set(EJECT_SPEED);
             // Set to stop when they stop hitting the button.
             intakeState = IntakeState.STOP;
             break;
@@ -823,7 +812,6 @@ public void intakeUpdate ()
 
 // ===================== End Update Methods Section ========================
 
-
 /**
  * Cuts the power to all motors.
  */
@@ -833,8 +821,6 @@ public void stopEverything ()
     stopIntake();
     intakeDeployMotor.stopMotor();
 }
-
-
 
 /**
  * List of states used when updating the forklift position
@@ -893,8 +879,6 @@ MOVE_LIFT, DEPLOY_INTAKE, SPIT_OUT_CUBE, FINISHED, OVERRIDE
 // --------------------VARIABLES--------------------
 
 // ================Override Related================
-
-
 
 // ================FORKLIFT================
 // Used in forkliftUpdate()
