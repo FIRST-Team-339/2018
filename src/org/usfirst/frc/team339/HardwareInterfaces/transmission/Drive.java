@@ -1221,7 +1221,7 @@ private boolean turnDegrees2StageInit = true;
 
 private double turnDegreesTriggerStage = 40;// Degrees
 
-private double turnDegrees2ndStagePower = .1;
+private double turnDegrees2ndStagePower = .18;
 
 // ---------------------------------
 // THis is the distance we expect to move
