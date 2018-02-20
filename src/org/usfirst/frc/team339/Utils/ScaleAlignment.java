@@ -23,8 +23,64 @@ public ScaleAlignment (UltraSonic ultrasonic)
     this.rearUltrasonic = ultrasonic;
 }
 
+
 /**
- * ALign to proper distance with the scale
+ * TODO NOT COMPLETE; DO NOT USE YET
+ * and this needs to be commented
+ * 
+ * Version of align to scale that should be used in teleop; calls the normal
+ * alignToScale, but also properly sets the transmission and other variables to
+ * properly use this function
+ * 
+ * @param button
+ * @param overrideButton
+ * @return
+ * 
+ * @author C.R.
+ */
+public void alignToScaleByButtons (boolean button)
+{
+
+    if (button == true)
+        {
+        if (allowAlignment == false
+                && alignButtonPressedLastTime == false)
+            {
+            Hardware.transmission.setForAutonomous();
+            allowAlignment = true;
+            }
+
+        if (allowAlignment == true)
+            {
+            if (Hardware.scaleAlignment.alignToScale(.3, 3,
+                    false) == true)
+                {
+                Hardware.transmission
+                        .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+                allowAlignment = false;
+                }
+            }
+        }
+    else
+        {
+        allowAlignment = false;
+        if (alignButtonPressedLastTime == true)
+            {
+            Hardware.transmission
+                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+            }
+        }
+
+    alignButtonPressedLastTime = button;
+}
+
+// keeps track of whether or not the align by scale button was being pressed
+// last time (for alignToScaleByButtons)
+private boolean alignButtonPressedLastTime = false;
+
+/**
+ * TODO CHECK TO SEE IF THE OVERRIDE PARAMETER IS ACTUALLY NECESSARY
+ * Align to proper distance with the scale
  * 
  * @return true when completed
  * 
@@ -35,7 +91,6 @@ public ScaleAlignment (UltraSonic ultrasonic)
  * 
  * @author Conner McKevitt
  */
-
 public boolean alignToScale (double speed, double deadband,
         boolean override)
 {
@@ -45,17 +100,20 @@ public boolean alignToScale (double speed, double deadband,
     // checks if in proper distance
 
     // ROBOT_TO_SCALE_DISTANCE 72-36 =36
-    if (override == true)
-        {
-        alignOverride = true;
-        }
-    if (alignOverride == true)
-        {
-        Hardware.transmission
-                .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-        aligned = false;
-        return false;
-        }
+    // Cole's comment; the overrides are theoretically useless since wherever
+    // alignToScale is called it should cancel when we let go of the button
+    // that's calling it
+    // if (override == true)
+    // {
+    // alignOverride = true;
+    // }
+    // if (alignOverride == true)
+    // {
+    // Hardware.transmission
+    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+    // aligned = false;
+    // return false;
+    // }
     if (this.rearUltrasonic
             .getDistanceFromNearestBumper() < ROBOT_TO_SCALE_DISTANCE
                     - deadband
@@ -107,6 +165,10 @@ public boolean alignToScale (double speed, double deadband,
 }
 
 public String RelativeScale = "";
+
+// used to communicate with teleop whether or not to lock out the joysticks and
+// let the autonomous code drive
+public boolean allowAlignment = false;
 
 public boolean alignOverride = false;
 

@@ -104,34 +104,45 @@ public static void init ()
  */
 public static void periodic ()
 {
+
+
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
 
     // Align to scale
-    if (Hardware.leftOperator.getRawButton(4) == true)
-        {
-        Hardware.transmission.setForAutonomous();
-        allowAlignment = true;
-        Hardware.scaleAlignment.alignOverride = false;
+    // if (Hardware.leftOperator.getRawButton(4) == true)
+    // {
+    // Hardware.transmission.setForAutonomous();
+    // allowAlignment = true;
+    // Hardware.scaleAlignment.alignOverride = false;
+    //
+    // if (Hardware.scaleAlignment.alignToScale(.3, 3,
+    // Hardware.leftOperator.getRawButton(5)))
+    // {
+    // Hardware.transmission
+    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // else if (Hardware.scaleAlignment.alignToScale(.3, 3,
+    // Hardware.leftOperator.getRawButton(5))
+    // && Hardware.scaleAlignment.alignOverride == true)
+    // {
+    // Hardware.transmission
+    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // }
+    // else
+    // {
+    // allowAlignment = false;
+    // }
 
-        if (Hardware.scaleAlignment.alignToScale(.3, 3,
-                Hardware.leftOperator.getRawButton(5)))
-            {
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        else if (Hardware.scaleAlignment.alignToScale(.3, 3,
-                Hardware.leftOperator.getRawButton(5))
-                && Hardware.scaleAlignment.alignOverride == true)
-            {
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
-
+    // code for alignToScale; this is the best current version as of 8 p.m. on
+    // Monday
+    // TODO currently untested
+    // Hardware.scaleAlignment.alignToScaleByButtons(
+    // Hardware.leftOperator.getRawButton(4));
 
 
     Hardware.cubeManipulator.intakeCube(
@@ -201,7 +212,8 @@ public static void periodic ()
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
     //
-    if (isTestingDrive == false && allowAlignment == false
+    if (isTestingDrive == false
+            && Hardware.scaleAlignment.allowAlignment == false
             && isBeckyTest == false
             && isTestingEncoderTurn == false)
         Hardware.transmission.drive(Hardware.leftDriver,
@@ -474,12 +486,12 @@ public static void printStatements ()
     // =================================
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    // SmartDashboard.putNumber("R Drive Motor",
-    // Hardware.rightDriveMotor.get());
+    SmartDashboard.putNumber("R Drive Motor",
+            Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    // SmartDashboard.putNumber("L Drive Motor",
-    // Hardware.leftDriveMotor.get());
+    SmartDashboard.putNumber("L Drive Motor",
+            Hardware.leftDriveMotor.get());
 
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // SmartDashboard.putNumber("Lifting Motor",
