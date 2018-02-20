@@ -849,7 +849,7 @@ public static boolean rightAutoLineExchangePath ()
 public static boolean centerSwitchPath ()
 {
     // System.out.println("Vision Auto state: " + visionAuto);
-    // SmartDashboard.putString("Vision States", visionAuto.toString());
+    SmartDashboard.putString("Vision States", visionAuto.toString());
     switch (visionAuto)
         {
         case CENTER_INIT:
@@ -880,19 +880,21 @@ public static boolean centerSwitchPath ()
         case GRAB_DATA:
             // know where to go and sets state to the appropriate turn state
             // (whichever side is our side of the switch)
+            SmartDashboard.putString("Switch data",
+                    GameDataType.SWITCH.toString());
             if (grabData(GameDataType.SWITCH) == Position.LEFT)
                 {
                 visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
                 }
-            else if (grabData(
-                    GameDataType.SWITCH) == Position.RIGHT)
+            else// (grabData(
+            // GameDataType.SWITCH) == Position.RIGHT)
                 {
                 visionAuto = centerState.TURN_TOWARDS_RIGHT_SIDE;
                 }
-            else
-                {
-                visionAuto = centerState.DONE;
-                }
+            // else
+            // {
+            // visionAuto = centerState.DONE;
+            // }
             break;
         case TURN_TOWARDS_LEFT_SIDE:
             // Turn 90 degrees to the left, if the switch is on the left
@@ -962,16 +964,17 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case TURN_AGAIN_RIGHT:
-            // turn 90 to the right and sets the state to DRIVE_WITH_CAMERA
-            if (Hardware.autoDrive.turnDegrees(90,
+            // turn 90 to the left and sets the state to DRIVE_WITH_CAMERA this
+            // is the right side auto
+            if (Hardware.autoDrive.turnDegrees(-90,
                     AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_AFTER_RIGHT_TURN_2;
                 }
             break;
         case TURN_AGAIN_LEFT:
-            // turns 90 to the left then brakes and sets the state to
-            // DRIVE_WITH_CAMERA
+            // turns 90 to the right then brakes and sets the state to
+            // DRIVE_WITH_CAMERA this is the left side auto
             if (Hardware.autoDrive.turnDegrees(90,
                     AUTO_SPEED_VISION) == true)
                 {
@@ -1030,7 +1033,7 @@ public static boolean centerSwitchPath ()
                     .getDistanceFromNearestBumper() <= 15)
                 {
                 Hardware.transmission.stop();
-                visionAuto = centerState.LIFT;
+                visionAuto = centerState.MAKE_DEPOSIT;
                 }
             break;
         case LIFT:
@@ -1047,7 +1050,9 @@ public static boolean centerSwitchPath ()
             // deposits cube on switch and sets state to DONE
             Hardware.transmission.stop();
             if (Hardware.cubeManipulator.pushOutCubeAuto() == true)
+                {
                 visionAuto = centerState.DONE;
+                }
             break;
         default: // prints that we reached the default case, then falls through
                  // to DONE
