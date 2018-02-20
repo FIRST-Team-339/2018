@@ -85,12 +85,13 @@ public static void init ()
     // SmartDashboard.putNumber("Turn Power", 0);
     // SmartDashboard.putNumber("Turn Brake Power", 0);
     // SmartDashboard.putNumber("Turn Brake Deadband", 0);
-    // SmartDashboard.putNumber("Drive Power", 0);
+    SmartDashboard.putNumber("Drive Power", 0);
+    SmartDashboard.putNumber("Drive Straight Constant", 0);
     // SmartDashboard.putNumber("Drive Brake Power", 0);
     // SmartDashboard.putNumber("Drive Brake Deadband", 0);
     //
     // SmartDashboard.putNumber("Turn Degrees", 0);
-    // SmartDashboard.putNumber("Drive Distance", 0);
+    SmartDashboard.putNumber("Drive Distance", 0);
 
 } // end Init
 
@@ -104,34 +105,45 @@ public static void init ()
  */
 public static void periodic ()
 {
+
+
     // =================================================================
     // OPERATOR CONTROLS
     // =================================================================
 
     // Align to scale
-    if (Hardware.leftOperator.getRawButton(4) == true)
-        {
-        Hardware.transmission.setForAutonomous();
-        allowAlignment = true;
-        Hardware.scaleAlignment.alignOverride = false;
+    // if (Hardware.leftOperator.getRawButton(4) == true)
+    // {
+    // Hardware.transmission.setForAutonomous();
+    // allowAlignment = true;
+    // Hardware.scaleAlignment.alignOverride = false;
+    //
+    // if (Hardware.scaleAlignment.alignToScale(.3, 3,
+    // Hardware.leftOperator.getRawButton(5)))
+    // {
+    // Hardware.transmission
+    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // else if (Hardware.scaleAlignment.alignToScale(.3, 3,
+    // Hardware.leftOperator.getRawButton(5))
+    // && Hardware.scaleAlignment.alignOverride == true)
+    // {
+    // Hardware.transmission
+    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
+    // allowAlignment = false;
+    // }
+    // }
+    // else
+    // {
+    // allowAlignment = false;
+    // }
 
-        if (Hardware.scaleAlignment.alignToScale(.3, 3,
-                Hardware.leftOperator.getRawButton(5)))
-            {
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        else if (Hardware.scaleAlignment.alignToScale(.3, 3,
-                Hardware.leftOperator.getRawButton(5))
-                && Hardware.scaleAlignment.alignOverride == true)
-            {
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            allowAlignment = false;
-            }
-        }
-
+    // code for alignToScale; this is the best current version as of 8 p.m. on
+    // Monday
+    // TODO currently untested
+    // Hardware.scaleAlignment.alignToScaleByButtons(
+    // Hardware.leftOperator.getRawButton(4));
 
 
     Hardware.cubeManipulator.intakeCube(
@@ -201,7 +213,8 @@ public static void periodic ()
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
     //
-    if (isTestingDrive == false && allowAlignment == false
+    if (isTestingDrive == false
+            && Hardware.scaleAlignment.allowAlignment == false
             && isBeckyTest == false
             && isTestingEncoderTurn == false)
         Hardware.transmission.drive(Hardware.leftDriver,
@@ -222,9 +235,9 @@ public static void periodic ()
 
     // testingDrive();
 
-    alignScale();
+    // alignScale();
 
-    // testingDrive();
+    testingDrive();
     // liftTest();
     // beckyTest();
 
@@ -351,19 +364,22 @@ private static void beckyTest ()
 
 private static void testingDrive ()
 {
-    Hardware.autoDrive.setBrakeDeadband(
-            (int) SmartDashboard.getNumber("Turn Brake Deadband", 0),
-            BrakeType.AFTER_TURN);
-    Hardware.autoDrive.setBrakePower(
-            SmartDashboard.getNumber("Turn Brake Power", 0),
-            BrakeType.AFTER_TURN);
+    // Hardware.autoDrive.setBrakeDeadband(
+    // (int) SmartDashboard.getNumber("Turn Brake Deadband", 0),
+    // BrakeType.AFTER_TURN);
+    // Hardware.autoDrive.setBrakePower(
+    // SmartDashboard.getNumber("Turn Brake Power", 0),
+    // BrakeType.AFTER_TURN);
+    //
+    // Hardware.autoDrive.setBrakeDeadband(
+    // (int) SmartDashboard.getNumber("Drive Brake Deadband", 0),
+    // BrakeType.AFTER_DRIVE);
+    // Hardware.autoDrive.setBrakePower(
+    // SmartDashboard.getNumber("Drive Brake Power", 0),
+    // BrakeType.AFTER_DRIVE);
 
-    Hardware.autoDrive.setBrakeDeadband(
-            (int) SmartDashboard.getNumber("Drive Brake Deadband", 0),
-            BrakeType.AFTER_DRIVE);
-    Hardware.autoDrive.setBrakePower(
-            SmartDashboard.getNumber("Drive Brake Power", 0),
-            BrakeType.AFTER_DRIVE);
+    Hardware.autoDrive.setDriveStraightConstant(
+            SmartDashboard.getNumber("Drive Straight Constant", 0));
 
     if (Hardware.leftDriver.getRawButton(9) == true)
         {
@@ -474,12 +490,12 @@ public static void printStatements ()
     // =================================
     // System.out.println(
     // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    // SmartDashboard.putNumber("R Drive Motor",
-    // Hardware.rightDriveMotor.get());
+    SmartDashboard.putNumber("R Drive Motor",
+            Hardware.rightDriveMotor.get());
     // System.out.println(
     // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    // SmartDashboard.putNumber("L Drive Motor",
-    // Hardware.leftDriveMotor.get());
+    SmartDashboard.putNumber("L Drive Motor",
+            Hardware.leftDriveMotor.get());
 
     // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
     // SmartDashboard.putNumber("Lifting Motor",

@@ -574,7 +574,7 @@ public static boolean leftAutoLineExchangePath ()
         case TURN_90_DEGREES_RIGHT:
             // turns 90 degrees towards the exchange and sets the state
             // to DRIVE_TO_EXCHANGE
-            if (Hardware.autoDrive.turnDegrees(
+            if (Hardware.autoDrive.turnDegrees2Stage(
                     LEFT_SIDE_TURN_TOWARDS_EXCHANGE,
                     TURN_SPEED) == true)
                 {

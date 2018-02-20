@@ -58,8 +58,7 @@ private final TransmissionType transmissionType;
  */
 public Drive (TransmissionBase transmission, Encoder leftFrontEncoder,
         Encoder rightFrontEncoder,
-        Encoder leftRearEncoder, Encoder rightRearEncoder,
-        Gyro gyro)
+        Encoder leftRearEncoder, Encoder rightRearEncoder, Gyro gyro)
 {
     this.transmissionType = transmission.getType();
     this.leftFrontEncoder = leftFrontEncoder;
@@ -95,7 +94,6 @@ public Drive (TransmissionBase transmission, Encoder leftEncoder,
     this.rightRearEncoder = rightEncoder;
 
     this.gyro = gyro;
-
 
     init(transmission);
 }
@@ -347,57 +345,35 @@ public double getEncoderDistanceAverage (WheelGroups encoderGroup)
  */
 public int getEncoderTicks (TransmissionBase.MotorPosition encoder)
 {
-    // Get the ticks of either right or left side on the 2 wheel system.
-    if (transmissionType == TransmissionType.TRACTION)
-        {
-        switch (encoder)
-            {
-            // these cases return the left rear Encoder
-            case LEFT_FRONT:
-            case LEFT_REAR:
-            case LEFT:
-                return leftRearEncoder.get();
-            // these cases return the right rear Encoder
-            case RIGHT_FRONT:
-            case RIGHT_REAR:
-            case RIGHT:
-                return rightRearEncoder.get();
-            // returns 0 to show default case was run
-            default:
-                return 0;
-            }
-        }
-    // Get encoder ticks on a 4 wheel drive system.
     switch (encoder)
         {
-        // returns the total ticks on the left side encoders
-        case LEFT:
-            return leftFrontEncoder.get() + leftRearEncoder.get();
-
-        // returns the total ticks on the left front encoders
+        // Returns the left front encoder if it exists. If it doesn't,
+        // return left Rear encoder.
         case LEFT_FRONT:
-            return leftFrontEncoder.get();
+            if (leftFrontEncoder != null)
+                return leftFrontEncoder.get();
 
-        // returns the total ticks on the left rear encoders
+            // left Rear Encoder
+        case LEFT:
         case LEFT_REAR:
             return leftRearEncoder.get();
 
-        // returns the total ticks on the right side encoders
-        case RIGHT:
-            return rightFrontEncoder.get() + rightRearEncoder.get();
-
-        // returns the total ticks on the right front encoders
+        // Returns the right front encoder if it exists. If it doesn't,
+        // return the right rear encoder.
         case RIGHT_FRONT:
-            return rightFrontEncoder.get();
+            if (rightFrontEncoder != null)
+                return rightFrontEncoder.get();
 
-        // returns the total ticks on the right rear encoders
+            // Right rear encoder
+        case RIGHT:
         case RIGHT_REAR:
             return rightRearEncoder.get();
 
-        // default:returns zero
+        // returns 0 to show default case was run
         default:
             return 0;
         }
+
 }
 
 /**
@@ -511,17 +487,17 @@ public boolean brake (BrakeType type)
         power = brakeTurnPower;
         }
 
-
     if (System.currentTimeMillis() - previousBrakeTime > INIT_TIMEOUT)
         {
-        prevEncoderValues = new double[4];
+        prevEncoderValues = new int[4];
 
         // Get the direction of the motor values on the first start.
         brakeMotorDirection[0] = (int) Math
                 .signum(leftRearEncoder.getRate());
         brakeMotorDirection[1] = (int) Math
                 .signum(rightRearEncoder.getRate());
-        // If it's not a 2 wheel drive, get the direction of the other 2 wheels.
+        // If it's not a 2 wheel drive, get the direction of the other 2
+        // wheels.
         if (transmissionType != TransmissionType.TRACTION)
             {
             brakeMotorDirection[2] = (int) Math
@@ -562,8 +538,7 @@ public boolean brake (BrakeType type)
 
     // See if the motors are past the deadband
     if (brakeMotorDirection[0] * brakeDeltas[0] < deadband
-            && brakeMotorDirection[1]
-                    * brakeDeltas[1] < deadband
+            && brakeMotorDirection[1] * brakeDeltas[1] < deadband
             && ((transmissionType == TransmissionType.TRACTION)
                     || brakeMotorDirection[2]
                             * brakeDeltas[2] < deadband
@@ -588,8 +563,7 @@ public boolean brake (BrakeType type)
         }
 
     // Set the rear wheels
-    getTransmission()
-            .getSpeedController(MotorPosition.LEFT_REAR)
+    getTransmission().getSpeedController(MotorPosition.LEFT_REAR)
             .set(-brakeMotorDirection[0] * power);
     getTransmission().getSpeedController(MotorPosition.RIGHT_REAR)
             .set(-brakeMotorDirection[1] * power);
@@ -680,7 +654,6 @@ public void setBrakeIterations (int iterations)
 {
     this.totalBrakeIterations = iterations;
 }
-
 
 /**
  * Drives the robot a certain distance without encoder correction.
@@ -841,6 +814,13 @@ public void setStrafeStraightScalar (double scalar)
 public boolean accelerateTo (double leftSpeed, double rightSpeed,
         double time)
 {
+    // Avoid a divideByZero error.
+    if (time <= 0)
+        {
+        this.getTransmission().drive(leftSpeed, rightSpeed);
+        return true;
+        }
+
     // If we timeout, then reset all the accelerate
     if (System.currentTimeMillis() - lastAccelerateTime > INIT_TIMEOUT
             || accelerateInit == true)
@@ -856,8 +836,7 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
     accelMotorPower += deltaSeconds / time;
 
     // Drive the robot based on the times and speeds
-    this.getTransmission().drive(
-            leftSpeed * inRange(accelMotorPower),
+    this.getTransmission().drive(leftSpeed * inRange(accelMotorPower),
             rightSpeed * inRange(accelMotorPower));
 
     // Reset the "timer"
@@ -914,6 +893,53 @@ public void setDefaultAcceleration (double value)
 }
 
 /**
+ * Drives the robot in a straight line, correcting based on values gotten from
+ * encoders.
+ * 
+ * 
+ * @param speed
+ *            How fast the robot should be moving, and in which direction.
+ * @param acceleration
+ *            Whether or not the robot should accelerate to the requested speed.
+ */
+public void driveStraight (double speed, boolean acceleration)
+{
+    // "Reset" the encoders (will not mess with driveInches or such)
+    if (System.currentTimeMillis()
+            - driveStraightLastTime > INIT_TIMEOUT)
+        {
+        this.prevEncoderValues[0] = getEncoderTicks(MotorPosition.LEFT);
+        this.prevEncoderValues[1] = getEncoderTicks(
+                MotorPosition.RIGHT);
+        }
+
+    // Left change since start minus right change since start
+    int delta = (getEncoderTicks(MotorPosition.LEFT)
+            - prevEncoderValues[0])
+            - (getEncoderTicks(MotorPosition.RIGHT)
+                    - prevEncoderValues[1]);
+
+    // If left is greater than right, add more to right & subtract from
+    // left.
+    // If right is greater than left, add more to left & subtract from
+    // right.
+    double leftSpeed = speed
+            - (Math.signum(delta) * driveStraightConstant);
+    double rightSpeed = speed
+            + (Math.signum(delta) * driveStraightConstant);
+
+    if (acceleration)
+        this.accelerateTo(leftSpeed, rightSpeed, defaultAcceleration);
+    else
+        this.accelerateTo(leftSpeed, rightSpeed, 0);
+    // Reset the "timer" to know when to "reset" the encoders for this
+    // method.
+    driveStraightLastTime = System.currentTimeMillis();
+}
+
+private long driveStraightLastTime = 0;
+
+/**
  * Drives the robot in a straight line based on encoders.
  * 
  * This works by polling the encoders every (COLLECTION_TIME) milliseconds
@@ -925,6 +951,9 @@ public void setDefaultAcceleration (double value)
  * 
  * Remember: reset the encoders before running this method.
  * 
+ * @deprecated Method relies on change between cycles on the rio, not absolute
+ *             positioning. Use the improved driveStraight instead.
+ * 
  * @param speed
  *            How fast the robot will be moving. Correction will be better with
  *            lower percentages.
@@ -933,7 +962,7 @@ public void setDefaultAcceleration (double value)
  * @param acceleration
  *            TODO
  */
-public void driveStraight (double speed, boolean accelerate)
+public void driveStraight_old (double speed, boolean accelerate)
 {
     // Only use the four encoders if the robot uses a four-wheel system
     if (transmissionType == TransmissionType.MECANUM
@@ -941,38 +970,32 @@ public void driveStraight (double speed, boolean accelerate)
         {
         // Calculate how much has changed between the last collection
         // time and now
-        leftChange = (leftFrontEncoder.getDistance()
-                + leftRearEncoder.getDistance())
+        leftChange = (leftFrontEncoder.get() + leftRearEncoder.get())
                 - prevEncoderValues[0];
-        rightChange = (rightFrontEncoder.getDistance()
-                + rightRearEncoder.getDistance())
+        rightChange = (rightFrontEncoder.get() + rightRearEncoder.get())
                 - prevEncoderValues[1];
         // Setup the previous values for the next collection run
-        prevEncoderValues[0] = leftFrontEncoder.getDistance()
+        prevEncoderValues[0] = leftFrontEncoder.get()
                 + leftRearEncoder.get();
-        prevEncoderValues[1] = rightFrontEncoder.getDistance()
+        prevEncoderValues[1] = rightFrontEncoder.get()
                 + rightRearEncoder.get();
         }
     else
         {
         // Calculate how much has changed between the last collection
         // time and now
-        leftChange = leftRearEncoder.getDistance()
-                - prevEncoderValues[0];
-        rightChange = rightRearEncoder.getDistance()
-                - prevEncoderValues[1];
+        leftChange = leftRearEncoder.get() - prevEncoderValues[0];
+        rightChange = rightRearEncoder.get() - prevEncoderValues[1];
         // Setup the previous values for the next collection run
-        prevEncoderValues[0] = leftRearEncoder.getDistance();
-        prevEncoderValues[1] = rightRearEncoder.getDistance();
+        prevEncoderValues[0] = leftRearEncoder.get();
+        prevEncoderValues[1] = rightRearEncoder.get();
         }
 
     double delta = leftChange - rightChange;
     double leftMotorVal = speed, rightMotorVal = speed;
 
-
     leftMotorVal -= Math.signum(delta) * driveStraightConstant;
     rightMotorVal += Math.signum(delta) * driveStraightConstant;
-
 
     // Changes how much the robot corrects by how off course it is. The
     // more off course, the more it will attempt to correct.
@@ -991,7 +1014,7 @@ private double driveStraightConstant = .1;
 
 private double leftChange = 0, rightChange = 0;
 
-private double[] prevEncoderValues =
+private int[] prevEncoderValues =
     {0, 0};
 
 /**
@@ -1127,7 +1150,8 @@ public boolean pivotTurnDegrees (int degrees, double power)
         {
         // If the left side has reached it's calculated arc length, stop.
         if (this.getEncoderDistanceAverage(WheelGroups.LEFT_SIDE) > Math
-                .toRadians(Math.abs(degrees)) * (turningRadius))
+                .toRadians(Math.abs(degrees))
+                * (turningRadius))
             {
             this.getTransmission().stop();
             pivotTurnDegreesInit = true;
@@ -1179,7 +1203,8 @@ public boolean turnDegrees2Stage (int degrees, double power)
         turnDegrees2StageInit = false;
         }
 
-    // If we have turned (degrees) at all (left or right, just in case), return
+    // If we have turned (degrees) at all (left or right, just in case),
+    // return
     // true.
     if (Math.abs(gyro.getAngle()) > Math.abs(degrees))
         {
@@ -1221,7 +1246,7 @@ private boolean turnDegrees2StageInit = true;
 
 private double turnDegreesTriggerStage = 40;// Degrees
 
-private double turnDegrees2ndStagePower = .1;
+private double turnDegrees2ndStagePower = .18;
 
 // ---------------------------------
 // THis is the distance we expect to move
