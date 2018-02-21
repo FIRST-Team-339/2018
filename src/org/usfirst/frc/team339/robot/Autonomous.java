@@ -755,7 +755,7 @@ public static boolean rightAutoLineExchangePath ()
         case TURN_90_DEGREES_LEFT:
             // turns 90 degrees towards the exchange and sets the state
             // to DRIVE_TO_EXCHANGE
-            if (Hardware.autoDrive.turnDegrees(
+            if (Hardware.autoDrive.turnDegrees2Stage(
                     RIGHT_SIDE_TURN_TOWARDS_EXCHANGE,
                     TURN_SPEED) == true)
                 {
@@ -899,7 +899,7 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_LEFT_SIDE:
             // Turn 90 degrees to the left, if the switch is on the left
             // sets state to BRAKE_2_L
-            if (Hardware.autoDrive.turnDegrees(-90,
+            if (Hardware.autoDrive.turnDegrees2Stage(-90,
                     AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_2_L;
@@ -908,7 +908,7 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_RIGHT_SIDE:
             // Turn 90 degrees to the right, if the switch is on the right
             // sets state to BRAKE_2_L
-            if (Hardware.autoDrive.turnDegrees(90,
+            if (Hardware.autoDrive.turnDegrees2Stage(90,
                     AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_2_R;
@@ -966,7 +966,7 @@ public static boolean centerSwitchPath ()
         case TURN_AGAIN_RIGHT:
             // turn 90 to the left and sets the state to DRIVE_WITH_CAMERA this
             // is the right side auto
-            if (Hardware.autoDrive.turnDegrees(-90,
+            if (Hardware.autoDrive.turnDegrees2Stage(-90,
                     AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_AFTER_RIGHT_TURN_2;
@@ -975,7 +975,7 @@ public static boolean centerSwitchPath ()
         case TURN_AGAIN_LEFT:
             // turns 90 to the right then brakes and sets the state to
             // DRIVE_WITH_CAMERA this is the left side auto
-            if (Hardware.autoDrive.turnDegrees(90,
+            if (Hardware.autoDrive.turnDegrees2Stage(90,
                     AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_AFTER_LEFT_TURN_2;
@@ -1204,14 +1204,14 @@ public static boolean switchOrScalePath (Position robotPosition)
             if (robotPosition == Position.RIGHT)
                 {
                 // We are on the Right side? turn left.
-                if (Hardware.autoDrive.turnDegrees(-90,
+                if (Hardware.autoDrive.turnDegrees2Stage(-90,
                         TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN1;
                 } // end if
             else
                 {
                 // We are on the Left side? turn right.
-                if (Hardware.autoDrive.turnDegrees(90,
+                if (Hardware.autoDrive.turnDegrees2Stage(90,
                         TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN1;
                 } // end if
@@ -1276,14 +1276,14 @@ public static boolean switchOrScalePath (Position robotPosition)
             if (robotPosition == Position.RIGHT)
                 {
                 // We are on the Right side? turn left.
-                if (Hardware.autoDrive.turnDegrees(-90,
+                if (Hardware.autoDrive.turnDegrees2Stage(-90,
                         TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN2;
                 }
             else
                 {
                 // We are on the Left side? turn right.
-                if (Hardware.autoDrive.turnDegrees(90,
+                if (Hardware.autoDrive.turnDegrees2Stage(90,
                         TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_TURN2;
                 }
@@ -1331,14 +1331,14 @@ public static boolean switchOrScalePath (Position robotPosition)
             if (robotPosition == Position.RIGHT)
                 {
                 // We start on the RIGHT side? turn right.
-                if (Hardware.autoDrive.turnDegrees(90,
+                if (Hardware.autoDrive.turnDegrees2Stage(90,
                         TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_B4_RAISE_ARM2;
                 }
             else
                 {
                 // We start on the LEFT side? turn left.
-                if (Hardware.autoDrive.turnDegrees(-90,
+                if (Hardware.autoDrive.turnDegrees2Stage(-90,
                         TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_B4_RAISE_ARM2;
                 }
@@ -1370,14 +1370,14 @@ public static boolean switchOrScalePath (Position robotPosition)
             if (robotPosition == Position.RIGHT)
                 {
                 // We start on the RIGHT side? turn right.
-                if (Hardware.autoDrive.turnDegrees(90,
+                if (Hardware.autoDrive.turnDegrees2Stage(90,
                         TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_B4_RAISE_ARM2;
                 }
             else
                 {
                 // We start on the LEFT side? turn left.
-                if (Hardware.autoDrive.turnDegrees(-90,
+                if (Hardware.autoDrive.turnDegrees2Stage(-90,
                         TURN_SPEED) == true)
                     currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_B4_RAISE_ARM2;
                 }
@@ -1464,14 +1464,14 @@ public static boolean offsetSwitchPath ()
             if (grabData(GameDataType.SWITCH) == Position.LEFT)
                 {
                 // If the switch is on the left side, then turn left
-                if (Hardware.autoDrive.turnDegrees(-90,
+                if (Hardware.autoDrive.turnDegrees2Stage(-90,
                         TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN1;
                 }
             else
                 {
                 // If the switch is on the right side, then turn right
-                if (Hardware.autoDrive.turnDegrees(90,
+                if (Hardware.autoDrive.turnDegrees2Stage(90,
                         TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN1;
                 }
@@ -1518,14 +1518,14 @@ public static boolean offsetSwitchPath ()
             if (grabData(GameDataType.SWITCH) == Position.LEFT)
                 {
                 // switch is on the left side? turn right
-                if (Hardware.autoDrive.turnDegrees(90,
+                if (Hardware.autoDrive.turnDegrees2Stage(90,
                         TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN2;
                 }
             else
                 {
                 // Switch is on the right side? turn left
-                if (Hardware.autoDrive.turnDegrees(-90,
+                if (Hardware.autoDrive.turnDegrees2Stage(-90,
                         TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN2;
                 }
@@ -1581,14 +1581,14 @@ public static boolean offsetSwitchPath ()
             if (grabData(GameDataType.SWITCH) == Position.LEFT)
                 {
                 // Switch is on the left side? turn right.
-                if (Hardware.autoDrive.turnDegrees(90,
+                if (Hardware.autoDrive.turnDegrees2Stage(90,
                         TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN3;
                 }
             else
                 {
                 // Switch is on the right side? turn left.
-                if (Hardware.autoDrive.turnDegrees(-90,
+                if (Hardware.autoDrive.turnDegrees2Stage(-90,
                         TURN_SPEED) == true)
                     currentOffsetSwitchState = OffsetSwitchPath.BRAKE_TURN3;
                 }
@@ -1735,9 +1735,9 @@ private final static double AUTO_SPEED_VISION = .25;
 // array for storing the different driving distances in SWITH_OR_SCALE
 private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
 // distance to be perpendicular to the switch
-    {(int) (AUTO_TESTING_SCALAR * 133),
+    {(int) (AUTO_TESTING_SCALAR * 126),
             // distance to drive to the middle of the platform zone
-            (int) (AUTO_TESTING_SCALAR * 71),
+            (int) (AUTO_TESTING_SCALAR * 65),
             // distance to drive in platform zone til you are in line with the
             // scale
             (int) (AUTO_TESTING_SCALAR * 31),
@@ -1756,7 +1756,7 @@ private static final int[] OFFSET_SWITCH_DRIVE_DISTANCES = new int[]
             (int) (AUTO_TESTING_SCALAR * 180),
             (int) (AUTO_TESTING_SCALAR * 44),
             (int) (AUTO_TESTING_SCALAR * 127),
-            (int) (AUTO_TESTING_SCALAR * 100)};
+            (int) (AUTO_TESTING_SCALAR * 117)};
 
 
 // FINISH

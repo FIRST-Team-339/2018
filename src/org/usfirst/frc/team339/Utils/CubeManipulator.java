@@ -106,8 +106,17 @@ public double getForkliftHeight ()
  * 
  */
 public void moveForkliftWithController (double speed,
-        boolean overrideButton)
+        boolean overrideButton, boolean isClimbing)
 {
+    if (isClimbing == true)
+        {
+        this.currentForkliftDownSpeed = FORKLIFT_CLIMB_SCALAR;
+        }
+    else
+        {
+        this.currentForkliftDownSpeed = FORKLIFT_DOWN_JOYSTICK_SCALAR;
+        }
+
     // Override button, ignore encoder.
     if (overrideButton == true)
         {
@@ -128,7 +137,7 @@ public void moveForkliftWithController (double speed,
         if (speed > 0)
             forkliftTargetSpeed = speed * FORKLIFT_UP_JOYSTICK_SCALAR;
         else
-            forkliftTargetSpeed = speed * FORKLIFT_DOWN_JOYSTICK_SCALAR;
+            forkliftTargetSpeed = speed * currentForkliftDownSpeed;
         this.liftState = ForkliftState.MOVE_JOY;
         }
 }
@@ -429,7 +438,7 @@ public boolean pushOutCubeAuto ()
             // EJECT_TIME seconds has not elapsed? run motors.
             if (this.switchTimer.get() < EJECT_TIME)
                 {
-                this.intakeMotor.set(this.EJECT_SPEED_FAST);
+                this.intakeMotor.set(this.currentEjectSpeed);
                 }
             // Time has elapsed? stop timer and move to next state.
             else
@@ -888,6 +897,10 @@ private ForkliftState liftState = ForkliftState.STAY_AT_POSITION;
 // used to tell the forklift which direction it should be moving
 private ForkliftDirectionState forkliftDirection = ForkliftDirectionState.NEUTRAL;
 
+private boolean isClimbing = false;
+
+private double currentForkliftDownSpeed = 0;
+
 private double forkliftTargetHeight = 0.0;
 
 private double forkliftTargetSpeed = 0.0;
@@ -928,7 +941,9 @@ private final double FORKLIFT_MAX_HEIGHT = 70;
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .25;
 
-private final double FORKLIFT_UP_JOYSTICK_SCALAR = .7;
+private final double FORKLIFT_CLIMB_SCALAR = .8;
+
+private final double FORKLIFT_UP_JOYSTICK_SCALAR = .85;
 
 private final double FORKLIFT_NO_CUBE_MIN_HEIGHT = 0;
 
@@ -940,7 +955,7 @@ private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 
-public final static double SWITCH_HEIGHT = 33.0;
+public final static double SWITCH_HEIGHT = 26;
 
 public final static double SCALE_HEIGHT = 70;
 // =========================================

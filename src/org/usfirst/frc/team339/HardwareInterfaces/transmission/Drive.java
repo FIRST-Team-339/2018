@@ -1207,7 +1207,7 @@ public boolean turnDegrees2Stage (int degrees, double power)
     // If we have turned (degrees) at all (left or right, just in case),
     // return
     // true.
-    if (Math.abs(gyro.getAngle()) > Math.abs(degrees))
+    if (Math.abs(gyro.getAngle()) > Math.abs(degrees) - gyroFudgeFactor)
         {
         this.getTransmission().stop();
         turnDegrees2StageInit = true;
@@ -1232,6 +1232,8 @@ public boolean turnDegrees2Stage (int degrees, double power)
     return false;
 }
 
+private double gyroFudgeFactor = 3; // degrees
+
 /**
  * Sets the distance from the wheel to the turning center point.
  * 
@@ -1247,7 +1249,7 @@ private boolean turnDegrees2StageInit = true;
 
 private double turnDegreesTriggerStage = 40;// Degrees
 
-private double turnDegrees2ndStagePower = .18;
+private double turnDegrees2ndStagePower = .19;
 
 // ---------------------------------
 // THis is the distance we expect to move

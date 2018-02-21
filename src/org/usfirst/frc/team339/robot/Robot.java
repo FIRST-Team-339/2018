@@ -480,7 +480,7 @@ private static final double KILROY_XV_GEAR_1_SPEED = .3;
 
 private static final double NESSIE_GEAR_1_SPEED = .5;
 
-public static final double KILROY_XIX_GEAR_2_SPEED = .5;
+public static final double KILROY_XIX_GEAR_2_SPEED = .6;
 
 public static final double KILROY_XV_GEAR_2_SPEED = .6;
 
@@ -506,7 +506,7 @@ private static final int KILROY_XIX_BRAKE_TURN_DEADBAND = 15;
 private static final int KILROY_XIX_BRAKE_DRIVE_DEADBAND = 20;
 
 // Drive Straight
-private static final double KILROY_XIX_DRIVESTRAIGHT_CONSTANT = .06;
+private static final double KILROY_XIX_DRIVESTRAIGHT_CONSTANT = .1;
 
 private static final int KILROY_XIX_US_DISTANCE_FROM_BUMPER = 3;
 

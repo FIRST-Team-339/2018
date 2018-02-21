@@ -173,7 +173,8 @@ public static void periodic ()
     Hardware.cubeManipulator
             .moveForkliftWithController(
                     Hardware.rightOperator.getY(),
-                    Hardware.rightOperator.getRawButton(5));
+                    Hardware.rightOperator.getRawButton(5),
+                    Hardware.climbButton.isOnCheckNow());
 
     if (Hardware.rightOperator.getRawButton(6) == true)
         Hardware.cubeManipulator
