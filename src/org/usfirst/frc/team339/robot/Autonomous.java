@@ -586,11 +586,11 @@ public static boolean leftAutoLineExchangePath ()
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 {
-                System.out.println("LeftFront: "
-                        + Hardware.leftFrontDriveEncoder.getDistance());
-                System.out.println(
-                        "RightFront: " + Hardware.rightFrontDriveEncoder
-                                .getDistance());
+                // System.out.println("LeftFront: "
+                // + Hardware.leftFrontDriveEncoder.getDistance());
+                // System.out.println(
+                // "RightFront: " + Hardware.rightFrontDriveEncoder
+                // .getDistance());
                 delayForBrakeTimer.reset();
                 delayForBrakeTimer.start();
                 leftExchangeAuto = leftExchangeState.TIMER_DELAY_THREE;
@@ -767,11 +767,11 @@ public static boolean rightAutoLineExchangePath ()
             // Brake after driving forwards and backwards
             if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
                 {
-                System.out.println("LeftFront: "
-                        + Hardware.leftFrontDriveEncoder.getDistance());
-                System.out.println(
-                        "RightFront: " + Hardware.rightFrontDriveEncoder
-                                .getDistance());
+                // System.out.println("LeftFront: "
+                // + Hardware.leftFrontDriveEncoder.getDistance());
+                // System.out.println(
+                // "RightFront: " + Hardware.rightFrontDriveEncoder
+                // .getDistance());
                 delayForBrakeTimer.reset();
                 delayForBrakeTimer.start();
                 rightExchangeAuto = rightExchangeState.TIMER_DELAY_THREE;
@@ -848,8 +848,10 @@ public static boolean rightAutoLineExchangePath ()
  */
 public static boolean centerSwitchPath ()
 {
-    // System.out.println("Vision Auto state: " + visionAuto);
-    SmartDashboard.putString("Vision States", visionAuto.toString());
+    System.out.println("Vision Auto state: " + visionAuto);
+    System.out.println("turned right: " + turnedRightCenterAuto);
+    // SmartDashboard.putBoolean("TurneD RIGHT", TURNEDRIGHTCENTERAUTO);
+    // SMARTDASHBOARD.PUTSTRING("VISION STates", visionAuto.toString());
     switch (visionAuto)
         {
         case CENTER_INIT:
@@ -886,15 +888,15 @@ public static boolean centerSwitchPath ()
                 {
                 visionAuto = centerState.TURN_TOWARDS_LEFT_SIDE;
                 }
-            else// (grabData(
-            // GameDataType.SWITCH) == Position.RIGHT)
+            else if (grabData(
+                    GameDataType.SWITCH) == Position.RIGHT)
                 {
                 visionAuto = centerState.TURN_TOWARDS_RIGHT_SIDE;
                 }
-            // else
-            // {
-            // visionAuto = centerState.DONE;
-            // }
+            else
+                {
+                visionAuto = centerState.DONE;
+                }
             break;
         case TURN_TOWARDS_LEFT_SIDE:
             // Turn 90 degrees to the left, if the switch is on the left
@@ -908,9 +910,12 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_RIGHT_SIDE:
             // Turn 90 degrees to the right, if the switch is on the right
             // sets state to BRAKE_2_L
+            turnedRightCenterAuto = false;
             if (Hardware.autoDrive.turnDegrees(90,
                     AUTO_SPEED_VISION) == true)
+            // if (Hardware.autoDrive.driveInches(-5, AUTO_SPEED_VISION))
                 {
+                turnedRightCenterAuto = true;
                 visionAuto = centerState.BRAKE_2_R;
                 }
         case BRAKE_2_L:
@@ -943,7 +948,9 @@ public static boolean centerSwitchPath ()
         case BRAKE_3_L:
             if (Hardware.autoDrive
                     .brake(BrakeType.AFTER_DRIVE) == true)
+                {
                 visionAuto = centerState.TURN_AGAIN_LEFT;
+                }
             break;
         case DRIVE_STRAIGHT_TO_SWITCH_RIGHT:
             // drive straight, switch is on the right then brakes
@@ -1071,6 +1078,8 @@ public static boolean centerSwitchPath ()
 public static centerState visionAuto = centerState.CENTER_INIT;
 
 public static boolean usingAutoCamera = false;
+
+public static boolean turnedRightCenterAuto = false;
 
 /**
  * Possible states for center vision autonomous

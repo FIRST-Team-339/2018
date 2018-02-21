@@ -563,8 +563,8 @@ public static void printStatements ()
     // ---------------------------------
     // Encoders
     // ---------------------------------
-    // System.out.println("Left Front Encoder Inches = "
-    // + Hardware.leftFrontDriveEncoder.getDistance());
+    System.out.println("Left Front Encoder Inches = "
+            + Hardware.leftFrontDriveEncoder.getDistance());
     SmartDashboard.putNumber("Left Front Encoder Inches",
             Hardware.leftFrontDriveEncoder.getDistance());
 
@@ -573,8 +573,8 @@ public static void printStatements ()
     SmartDashboard.putNumber("Left Front Encoder Ticks",
             Hardware.leftFrontDriveEncoder.get());
 
-    // System.out.println("Right Front Inches = "
-    // + Hardware.rightFrontDriveEncoder.getDistance());
+    System.out.println("Right Front Inches = "
+            + Hardware.rightFrontDriveEncoder.getDistance());
     SmartDashboard.putNumber("Right Front Encoder Inches",
             Hardware.rightFrontDriveEncoder.getDistance());
 
