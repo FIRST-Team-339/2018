@@ -25,7 +25,7 @@ public ScaleAlignment (UltraSonic ultrasonic)
 
 
 /**
- * TODO NOT COMPLETE; DO NOT USE YET
+ * TODO NOT TESTED; currently commented out in teleop
  * and this needs to be commented
  * 
  * Version of align to scale that should be used in teleop; calls the normal
@@ -33,28 +33,37 @@ public ScaleAlignment (UltraSonic ultrasonic)
  * properly use this function
  * 
  * @param button
- * @param overrideButton
- * @return
+ *            The button that will call alignToScale when pressed
  * 
  * @author C.R.
  */
 public void alignToScaleByButtons (boolean button)
 {
 
-    if (button == true)
+    if (button == true) // if the button is being pressed
         {
+        // runs the first time after the button is pressed
         if (allowAlignment == false
                 && alignButtonPressedLastTime == false)
             {
+            // set the transmission for autonomous mode and set allowAlignment
+            // to true, which is used elsewhere in the code to lock out the
+            // driver's joystick inputs
             Hardware.transmission.setForAutonomous();
             allowAlignment = true;
             }
 
         if (allowAlignment == true)
             {
+            // keep running align to scale until it returns true
             if (Hardware.scaleAlignment.alignToScale(.3, 3,
                     false) == true)
                 {
+                // after the robot has aligned, set the transmission back to the
+                // appropriate values for teleop, tell the robot to stop trying
+                // to align by setting allowAlignment to false
+                // TODO check to see if the gear speed inputted into
+                // setForTeleop is the right one
                 Hardware.transmission
                         .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
                 allowAlignment = false;
@@ -63,14 +72,18 @@ public void alignToScaleByButtons (boolean button)
         }
     else
         {
+        // set allowAlignmet to false so we stop locking out the driver
+        // joysticks in teleop
         allowAlignment = false;
+        // resets the transmission for teleop once, immediately after we stop
+        // hold down the align button
         if (alignButtonPressedLastTime == true)
             {
             Hardware.transmission
                     .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
             }
         }
-
+    // used like a momentary switch to prevent an infinite alignment loop
     alignButtonPressedLastTime = button;
 }
 
