@@ -908,25 +908,26 @@ public void driveStraight (double speed, boolean acceleration)
     if (System.currentTimeMillis()
             - driveStraightLastTime > INIT_TIMEOUT)
         {
-        this.prevEncoderValues[0] = getEncoderTicks(MotorPosition.LEFT);
-        this.prevEncoderValues[1] = getEncoderTicks(
-                MotorPosition.RIGHT);
+        // this.prevEncoderValues[0] = getEncoderTicks(MotorPosition.LEFT);
+        // this.prevEncoderValues[1] = getEncoderTicks(
+        // MotorPosition.RIGHT);
+        this.gyro.reset();
         }
 
     // Left change since start minus right change since start
-    int delta = (getEncoderTicks(MotorPosition.LEFT)
-            - prevEncoderValues[0])
-            - (getEncoderTicks(MotorPosition.RIGHT)
-                    - prevEncoderValues[1]);
+    // int delta = (getEncoderTicks(MotorPosition.LEFT)
+    // - prevEncoderValues[0])
+    // - (getEncoderTicks(MotorPosition.RIGHT)
+    // - prevEncoderValues[1]);
 
     // If left is greater than right, add more to right & subtract from
     // left.
     // If right is greater than left, add more to left & subtract from
     // right.
     double leftSpeed = speed
-            - (Math.signum(delta) * driveStraightConstant);
+            - (Math.signum(gyro.getAngle()) * driveStraightConstant);
     double rightSpeed = speed
-            + (Math.signum(delta) * driveStraightConstant);
+            + (Math.signum(gyro.getAngle()) * driveStraightConstant);
 
     if (acceleration)
         this.accelerateTo(leftSpeed, rightSpeed, defaultAcceleration);
