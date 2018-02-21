@@ -428,7 +428,7 @@ public boolean pushOutCubeAuto ()
             // EJECT_TIME seconds has not elapsed? run motors.
             if (this.switchTimer.get() < EJECT_TIME)
                 {
-                this.intakeMotor.set(this.EJECT_SPEED);
+                this.intakeMotor.set(this.EJECT_SPEED_FAST);
                 }
             // Time has elapsed? stop timer and move to next state.
             else
@@ -754,6 +754,15 @@ public void intakeUpdate ()
         return;
         }
 
+    if (this.forkliftEncoder.getDistance() > EJECT_CHANGE_HEIGHT)
+        {
+        this.currentEjectSpeed = EJECT_SPEED_FAST;
+        }
+    else
+        {
+        this.currentEjectSpeed = EJECT_SPEED_SLOW;
+        }
+
     switch (intakeState)
         {
         case PULL_IN:
@@ -768,7 +777,7 @@ public void intakeUpdate ()
             intakeState = IntakeState.STOP;
             break;
         case PUSH_OUT:
-            this.intakeMotor.set(EJECT_SPEED);
+            this.intakeMotor.set(currentEjectSpeed);
             // Set to stop when they stop hitting the button.
             intakeState = IntakeState.STOP;
             break;
@@ -884,6 +893,8 @@ private pushOutState pushState = pushOutState.INIT;
 
 private IntakeState intakeState = IntakeState.STOP;
 
+private double currentEjectSpeed = -1;
+
 private boolean isPullingIn = true;
 
 private boolean lastIntakeButtonStatus = false;
@@ -926,7 +937,11 @@ public final static double SCALE_HEIGHT = 70;
 
 private final double INTAKE_SPEED = .5;
 
-private final double EJECT_SPEED = -.8;
+private final double EJECT_SPEED_FAST = -1;
+
+private final double EJECT_SPEED_SLOW = -.4;
+
+private final double EJECT_CHANGE_HEIGHT = 58;
 
 public final double INTAKE_STOP_WITH_CUBE = .1;
 
