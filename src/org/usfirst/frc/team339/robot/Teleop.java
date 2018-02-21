@@ -214,12 +214,12 @@ public static void periodic ()
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
     //
-    if (isTestingDrive == false
-            && Hardware.scaleAlignment.allowAlignment == false
-            && isBeckyTest == false
-            && isTestingEncoderTurn == false)
-        Hardware.transmission.drive(Hardware.leftDriver,
-                Hardware.rightDriver);
+    // if (isTestingDrive == false
+    // && Hardware.scaleAlignment.allowAlignment == false
+    // && isBeckyTest == false
+    // && isTestingEncoderTurn == false)
+    Hardware.transmission.drive(Hardware.leftDriver,
+            Hardware.rightDriver);
     // update
 
     // ------------------------------------
@@ -238,7 +238,7 @@ public static void periodic ()
 
     // alignScale();
 
-    testingDrive();
+    // testingDrive();
     // liftTest();
     // beckyTest();
 
