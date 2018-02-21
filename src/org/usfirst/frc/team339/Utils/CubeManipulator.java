@@ -1,6 +1,5 @@
 package org.usfirst.frc.team339.Utils;
 
-import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -484,12 +483,6 @@ public boolean scoreScale ()
 
         // Move the lift to the scale height, and move on when it's finished
         case MOVE_LIFT:
-
-            if (Hardware.scaleAlignment.alignOverride == true)
-                {
-                scaleState = scoreScaleState.FINISHED;
-                }
-
             if (setLiftPosition(SCALE_HEIGHT,
                     FORKLIFT_DEFAULT_SPEED_UP) == true)
                 {
@@ -498,11 +491,6 @@ public boolean scoreScale ()
             break;
         // Eject the cube (onto the scale preferably)
         case SPIT_OUT_CUBE:
-            if (Hardware.scaleAlignment.alignOverride == true)
-                {
-                scaleState = scoreScaleState.FINISHED;
-                }
-
             // System.out.println("Spitting out cube");
             if (pushOutCubeAuto() == true)
                 {
