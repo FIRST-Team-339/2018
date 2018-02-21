@@ -848,8 +848,8 @@ public static boolean rightAutoLineExchangePath ()
  */
 public static boolean centerSwitchPath ()
 {
-    System.out.println("Vision Auto state: " + visionAuto);
-    System.out.println("turned right: " + turnedRightCenterAuto);
+    // System.out.println("Vision Auto state: " + visionAuto);
+    // System.out.println("turned right: " + turnedRightCenterAuto);
     // SmartDashboard.putBoolean("TurneD RIGHT", TURNEDRIGHTCENTERAUTO);
     // SMARTDASHBOARD.PUTSTRING("VISION STates", visionAuto.toString());
     switch (visionAuto)
@@ -901,7 +901,7 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_LEFT_SIDE:
             // Turn 90 degrees to the left, if the switch is on the left
             // sets state to BRAKE_2_L
-            if (Hardware.autoDrive.turnDegrees(-90,
+            if (Hardware.autoDrive.turnDegrees2Stage(-90,
                     AUTO_SPEED_VISION) == true)
                 {
                 visionAuto = centerState.BRAKE_2_L;
@@ -910,14 +910,16 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_RIGHT_SIDE:
             // Turn 90 degrees to the right, if the switch is on the right
             // sets state to BRAKE_2_L
+            // System.out.print("We are in right side auto");
             turnedRightCenterAuto = false;
-            if (Hardware.autoDrive.turnDegrees(90,
+            if (Hardware.autoDrive.turnDegrees2Stage(90,
                     AUTO_SPEED_VISION) == true)
-            // if (Hardware.autoDrive.driveInches(-5, AUTO_SPEED_VISION))
+
                 {
                 turnedRightCenterAuto = true;
                 visionAuto = centerState.BRAKE_2_R;
                 }
+            break;
         case BRAKE_2_L:
             // brake switch is on left
             // sets state to DRIVE_STRAIGHT_TO_SWITCH_LEFT
