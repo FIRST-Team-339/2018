@@ -673,7 +673,7 @@ public static void printStatements ()
     // Hardware.gyroAnalog.getAngle());
 
     // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
 
     // ---------------------------------

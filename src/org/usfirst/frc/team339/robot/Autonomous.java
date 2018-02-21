@@ -1164,6 +1164,8 @@ public static boolean switchOrScalePath (Position robotPosition)
             // onto the next state
             currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE1;
             Hardware.cubeManipulator.deployCubeIntake(false);
+            Hardware.cubeManipulator
+                    .setLiftPosition(CubeManipulator.SWITCH_HEIGHT);
             break;
         case DRIVE1:
             // FIRST driveInches: drive forward to switch
@@ -1218,19 +1220,7 @@ public static boolean switchOrScalePath (Position robotPosition)
             // Brake after turning, and before going to the switch with
             // ultrasonic
             if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
-                currentSwitchOrScaleState = SwitchOrScaleStates.RAISE_ARM1;
-            break;
-        case RAISE_ARM1: // TODO this case was changed and IS UNTESTED!!!
-            // TODO do we want to start to raising the forklift early so it's
-            // already up?
-            // Raise the forklift/ arm for the switch after turning towards it,
-            // but before
-            // driving to the wall.
-            if (Hardware.cubeManipulator
-                    .setLiftPosition(SWITCH_LIFT_HEIGHT) == true)
-                {
                 currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_WITH_ULTRSNC;
-                }
             break;
         case DRIVE_WITH_ULTRSNC:
             Hardware.autoDrive.driveStraight(DRIVE_SPEED, true);
@@ -1552,11 +1542,28 @@ public static boolean offsetSwitchPath ()
             // the cube on the switch later
             Hardware.cubeManipulator.setLiftPosition(SWITCH_LIFT_HEIGHT,
                     FORKLIFT_SPEED);
-            currentOffsetSwitchState = OffsetSwitchPath.DRIVE3;
+
+            // Go the correct distance based on which side we are going to.
+            if (grabData(GameDataType.SWITCH) == Position.LEFT)
+                currentOffsetSwitchState = OffsetSwitchPath.DRIVE3L;
+            else if (grabData(GameDataType.SWITCH) == Position.RIGHT)
+                currentOffsetSwitchState = OffsetSwitchPath.DRIVE3R;
+            else
+                currentOffsetSwitchState = OffsetSwitchPath.FINISH;
+
             break;
 
-        case DRIVE3:
-            // Drive to the middle of the end of the switch
+        case DRIVE3L:
+            // Drive to the middle of the end of the switch on the left path.
+            if (Hardware.autoDrive.driveStraightInches(
+                    OFFSET_SWITCH_DRIVE_DISTANCES[4]
+                            - Hardware.autoDrive
+                                    .getBrakeStoppingDistance(),
+                    DRIVE_SPEED) == true)
+                currentOffsetSwitchState = OffsetSwitchPath.BRAKE_DRIVE3;
+            break;
+        case DRIVE3R:
+            // Drive to the middle of the end of the switch on the right path.
             if (Hardware.autoDrive.driveStraightInches(
                     OFFSET_SWITCH_DRIVE_DISTANCES[3]
                             - Hardware.autoDrive
@@ -1640,7 +1647,7 @@ private static OffsetSwitchPath currentOffsetSwitchState = OffsetSwitchPath.PATH
  */
 private enum OffsetSwitchPath
     {
-PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRIVE2R, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3, RAISE_ARM_AND_DRIVE3_2, BRAKE_DRIVE3, TURN3, BRAKE_TURN3, RAISE_ARM, DRIVE_WITH_ULTRSNC, BRAKE_B4_EJECT, EJECT, FINISH
+PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRIVE2R, BRAKE_DRIVE2, TURN2, BRAKE_TURN2, DRIVE3L, DRIVE3R, RAISE_ARM_AND_DRIVE3_2, BRAKE_DRIVE3, TURN3, BRAKE_TURN3, RAISE_ARM, DRIVE_WITH_ULTRSNC, BRAKE_B4_EJECT, EJECT, FINISH
     }
 
 
@@ -1651,11 +1658,11 @@ PATH_INIT, DEPLOY_INTAKE, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE2L, DRI
  */
 
 // DRIVING
-private static final double AUTO_TESTING_SCALAR = .5; // percent
+private static final double AUTO_TESTING_SCALAR = 1.0; // percent
 
 private static final double DRIVE_STRAIGHT_ACCELERATION_TIME = .6; // seconds
 
-private static final double DRIVE_SPEED = .3; // percent
+private static final double DRIVE_SPEED = .4; // percent
 
 private static final double TURN_SPEED = .25; // percent
 
@@ -1730,7 +1737,7 @@ private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
 // distance to be perpendicular to the switch
     {(int) (AUTO_TESTING_SCALAR * 133),
             // distance to drive to the middle of the platform zone
-            (int) (AUTO_TESTING_SCALAR * 67),
+            (int) (AUTO_TESTING_SCALAR * 71),
             // distance to drive in platform zone til you are in line with the
             // scale
             (int) (AUTO_TESTING_SCALAR * 31),
@@ -1742,12 +1749,14 @@ private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
 
 // OFFSET_SWITCH
 // array for storing the different driving distances used in OFFSET_SWITCH
-// values in the array (in order) are for DRIVE1, DRIVE2L, DRIVE2R, DRIVE3
+// values in the array (in order) are for DRIVE1, DRIVE2L, DRIVE2R, DRIVE3R,
+// DRIVE3L
 private static final int[] OFFSET_SWITCH_DRIVE_DISTANCES = new int[]
-    {(int) (AUTO_TESTING_SCALAR * 6),
+    {(int) (AUTO_TESTING_SCALAR * 12),
             (int) (AUTO_TESTING_SCALAR * 180),
-            (int) (AUTO_TESTING_SCALAR * 59),
-            (int) (AUTO_TESTING_SCALAR * 127)};
+            (int) (AUTO_TESTING_SCALAR * 44),
+            (int) (AUTO_TESTING_SCALAR * 127),
+            (int) (AUTO_TESTING_SCALAR * 100)};
 
 
 // FINISH
