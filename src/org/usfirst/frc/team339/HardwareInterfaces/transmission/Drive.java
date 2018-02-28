@@ -316,6 +316,7 @@ public double getEncoderDistanceAverage (WheelGroups encoderGroup)
                             + Math.abs(rightRearEncoder.getDistance()))
                             / 2.0;
                     }
+                break;
             case LEFT_SIDE:
                 // averages left side encoders
                 return (Math.abs(leftFrontEncoder.getDistance())
