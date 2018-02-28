@@ -40,7 +40,7 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.VictorSP;
 
 /**
  * -------------------------------------------------------
@@ -92,11 +92,11 @@ public static Talon leftDriveMotor = new Talon(3);
 // ------------------------------------
 // Victor Classes
 // ------------------------------------
-public static Victor liftingMotor = new Victor(0);
+public static VictorSP liftingMotor = new VictorSP(0);
 
-public static Victor cubeIntakeMotor = new Victor(1);
+public static VictorSP cubeIntakeMotor = new VictorSP(1);
 
-public static Victor intakeDeployArm = new Victor(4);
+public static VictorSP intakeDeployArm = new VictorSP(4);
 
 // ------------------------------------
 // Servo classes
@@ -245,10 +245,13 @@ public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 // -------------------------------------
 // Axis/USB Camera class
 // -------------------------------------
-public static VisionProcessor axisCamera = new VisionProcessor(
-
-        "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
+//public static VisionProcessor axisCamera = new VisionProcessor(
+//        "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
 // @todo - add ring light relay as 3rd argument
+
+//TODO this is a temporary Vision Processor object to use with ball bot
+public static VisionProcessor axisCamera = new VisionProcessor(
+        "10.23.39.11", CameraModel.AXIS_M1011, tempRelay);
 
 // -------------------------------------
 // declare the USB camera server and the
