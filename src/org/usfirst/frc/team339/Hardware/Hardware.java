@@ -245,10 +245,13 @@ public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 // -------------------------------------
 // Axis/USB Camera class
 // -------------------------------------
-public static VisionProcessor axisCamera = new VisionProcessor(
-
-        "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
+//public static VisionProcessor axisCamera = new VisionProcessor(
+//        "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
 // @todo - add ring light relay as 3rd argument
+
+//TODO this is a temporary Vision Processor object to use with ball bot
+public static VisionProcessor axisCamera = new VisionProcessor(
+        "10.23.39.11", CameraModel.AXIS_M1011, tempRelay);
 
 // -------------------------------------
 // declare the USB camera server and the
