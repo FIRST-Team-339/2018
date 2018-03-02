@@ -106,6 +106,9 @@ public static VictorSP intakeDeployArm = new VictorSP(4);
 public static Servo climbingMechanismServo = new Servo(5);
 // Documentation says 200* servo
 
+public static Servo intakeArmPositionServo = new Servo(6);
+// shotwell says 180* servo
+
 // ====================================
 // CAN classes
 // ====================================
