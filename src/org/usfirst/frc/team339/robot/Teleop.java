@@ -34,6 +34,7 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -306,13 +307,15 @@ private static void beckyTest ()
     if (isBeckyTest == true)
         {
 
-        if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
+        if (Hardware.driveWithCamera.driveToSwitch(.6) == true)
             {
             Hardware.transmission
                     .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
             isBeckyTest = false;
             }
-
+        Hardware.tempRelay.set(true);
+        // Hardware.tempRelay.set(true);
+        Hardware.axisCamera.saveImage(ImageType.PROCESSED);
         }
 
     // if (Hardware.rightOperator.getRawButton(2))

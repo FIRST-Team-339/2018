@@ -187,7 +187,7 @@ public boolean driveToSwitch (double speed)
             // gets the position of the center
             double centerX = this.getCameraCenterValue();
             // turns on the ring light
-            this.visionProcessor.setRelayValue(true);
+            this.visionProcessor.setDigitalOutputValue(true);
 
             // if the switch center is to the right of our center set by the
             // SWITCH_CAMERA_CENTER, correct by driving faster on the left
@@ -215,7 +215,7 @@ public boolean driveToSwitch (double speed)
                 state = DriveWithCameraState.DRIVE_WITH_US;
             break;
         case DRIVE_WITH_US:
-            visionProcessor.setRelayValue(false);
+            this.visionProcessor.setDigitalOutputValue(false);
             driveStraight(speed, false);
 
             if (this.frontUltrasonic
