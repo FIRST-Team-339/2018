@@ -1,5 +1,6 @@
 package org.usfirst.frc.team339.Utils;
 
+import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -254,7 +255,7 @@ private void stopIntake ()
  */
 public boolean deployCubeIntake (boolean override)
 {
-    if (override)
+    if (override == true)
         {
         deployIntakeState = DeployState.OVERRIDE_DEPLOY;
         return true;
@@ -266,10 +267,26 @@ public boolean deployCubeIntake (boolean override)
         deployIntakeState = DeployState.DEPLOYING;
         }
 
-    // returns whether or not the intake has finished deploying
-    if (deployIntakeState == DeployState.DEPLOYED)
+
+    if (Hardware.newCode == false)
         {
-        return true;
+        // returns whether or not the intake has finished deploying
+        if (deployIntakeState == DeployState.DEPLOYED)
+            {
+            return true;
+            }
+        }
+    else
+        {
+        if (deployIntakeState == DeployState.DEPLOYED
+                && Hardware.climbButton.isOnCheckNow() == true)
+            {
+            deployIntakeState = DeployState.POSITION_TO_CLIMB;
+            }
+        else
+            {
+            return true;
+            }
         }
 
     return false; // returns false if we haven't finished deploying
@@ -680,6 +697,7 @@ public void deployIntakeUpdate ()
                 this.intakeDeployMotor.set(0.0);
                 deployIntakeState = DeployState.DEPLOYED;
                 }
+
             break;
 
         // final state in the state machine; stops the intake deploy
@@ -736,6 +754,39 @@ public void deployIntakeUpdate ()
             // Only set it while we are holding the button.
             deployIntakeState = DeployState.DEPLOYING;
             break;
+
+        case POSITION_TO_CLIMB:
+
+            if (intakeArmHasBeenDroppedToClimb == false)
+                {
+                initialDeployTicks = this.getIntakeAngle();
+                intakeArmHasBeenDroppedToClimb = true;
+                }
+
+            if (Hardware.climbButton.isOnCheckNow() == true)
+                {
+                if (this.getIntakeAngle() >= initialDeployTicks
+                        + INTAKE_DEPLOY_TICKS)
+                    {
+                    this.intakeDeployMotor.set(0.0);
+                    deployIntakeState = DeployState.DEPLOYED;
+                    }
+                }
+            else
+                {
+                if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS)
+                    {
+                    // stops the intake deploy motor if we've turned far
+                    // enough;
+                    // FINISHED does this as well, but doing it here helps
+                    // keep the motor from overshooting too much
+                    this.intakeDeployMotor.set(0.0);
+                    deployIntakeState = DeployState.DEPLOYED;
+                    }
+                }
+
+            break;
+
         default:
             System.out.println(
                     "Unkown case found in deployIntakeUpdate(). Stopping deploy.");
@@ -743,6 +794,7 @@ public void deployIntakeUpdate ()
             this.intakeDeployMotor.stopMotor();
             break;
         }
+
 }
 
 /**
@@ -855,7 +907,7 @@ MOVING_UP, MOVING_DOWN, NEUTRAL
  */
 private static enum DeployState
     {
-NOT_DEPLOYED, DEPLOYING, DEPLOYED, POSITION_45, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, STOPPED
+NOT_DEPLOYED, DEPLOYING, DEPLOYED, POSITION_45, POSITION_TO_CLIMB, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, STOPPED
     }
 
 /**
@@ -916,6 +968,10 @@ private boolean intakeOverride = false;
 
 private boolean isRunningPushOutCubeAuto = false;
 
+private double initialDeployTicks = 0;
+
+private boolean intakeArmHasBeenDroppedToClimb = false;
+
 // ========================================
 
 private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
@@ -946,6 +1002,7 @@ private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 public final static double SWITCH_HEIGHT = 26;
 
 public final static double SCALE_HEIGHT = 70;
+
 // =========================================
 
 // ================INTAKE===================

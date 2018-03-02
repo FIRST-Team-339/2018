@@ -70,7 +70,7 @@ public static boolean onNessie = false;
 
 public static boolean on2018 = true;
 
-public static boolean newCode = false;
+public static boolean newCode = true;
 
 // **********************************************************
 // DIGITAL I/O CLASSES
@@ -105,6 +105,9 @@ public static VictorSP intakeDeployArm = new VictorSP(4);
 // ------------------------------------
 public static Servo climbingMechanismServo = new Servo(5);
 // Documentation says 200* servo
+
+public static Servo intakeArmPositionServo = new Servo(6);
+// shotwell says 180* servo
 
 // ====================================
 // CAN classes
