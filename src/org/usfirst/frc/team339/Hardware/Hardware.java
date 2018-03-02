@@ -70,7 +70,7 @@ public static boolean onNessie = false;
 
 public static boolean on2018 = true;
 
-public static boolean newCode = false;
+public static boolean newCode = true;
 
 // **********************************************************
 // DIGITAL I/O CLASSES
@@ -174,6 +174,9 @@ public static Encoder intakeDeployEncoder = new Encoder(23, 24);
 // -------------------------------------
 // Red Light/IR Sensor class
 // -------------------------------------
+public static LightSensor scaleIR = new LightSensor(21);// TODO check port for
+                                                        // 2018 robot
+
 public static LightSensor rightRedLight = new LightSensor(7);
 
 public static LightSensor leftRedLight = new LightSensor(8);

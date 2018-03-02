@@ -234,6 +234,7 @@ public static void periodic ()
     // code will not be a part of the final teleop
     // -------------------------------------------
 
+
     // testingDrive();
 
     // alignScale();
@@ -254,42 +255,7 @@ private static int driveState = 0;
 
 public static void alignScale ()
 {
-    // if (Hardware.leftOperator.getRawButton(4) == true)
-    // {
-    // allowAlignment = true;
-    // Hardware.scaleAlignment.alignOverride = false;
-    // }
-    // // override
-    // if (Hardware.leftOperator.getRawButton(5))
-    // {
-    // allowAlignment = false;
-    // Hardware.scaleAlignment.alignOverride = true;
-    // Hardware.transmission
-    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-    // System.out.println("Stopped scale alignment");
-    // }
-    //
-    // if (allowAlignment == true)
-    // {
-    //
-    // Hardware.transmission.setForAutonomous();
-    // if (Hardware.scaleAlignment.alignToScale(.3, 3)
-    // && Hardware.scaleAlignment.alignOverride == false)
-    // {
-    // System.out.println("aligned to scale");
-    // Hardware.transmission
-    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-    // allowAlignment = false;
-    // }
-    // else if (Hardware.scaleAlignment.alignToScale(.3, 3) == false
-    // && Hardware.scaleAlignment.alignOverride == true)
-    // {
-    // System.out.println("Overrode align to scale");
-    // Hardware.transmission
-    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-    // allowAlignment = false;
-    // }
-    // }
+
 }
 
 private static boolean isBeckyTest = false;
@@ -639,6 +605,8 @@ public static void printStatements ()
     // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     // SmartDashboard.putBoolean("Photo SW",
     // Hardware.cubePhotoSwitch.isOn());
+    SmartDashboard.putBoolean("IR is On", Hardware.scaleIR.isOn());
+
 
     // =================================
     // Pneumatics
