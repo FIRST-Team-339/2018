@@ -184,12 +184,44 @@ public static void periodic ()
         Hardware.cubeManipulator
                 .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
 
-    if (Hardware.climbButton.isOnCheckNow() == true)
-        Hardware.climbingMechanismServo
-                .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
+
+    // servo code
+    if (Hardware.newCode == false)
+        {
+        if (Hardware.climbButton.isOnCheckNow() == true)
+            Hardware.climbingMechanismServo
+                    .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
+        else
+            Hardware.climbingMechanismServo
+                    .set(Robot.CLIMB_SERVO_INIT_POSITION);
+        }
     else
-        Hardware.climbingMechanismServo
-                .set(Robot.CLIMB_SERVO_INIT_POSITION);
+        {
+        if (Hardware.climbButton.isOnCheckNow() == true)
+            {
+            Hardware.climbingMechanismServo
+                    .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
+            if (Hardware.cubeManipulator
+                    .getForkliftHeight() >= FORKLIFT_HEIGHT_TO_PUT_DOWN_SERVO)
+                {
+                Hardware.intakeArmPositionServo
+                        .setAngle(INTAKE_ARM_SERVO_DOWN_POSITION);
+                Hardware.cubeManipulator.deployCubeIntake(false);
+                }
+            else
+                {
+                Hardware.intakeArmPositionServo
+                        .setAngle(INTAKE_ARM_SERVO_UP_POSITION);
+                }
+            }
+        else
+            {
+            Hardware.climbingMechanismServo
+                    .set(Robot.CLIMB_SERVO_INIT_POSITION);
+            Hardware.intakeArmPositionServo
+                    .setAngle(INTAKE_ARM_SERVO_UP_POSITION);
+            }
+        }
 
     // update for the cube manipulator (forklift, intake, etc.) and its state
     // machines
@@ -235,6 +267,7 @@ public static void periodic ()
     // code will not be a part of the final teleop
     // -------------------------------------------
 
+
     // testingDrive();
 
     // alignScale();
@@ -255,42 +288,7 @@ private static int driveState = 0;
 
 public static void alignScale ()
 {
-    // if (Hardware.leftOperator.getRawButton(4) == true)
-    // {
-    // allowAlignment = true;
-    // Hardware.scaleAlignment.alignOverride = false;
-    // }
-    // // override
-    // if (Hardware.leftOperator.getRawButton(5))
-    // {
-    // allowAlignment = false;
-    // Hardware.scaleAlignment.alignOverride = true;
-    // Hardware.transmission
-    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-    // System.out.println("Stopped scale alignment");
-    // }
-    //
-    // if (allowAlignment == true)
-    // {
-    //
-    // Hardware.transmission.setForAutonomous();
-    // if (Hardware.scaleAlignment.alignToScale(.3, 3)
-    // && Hardware.scaleAlignment.alignOverride == false)
-    // {
-    // System.out.println("aligned to scale");
-    // Hardware.transmission
-    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-    // allowAlignment = false;
-    // }
-    // else if (Hardware.scaleAlignment.alignToScale(.3, 3) == false
-    // && Hardware.scaleAlignment.alignOverride == true)
-    // {
-    // System.out.println("Overrode align to scale");
-    // Hardware.transmission
-    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-    // allowAlignment = false;
-    // }
-    // }
+
 }
 
 private static boolean isBeckyTest = false;
@@ -559,6 +557,7 @@ public static void printStatements ()
     // SmartDashboard.putBoolean("R Auto SW",
     // Hardware.rightAutoSwitch.isOn());
 
+
     // System.out.println("6 pos = "
     // + Hardware.autoSixPosSwitch.getPosition());
     // SmartDashboard.putNumber("6 Pos Switch",
@@ -607,8 +606,8 @@ public static void printStatements ()
     SmartDashboard.putNumber("Right Rear Encoder Ticks",
             Hardware.rightRearDriveEncoder.get());
 
-    // System.out.println("Lift Encoder Inches = "
-    // + Hardware.liftingEncoder.getDistance());
+    System.out.println("Lift Encoder Inches = "
+            + Hardware.liftingEncoder.getDistance());
     SmartDashboard.putNumber("Lift Encoder Inches",
             Hardware.liftingEncoder.getDistance());
 
@@ -622,8 +621,8 @@ public static void printStatements ()
     SmartDashboard.putNumber("Intake Deploy Encoder",
             Hardware.intakeDeployEncoder.getDistance());
 
-    // System.out.println("Intake Deploy Encoder Ticks "
-    // + Hardware.intakeDeployEncoder.get());
+    System.out.println("Intake Deploy Encoder Ticks "
+            + Hardware.intakeDeployEncoder.get());
     SmartDashboard.putNumber("Intake Deploy Ticks",
             Hardware.intakeDeployEncoder.get());
 
@@ -642,6 +641,8 @@ public static void printStatements ()
     // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     // SmartDashboard.putBoolean("Photo SW",
     // Hardware.cubePhotoSwitch.isOn());
+    SmartDashboard.putBoolean("IR is On", Hardware.scaleIR.isOn());
+
 
     // =================================
     // Pneumatics
@@ -677,7 +678,7 @@ public static void printStatements ()
     // Hardware.gyroAnalog.getAngle());
 
     // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
 
     // ---------------------------------
@@ -711,6 +712,9 @@ public static void printStatements ()
     // Hardware.climbingMechanismServo.getAngle());
     // SmartDashboard.putNumber("Climb Servo",
     // Hardware.climbingMechanismServo.getAngle());
+
+    System.out.println("Intake Arm Servo " +
+            Hardware.intakeArmPositionServo.getAngle());
 
     // =================================
     // SPI Bus
@@ -832,5 +836,11 @@ public static void printStatements ()
 // Constants
 // ================================
 public static final int CLIMBING_SERVO_ANGLE = 78;
+
+public static final int INTAKE_ARM_SERVO_UP_POSITION = 0;
+
+public static final int INTAKE_ARM_SERVO_DOWN_POSITION = 180;
+
+public static final double FORKLIFT_HEIGHT_TO_PUT_DOWN_SERVO = 20.0;
 
 } // end class
