@@ -236,7 +236,21 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
         forkliftTargetHeight = position;
         forkliftTargetSpeed = Math.abs(forkliftSpeed);
 
-        liftState = ForkliftState.MOVING_TO_POSITION;
+        if (newCode == true)
+            {
+            if (armIR.isOn() == true)
+                {
+                liftState = ForkliftState.STAY_AT_POSITION;
+                }
+            else
+                {
+                liftState = ForkliftState.MOVING_TO_POSITION;
+                }
+            }
+        else
+            {
+            liftState = ForkliftState.MOVING_TO_POSITION;
+            }
 
         setLiftPositionInit = false;
         }
