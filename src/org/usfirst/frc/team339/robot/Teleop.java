@@ -606,8 +606,8 @@ public static void printStatements ()
     SmartDashboard.putNumber("Right Rear Encoder Ticks",
             Hardware.rightRearDriveEncoder.get());
 
-    System.out.println("Lift Encoder Inches = "
-            + Hardware.liftingEncoder.getDistance());
+    // System.out.println("Lift Encoder Inches = "
+    // + Hardware.liftingEncoder.getDistance());
     SmartDashboard.putNumber("Lift Encoder Inches",
             Hardware.liftingEncoder.getDistance());
 
@@ -621,8 +621,8 @@ public static void printStatements ()
     SmartDashboard.putNumber("Intake Deploy Encoder",
             Hardware.intakeDeployEncoder.getDistance());
 
-    System.out.println("Intake Deploy Encoder Ticks "
-            + Hardware.intakeDeployEncoder.get());
+    // System.out.println("Intake Deploy Encoder Ticks "
+    // + Hardware.intakeDeployEncoder.get());
     SmartDashboard.putNumber("Intake Deploy Ticks",
             Hardware.intakeDeployEncoder.get());
 
@@ -641,7 +641,7 @@ public static void printStatements ()
     // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     // SmartDashboard.putBoolean("Photo SW",
     // Hardware.cubePhotoSwitch.isOn());
-    SmartDashboard.putBoolean("IR is On", Hardware.scaleIR.isOn());
+
 
 
     // =================================
@@ -713,8 +713,8 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Climb Servo",
     // Hardware.climbingMechanismServo.getAngle());
 
-    System.out.println("Intake Arm Servo " +
-            Hardware.intakeArmPositionServo.getAngle());
+    // System.out.println("Intake Arm Servo " +
+    // Hardware.intakeArmPositionServo.getAngle());
 
     // =================================
     // SPI Bus
@@ -828,6 +828,11 @@ public static void printStatements ()
         // sets the other boolean box to transparent
         SmartDashboard.putBoolean("Has Cube ", false);
         }
+
+
+    SmartDashboard.putBoolean("To close to scale",
+            Hardware.scaleIR.isOn());
+
 
     SmartDashboard.updateValues();
 } // end printStatements()
