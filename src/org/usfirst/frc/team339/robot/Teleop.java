@@ -112,33 +112,7 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-    // Align to scale
-    // if (Hardware.leftOperator.getRawButton(4) == true)
-    // {
-    // Hardware.transmission.setForAutonomous();
-    // allowAlignment = true;
-    // Hardware.scaleAlignment.alignOverride = false;
-    //
-    // if (Hardware.scaleAlignment.alignToScale(.3, 3,
-    // Hardware.leftOperator.getRawButton(5)))
-    // {
-    // Hardware.transmission
-    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-    // allowAlignment = false;
-    // }
-    // else if (Hardware.scaleAlignment.alignToScale(.3, 3,
-    // Hardware.leftOperator.getRawButton(5))
-    // && Hardware.scaleAlignment.alignOverride == true)
-    // {
-    // Hardware.transmission
-    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-    // allowAlignment = false;
-    // }
-    // }
-    // else
-    // {
-    // allowAlignment = false;
-    // }
+
 
     // code for alignToScale; this is the best current version as of 8 p.m. on
     // Monday
@@ -307,7 +281,7 @@ private static void beckyTest ()
     if (isBeckyTest == true)
         {
 
-        if (Hardware.driveWithCamera.driveToSwitch(.6) == true)
+        if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
             {
             Hardware.transmission
                     .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
@@ -533,11 +507,15 @@ public static void printStatements ()
     // prints state of switches
     // ---------------------------------
     // if (Hardware.disableAutonomousSwitch.isOn() == false)
+    // {
     // System.out.println(
     // "Disable = off");
+    // }
     // else
+    // {
     // System.out.println(
     // "Disable = on");
+    // }
     // SmartDashboard.putBoolean("Disable SW",
     // Hardware.disableAutonomousSwitch.isOn());
 
@@ -643,7 +621,8 @@ public static void printStatements ()
     // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     // SmartDashboard.putBoolean("Photo SW",
     // Hardware.cubePhotoSwitch.isOn());
-    SmartDashboard.putBoolean("IR is On", Hardware.scaleIR.isOn());
+
+    SmartDashboard.putBoolean("IR is On", Hardware.armIR.isOn());
 
 
     // =================================
@@ -737,10 +716,10 @@ public static void printStatements ()
     // Cameras
     // prints any camera information required
     // ---------------------------------
-    // System.out.println("The camera center is: " +
-    // Hardware.autoDrive.getCameraCenterValue());
-    // SmartDashboard.putNumber("Camera Center",
-    // Hardware.driveWithCamera.getCameraCenterValue());
+    // System.out.println("The camera center is: "
+    // + Hardware.driveWithCamera.getCameraCenterValue());
+    SmartDashboard.putNumber("Camera Center",
+            Hardware.driveWithCamera.getCameraCenterValue());
 
     // =================================
     // Driver station
@@ -830,6 +809,11 @@ public static void printStatements ()
         // sets the other boolean box to transparent
         SmartDashboard.putBoolean("Has Cube ", false);
         }
+
+
+    SmartDashboard.putBoolean("To close to scale",
+            Hardware.armIR.isOn());
+
 
     SmartDashboard.updateValues();
 } // end printStatements()

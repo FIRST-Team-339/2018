@@ -1,7 +1,7 @@
 package org.usfirst.frc.team339.Utils;
 
-import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
+import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -12,9 +12,10 @@ import edu.wpi.first.wpilibj.Timer;
  * intake motors, and an intake deploy mechanism.
  * 
  * @author Becky Button
+ * @param <Button>
  *
  */
-public class CubeManipulator
+public class CubeManipulator<Button>
 {
 // ---------------HARDWARE---------------------
 
@@ -22,6 +23,12 @@ public class CubeManipulator
 private SpeedController forkliftMotor = null;
 
 private Encoder forkliftEncoder = null;
+
+private LightSensor armIR = null;
+
+private boolean newCode = true;
+
+private MomentarySwitch climbButton = null;
 // ========================================
 
 // ================INTAKE==================
@@ -78,6 +85,54 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
+
+}
+
+// CONSTRUCTOR TO INCLUDE THE ARMIR and the new code boolean
+/**
+ * Creates the CubeManipulator class, which conrols the movement of the
+ * forklift, intake, and climbing for autonomous and teleop functions
+ * 
+ * @param forkliftMotor
+ *            Motor controller that powers the up and down movement of the
+ *            forklift
+ * @param intakeMotor
+ *            Motor controller that powers the spinning wheels that grabs the
+ *            cube
+ * @param intakeSwitch
+ *            Light sensor that senses whether or not we are in control of a
+ *            cube
+ * @param forkliftEncoder
+ *            Sensor for software stops on the forklift
+ * @param intakeDeploy
+ *            Motor controller that is used to deploy the intake
+ * @param intakeDeployEncoder
+ *            Sensor for the software stops on the deploy motor
+ * @param timer
+ *            Timer used for the intake mechanism
+ * @param deployFoldingServo
+ *            Servo used to fold the deploy down in order to climb.
+ * @param armIRSensor
+ *            IR used to see if were about to hit the scale
+ * @param boolean
+ *            boolean used to determine if we want to use the new code
+ */
+public CubeManipulator (SpeedController forkliftMotor,
+        SpeedController intakeMotor, LightSensor intakeSwitch,
+        Encoder forkliftEncoder, SpeedController intakeDeploy,
+        Encoder intakeDeployEncoder, Timer timer,
+        Servo deployFoldingServo,
+        LightSensor armIRSensor)
+{
+    this.forkliftMotor = forkliftMotor;
+    this.intakeMotor = intakeMotor;
+    this.intakeSwitch = intakeSwitch;
+    this.forkliftEncoder = forkliftEncoder;
+    this.intakeDeployMotor = intakeDeploy;
+    this.intakeDeployEncoder = intakeDeployEncoder;
+    this.switchTimer = timer;
+    this.deployFoldingServo = deployFoldingServo;
+    this.armIR = armIRSensor;
 }
 
 // ========================FORKLIFT FUNCTIONS========================
@@ -145,7 +200,28 @@ public void moveForkliftWithController (double speed,
             forkliftTargetSpeed = speed * FORKLIFT_UP_JOYSTICK_SCALAR;
         else
             forkliftTargetSpeed = speed * currentForkliftDownSpeed;
-        this.liftState = ForkliftState.MOVE_JOY;
+
+
+        // checks to see if we want to use new code
+        if (newCode == true)
+            {
+            // checks to see if the IR reads true, if so sets the state to
+            // stay at position because we're about to hit the stupid scale
+            if (armIR.isOn() == true)
+                {
+                this.liftState = ForkliftState.STAY_AT_POSITION;
+                }
+            // if the override is off and the IR reads false then move based on
+            // joystick
+            else
+                {
+                this.liftState = ForkliftState.MOVE_JOY;
+                }
+            }
+        else
+            {
+            this.liftState = ForkliftState.MOVE_JOY;
+            }
         }
 }
 
@@ -168,7 +244,22 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
         forkliftTargetHeight = position;
         forkliftTargetSpeed = Math.abs(forkliftSpeed);
 
-        liftState = ForkliftState.MOVING_TO_POSITION;
+        if (newCode == true)
+            {
+            if (armIR.isOn() == true)
+                {
+                liftState = ForkliftState.STAY_AT_POSITION;
+                }
+            else
+                {
+                liftState = ForkliftState.MOVING_TO_POSITION;
+                }
+            }
+        else
+            {
+            liftState = ForkliftState.MOVING_TO_POSITION;
+            }
+
         setLiftPositionInit = false;
         }
     // return true is we are done moving, false is we are still going
@@ -277,7 +368,7 @@ public boolean deployCubeIntake (boolean override)
         }
 
 
-    if (Hardware.newCode == false)
+    if (newCode == false)
         {
         // returns whether or not the intake has finished deploying
         if (deployIntakeState == DeployState.DEPLOYED)
@@ -288,7 +379,7 @@ public boolean deployCubeIntake (boolean override)
     else
         {
         if (deployIntakeState == DeployState.DEPLOYED
-                && Hardware.climbButton.isOnCheckNow() == true)
+                && climbButton.isOnCheckNow() == true)
             {
             deployIntakeState = DeployState.FOLD_ARM_DOWN;
             }
@@ -628,6 +719,7 @@ public void forkliftUpdate ()
                 }
 
             // Differentiate moving up from down
+            // TODO test scaleIR code
             if (forkliftDirection == ForkliftDirectionState.MOVING_UP)
                 {
                 // If we have passed the value we wanted...
@@ -639,8 +731,11 @@ public void forkliftUpdate ()
                     forkliftDirection = ForkliftDirectionState.NEUTRAL;
                     break;
                     }
-                // we have NOT passed the value, keep going up.
+                // we have NOT passed the value , keep going up.
+
+
                 this.forkliftMotor.set(forkliftTargetSpeed);
+
                 }
             else
                 {
@@ -653,8 +748,11 @@ public void forkliftUpdate ()
                     forkliftDirection = ForkliftDirectionState.NEUTRAL;
                     break;
                     }
-                // we have NOT passed the value, keep going down.
+                // we have NOT passed the value , keep going down.
+
+
                 this.forkliftMotor.set(-forkliftTargetSpeed);
+
                 }
 
             break;
@@ -835,7 +933,6 @@ public void deployIntakeUpdate ()
                     deployIntakeState = DeployState.STOPPED;
                 }
             break;
-
         case FOLDED:
             intakeDeployMotor.stopMotor();
             break;
@@ -1013,6 +1110,8 @@ private ForkliftState liftState = ForkliftState.STAY_AT_POSITION;
 
 // used to tell the forklift which direction it should be moving
 private ForkliftDirectionState forkliftDirection = ForkliftDirectionState.NEUTRAL;
+
+private boolean IROverride = false;
 
 private boolean isClimbing = false;
 
