@@ -68,7 +68,7 @@ public class Hardware
 // ---------------------------------------
 public static boolean onNessie = false;
 
-public static boolean on2018 = true;
+public static boolean on2018 = false;
 
 public static boolean newCode = true;
 
@@ -354,7 +354,8 @@ public static DriveWithCamera driveWithCamera = new DriveWithCamera(
 public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
-        intakeDeployArm, intakeDeployEncoder, autoTimer);
+        intakeDeployArm, intakeDeployEncoder, autoTimer,
+        intakeArmPositionServo);
 
 public static ScaleAlignment scaleAlignment = new ScaleAlignment(
         rearUltraSonic);

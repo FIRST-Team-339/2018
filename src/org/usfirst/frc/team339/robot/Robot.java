@@ -301,6 +301,8 @@ public void robotInit ()
                 KILROY_XV_ENCODER_DPP,
                 MotorPosition.ALL);
 
+        Hardware.intakeDeployArm.setInverted(false);
+
         Hardware.liftingEncoder
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder

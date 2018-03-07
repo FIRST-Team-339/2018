@@ -3,6 +3,7 @@ package org.usfirst.frc.team339.Utils;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -33,6 +34,8 @@ private Encoder intakeDeployEncoder = null;
 private LightSensor intakeSwitch = null;
 
 private Timer switchTimer = null;
+
+private Servo deployFoldingServo = null;
 // ========================================
 
 // --------------------------------------------
@@ -58,11 +61,14 @@ private Timer switchTimer = null;
  *            Sensor for the software stops on the deploy motor
  * @param timer
  *            Timer used for the intake mechanism
+ * @param deployFoldingServo
+ *            Servo used to fold the deploy down in order to climb.
  */
 public CubeManipulator (SpeedController forkliftMotor,
         SpeedController intakeMotor, LightSensor intakeSwitch,
         Encoder forkliftEncoder, SpeedController intakeDeploy,
-        Encoder intakeDeployEncoder, Timer timer)
+        Encoder intakeDeployEncoder, Timer timer,
+        Servo deployFoldingServo)
 {
     this.forkliftMotor = forkliftMotor;
     this.intakeMotor = intakeMotor;
@@ -71,6 +77,7 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.intakeDeployMotor = intakeDeploy;
     this.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
+    this.deployFoldingServo = deployFoldingServo;
 }
 
 // ========================FORKLIFT FUNCTIONS========================
@@ -262,7 +269,9 @@ public boolean deployCubeIntake (boolean override)
         }
     // advances the deploy intake state machine if it hasn't already been
     // deployed/ is deploying
-    if (deployIntakeState == DeployState.NOT_DEPLOYED)
+    if (deployIntakeState == DeployState.NOT_DEPLOYED
+            || deployIntakeState == DeployState.UNFOLD_ARM_UP)
+        ;
         {
         deployIntakeState = DeployState.DEPLOYING;
         }
@@ -281,7 +290,7 @@ public boolean deployCubeIntake (boolean override)
         if (deployIntakeState == DeployState.DEPLOYED
                 && Hardware.climbButton.isOnCheckNow() == true)
             {
-            deployIntakeState = DeployState.POSITION_TO_CLIMB;
+            deployIntakeState = DeployState.FOLD_ARM_DOWN;
             }
         else
             {
@@ -339,6 +348,21 @@ public void angleDeployForScale ()
             && deployIntakeState != DeployState.OVERRIDE_DEPLOY
             && deployIntakeState != DeployState.OVERRIDE_RETRACT)
         deployIntakeState = DeployState.POSITION_45;
+}
+
+/**
+ * Folds the deploy down to be able to climb well
+ */
+public void setDeployForClimb ()
+{
+    if (deployIntakeState == DeployState.DEPLOYED)
+        {
+        deployIntakeState = DeployState.FOLD_ARM_DOWN;
+        }
+    else if (deployIntakeState == DeployState.FOLDED)
+        {
+        deployIntakeState = DeployState.UNFOLD_ARM_UP;
+        }
 }
 
 /**
@@ -573,6 +597,10 @@ public void masterUpdate ()
  */
 public void forkliftUpdate ()
 {
+    if (deployIntakeState == DeployState.FOLD_ARM_DOWN
+            || deployIntakeState == DeployState.FOLDED
+            || deployIntakeState == DeployState.UNFOLD_ARM_UP)
+        this.currentMinLiftPosition = FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT;
     // main switch statement for the forklift state machine
     switch (liftState)
         {
@@ -638,7 +666,8 @@ public void forkliftUpdate ()
             liftState = ForkliftState.STAY_AT_POSITION;
             break;
         default:
-            // print out we reached the default case (which we shouldn't have),
+            // print out we reached the default case (which we shouldn't
+            // have),
             // then fall through to STAY_AT_POSITION
             System.out.println(
                     "Reached default in the liftState switch in "
@@ -755,38 +784,76 @@ public void deployIntakeUpdate ()
             deployIntakeState = DeployState.DEPLOYING;
             break;
 
-        case POSITION_TO_CLIMB:
+        case FOLD_ARM_DOWN:
 
-            if (intakeArmHasBeenDroppedToClimb == false)
+            // Sets up a state machine INSIDE the state machine to fold the arm
+            // down to climb.
+            switch (foldDownDeployState)
                 {
-                initialDeployTicks = this.getIntakeAngle();
-                intakeArmHasBeenDroppedToClimb = true;
+                case RAISE_ARM:
+                    // Raise the arm up and out of the way
+                    if (setLiftPosition(
+                            FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT) == true)
+                        foldDownDeployState = FoldDownDeployState.RELEASE_TENSION;
+                    break;
+                // First bring the arm up halfway to relieve tension on the
+                // servo arm
+                case RELEASE_TENSION:
+                    // If we have reached the 45 point?
+                    if (getIntakeAngle() < DEPLOY_45_POSITION_TICKS)
+                        {
+                        // Set the servo to the "in" position get ready to bring
+                        // the arm down.
+                        deployFoldingServo.set(DEPLOY_SERVO_IN);
+                        this.foldDownDeployState = FoldDownDeployState.FOLD_DOWN;
+                        }
+                    // If we have not yet reached the 45 point?
+                    else
+                        {
+                        // Keep brining the arm up
+                        this.intakeDeployMotor
+                                .set(INTAKE_RETRACT_SPEED);
+                        }
+                    break;
+                case FOLD_DOWN:
+                    // We have finished going down?
+                    if (getIntakeAngle() > INTAKE_FOLDED_TICKS)
+                        {
+                        // Reset the state for next time and change the overall
+                        // deploy state.
+                        this.foldDownDeployState = FoldDownDeployState.RAISE_ARM;
+                        this.deployIntakeState = DeployState.FOLDED;
+                        }
+                    // We have NOT finished going down?
+                    else
+                        {
+                        // Keep bringing the arm down
+                        this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+                        }
+                    break;
+                default:
+                    deployIntakeState = DeployState.STOPPED;
                 }
+            break;
 
-            if (Hardware.climbButton.isOnCheckNow() == true)
+        case FOLDED:
+            intakeDeployMotor.stopMotor();
+            break;
+
+        case UNFOLD_ARM_UP:
+            // If the arm has reached the 45 position
+            if (getIntakeAngle() < DEPLOY_45_POSITION_TICKS)
                 {
-                if (this.getIntakeAngle() >= initialDeployTicks
-                        + INTAKE_DEPLOY_TICKS)
-                    {
-                    this.intakeDeployMotor.set(0.0);
-                    deployIntakeState = DeployState.DEPLOYED;
-                    }
+                // set the servo out and begin the normal deploy motor code
+                this.deployFoldingServo.set(DEPLOY_SERVO_OUT);
+                this.deployCubeIntake(false);
                 }
             else
                 {
-                if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS)
-                    {
-                    // stops the intake deploy motor if we've turned far
-                    // enough;
-                    // FINISHED does this as well, but doing it here helps
-                    // keep the motor from overshooting too much
-                    this.intakeDeployMotor.set(0.0);
-                    deployIntakeState = DeployState.DEPLOYED;
-                    }
+                // Continue retracting the motor
+                this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
                 }
-
             break;
-
         default:
             System.out.println(
                     "Unkown case found in deployIntakeUpdate(). Stopping deploy.");
@@ -907,7 +974,17 @@ MOVING_UP, MOVING_DOWN, NEUTRAL
  */
 private static enum DeployState
     {
-NOT_DEPLOYED, DEPLOYING, DEPLOYED, POSITION_45, POSITION_TO_CLIMB, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, STOPPED
+NOT_DEPLOYED, DEPLOYING, DEPLOYED, POSITION_45, FOLD_ARM_DOWN, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, STOPPED, FOLDED, UNFOLD_ARM_UP
+    }
+
+/**
+ * 
+ * @author Ryan McGee
+ *
+ */
+private static enum FoldDownDeployState
+    {
+RELEASE_TENSION, FOLD_DOWN, RAISE_ARM
     }
 
 /**
@@ -954,6 +1031,8 @@ private double currentMinLiftPosition = 0;
 // variable that controls the deploy intake state machine
 private DeployState deployIntakeState = DeployState.NOT_DEPLOYED;
 
+private FoldDownDeployState foldDownDeployState = FoldDownDeployState.RELEASE_TENSION;
+
 private pushOutState pushState = pushOutState.INIT;
 
 private IntakeState intakeState = IntakeState.STOP;
@@ -991,6 +1070,8 @@ private final double FORKLIFT_UP_JOYSTICK_SCALAR = .85;
 
 private final double FORKLIFT_NO_CUBE_MIN_HEIGHT = 0;
 
+private final double FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT = 20;
+
 private final double FORKLIFT_DEFAULT_SPEED_UP = .6;
 
 private final double FORKLIFT_DEFAULT_SPEED_DOWN = .4;
@@ -1023,6 +1104,15 @@ private final double INTAKE_DEPLOY_TICKS = 245;
 
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 10.0;
+
+// Set at 180 degrees instead of 90 degrees, hence double the value of deployed.
+private final double INTAKE_FOLDED_TICKS = INTAKE_DEPLOY_TICKS * 2;
+
+// Servo is IN, deploy will be able to fold down.
+private final double DEPLOY_SERVO_IN = 1;
+
+// Servo is OUT, deploy will be supported by servo.
+private final double DEPLOY_SERVO_OUT = 0;
 
 private final double INTAKE_DEPLOY_SPEED = .5;
 
