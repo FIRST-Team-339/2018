@@ -645,7 +645,7 @@ public static void printStatements ()
     // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
     // SmartDashboard.putBoolean("Photo SW",
     // Hardware.cubePhotoSwitch.isOn());
-    SmartDashboard.putBoolean("IR is On", Hardware.scaleIR.isOn());
+
 
 
     // =================================
@@ -717,8 +717,8 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Climb Servo",
     // Hardware.climbingMechanismServo.getAngle());
 
-    System.out.println("Intake Arm Servo " +
-            Hardware.intakeArmPositionServo.getAngle());
+    // System.out.println("Intake Arm Servo " +
+    // Hardware.intakeArmPositionServo.getAngle());
 
     // =================================
     // SPI Bus
@@ -832,6 +832,11 @@ public static void printStatements ()
         // sets the other boolean box to transparent
         SmartDashboard.putBoolean("Has Cube ", false);
         }
+
+
+    SmartDashboard.putBoolean("To close to scale",
+            Hardware.scaleIR.isOn());
+
 
     SmartDashboard.updateValues();
 } // end printStatements()
