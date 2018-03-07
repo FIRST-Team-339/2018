@@ -72,6 +72,7 @@ public static boolean on2018 = true;
 
 public static boolean newCode = true;
 
+
 // **********************************************************
 // DIGITAL I/O CLASSES
 // **********************************************************
@@ -177,12 +178,12 @@ public static Encoder intakeDeployEncoder = new Encoder(23, 24);
 // -------------------------------------
 // Red Light/IR Sensor class
 // -------------------------------------
-public static LightSensor scaleIR = new LightSensor(21);// TODO check port for
-                                                        // 2018 robot
+public static LightSensor armIR = new LightSensor(21);// TODO check port for
+                                                      // 2018 robot
 
-public static LightSensor rightRedLight = new LightSensor(7);
-
-public static LightSensor leftRedLight = new LightSensor(8);
+// public static LightSensor rightRedLight = new LightSensor(7);
+//
+// public static LightSensor leftRedLight = new LightSensor(8);
 
 public static LightSensor cubePhotoSwitch = new LightSensor(22);
 
@@ -354,7 +355,8 @@ public static DriveWithCamera driveWithCamera = new DriveWithCamera(
 public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor,
         cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
-        intakeDeployArm, intakeDeployEncoder, autoTimer);
+        intakeDeployArm, intakeDeployEncoder, autoTimer, armIR,
+        climbButton);
 
 public static ScaleAlignment scaleAlignment = new ScaleAlignment(
         rearUltraSonic);
