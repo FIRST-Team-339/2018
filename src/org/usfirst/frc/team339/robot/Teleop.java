@@ -112,33 +112,7 @@ public static void periodic ()
     // OPERATOR CONTROLS
     // =================================================================
 
-    // Align to scale
-    // if (Hardware.leftOperator.getRawButton(4) == true)
-    // {
-    // Hardware.transmission.setForAutonomous();
-    // allowAlignment = true;
-    // Hardware.scaleAlignment.alignOverride = false;
-    //
-    // if (Hardware.scaleAlignment.alignToScale(.3, 3,
-    // Hardware.leftOperator.getRawButton(5)))
-    // {
-    // Hardware.transmission
-    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-    // allowAlignment = false;
-    // }
-    // else if (Hardware.scaleAlignment.alignToScale(.3, 3,
-    // Hardware.leftOperator.getRawButton(5))
-    // && Hardware.scaleAlignment.alignOverride == true)
-    // {
-    // Hardware.transmission
-    // .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-    // allowAlignment = false;
-    // }
-    // }
-    // else
-    // {
-    // allowAlignment = false;
-    // }
+
 
     // code for alignToScale; this is the best current version as of 8 p.m. on
     // Monday
