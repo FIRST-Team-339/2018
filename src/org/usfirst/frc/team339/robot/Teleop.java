@@ -305,7 +305,7 @@ private static void beckyTest ()
     if (isBeckyTest == true)
         {
 
-        if (Hardware.driveWithCamera.driveToSwitch(.6) == true)
+        if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
             {
             Hardware.transmission
                     .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
@@ -531,11 +531,15 @@ public static void printStatements ()
     // prints state of switches
     // ---------------------------------
     // if (Hardware.disableAutonomousSwitch.isOn() == false)
+    // {
     // System.out.println(
     // "Disable = off");
+    // }
     // else
+    // {
     // System.out.println(
     // "Disable = on");
+    // }
     // SmartDashboard.putBoolean("Disable SW",
     // Hardware.disableAutonomousSwitch.isOn());
 
@@ -606,8 +610,8 @@ public static void printStatements ()
     SmartDashboard.putNumber("Right Rear Encoder Ticks",
             Hardware.rightRearDriveEncoder.get());
 
-    System.out.println("Lift Encoder Inches = "
-            + Hardware.liftingEncoder.getDistance());
+    // System.out.println("Lift Encoder Inches = "
+    // + Hardware.liftingEncoder.getDistance());
     SmartDashboard.putNumber("Lift Encoder Inches",
             Hardware.liftingEncoder.getDistance());
 
@@ -621,8 +625,8 @@ public static void printStatements ()
     SmartDashboard.putNumber("Intake Deploy Encoder",
             Hardware.intakeDeployEncoder.getDistance());
 
-    System.out.println("Intake Deploy Encoder Ticks "
-            + Hardware.intakeDeployEncoder.get());
+    // System.out.println("Intake Deploy Encoder Ticks "
+    // + Hardware.intakeDeployEncoder.get());
     SmartDashboard.putNumber("Intake Deploy Ticks",
             Hardware.intakeDeployEncoder.get());
 
@@ -735,10 +739,10 @@ public static void printStatements ()
     // Cameras
     // prints any camera information required
     // ---------------------------------
-    // System.out.println("The camera center is: " +
-    // Hardware.autoDrive.getCameraCenterValue());
-    // SmartDashboard.putNumber("Camera Center",
-    // Hardware.driveWithCamera.getCameraCenterValue());
+    // System.out.println("The camera center is: "
+    // + Hardware.driveWithCamera.getCameraCenterValue());
+    SmartDashboard.putNumber("Camera Center",
+            Hardware.driveWithCamera.getCameraCenterValue());
 
     // =================================
     // Driver station

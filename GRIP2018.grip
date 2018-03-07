@@ -1,28 +1,24 @@
 <edu.wpi.grip.core.Pipeline>
-  <sources>
-    <edu.wpi.grip.core.sources.CameraSource>
-      <property name="address" value="http://10.3.39.11/mjpg/video.mjpg"/>
-    </edu.wpi.grip.core.sources.CameraSource>
-  </sources>
+  <sources/>
   <steps>
     <edu.wpi.grip.core.Step name="RGB Threshold">
       <edu.wpi.grip.core.sockets.InputSocketImpl step="0" socket="0"/>
       <edu.wpi.grip.core.sockets.InputSocketImpl step="0" socket="1">
         <value>
           <double>0.0</double>
-          <double>0.0</double>
+          <double>41.339590443686006</double>
         </value>
       </edu.wpi.grip.core.sockets.InputSocketImpl>
       <edu.wpi.grip.core.sockets.InputSocketImpl step="0" socket="2">
         <value>
-          <double>145.8453237410072</double>
-          <double>196.2542662116041</double>
+          <double>222.43705035971223</double>
+          <double>255.0</double>
         </value>
       </edu.wpi.grip.core.sockets.InputSocketImpl>
       <edu.wpi.grip.core.sockets.InputSocketImpl step="0" socket="3">
         <value>
           <double>0.0</double>
-          <double>4.786689419795237</double>
+          <double>113.5750853242321</double>
         </value>
       </edu.wpi.grip.core.sockets.InputSocketImpl>
       <edu.wpi.grip.core.sockets.OutputSocketImpl step="0" socket="0" previewed="true"/>
@@ -32,21 +28,21 @@
       <edu.wpi.grip.core.sockets.InputSocketImpl step="1" socket="1">
         <value>false</value>
       </edu.wpi.grip.core.sockets.InputSocketImpl>
-      <edu.wpi.grip.core.sockets.OutputSocketImpl step="1" socket="0" previewed="false"/>
+      <edu.wpi.grip.core.sockets.OutputSocketImpl step="1" socket="0" previewed="true"/>
     </edu.wpi.grip.core.Step>
     <edu.wpi.grip.core.Step name="Filter Contours">
       <edu.wpi.grip.core.sockets.InputSocketImpl step="2" socket="0"/>
       <edu.wpi.grip.core.sockets.InputSocketImpl step="2" socket="1">
-        <value>80.0</value>
+        <value>100.0</value>
       </edu.wpi.grip.core.sockets.InputSocketImpl>
       <edu.wpi.grip.core.sockets.InputSocketImpl step="2" socket="2">
-        <value>50.0</value>
+        <value>0</value>
       </edu.wpi.grip.core.sockets.InputSocketImpl>
       <edu.wpi.grip.core.sockets.InputSocketImpl step="2" socket="3">
-        <value>0.0</value>
+        <value>0</value>
       </edu.wpi.grip.core.sockets.InputSocketImpl>
       <edu.wpi.grip.core.sockets.InputSocketImpl step="2" socket="4">
-        <value>1000.0</value>
+        <value>1000</value>
       </edu.wpi.grip.core.sockets.InputSocketImpl>
       <edu.wpi.grip.core.sockets.InputSocketImpl step="2" socket="5">
         <value>0</value>
@@ -56,7 +52,7 @@
       </edu.wpi.grip.core.sockets.InputSocketImpl>
       <edu.wpi.grip.core.sockets.InputSocketImpl step="2" socket="7">
         <value>
-          <double>30.575539568345327</double>
+          <int>0</int>
           <int>100</int>
         </value>
       </edu.wpi.grip.core.sockets.InputSocketImpl>
@@ -77,16 +73,12 @@
   </steps>
   <connections>
     <edu.wpi.grip.core.Connection>
-      <edu.wpi.grip.core.sockets.OutputSocketImpl source="0" socket="0" previewed="true"/>
-      <edu.wpi.grip.core.sockets.InputSocketImpl step="0" socket="0"/>
+      <edu.wpi.grip.core.sockets.OutputSocketImpl step="1" socket="0" previewed="true"/>
+      <edu.wpi.grip.core.sockets.InputSocketImpl step="2" socket="0"/>
     </edu.wpi.grip.core.Connection>
     <edu.wpi.grip.core.Connection>
       <edu.wpi.grip.core.sockets.OutputSocketImpl step="0" socket="0" previewed="true"/>
       <edu.wpi.grip.core.sockets.InputSocketImpl step="1" socket="0"/>
-    </edu.wpi.grip.core.Connection>
-    <edu.wpi.grip.core.Connection>
-      <edu.wpi.grip.core.sockets.OutputSocketImpl step="1" socket="0" previewed="false"/>
-      <edu.wpi.grip.core.sockets.InputSocketImpl step="2" socket="0"/>
     </edu.wpi.grip.core.Connection>
   </connections>
   <settings>
@@ -100,10 +92,10 @@
   </settings>
   <codeGenerationSettings>
     <language>Java</language>
-    <className>GripPipeline</className>
+    <className>AutoGenVision</className>
     <implementWpilibPipeline>false</implementWpilibPipeline>
-    <saveDir>C:\Users\Kilroy Programming\GRIP</saveDir>
-    <packageName></packageName>
+    <saveDir>C:\Robotics\2018\Kilroy\src\org\usfirst\frc\team339\vision</saveDir>
+    <packageName>org.usfirst.frc.team339.vision</packageName>
     <moduleName>grip</moduleName>
   </codeGenerationSettings>
 </edu.wpi.grip.core.Pipeline>

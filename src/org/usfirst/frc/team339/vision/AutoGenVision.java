@@ -40,9 +40,9 @@ public class AutoGenVision {
 	public void process(Mat source0) {
 		// Step RGB_Threshold0:
 		Mat rgbThresholdInput = source0;
-		double[] rgbThresholdRed = {0.0, 0.0};
-		double[] rgbThresholdGreen = {48.156474820143885, 255.0};
-		double[] rgbThresholdBlue = {0.0, 255.0};
+		double[] rgbThresholdRed = {0.0, 41.339590443686006};
+		double[] rgbThresholdGreen = {222.43705035971223, 255.0};
+		double[] rgbThresholdBlue = {0.0, 113.5750853242321};
 		rgbThreshold(rgbThresholdInput, rgbThresholdRed, rgbThresholdGreen, rgbThresholdBlue, rgbThresholdOutput);
 
 		// Step Find_Contours0:
