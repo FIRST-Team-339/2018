@@ -849,8 +849,6 @@ public static boolean rightAutoLineExchangePath ()
 public static boolean centerSwitchPath ()
 {
     // System.out.println("Vision Auto state: " + visionAuto);
-    // System.out.println("turned right: " + turnedRightCenterAuto);
-    // SmartDashboard.putBoolean("TurneD RIGHT", TURNEDRIGHTCENTERAUTO);
     // SMARTDASHBOARD.PUTSTRING("VISION STates", visionAuto.toString());
     switch (visionAuto)
         {
@@ -911,12 +909,10 @@ public static boolean centerSwitchPath ()
             // Turn 90 degrees to the right, if the switch is on the right
             // sets state to BRAKE_2_L
             // System.out.print("We are in right side auto");
-            turnedRightCenterAuto = false;
             if (Hardware.autoDrive.turnDegrees2Stage(90,
                     AUTO_SPEED_VISION) == true)
 
                 {
-                turnedRightCenterAuto = true;
                 visionAuto = centerState.BRAKE_2_R;
                 }
             break;
@@ -1029,10 +1025,12 @@ public static boolean centerSwitchPath ()
         case DRIVE_WITH_CAMERA:
             // drives to the switch based on the camera
             // sets state to LIFT
+            Hardware.tempRelay.set(true);
             if (Hardware.driveWithCamera.driveToSwitch(
                     AUTO_SPEED_VISION) == true)
                 {
-                Hardware.transmission.stop();
+                Hardware.tempRelay.set(false);
+                // Hardware.transmission.stop();
                 visionAuto = centerState.LIFT;
                 }
             break;
@@ -1079,9 +1077,7 @@ public static boolean centerSwitchPath ()
 
 public static centerState visionAuto = centerState.CENTER_INIT;
 
-public static boolean usingAutoCamera = false;
-
-public static boolean turnedRightCenterAuto = false;
+public static boolean usingAutoCamera = true;
 
 /**
  * Possible states for center vision autonomous

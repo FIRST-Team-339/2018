@@ -40,8 +40,6 @@ private VisionProcessor visionProcessor = null;
 
 private final TransmissionType transmissionType;
 
-private DigitalOutput ringlight;
-
 /**
  * Creates the drive with camera object. If a sensor listed is not used (except
  * for
@@ -138,14 +136,15 @@ public DriveWithCamera (TransmissionBase transmission,
  *            A sensor that uses a spinning disk to measure rotation.
  * @param visionProcessor
  *            The camera's vision processing code, as a sensor.
- * @param ringlightRelay 
- *            The janky fix for relay not working           
+ * @param ringlightRelay
+ *            The janky fix for relay not working
  * 
  */
 public DriveWithCamera (TransmissionBase transmission,
         Encoder leftEncoder, Encoder rightEncoder,
         UltraSonic frontUltrasonic, UltraSonic rearUltrasonic,
-        Gyro gyro, VisionProcessor visionProcessor, DigitalOutput ringlightRelay)
+        Gyro gyro, VisionProcessor visionProcessor,
+        DigitalOutput ringlightRelay)
 {
     super(transmission, leftEncoder, rightEncoder, gyro);
 
@@ -156,7 +155,6 @@ public DriveWithCamera (TransmissionBase transmission,
     this.leftRearEncoder = leftEncoder;
     this.rightRearEncoder = rightEncoder;
     this.gyro = gyro;
-    this.ringlight = ringlightRelay;
 }
 
 
@@ -180,7 +178,7 @@ public boolean driveToSwitch (double speed)
     switch (state)
         {
         case INIT:
-            visionProcessor.setRelayValue(true);
+            this.visionProcessor.setRelayValue(true);
             state = DriveWithCameraState.DRIVE_WITH_CAMERA;
             break;
         case DRIVE_WITH_CAMERA:
@@ -260,15 +258,18 @@ public boolean jankyDriveToSwitch (double speed)
     switch (jankyState)
         {
         case INIT:
-            this.ringlight.set(true);
             state = DriveWithCameraState.DRIVE_WITH_CAMERA;
             break;
         case DRIVE_WITH_CAMERA:
             // gets the position of the center
-            double centerX = this.getCameraCenterValue();
-            // turns on the ring light
-            this.visionProcessor.setRelayValue(true);
 
+            double centerX = this.getCameraCenterValue();
+
+            // System.out.println("center" + centerX);
+            // turns on the ring light
+            // this.visionProcessor.setRelayValue(true);
+
+            // this.visionProcessor.setDigitalOutputValue(true);
             // if the switch center is to the right of our center set by the
             // SWITCH_CAMERA_CENTER, correct by driving faster on the left
             if (centerX >= SWITCH_CAMERA_CENTER)
@@ -295,7 +296,6 @@ public boolean jankyDriveToSwitch (double speed)
                 state = DriveWithCameraState.DRIVE_WITH_US;
             break;
         case DRIVE_WITH_US:
-            this.ringlight.set(false);
             driveStraight(speed, false);
 
             if (this.frontUltrasonic
@@ -325,14 +325,14 @@ private DriveWithCameraState jankyState = DriveWithCameraState.INIT;
 public void visionTest (double compensationFactor, double speed)
 {
     this.getCameraCenterValue();
-    System.out.println("Center for the vision : " + center);
+    // System.out.println("Center for the vision : " + center);
     if (this.getCameraCenterValue() >= SWITCH_CAMERA_CENTER
             - CAMERA_DEADBAND
             && this.getCameraCenterValue() <= SWITCH_CAMERA_CENTER
                     + CAMERA_DEADBAND)
         {
         // driveStraight(speed, false);
-        System.out.println("We are aligned in the center");
+        // System.out.println("We are aligned in the center");
         }
     else if (this.getCameraCenterValue() > SWITCH_CAMERA_CENTER
             + CAMERA_DEADBAND)
@@ -340,14 +340,14 @@ public void visionTest (double compensationFactor, double speed)
         // center is too far left, drive faster on the right
         this.getTransmission().drive(speed,
                 speed * compensationFactor);
-        System.out.println("We're too right");
+        // System.out.println("We're too right");
         }
     else
         {
         // center is too far right, drive faster on the left
         this.getTransmission().drive(speed * compensationFactor,
                 speed);
-        System.out.println("We're too left");
+        // System.out.println("We're too left");
         }
 }
 
@@ -388,18 +388,17 @@ public double getCameraCenterValue ()
 // ================VISION CONSTANTS================
 // the distance in inches in which we drive the robot straight using the
 // ultrasonic
-private final double CAMERA_NO_LONGER_WORKS = 36;
+private final double CAMERA_NO_LONGER_WORKS =  36;
 // 38 + 50;
 
 // the number in pixels that the center we are looking for can be off
 private final double CAMERA_DEADBAND = 7;
 
 // the distance from the wall (in inches) where we start stopping the robot
-private final double DISTANCE_FROM_WALL_TO_STOP = 15;
+private final double DISTANCE_FROM_WALL_TO_STOP =  15;
 // 20 + 50;
 
-// TODO This is for nessie, test for the new robot
-private final double SWITCH_CAMERA_CENTER = 160;
+private final double SWITCH_CAMERA_CENTER = 150;
 // 160;
 
 private final double DRIVE_CORRECTION = .1;

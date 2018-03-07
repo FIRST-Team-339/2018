@@ -40,6 +40,8 @@ private Encoder intakeDeployEncoder = null;
 private LightSensor intakeSwitch = null;
 
 private Timer switchTimer = null;
+
+private LightSensor scaleIR;
 // ========================================
 
 // --------------------------------------------
@@ -78,6 +80,7 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.intakeDeployMotor = intakeDeploy;
     this.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
+
 }
 
 // CONSTRUCTOR TO INCLUDE THE ARMIR and the new code boolean
@@ -673,6 +676,7 @@ public void forkliftUpdate ()
                 }
 
             // Differentiate moving up from down
+            // TODO test scaleIR code
             if (forkliftDirection == ForkliftDirectionState.MOVING_UP)
                 {
                 // If we have passed the value we wanted...
@@ -684,8 +688,11 @@ public void forkliftUpdate ()
                     forkliftDirection = ForkliftDirectionState.NEUTRAL;
                     break;
                     }
-                // we have NOT passed the value, keep going up.
+                // we have NOT passed the value , keep going up.
+
+
                 this.forkliftMotor.set(forkliftTargetSpeed);
+
                 }
             else
                 {
@@ -698,8 +705,11 @@ public void forkliftUpdate ()
                     forkliftDirection = ForkliftDirectionState.NEUTRAL;
                     break;
                     }
-                // we have NOT passed the value, keep going down.
+                // we have NOT passed the value , keep going down.
+
+
                 this.forkliftMotor.set(-forkliftTargetSpeed);
+
                 }
 
             break;
