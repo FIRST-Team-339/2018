@@ -688,10 +688,14 @@ public void masterUpdate ()
  */
 public void forkliftUpdate ()
 {
+	//Make sure the lift stays up to prevent bad things when folding the deploy
     if (deployIntakeState == DeployState.FOLD_ARM_DOWN
             || deployIntakeState == DeployState.FOLDED
             || deployIntakeState == DeployState.UNFOLD_ARM_UP)
         this.currentMinLiftPosition = FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT;
+    else
+    	this.currentMinLiftPosition = FORKLIFT_NO_CUBE_MIN_HEIGHT;
+    
     // main switch statement for the forklift state machine
     switch (liftState)
         {
