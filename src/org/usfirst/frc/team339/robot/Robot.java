@@ -301,8 +301,6 @@ public void robotInit ()
                 KILROY_XV_ENCODER_DPP,
                 MotorPosition.ALL);
 
-        Hardware.intakeDeployArm.setInverted(false);
-
         Hardware.liftingEncoder
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder
@@ -342,6 +340,9 @@ public void robotInit ()
     // Sets the angle of the servo to 100
     // ---------------------------------
     Hardware.climbingMechanismServo.set(CLIMB_SERVO_INIT_POSITION);
+
+    Hardware.intakeArmPositionServo
+            .set(Hardware.cubeManipulator.DEPLOY_SERVO_OUT);
 
     // ---------------------------------
     // sets the ring light to off

@@ -207,7 +207,7 @@ public void moveForkliftWithController (double speed,
             {
             // checks to see if the IR reads true, if so sets the state to
             // stay at position because we're about to hit the stupid scale
-            if (armIR.isOn() == true)
+            if (armIR.isOn() == true && speed > 0)
                 {
                 this.liftState = ForkliftState.STAY_AT_POSITION;
                 }
@@ -688,14 +688,14 @@ public void masterUpdate ()
  */
 public void forkliftUpdate ()
 {
-	//Make sure the lift stays up to prevent bad things when folding the deploy
+    // Make sure the lift stays up to prevent bad things when folding the deploy
     if (deployIntakeState == DeployState.FOLD_ARM_DOWN
             || deployIntakeState == DeployState.FOLDED
             || deployIntakeState == DeployState.UNFOLD_ARM_UP)
         this.currentMinLiftPosition = FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT;
     else
-    	this.currentMinLiftPosition = FORKLIFT_NO_CUBE_MIN_HEIGHT;
-    
+        this.currentMinLiftPosition = FORKLIFT_NO_CUBE_MIN_HEIGHT;
+
     // main switch statement for the forklift state machine
     switch (liftState)
         {
@@ -1212,10 +1212,10 @@ private final double INTAKE_RETRACT_TICKS = 10.0;
 private final double INTAKE_FOLDED_TICKS = INTAKE_DEPLOY_TICKS * 2;
 
 // Servo is IN, deploy will be able to fold down.
-private final double DEPLOY_SERVO_IN = 1;
+public final double DEPLOY_SERVO_IN = 1;
 
 // Servo is OUT, deploy will be supported by servo.
-private final double DEPLOY_SERVO_OUT = 0;
+public final double DEPLOY_SERVO_OUT = 0;
 
 private final double INTAKE_DEPLOY_SPEED = .5;
 

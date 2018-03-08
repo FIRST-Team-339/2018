@@ -161,43 +161,13 @@ public static void periodic ()
                 .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
 
 
-    // servo code
-    if (Hardware.newCode == false)
-        {
-        if (Hardware.climbButton.isOnCheckNow() == true)
-            Hardware.climbingMechanismServo
-                    .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
-        else
-            Hardware.climbingMechanismServo
-                    .set(Robot.CLIMB_SERVO_INIT_POSITION);
-        }
+    if (Hardware.climbButton.isOnCheckNow() == true)
+        Hardware.climbingMechanismServo
+                .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
     else
-        {
-        if (Hardware.climbButton.isOnCheckNow() == true)
-            {
-            Hardware.climbingMechanismServo
-                    .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
-            if (Hardware.cubeManipulator
-                    .getForkliftHeight() >= FORKLIFT_HEIGHT_TO_PUT_DOWN_SERVO)
-                {
-                Hardware.intakeArmPositionServo
-                        .setAngle(INTAKE_ARM_SERVO_DOWN_POSITION);
-                Hardware.cubeManipulator.deployCubeIntake(false);
-                }
-            else
-                {
-                Hardware.intakeArmPositionServo
-                        .setAngle(INTAKE_ARM_SERVO_UP_POSITION);
-                }
-            }
-        else
-            {
-            Hardware.climbingMechanismServo
-                    .set(Robot.CLIMB_SERVO_INIT_POSITION);
-            Hardware.intakeArmPositionServo
-                    .setAngle(INTAKE_ARM_SERVO_UP_POSITION);
-            }
-        }
+        Hardware.climbingMechanismServo
+                .set(Robot.CLIMB_SERVO_INIT_POSITION);
+
 
     // update for the cube manipulator (forklift, intake, etc.) and its state
     // machines
@@ -481,8 +451,8 @@ public static void printStatements ()
 
     // System.out.println(
     // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    // SmartDashboard.putNumber("Cube Motor",
-    // Hardware.cubeIntakeMotor.get());
+    SmartDashboard.putNumber("Cube Motor",
+            Hardware.cubeIntakeMotor.get());
     // System.out.println(
     // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
     // SmartDashboard.putNumber("Intake Deploy Motor",
@@ -655,8 +625,8 @@ public static void printStatements ()
     // ---------------------------------
 
     // System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
-    // SmartDashboard.putNumber("AnalogGyro",
-    // Hardware.gyroAnalog.getAngle());
+    SmartDashboard.putNumber("AnalogGyro",
+            Hardware.gyroAnalog.getAngle());
 
     // System.out.println("Gyro: " + Hardware.gyro.getAngle());
     // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
@@ -670,8 +640,8 @@ public static void printStatements ()
 
     // System.out.println("Front UltraSonic "
     // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    // SmartDashboard.putNumber("Front Ultrasonic",
-    // Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+    SmartDashboard.putNumber("Front Ultrasonic",
+            Hardware.frontUltraSonic.getDistanceFromNearestBumper());
     //
     // SmartDashboard.putNumber("Front Ultrasonic Raw",
     // Hardware.frontUltraSonic.getRefinedDistanceValue());

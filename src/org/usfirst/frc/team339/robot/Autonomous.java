@@ -119,8 +119,6 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
-
-    Hardware.cubeManipulator.masterUpdate();
     SmartDashboard.putString("Overall Auto state",
             autoState.toString());
     SmartDashboard.putString("Vision auto state",
@@ -1031,7 +1029,7 @@ public static boolean centerSwitchPath ()
                 {
                 Hardware.tempRelay.set(false);
                 // Hardware.transmission.stop();
-                visionAuto = centerState.LIFT;
+                visionAuto = centerState.MAKE_DEPOSIT;
                 }
             break;
         case DRIVE_STRAIGHT_NO_CAMERA:
@@ -1043,7 +1041,7 @@ public static boolean centerSwitchPath ()
                 visionAuto = centerState.MAKE_DEPOSIT;
                 }
             break;
-        case LIFT:
+        case LIFT:// DO NOT USE! it sets the lift position in this auto's init.
             // moves the forklift to the scale height and holds it there
             // sets state to MAKE_DEPOSIT
             Hardware.transmission.stop();

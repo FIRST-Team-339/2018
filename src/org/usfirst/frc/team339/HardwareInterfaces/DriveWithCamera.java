@@ -9,7 +9,6 @@ import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
@@ -388,18 +387,17 @@ public double getCameraCenterValue ()
 // ================VISION CONSTANTS================
 // the distance in inches in which we drive the robot straight using the
 // ultrasonic
-private final double CAMERA_NO_LONGER_WORKS =  36;
+private final double CAMERA_NO_LONGER_WORKS = 36;
 // 38 + 50;
 
 // the number in pixels that the center we are looking for can be off
 private final double CAMERA_DEADBAND = 7;
 
 // the distance from the wall (in inches) where we start stopping the robot
-private final double DISTANCE_FROM_WALL_TO_STOP =  15;
+private final double DISTANCE_FROM_WALL_TO_STOP = 15;
 // 20 + 50;
 
-private final double SWITCH_CAMERA_CENTER = 150;
-// 160;
+private final double SWITCH_CAMERA_CENTER = 160;// Center of a 320x240 image
 
 private final double DRIVE_CORRECTION = .1;
 
