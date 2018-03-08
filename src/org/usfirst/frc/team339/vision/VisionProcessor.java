@@ -13,8 +13,6 @@ import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.VideoCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -603,7 +601,7 @@ private boolean takePictureByButton = false;
 
 private boolean pictureTakenByButton = false;
 
-private final double TAKE_PICTURE_DELAY = 0.1;
+private final double TAKE_PICTURE_DELAY = 1.0;
 
 /**
  * Gets the value of the ring light relay
