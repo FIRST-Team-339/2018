@@ -45,36 +45,29 @@ public class DrivePID extends Drive
 
 	private void init()
 	{
-
+		
 	}
+	
+	@Override
+	public boolean turnDegrees(int angle, double speed)
+	{
+		if(turnDegreesInit == true)
+		{
+			super.resetEncoders();
+			turnDegreesInit = false;
+		}
+		
+		
+		return false;
+	}
+	
+	private boolean turnDegreesInit = true;
+	private double currentTurnSpeed = 0;
 
 	// ======================Variables======================
 
 	private double turnP = 0, turnI = 0, turnD = 0;
 
-	private PIDSubsystem encoderTurnPID = new PIDSubsystem(turnP, turnI, turnD)
-	{
-
-		@Override
-		protected double returnPIDInput()
-		{
-			return getEncoderDegreesTurned();
-		}
-
-		@Override
-		protected void usePIDOutput(double output)
-		{
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		protected void initDefaultCommand()
-		{
-			// TODO Auto-generated method stub
-
-		}
-
-	};
+	
 
 }
