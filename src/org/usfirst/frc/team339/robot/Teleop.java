@@ -589,8 +589,8 @@ public static void printStatements ()
     // Hardware.leftRedLight.isOn());
     // System.out.println(
     // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
-    // SmartDashboard.putBoolean("Photo SW",
-    // Hardware.cubePhotoSwitch.isOn());
+    SmartDashboard.putBoolean("Photo SW",
+            Hardware.cubePhotoSwitch.isOn());
 
     SmartDashboard.putBoolean("IR is On", Hardware.armIR.isOn());
 
