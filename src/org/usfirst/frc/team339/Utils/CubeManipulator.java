@@ -1212,10 +1212,10 @@ private final double INTAKE_RETRACT_TICKS = 10.0;
 private final double INTAKE_FOLDED_TICKS = INTAKE_DEPLOY_TICKS * 2;
 
 // Servo is IN, deploy will be able to fold down.
-public final double DEPLOY_SERVO_IN = 1;
+public final double DEPLOY_SERVO_IN = 0;
 
 // Servo is OUT, deploy will be supported by servo.
-public final double DEPLOY_SERVO_OUT = 0;
+public final double DEPLOY_SERVO_OUT = 1;
 
 private final double INTAKE_DEPLOY_SPEED = .5;
 
