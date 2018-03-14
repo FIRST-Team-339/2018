@@ -247,6 +247,7 @@ public void robotInit ()
     Hardware.intakeDeployArm.setSafetyEnabled(false);
 
     Hardware.intakeDeployArm.setInverted(true);
+    Hardware.cubeIntakeMotor.setInverted(true);
 
     // -------------------------------------
     // Manually sets encoders Distance per Pulse
@@ -477,7 +478,7 @@ private static final double KILROY_XV_ENCODER_DPP = .0174;
 
 private static final double KILROY_XIX_ENCODER_DPP = 0.0346;
 
-private static final double KILROY_XIX_GEAR_1_SPEED = .3;
+private static final double KILROY_XIX_GEAR_1_SPEED = .4;
 
 private static final double KILROY_XV_GEAR_1_SPEED = .3;
 

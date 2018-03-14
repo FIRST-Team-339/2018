@@ -784,7 +784,6 @@ public static void printStatements ()
     SmartDashboard.putBoolean("To close to scale",
             Hardware.armIR.isOn());
 
-
     SmartDashboard.updateValues();
 } // end printStatements()
 

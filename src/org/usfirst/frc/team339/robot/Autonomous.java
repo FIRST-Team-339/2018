@@ -34,6 +34,7 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -856,16 +857,17 @@ public static boolean centerSwitchPath ()
             // background
             Hardware.cubeManipulator.deployCubeIntake(false);
             Hardware.cubeManipulator
-                    .setLiftPosition(CubeManipulator.SWITCH_HEIGHT);
-            visionAuto = centerState.DRIVE_TEN_INCHES;
+                    .setLiftPosition(SWITCH_LIFT_HEIGHT,
+                            FORKLIFT_SPEED);
+            visionAuto = centerState.DRIVE_FOUR_INCHES;
             break;
-        case DRIVE_TEN_INCHES:
-            // drive 10 inches to make the turn and sets state to BRAKE_1
+        case DRIVE_FOUR_INCHES:
+            // drive 4 inches to make the turn and sets state to BRAKE_1
             // -Hardware.autoDrive.getBrakeStoppingDistance()
             if (Hardware.autoDrive.driveStraightInches(
-                    10, AUTO_SPEED_VISION) == true)
+                    4, AUTO_SPEED_VISION) == true)
                 {
-                visionAuto = centerState.BRAKE_1;
+                visionAuto = centerState.GRAB_DATA;// Bypass the first brake
                 }
             break;
         case BRAKE_1:
@@ -876,6 +878,8 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case GRAB_DATA:
+            // Turns on the ringlight
+            Hardware.tempRelay.set(true);
             // know where to go and sets state to the appropriate turn state
             // (whichever side is our side of the switch)
             SmartDashboard.putString("Switch data",
@@ -895,23 +899,21 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case TURN_TOWARDS_LEFT_SIDE:
-            // Turn 90 degrees to the left, if the switch is on the left
-            // sets state to BRAKE_2_L
-            if (Hardware.autoDrive.turnDegrees2Stage(-90,
-                    AUTO_SPEED_VISION) == true)
+            // Turn x degrees to the left, if the switch is on the left
+            if (Hardware.autoDrive.pivotTurnDegrees(-42,
+                    AUTO_SPEED_VISION) == true)// Changed from 2stageturn
                 {
-                visionAuto = centerState.BRAKE_2_L;
+                visionAuto = centerState.DRIVE_STRAIGHT_TO_SWITCH_LEFT;// Bypass
+                                                                       // brake
                 }
             break;
         case TURN_TOWARDS_RIGHT_SIDE:
-            // Turn 90 degrees to the right, if the switch is on the right
-            // sets state to BRAKE_2_L
-            // System.out.print("We are in right side auto");
-            if (Hardware.autoDrive.turnDegrees2Stage(90,
-                    AUTO_SPEED_VISION) == true)
-
+            // Turn x degrees to the right, if the switch is on the right
+            if (Hardware.autoDrive.pivotTurnDegrees(38,
+                    AUTO_SPEED_VISION) == true)// Changed from 2stageTurn
                 {
-                visionAuto = centerState.BRAKE_2_R;
+                visionAuto = centerState.DRIVE_STRAIGHT_TO_SWITCH_RIGHT;// bypass
+                                                                        // brake
                 }
             break;
         case BRAKE_2_L:
@@ -934,11 +936,12 @@ public static boolean centerSwitchPath ()
             // drive straight, switch is on the left then brakes
             // sets state to TURN_AGAIN_LEFT
             if (Hardware.autoDrive.driveStraightInches(
-                    DRIVE_NO_CAMERA_LEFT - Hardware.autoDrive
-                            .getBrakeStoppingDistance(),
-                    AUTO_SPEED_VISION) == true)
+                    DRIVE_NO_CAMERA_LEFT, DRIVE_SPEED) == true)
                 {
-                visionAuto = centerState.BRAKE_3_L;
+                Hardware.axisCamera.saveImage(ImageType.RAW);
+                Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+                // visionAuto = centerState.DONE;
+                visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
             break;
         case BRAKE_3_L:
@@ -952,11 +955,12 @@ public static boolean centerSwitchPath ()
             // drive straight, switch is on the right then brakes
             // sets state to TURN_AGAIN_RIGHT
             if (Hardware.autoDrive.driveStraightInches(
-                    DRIVE_NO_CAMERA_RIGHT - Hardware.autoDrive
-                            .getBrakeStoppingDistance(),
-                    AUTO_SPEED_VISION) == true)
+                    DRIVE_NO_CAMERA_RIGHT, DRIVE_SPEED) == true)
                 {
-                visionAuto = centerState.BRAKE_3_R;
+                Hardware.axisCamera.saveImage(ImageType.RAW);
+                Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+                // visionAuto = centerState.DONE;
+                visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
             break;
         case BRAKE_3_R:
@@ -1003,6 +1007,7 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case BRAKE_AFTER_RIGHT_TURN_2:
+            Hardware.tempRelay.set(true);
             if (Hardware.autoDrive
                     .brake(BrakeType.AFTER_TURN) == true)
                 {
@@ -1011,6 +1016,8 @@ public static boolean centerSwitchPath ()
                 if (usingAutoCamera == true)
                     {
                     visionAuto = centerState.DRIVE_WITH_CAMERA;
+                    Hardware.axisCamera.saveImage(ImageType.RAW);
+                    Hardware.axisCamera.saveImage(ImageType.PROCESSED);
                     }
                 else
                     {
@@ -1023,10 +1030,13 @@ public static boolean centerSwitchPath ()
         case DRIVE_WITH_CAMERA:
             // drives to the switch based on the camera
             // sets state to LIFT
-            Hardware.tempRelay.set(true);
+            // Hardware.tempRelay.set(true);
             if (Hardware.driveWithCamera.driveToSwitch(
                     AUTO_SPEED_VISION) == true)
                 {
+                Hardware.axisCamera.saveImage(ImageType.RAW);
+                Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+                // Turn off the ringlight camera
                 Hardware.tempRelay.set(false);
                 // Hardware.transmission.stop();
                 visionAuto = centerState.MAKE_DEPOSIT;
@@ -1038,15 +1048,17 @@ public static boolean centerSwitchPath ()
                     .getDistanceFromNearestBumper() <= 15)
                 {
                 Hardware.transmission.stop();
-                visionAuto = centerState.MAKE_DEPOSIT;
+                visionAuto = centerState.LIFT;
                 }
             break;
-        case LIFT:// DO NOT USE! it sets the lift position in this auto's init.
+        case LIFT:// DO NOT USE!(too bad I'm using it) it sets the lift position
+                  // in this auto's init.
             // moves the forklift to the scale height and holds it there
             // sets state to MAKE_DEPOSIT
             Hardware.transmission.stop();
             if (Hardware.cubeManipulator.setLiftPosition(
-                    SWITCH_LIFT_HEIGHT, FORKLIFT_SPEED) == true)
+                    CubeManipulator.SWITCH_HEIGHT,
+                    FORKLIFT_SPEED) == true)
                 {
                 visionAuto = centerState.MAKE_DEPOSIT;
                 }
@@ -1086,7 +1098,7 @@ public static boolean usingAutoCamera = true;
 public static enum centerState
     {
 
-CENTER_INIT, DRIVE_TEN_INCHES, BRAKE_1, GRAB_DATA,
+CENTER_INIT, DRIVE_FOUR_INCHES, BRAKE_1, GRAB_DATA,
 /**
  * Left side auto, turns 90 degrees to the left
  */
@@ -1323,7 +1335,8 @@ public static boolean switchOrScalePath (Position robotPosition)
                 // No? adventure on...
                 else
                     {
-                    currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_BRAKING_DISTANCE_B4_DRIVE4;
+                    currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
+                    // TODO Nasty temporary fix to avoid fouls :(
                     }
             break;
         case BRAKE_DRIVE3:
@@ -1667,7 +1680,7 @@ private static final double AUTO_TESTING_SCALAR = 1.0; // percent
 
 private static final double DRIVE_STRAIGHT_ACCELERATION_TIME = .6; // seconds
 
-private static final double DRIVE_SPEED = .4; // percent
+private static final double DRIVE_SPEED = .5; // percent
 
 private static final double TURN_SPEED = .25; // percent
 
@@ -1683,7 +1696,7 @@ private static final double INTAKE_EJECT_TIME = 1;// Seconds
 // ==========
 
 // LIFT HEIGHT
-private static final int SWITCH_LIFT_HEIGHT = 24;// Inches
+private static final int SWITCH_LIFT_HEIGHT = 30;// Inches
 
 private static final int SCALE_LIFT_HEIGHT = 78;// Inches
 // ==========
@@ -1727,9 +1740,9 @@ private final static int RIGHT_SIDE_TURN_TOWARDS_EXCHANGE = -90;
 private final static int RIGHT_DISTANCE_TO_EXCHANGE = 130;
 
 // CENTER_SWITCH
-private final static int DRIVE_NO_CAMERA_LEFT = 53;
+private final static int DRIVE_NO_CAMERA_LEFT = 12;
 
-private final static int DRIVE_NO_CAMERA_RIGHT = 50;
+private final static int DRIVE_NO_CAMERA_RIGHT = 12;
 
 private final static double CENTER_ACCEL = .6;
 
