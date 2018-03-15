@@ -347,7 +347,7 @@ private static void testingDrive ()
                 && Hardware.autoDrive.driveStraightInches(
                         SmartDashboard.getNumber("Drive Distance", 0),
                         SmartDashboard.getNumber("Drive Power",
-                                0)) == true)
+                                0), true) == true)
             {
             driveState = 1;
             }
