@@ -393,6 +393,43 @@ public class Drive
 		return Math.toDegrees(getEncoderDistanceAverage(WheelGroups.ALL) / turningRadius);
 	}
 
+	/**
+	 * Determines how many inches an encoder must read to have completed a turn
+	 * @param degrees How many degrees the robot should turn
+	 * @param pivot Whether or not the robot is pivoting on a wheel: Effectively doubles the turning radius
+	 * @return The calculated value in inches.
+	 */
+	public double degreesToEncoderInches(double degrees, boolean pivot)
+	{
+		if (pivot == false)
+			return turningRadius * Math.toRadians(Math.abs(degrees));
+
+		return (turningRadius * 2) * Math.toRadians(Math.abs(degrees));
+	}
+
+	/**
+	 * @param encoder Which encoder should be returned. If encoder is not passed into the Drive class, it will be returned as null.
+	 * @return The encoder attached to the respective wheel
+	 */
+	public Encoder getEncoder(MotorPosition encoder)
+	{
+		switch (encoder)
+		{
+		case LEFT:
+		case LEFT_REAR:
+			return this.leftRearEncoder;
+		case RIGHT:
+		case RIGHT_REAR:
+			return this.rightRearEncoder;
+		case LEFT_FRONT:
+			return this.leftFrontEncoder;
+		case RIGHT_FRONT:
+			return this.rightFrontEncoder;
+		default:
+			return null;
+		}
+	}
+
 	// ================ DRIVE METHODS ================
 
 	/**
@@ -896,7 +933,7 @@ public class Drive
 		double rightSpeed = speed + (Math.signum(gyro.getAngle()) * driveStraightConstant);
 
 		if (acceleration)
-			this.accelerateTo(leftSpeed, rightSpeed, defaultAcceleration);
+			this.accelerateTo(leftSpeed, rightSpeed, getDefaultAcceleration());
 		else
 			this.accelerateTo(leftSpeed, rightSpeed, 0);
 		// Reset the "timer" to know when to "reset" the encoders for this
@@ -962,7 +999,7 @@ public class Drive
 		// more off course, the more it will attempt to correct.
 
 		if (accelerate)
-			this.accelerateTo(leftMotorVal, rightMotorVal, defaultAcceleration);
+			this.accelerateTo(leftMotorVal, rightMotorVal, getDefaultAcceleration());
 		else
 			this.getTransmission().drive(leftMotorVal, rightMotorVal);
 
@@ -1192,6 +1229,14 @@ public class Drive
 		turningRadius = radius;
 	}
 
+	/**
+	 * @return the defaultAcceleration, in seconds
+	 */
+	public double getDefaultAcceleration()
+	{
+		return defaultAcceleration;
+	}
+
 	private boolean turnDegrees2StageInit = true;
 
 	private double turnDegreesTriggerStage = 40;// Degrees
@@ -1215,6 +1260,7 @@ public class Drive
 	// Nov 4 changed from 16 to 17
 	private static double turningRadius = 11 - .35;
 
-	private static final int INIT_TIMEOUT = 300;// Milliseconds until the
-												// initialization should reset.
+	protected static final int INIT_TIMEOUT = 300;// Milliseconds until the
+													// initialization should
+													// reset.
 }
