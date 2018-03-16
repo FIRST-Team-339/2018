@@ -181,8 +181,9 @@ public static Encoder intakeDeployEncoder = new Encoder(23, 24);
 public static LightSensor armIR = new LightSensor(21);// TODO check port for
                                                       // 2018 robot
 
-// public static LightSensor rightRedLight = new LightSensor(7);
-//
+public static LightSensor redLight = new LightSensor(7);
+
+
 // public static LightSensor leftRedLight = new LightSensor(8);
 
 public static LightSensor cubePhotoSwitch = new LightSensor(22);
