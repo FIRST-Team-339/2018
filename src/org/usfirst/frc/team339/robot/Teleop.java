@@ -347,7 +347,8 @@ private static void testingDrive ()
                 && Hardware.autoDrive.driveStraightInches(
                         SmartDashboard.getNumber("Drive Distance", 0),
                         SmartDashboard.getNumber("Drive Power",
-                                0), true) == true)
+                                0),
+                        true) == true)
             {
             driveState = 1;
             }
@@ -646,9 +647,9 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Front Ultrasonic Raw",
     // Hardware.frontUltraSonic.getRefinedDistanceValue());
     //
-    // SmartDashboard.putNumber("Front ultrasonic bumper",
-    // Hardware.frontUltraSonic
-    // .getOffsetDistanceFromNearestBumper());
+    SmartDashboard.putNumber("Front ultrasonic bumper",
+            Hardware.frontUltraSonic
+                    .getOffsetDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     // SmartDashboard.putNumber("Rear Ultrasonic",
