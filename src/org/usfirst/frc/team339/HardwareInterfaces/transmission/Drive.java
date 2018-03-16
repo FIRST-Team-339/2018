@@ -1260,6 +1260,7 @@ public class Drive
 	// Nov 4 changed from 16 to 17
 	private static double turningRadius = 11 - .35;
 
-	private static final int INIT_TIMEOUT = 300;// Milliseconds until the
-												// initialization should reset.
+	protected static final int INIT_TIMEOUT = 300;// Milliseconds until the
+													// initialization should
+													// reset.
 }
