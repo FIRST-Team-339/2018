@@ -388,7 +388,7 @@ public int getEncoderTicks (TransmissionBase.MotorPosition encoder)
  *            The desired length
  * @return True when any encoder is past length
  */
-private boolean isAnyEncoderLargerThan (double length)
+public boolean isAnyEncoderLargerThan (double length)
 {
     // if using mecanum or tank return true if any of the encoders are
     // greater than the parameter, return true else return false
