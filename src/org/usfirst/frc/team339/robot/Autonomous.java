@@ -848,7 +848,7 @@ public static boolean rightAutoLineExchangePath ()
 public static boolean centerSwitchPath ()
 {
     // System.out.println("Vision Auto state: " + visionAuto);
-    // SMARTDASHBOARD.PUTSTRING("VISION STates", visionAuto.toString());
+    // SMARTDASHBOARD.PUTSTRING("VISION States", visionAuto.toString());
     switch (visionAuto)
         {
         case CENTER_INIT:
