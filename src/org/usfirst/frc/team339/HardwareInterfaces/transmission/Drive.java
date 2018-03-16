@@ -371,7 +371,7 @@ public class Drive
 	 *            The desired length
 	 * @return True when any encoder is past length
 	 */
-	private boolean isAnyEncoderLargerThan(double length)
+	public boolean isAnyEncoderLargerThan(double length)
 	{
 		// if using mecanum or tank return true if any of the encoders are
 		// greater than the parameter, return true else return false
@@ -386,7 +386,8 @@ public class Drive
 	}
 
 	/**
-	 * @return How many degrees the robot has turned in place since the encoders were reset.
+	 * @return How many degrees the robot has turned in place since the encoders
+	 *         were reset.
 	 */
 	public double getEncoderDegreesTurned()
 	{
@@ -712,9 +713,10 @@ public class Drive
 	 *            How far the robot should go (should be greater than 0)
 	 * @param speed
 	 *            How fast the robot should travel
+	 * @param accelerate TODO
 	 * @return Whether or not the robot has finished traveling that given distance.
 	 */
-	public boolean driveStraightInches(double distance, double speed)
+	public boolean driveStraightInches(double distance, double speed, boolean accelerate)
 	{
 		// Runs once when the method runs the first time, and does not run again
 		// until after the method returns true.
@@ -733,7 +735,7 @@ public class Drive
 		}
 
 		// Drive straight if we have not reached the distance
-		this.driveStraight(speed, true);
+		this.driveStraight(speed, accelerate);
 
 		return false;
 	}
@@ -1134,7 +1136,7 @@ public class Drive
 		// Reset the encoders on the first start only
 		if (pivotTurnDegreesInit == true)
 		{
-			this.resetEncoders();
+			this.gyro.reset();
 			pivotTurnDegreesInit = false;
 		}
 
@@ -1142,8 +1144,7 @@ public class Drive
 		if (degrees > 0)
 		{
 			// If the left side has reached it's calculated arc length, stop.
-			if (this.getEncoderDistanceAverage(WheelGroups.LEFT_SIDE) > Math.toRadians(Math.abs(degrees))
-					* (turningRadius))
+			if (Math.abs(gyro.getAngle()) > Math.abs(degrees) - this.gyroFudgeFactor)
 			{
 				this.getTransmission().stop();
 				pivotTurnDegreesInit = true;
@@ -1155,8 +1156,7 @@ public class Drive
 		else
 		{
 			// If the right side has reached it's calculated arc length, stop.
-			if (this.getEncoderDistanceAverage(WheelGroups.RIGHT_SIDE) > Math.toRadians(Math.abs(degrees))
-					* (turningRadius * 2))
+			if (Math.abs(gyro.getAngle()) > Math.abs(degrees) - this.gyroFudgeFactor)
 			{
 				this.getTransmission().stop();
 				pivotTurnDegreesInit = true;
@@ -1260,7 +1260,6 @@ public class Drive
 	// Nov 4 changed from 16 to 17
 	private static double turningRadius = 11 - .35;
 
-	protected static final int INIT_TIMEOUT = 300;// Milliseconds until the
-													// initialization should
-													// reset.
+	private static final int INIT_TIMEOUT = 300;// Milliseconds until the
+												// initialization should reset.
 }

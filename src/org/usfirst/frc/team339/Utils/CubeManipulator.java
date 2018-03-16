@@ -203,25 +203,31 @@ public void moveForkliftWithController (double speed,
 
 
         // checks to see if we want to use new code
-        if (newCode == true)
-            {
-            // checks to see if the IR reads true, if so sets the state to
-            // stay at position because we're about to hit the stupid scale
-            if (armIR.isOn() == true && speed > 0)
-                {
-                this.liftState = ForkliftState.STAY_AT_POSITION;
-                }
-            // if the override is off and the IR reads false then move based on
-            // joystick
-            else
-                {
-                this.liftState = ForkliftState.MOVE_JOY;
-                }
-            }
-        else
-            {
-            this.liftState = ForkliftState.MOVE_JOY;
-            }
+        /*
+         * if (newCode == true)
+         * {
+         * // checks to see if the IR reads true, if so sets the state to
+         * // stay at position because we're about to hit the stupid scale
+         * if (armIR.isOn() == true && speed > 0
+         * && deployIntakeState != DeployState.FOLDED
+         * && deployIntakeState != DeployState.FOLD_ARM_DOWN
+         * && deployIntakeState != DeployState.UNFOLD_ARM_UP)
+         * {
+         * this.liftState = ForkliftState.STAY_AT_POSITION;
+         * }
+         * // if the override is off and the IR reads false then move based on
+         * // joystick
+         * else
+         * {
+         * this.liftState = ForkliftState.MOVE_JOY;
+         * }
+         * 
+         * }
+         * else
+         * {
+         */
+        this.liftState = ForkliftState.MOVE_JOY;
+        // }
         }
 }
 
@@ -244,21 +250,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
         forkliftTargetHeight = position;
         forkliftTargetSpeed = Math.abs(forkliftSpeed);
 
-        if (newCode == true)
-            {
-            if (armIR.isOn() == true)
-                {
-                liftState = ForkliftState.STAY_AT_POSITION;
-                }
-            else
-                {
-                liftState = ForkliftState.MOVING_TO_POSITION;
-                }
-            }
-        else
-            {
-            liftState = ForkliftState.MOVING_TO_POSITION;
-            }
+        liftState = ForkliftState.MOVING_TO_POSITION;
 
         setLiftPositionInit = false;
         }
@@ -706,7 +698,11 @@ public void forkliftUpdate ()
                             .getDistance())
                     || (this.forkliftTargetHeight < currentMinLiftPosition
                             && forkliftTargetHeight < forkliftEncoder
-                                    .getDistance()))
+                                    .getDistance())/*
+                                                    * || (armIR.isOn() == true
+                                                    * && deployIntakeState ==
+                                                    * DeployState.DEPLOYED)
+                                                    */)
                 {
                 liftState = ForkliftState.STAY_AT_POSITION;
                 break;
@@ -894,15 +890,16 @@ public void deployIntakeUpdate ()
                 {
                 case RAISE_ARM:
                     // Raise the arm up and out of the way
-                    if (setLiftPosition(
-                            FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT) == true)
+                    if (this.getForkliftHeight() > FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT
+                            || setLiftPosition(
+                                    FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT) == true)
                         foldDownDeployState = FoldDownDeployState.RELEASE_TENSION;
                     break;
                 // First bring the arm up halfway to relieve tension on the
                 // servo arm
                 case RELEASE_TENSION:
-                    // If we have reached the 45 point?
-                    if (getIntakeAngle() < DEPLOY_45_POSITION_TICKS)
+                    // If we have reached the up position?
+                    if (getIntakeAngle() < INTAKE_RETRACT_TICKS)
                         {
                         // Set the servo to the "in" position get ready to bring
                         // the arm down.
@@ -943,7 +940,7 @@ public void deployIntakeUpdate ()
 
         case UNFOLD_ARM_UP:
             // If the arm has reached the 45 position
-            if (getIntakeAngle() < DEPLOY_45_POSITION_TICKS)
+            if (getIntakeAngle() < INTAKE_RETRACT_TICKS)
                 {
                 // set the servo out and begin the normal deploy motor code
                 this.deployFoldingServo.set(DEPLOY_SERVO_OUT);
@@ -1134,7 +1131,7 @@ private double currentMinLiftPosition = 0;
 // variable that controls the deploy intake state machine
 private DeployState deployIntakeState = DeployState.NOT_DEPLOYED;
 
-private FoldDownDeployState foldDownDeployState = FoldDownDeployState.RELEASE_TENSION;
+private FoldDownDeployState foldDownDeployState = FoldDownDeployState.RAISE_ARM;
 
 private pushOutState pushState = pushOutState.INIT;
 
@@ -1163,29 +1160,29 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 // --------------------CONSTANTS--------------------
 
 // ================FORKLIFT================
-private final double FORKLIFT_MAX_HEIGHT = 70;
+private final double FORKLIFT_MAX_HEIGHT = 76;
 
-private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .25;
+private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .55;
 
 private final double FORKLIFT_CLIMB_SCALAR = .8;
 
-private final double FORKLIFT_UP_JOYSTICK_SCALAR = .85;
+private final double FORKLIFT_UP_JOYSTICK_SCALAR = .9;
 
 private final double FORKLIFT_NO_CUBE_MIN_HEIGHT = 0;
 
 private final double FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT = 20;
 
-private final double FORKLIFT_DEFAULT_SPEED_UP = .6;
+private final double FORKLIFT_DEFAULT_SPEED_UP = FORKLIFT_UP_JOYSTICK_SCALAR;
 
-private final double FORKLIFT_DEFAULT_SPEED_DOWN = .4;
+private final double FORKLIFT_DEFAULT_SPEED_DOWN = FORKLIFT_DOWN_JOYSTICK_SCALAR;
 
-private final double FORKLIFT_STAY_UP_SPEED = 0.0; // -.15;
+private final double FORKLIFT_STAY_UP_SPEED = 0.05; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 
 public final static double SWITCH_HEIGHT = 26;
 
-public final static double SCALE_HEIGHT = 70;
+public final static double SCALE_HEIGHT = 76;
 
 // =========================================
 
@@ -1193,13 +1190,13 @@ public final static double SCALE_HEIGHT = 70;
 
 private final double INTAKE_SPEED = .5;
 
-private final double EJECT_SPEED_FAST = -1;
+private final double EJECT_SPEED_FAST = -.5;
 
 private final double EJECT_SPEED_SLOW = -.4;
 
 private final double EJECT_CHANGE_HEIGHT = 58;
 
-public final double INTAKE_STOP_WITH_CUBE = .1;
+public final double INTAKE_STOP_WITH_CUBE = .06;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
@@ -1209,13 +1206,13 @@ private final double INTAKE_DEPLOY_TICKS = 245;
 private final double INTAKE_RETRACT_TICKS = 10.0;
 
 // Set at 180 degrees instead of 90 degrees, hence double the value of deployed.
-private final double INTAKE_FOLDED_TICKS = INTAKE_DEPLOY_TICKS * 2;
+private final double INTAKE_FOLDED_TICKS = 300;
 
 // Servo is IN, deploy will be able to fold down.
-public final double DEPLOY_SERVO_IN = 1;
+public final double DEPLOY_SERVO_IN = 0;
 
 // Servo is OUT, deploy will be supported by servo.
-public final double DEPLOY_SERVO_OUT = 0;
+public final double DEPLOY_SERVO_OUT = 1;
 
 private final double INTAKE_DEPLOY_SPEED = .5;
 

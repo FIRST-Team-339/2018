@@ -347,7 +347,8 @@ private static void testingDrive ()
                 && Hardware.autoDrive.driveStraightInches(
                         SmartDashboard.getNumber("Drive Distance", 0),
                         SmartDashboard.getNumber("Drive Power",
-                                0)) == true)
+                                0),
+                        true) == true)
             {
             driveState = 1;
             }
@@ -589,8 +590,8 @@ public static void printStatements ()
     // Hardware.leftRedLight.isOn());
     // System.out.println(
     // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
-    // SmartDashboard.putBoolean("Photo SW",
-    // Hardware.cubePhotoSwitch.isOn());
+    SmartDashboard.putBoolean("Photo SW",
+            Hardware.cubePhotoSwitch.isOn());
 
     SmartDashboard.putBoolean("IR is On", Hardware.armIR.isOn());
 
@@ -646,9 +647,9 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Front Ultrasonic Raw",
     // Hardware.frontUltraSonic.getRefinedDistanceValue());
     //
-    // SmartDashboard.putNumber("Front ultrasonic bumper",
-    // Hardware.frontUltraSonic
-    // .getOffsetDistanceFromNearestBumper());
+    SmartDashboard.putNumber("Front ultrasonic bumper",
+            Hardware.frontUltraSonic
+                    .getOffsetDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     // SmartDashboard.putNumber("Rear Ultrasonic",
@@ -783,7 +784,6 @@ public static void printStatements ()
 
     SmartDashboard.putBoolean("To close to scale",
             Hardware.armIR.isOn());
-
 
     SmartDashboard.updateValues();
 } // end printStatements()
