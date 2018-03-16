@@ -713,9 +713,10 @@ private boolean driveInchesInit = true;
  *            How far the robot should go (should be greater than 0)
  * @param speed
  *            How fast the robot should travel
+ * @param accelerate TODO
  * @return Whether or not the robot has finished traveling that given distance.
  */
-public boolean driveStraightInches (double distance, double speed)
+public boolean driveStraightInches (double distance, double speed, boolean accelerate)
 {
     // Runs once when the method runs the first time, and does not run again
     // until after the method returns true.
@@ -734,7 +735,7 @@ public boolean driveStraightInches (double distance, double speed)
         }
 
     // Drive straight if we have not reached the distance
-    this.driveStraight(speed, true);
+    this.driveStraight(speed, accelerate);
 
     return false;
 }

@@ -287,7 +287,10 @@ public boolean jankyDriveToSwitch (double speed)
 
             if (this.frontUltrasonic
                     .getDistanceFromNearestBumper() <= CAMERA_NO_LONGER_WORKS)
+                {
                 state = DriveWithCameraState.DRIVE_WITH_US;
+                }
+            
             break;
         case DRIVE_WITH_US:
             driveStraight(speed, false);
