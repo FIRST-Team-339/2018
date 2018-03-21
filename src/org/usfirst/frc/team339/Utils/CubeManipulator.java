@@ -121,8 +121,7 @@ public CubeManipulator (SpeedController forkliftMotor,
         SpeedController intakeMotor, LightSensor intakeSwitch,
         Encoder forkliftEncoder, SpeedController intakeDeploy,
         Encoder intakeDeployEncoder, Timer timer,
-        Servo deployFoldingServo,
-        LightSensor armIRSensor)
+        Servo deployFoldingServo, LightSensor armIRSensor)
 {
     this.forkliftMotor = forkliftMotor;
     this.intakeMotor = intakeMotor;
@@ -201,31 +200,27 @@ public void moveForkliftWithController (double speed,
         else
             forkliftTargetSpeed = speed * currentForkliftDownSpeed;
 
-
         // checks to see if we want to use new code
-        /*
-         * if (newCode == true)
-         * {
-         * // checks to see if the IR reads true, if so sets the state to
-         * // stay at position because we're about to hit the stupid scale
-         * if (armIR.isOn() == true && speed > 0
-         * && deployIntakeState != DeployState.FOLDED
-         * && deployIntakeState != DeployState.FOLD_ARM_DOWN
-         * && deployIntakeState != DeployState.UNFOLD_ARM_UP)
-         * {
-         * this.liftState = ForkliftState.STAY_AT_POSITION;
-         * }
-         * // if the override is off and the IR reads false then move based on
-         * // joystick
-         * else
-         * {
-         * this.liftState = ForkliftState.MOVE_JOY;
-         * }
-         * 
-         * }
-         * else
-         * {
-         */
+
+        // if (newCode == true)
+        // { // checks to see if the IR reads true, if so sets the state to
+        // // stay at position because we're about to hit the stupid scale
+        // if (armIR.isOn() == true && speed > 0 &&
+        // deployIntakeState != DeployState.FOLDED
+        // && deployIntakeState != DeployState.FOLD_ARM_DOWN
+        // && deployIntakeState != DeployState.UNFOLD_ARM_UP)
+        // {
+        // this.liftState = ForkliftState.STAY_AT_POSITION;
+        // } // if the override is off and the IR reads false then move
+        // // based on // joystick
+        // else
+        // {
+        // this.liftState = ForkliftState.MOVE_JOY;
+        // }
+        //
+        // }
+        // else
+        // {
         this.liftState = ForkliftState.MOVE_JOY;
         // }
         }
@@ -244,7 +239,8 @@ public void moveForkliftWithController (double speed,
  */
 public boolean setLiftPosition (double position, double forkliftSpeed)
 {
-    // Sets the target position and speed, enables "moving-to-position" state.
+    // Sets the target position and speed, enables "moving-to-position"
+    // state.
     if (setLiftPositionInit == true)
         {
         forkliftTargetHeight = position;
@@ -254,6 +250,7 @@ public boolean setLiftPosition (double position, double forkliftSpeed)
 
         setLiftPositionInit = false;
         }
+
     // return true is we are done moving, false is we are still going
     if (liftState == ForkliftState.STAY_AT_POSITION)
         {
@@ -279,7 +276,8 @@ private boolean setLiftPositionInit = true;
 public boolean setLiftPosition (double position)
 {
     double defaultSpeed = 0.0;
-    // If the requested position is greater than the current position, set the
+    // If the requested position is greater than the current position, set
+    // the
     // state machine to go up.
     if (this.getForkliftHeight() < position)
         {
@@ -316,7 +314,6 @@ public double getIntakeMotorSpeed ()
 {
     return this.intakeMotor.get();
 }
-
 
 /**
  * Tell the intake motor to stop by setting it to zero. Should be changed to
@@ -358,7 +355,6 @@ public boolean deployCubeIntake (boolean override)
         {
         deployIntakeState = DeployState.DEPLOYING;
         }
-
 
     if (newCode == false)
         {
@@ -425,12 +421,14 @@ public boolean retractCubeIntake (boolean override)
  * Angles the deploy to the 45 degree angle while the button is held, and holds
  * it at that position for placing on the scale.
  */
-public void angleDeployForScale ()
+public boolean angleDeployForScale ()
 {
     if (deployIntakeState != DeployState.STOPPED
             && deployIntakeState != DeployState.OVERRIDE_DEPLOY
             && deployIntakeState != DeployState.OVERRIDE_RETRACT)
         deployIntakeState = DeployState.POSITION_45;
+
+    return getIntakeAngle() < DEPLOY_45_POSITION_TICKS;
 }
 
 /**
@@ -490,13 +488,15 @@ public void runIntake (boolean button, boolean pullInOverride,
     // Only run the override if the button is pressed
     intakeOverride = false;
 
-    // If it's the buttons first run, then figure out if we will be pulling the
+    // If it's the buttons first run, then figure out if we will be pulling
+    // the
     // cube in or pushing it out
     if (button == true && lastIntakeButtonStatus == false)
         {
         isPullingIn = hasCube() == false;
         }
-    // If it's not the buttons first run but the button is still being pressed,
+    // If it's not the buttons first run but the button is still being
+    // pressed,
     // then continue what we were doing previously.
     else if (button == true)
         {
@@ -596,8 +596,6 @@ public boolean hasCube ()
     return this.intakeSwitch.isOn();
 }
 
-
-
 // TODO make sure this works
 /**
  * Scores a cube on a scale autonomously, using the forklift, intake and intake
@@ -680,7 +678,8 @@ public void masterUpdate ()
  */
 public void forkliftUpdate ()
 {
-    // Make sure the lift stays up to prevent bad things when folding the deploy
+    // Make sure the lift stays up to prevent bad things when folding the
+    // deploy
     if (deployIntakeState == DeployState.FOLD_ARM_DOWN
             || deployIntakeState == DeployState.FOLDED
             || deployIntakeState == DeployState.UNFOLD_ARM_UP)
@@ -693,16 +692,10 @@ public void forkliftUpdate ()
         {
         case MOVING_TO_POSITION:
             // Make sure we don't move past the MAX or MIN position
-            if ((this.forkliftTargetHeight > FORKLIFT_MAX_HEIGHT
-                    && forkliftTargetHeight > forkliftEncoder
-                            .getDistance())
-                    || (this.forkliftTargetHeight < currentMinLiftPosition
-                            && forkliftTargetHeight < forkliftEncoder
-                                    .getDistance())/*
-                                                    * || (armIR.isOn() == true
-                                                    * && deployIntakeState ==
-                                                    * DeployState.DEPLOYED)
-                                                    */)
+            if ((this.forkliftTargetHeight > FORKLIFT_MAX_HEIGHT)
+                    || (this.forkliftTargetHeight < currentMinLiftPosition)
+                    || (this.deployIntakeState == DeployState.DEPLOYED
+                            && this.armIR.isOn()))
                 {
                 liftState = ForkliftState.STAY_AT_POSITION;
                 break;
@@ -733,7 +726,6 @@ public void forkliftUpdate ()
                     }
                 // we have NOT passed the value , keep going up.
 
-
                 this.forkliftMotor.set(forkliftTargetSpeed);
 
                 }
@@ -749,7 +741,6 @@ public void forkliftUpdate ()
                     break;
                     }
                 // we have NOT passed the value , keep going down.
-
 
                 this.forkliftMotor.set(-forkliftTargetSpeed);
 
@@ -838,8 +829,7 @@ public void deployIntakeUpdate ()
         // state to NOT_DEPLOYED
         case RETRACTING:
             this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
-            if (this.intakeDeployEncoder
-                    .get() <= INTAKE_RETRACT_TICKS)
+            if (this.intakeDeployEncoder.get() <= INTAKE_RETRACT_TICKS)
                 {
                 // brings back in the intake mechanism until the intake
                 // deploy
@@ -947,6 +937,13 @@ public void deployIntakeUpdate ()
             break;
         case FOLDED:
             intakeDeployMotor.stopMotor();
+
+            // As we near the bottom of the robot, retract the arms to get us
+            // more height.
+            if (this.getForkliftHeight() < FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT)
+                {
+                this.deployIntakeState = DeployState.UNFOLD_ARM_UP;
+                }
             break;
 
         case UNFOLD_ARM_UP:
@@ -1182,7 +1179,7 @@ private final double FORKLIFT_UP_JOYSTICK_SCALAR = .9;
 
 private final double FORKLIFT_NO_CUBE_MIN_HEIGHT = 0;
 
-private final double FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT = 20;
+private final double FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT = 25;
 
 private final double FORKLIFT_DEFAULT_SPEED_UP = FORKLIFT_UP_JOYSTICK_SCALAR;
 
@@ -1220,7 +1217,8 @@ private final double INTAKE_RELEASE_TENSION_TICKS = 235;
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 10.0;
 
-// Set at 180 degrees instead of 90 degrees, hence double the value of deployed.
+// Set at 180 degrees instead of 90 degrees, hence double the value of
+// deployed.
 private final double INTAKE_FOLDED_TICKS = 300;
 
 // Servo is IN, deploy will be able to fold down.
