@@ -595,6 +595,8 @@ public static void printStatements ()
 
     SmartDashboard.putBoolean("IR is On", Hardware.armIR.isOn());
 
+    SmartDashboard.putBoolean("Bottom RL: ", Hardware.redLight.isOn());
+
 
     // =================================
     // Pneumatics
