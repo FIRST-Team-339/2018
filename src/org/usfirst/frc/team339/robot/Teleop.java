@@ -160,7 +160,6 @@ public static void periodic ()
         Hardware.cubeManipulator
                 .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
 
-
     if (Hardware.climbButton.isOnCheckNow() == true)
         Hardware.climbingMechanismServo
                 .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
@@ -665,8 +664,8 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Climb Servo",
     // Hardware.climbingMechanismServo.getAngle());
 
-    // System.out.println("Intake Arm Servo " +
-    // Hardware.intakeArmPositionServo.getAngle());
+    System.out.println("Intake Arm Servo " +
+            Hardware.intakeArmPositionServo.getAngle());
 
     // =================================
     // SPI Bus
@@ -782,7 +781,7 @@ public static void printStatements ()
         }
 
 
-    SmartDashboard.putBoolean("To close to scale",
+    SmartDashboard.putBoolean("Too close to scale",
             Hardware.armIR.isOn());
 
     SmartDashboard.updateValues();
