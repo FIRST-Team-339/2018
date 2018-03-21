@@ -832,8 +832,6 @@ public class Autonomous
 			}
 			break;
 		case GRAB_DATA:
-			// Turns on the ringlight
-			Hardware.tempRelay.set(true);
 			// know where to go and sets state to the appropriate turn state
 			// (whichever side is our side of the switch)
 			SmartDashboard.putString("Switch data", GameDataType.SWITCH.toString());
@@ -951,7 +949,6 @@ public class Autonomous
 			}
 			break;
 		case BRAKE_AFTER_RIGHT_TURN_2:
-			Hardware.tempRelay.set(true);
 			if (Hardware.autoDrive.brake(BrakeType.AFTER_TURN) == true)
 			{
 				// if we are using the camera, go into the drive with camera
@@ -972,7 +969,7 @@ public class Autonomous
 		case DRIVE_WITH_CAMERA:
 			// drives to the switch based on the camera
 			// sets state to LIFT
-			// Hardware.tempRelay.set(true);
+			Hardware.tempRelay.set(true);
 			if (Hardware.driveWithCamera.driveToSwitch(AUTO_SPEED_VISION) == true)
 			{
 				Hardware.axisCamera.saveImage(ImageType.RAW);
