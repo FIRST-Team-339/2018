@@ -30,7 +30,7 @@ private boolean newCode = true;
 
 // true if we want to use the code to stop the forklift if the armIR
 // thinks we are about to hit the scale
-private boolean usingArmIRStop = true;
+private boolean usingArmIRStop = false;
 
 private MomentarySwitch climbButton = null;
 // ========================================
@@ -1123,8 +1123,6 @@ private ForkliftState liftState = ForkliftState.STAY_AT_POSITION;
 
 // used to tell the forklift which direction it should be moving
 private ForkliftDirectionState forkliftDirection = ForkliftDirectionState.NEUTRAL;
-
-private boolean IROverride = false;
 
 private boolean isClimbing = false;
 
