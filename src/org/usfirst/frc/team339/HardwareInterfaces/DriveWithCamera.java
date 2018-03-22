@@ -7,6 +7,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmiss
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
 import org.usfirst.frc.team339.vision.VisionProcessor;
+import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GyroBase;
@@ -173,6 +174,15 @@ public boolean driveToSwitch (double speed)
         {
         case INIT:
             this.visionProcessor.setRelayValue(true);
+
+            // take picture when we start driving with ultrasonic
+            this.takePicture = true;
+            this.visionProcessor.saveImageSafely(this.takePicture,
+                    ImageType.PROCESSED);
+            this.visionProcessor.saveImageSafely(this.takePicture,
+                    ImageType.RAW);
+            this.takePicture = false;
+
             state = DriveWithCameraState.DRIVE_WITH_CAMERA;
             break;
         case DRIVE_WITH_CAMERA:
@@ -210,6 +220,14 @@ public boolean driveToSwitch (double speed)
             this.visionProcessor.setDigitalOutputValue(false);
             driveStraight(speed, false);
 
+            // take a picture when we start to drive with ultrasonic
+            this.takePicture = true;
+            this.visionProcessor.saveImageSafely(this.takePicture,
+                    ImageType.PROCESSED);
+            this.visionProcessor.saveImageSafely(this.takePicture,
+                    ImageType.RAW);
+            this.takePicture = false;
+
             if (this.frontUltrasonic
                     .getDistanceFromNearestBumper() <= DISTANCE_FROM_WALL_TO_STOP)
                 state = DriveWithCameraState.STOP;
@@ -227,6 +245,8 @@ public boolean driveToSwitch (double speed)
 }
 
 private DriveWithCameraState state = DriveWithCameraState.INIT;
+
+private boolean takePicture = false;
 
 private enum DriveWithCameraState
     {
@@ -290,7 +310,7 @@ public boolean jankyDriveToSwitch (double speed)
                 {
                 state = DriveWithCameraState.DRIVE_WITH_US;
                 }
-            
+
             break;
         case DRIVE_WITH_US:
             driveStraight(speed, false);
@@ -397,7 +417,7 @@ private final double DISTANCE_FROM_WALL_TO_STOP = 15;
 
 private final double SWITCH_CAMERA_CENTER = 160;// Center of a 320x240 image
 
-private final double DRIVE_CORRECTION =  .05;
+private final double DRIVE_CORRECTION = .05;
 
 // ================VISION TUNABLES================
 // Gets the center x value of the vision targets (average of the x values
