@@ -935,13 +935,6 @@ public void deployIntakeUpdate ()
             break;
         case FOLDED:
             intakeDeployMotor.stopMotor();
-
-            // As we near the bottom of the robot, retract the arms to get us
-            // more height.
-            if (this.getForkliftHeight() < FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT)
-                {
-                this.deployIntakeState = DeployState.UNFOLD_ARM_UP;
-                }
             break;
 
         case UNFOLD_ARM_UP:
