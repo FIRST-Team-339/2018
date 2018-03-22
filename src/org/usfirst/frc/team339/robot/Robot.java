@@ -344,7 +344,7 @@ public void robotInit ()
     Hardware.climbingMechanismServo.set(CLIMB_SERVO_INIT_POSITION);
 
     Hardware.intakeArmPositionServo
-            .set(Hardware.cubeManipulator.DEPLOY_SERVO_OUT);
+            .set(Hardware.cubeManipulator.DEPLOY_SERVO_ENGAGED);
 
     // ---------------------------------
     // sets the ring light to off
