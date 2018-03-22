@@ -1035,8 +1035,6 @@ public static boolean centerSwitchPath ()
             if (Hardware.driveWithCamera
                     .driveToSwitch(AUTO_SPEED_VISION) == true)
                 {
-                Hardware.axisCamera.saveImage(ImageType.RAW);
-                Hardware.axisCamera.saveImage(ImageType.PROCESSED);
                 // Turn off the ringlight camera
                 Hardware.tempRelay.set(false);
                 // Hardware.transmission.stop();
