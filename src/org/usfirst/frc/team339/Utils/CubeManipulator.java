@@ -803,20 +803,46 @@ public void deployIntakeUpdate ()
         // and
         // moves to the next state
         case DEPLOYING:
-
-            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-            this.deployFoldingServo.set(DEPLOY_SERVO_FREE);
-
-            if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS)
+            switch (foldDownDeployState)
                 {
-                // stops the intake deploy motor if we've turned far enough;
-                // FINISHED does this as well, but doing it here helps
-                // keep the motor from overshooting too much
-                this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
-                this.intakeDeployMotor.set(0.0);
-                deployIntakeState = DeployState.DEPLOYED;
+                // We don't need to raise the arm
+                case RAISE_ARM:
+                    foldDownDeployState = FoldDownDeployState.RELEASE_TENSION;
+                    break;
+                // Bring up the arm just a hair to release tension on the
+                // ratchet
+                case RELEASE_TENSION:
+                    deployFoldingServo.set(DEPLOY_SERVO_FREE);
+                    // If the angle is past the "retract" distance, then start
+                    // pulling down
+                    if (getIntakeAngle() < INTAKE_RETRACT_TICKS
+                            - DEPLOY_DEADBAND)
+                        {
+                        foldDownDeployState = FoldDownDeployState.FOLD_DOWN;
+                        intakeDeployMotor.stopMotor();
+                        }
+                    else
+                        {
+                        intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
+                        }
+                    break;
+                case FOLD_DOWN:
+                    // We are past the "deployed" distance, finish the state.
+                    if (getIntakeAngle() > INTAKE_DEPLOY_TICKS)
+                        {
+                        deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
+                        foldDownDeployState = FoldDownDeployState.RAISE_ARM;
+                        deployIntakeState = DeployState.DEPLOYED;
+                        intakeDeployMotor.stopMotor();
+                        }
+                    else
+                        {
+                        // Keep going
+                        deployFoldingServo.set(DEPLOY_SERVO_FREE);
+                        intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+                        }
+                    break;
                 }
-
             break;
 
         // final state in the state machine; stops the intake deploy
@@ -1197,25 +1223,25 @@ public final double INTAKE_STOP_WITH_CUBE = .06;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
-private final double INTAKE_DEPLOY_TICKS = 245;
+private final double INTAKE_DEPLOY_TICKS = 200;
 
 // number of degrees the intake deploy motor needs to be at to release tension
 private final double INTAKE_RELEASE_TENSION_TICKS = 235;
 
 // the encoder value that counts as the intake being retracted
-private final double INTAKE_RETRACT_TICKS = 10.0;
+private final double INTAKE_RETRACT_TICKS = 0.0;
 
 // Set at 180 degrees instead of 90 degrees, hence double the value of
 // deployed.
 private final double INTAKE_FOLDED_TICKS = 300;
 
 // Servo is IN, deploy will be able to fold down.
-public final double DEPLOY_SERVO_FREE = 1.0;
+private final double DEPLOY_SERVO_FREE = .45;
 
 // Servo is OUT, deploy will be supported by servo.
-public final double DEPLOY_SERVO_ENGAGED = .6;
+private final double DEPLOY_SERVO_ENGAGED = .7;
 
-private final double INTAKE_DEPLOY_SPEED = .5;
+private final double INTAKE_DEPLOY_SPEED = .9;
 
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED = -INTAKE_DEPLOY_SPEED;
@@ -1227,7 +1253,7 @@ private final double EJECT_TIME = 2.0;
 private final double DEPLOY_45_POSITION_TICKS = INTAKE_DEPLOY_TICKS
         / 2.0;
 
-private final int DEPLOY_45_POSITION_DEADBAND = 20;
+private final int DEPLOY_DEADBAND = 8;
 
 // =========================================
 

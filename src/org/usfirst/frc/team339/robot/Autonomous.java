@@ -1280,7 +1280,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                 currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_DRIVE3;
             // Safety encoder reading: Make sure we don't get a penalty for
             // going into the opposition zone
-            else if (Hardware.autoDrive.isAnyEncoderLargerThan(90))
+            else if (Hardware.autoDrive.isAnyEncoderLargerThan(80))
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
             else
                 // Keep driving forwards
@@ -1718,7 +1718,7 @@ private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
             // distance to drive to the middle of the platform zone
             (int) (AUTO_TESTING_SCALAR * 200)};
 
-private static final int SWITCH_OR_SCALE_SCALE_ANGLE = 45;// degrees
+private static final int SWITCH_OR_SCALE_SCALE_ANGLE = 64;// degrees
 
 // OFFSET_SWITCH
 // array for storing the different driving distances used in OFFSET_SWITCH

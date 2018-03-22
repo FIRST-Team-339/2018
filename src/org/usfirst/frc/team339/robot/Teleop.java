@@ -666,8 +666,8 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Climb Servo",
     // Hardware.climbingMechanismServo.getAngle());
 
-    System.out.println("Intake Arm Servo " +
-            Hardware.intakeArmPositionServo.getAngle());
+    // System.out.println("Intake Arm Servo " +
+    // Hardware.intakeArmPositionServo.getAngle());
 
     // =================================
     // SPI Bus
