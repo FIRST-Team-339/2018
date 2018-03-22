@@ -30,7 +30,7 @@ private boolean newCode = true;
 
 // true if we want to use the code to stop the forklift if the armIR
 // thinks we are about to hit the scale
-private boolean usingArmIRStop = false;
+private boolean usingArmIRStop = true;
 
 private MomentarySwitch climbButton = null;
 // ========================================
@@ -190,8 +190,8 @@ public void moveForkliftWithController (double speed,
         }
     else
         {
-        // If we are past the max height or below the min, don't move the
-        // motors.
+        // If we are past the max height or below the min, or we are using the
+        // armIR and it is telling us to stop don't move the motors.
         if ((speed > 0
                 && forkliftEncoder.getDistance() > FORKLIFT_MAX_HEIGHT)
                 || (speed < 0 && forkliftEncoder
@@ -199,7 +199,9 @@ public void moveForkliftWithController (double speed,
                 || Math.abs(speed) < JOYSTICK_DEADBAND
                 || (this.usingArmIRStop == true && this.armIR.isOn()
                         && this.forkliftEncoder
-                                .getDistance() > USE_ARM_IR_HEIGHT))
+                                .getDistance() > USE_ARM_IR_HEIGHT
+                        && speed > 0
+                        && deployIntakeState == DeployState.DEPLOYED))
             return;
         // Move the forklift the desired speed
         if (speed > 0)
@@ -727,7 +729,8 @@ public void forkliftUpdate ()
                         || (this.armIR.isOn()
                                 && this.forkliftEncoder
                                         .getDistance() > USE_ARM_IR_HEIGHT
-                                && this.usingArmIRStop == true))
+                                && this.usingArmIRStop == true
+                                && this.deployIntakeState == DeployState.DEPLOYED))
                     {
                     liftState = ForkliftState.STAY_AT_POSITION;
                     // Reset the direction for next time.
