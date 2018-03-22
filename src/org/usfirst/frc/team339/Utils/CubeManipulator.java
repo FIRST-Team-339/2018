@@ -28,6 +28,10 @@ private LightSensor armIR = null;
 
 private boolean newCode = true;
 
+// true if we want to use the code to stop the forklift if the armIR
+// thinks we are about to hit the scale
+private boolean usingArmIRStop = true;
+
 private MomentarySwitch climbButton = null;
 // ========================================
 
@@ -186,13 +190,18 @@ public void moveForkliftWithController (double speed,
         }
     else
         {
-        // If we are past the max height or below the min, don't move the
-        // motors.
+        // If we are past the max height or below the min, or we are using the
+        // armIR and it is telling us to stop don't move the motors.
         if ((speed > 0
                 && forkliftEncoder.getDistance() > FORKLIFT_MAX_HEIGHT)
                 || (speed < 0 && forkliftEncoder
                         .getDistance() < currentMinLiftPosition)
-                || Math.abs(speed) < JOYSTICK_DEADBAND)
+                || Math.abs(speed) < JOYSTICK_DEADBAND
+                || (this.usingArmIRStop == true && this.armIR.isOn()
+                        && this.forkliftEncoder
+                                .getDistance() > USE_ARM_IR_HEIGHT
+                        && speed > 0
+                        && deployIntakeState == DeployState.DEPLOYED))
             return;
         // Move the forklift the desired speed
         if (speed > 0)
@@ -202,7 +211,7 @@ public void moveForkliftWithController (double speed,
 
         // checks to see if we want to use new code
 
-        // if (newCode == true)
+        // if (usingArmIRStop == true)
         // { // checks to see if the IR reads true, if so sets the state to
         // // stay at position because we're about to hit the stupid scale
         // if (armIR.isOn() == true && speed > 0 &&
@@ -212,7 +221,7 @@ public void moveForkliftWithController (double speed,
         // {
         // this.liftState = ForkliftState.STAY_AT_POSITION;
         // } // if the override is off and the IR reads false then move
-        // // based on // joystick
+        // // based on joystick
         // else
         // {
         // this.liftState = ForkliftState.MOVE_JOY;
@@ -713,9 +722,15 @@ public void forkliftUpdate ()
             // TODO test scaleIR code
             if (forkliftDirection == ForkliftDirectionState.MOVING_UP)
                 {
-                // If we have passed the value we wanted...
-                if (this.forkliftEncoder
+                // If we have passed the value we wanted... OR the armIR
+                // is being used and is telling us to stop
+                if ((this.forkliftEncoder
                         .getDistance() > forkliftTargetHeight)
+                        || (this.armIR.isOn()
+                                && this.forkliftEncoder
+                                        .getDistance() > USE_ARM_IR_HEIGHT
+                                && this.usingArmIRStop == true
+                                && this.deployIntakeState == DeployState.DEPLOYED))
                     {
                     liftState = ForkliftState.STAY_AT_POSITION;
                     // Reset the direction for next time.
@@ -1135,8 +1150,6 @@ private ForkliftState liftState = ForkliftState.STAY_AT_POSITION;
 // used to tell the forklift which direction it should be moving
 private ForkliftDirectionState forkliftDirection = ForkliftDirectionState.NEUTRAL;
 
-private boolean IROverride = false;
-
 private boolean isClimbing = false;
 
 private double currentForkliftDownSpeed = 0;
@@ -1183,7 +1196,7 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 // --------------------CONSTANTS--------------------
 
 // ================FORKLIFT================
-private final double FORKLIFT_MAX_HEIGHT = 76;
+private final double FORKLIFT_MAX_HEIGHT = 67; //Changed 3/22/18 from 76
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .55;
 
@@ -1203,9 +1216,12 @@ private final double FORKLIFT_STAY_UP_SPEED = 0.05; // -.15;
 
 private final double FORKLIFT_STAY_UP_WITH_CUBE = .1;
 
+// height above which the armIR's input will start mattering
+private final double USE_ARM_IR_HEIGHT = 35.0;
+
 public final static double SWITCH_HEIGHT = 26;
 
-public final static double SCALE_HEIGHT = 76;
+public final static double SCALE_HEIGHT = 67;//Changed 3/22/18 from 76
 
 // =========================================
 
