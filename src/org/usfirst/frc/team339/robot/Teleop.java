@@ -678,7 +678,7 @@ public static void printStatements ()
     // -------------------------------------
 
     // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
     // =================================
     // Connection Items

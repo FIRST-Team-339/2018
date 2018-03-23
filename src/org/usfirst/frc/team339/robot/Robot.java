@@ -328,7 +328,6 @@ public void robotInit ()
     // this years configuration
     // ----------------------------------
         {
-        //Hardware.autoDrive.setGyro(Hardware.gyroAnalog);
         Hardware.leftDriveMotor.setInverted(false);
         Hardware.rightDriveMotor.setInverted(true);
         } // else
