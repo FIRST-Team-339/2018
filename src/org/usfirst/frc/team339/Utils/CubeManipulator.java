@@ -823,6 +823,8 @@ public void deployIntakeUpdate ()
                 // We don't need to raise the arm
                 case RAISE_ARM:
                     foldDownDeployState = FoldDownDeployState.RELEASE_TENSION;
+                    this.switchTimer.reset();
+                    this.switchTimer.start();
                     break;
                 // Bring up the arm just a hair to release tension on the
                 // ratchet
@@ -830,10 +832,10 @@ public void deployIntakeUpdate ()
                     deployFoldingServo.set(DEPLOY_SERVO_FREE);
                     // If the angle is past the "retract" distance, then start
                     // pulling down
-                    if (getIntakeAngle() < INTAKE_RETRACT_TICKS
-                            - DEPLOY_DEADBAND)
+                    if (this.switchTimer.get() > .3)
                         {
                         foldDownDeployState = FoldDownDeployState.FOLD_DOWN;
+                        this.switchTimer.stop();
                         intakeDeployMotor.stopMotor();
                         }
                     else
@@ -1196,7 +1198,7 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 // --------------------CONSTANTS--------------------
 
 // ================FORKLIFT================
-private final double FORKLIFT_MAX_HEIGHT = 67; //Changed 3/22/18 from 76
+private final double FORKLIFT_MAX_HEIGHT = 69; // Changed 3/22/18 from 76
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .55;
 
@@ -1221,7 +1223,7 @@ private final double USE_ARM_IR_HEIGHT = 35.0;
 
 public final static double SWITCH_HEIGHT = 26;
 
-public final static double SCALE_HEIGHT = 67;//Changed 3/22/18 from 76
+public final static double SCALE_HEIGHT = 67;// Changed 3/22/18 from 76
 
 // =========================================
 
@@ -1239,7 +1241,7 @@ public final double INTAKE_STOP_WITH_CUBE = .06;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
-private final double INTAKE_DEPLOY_TICKS = 200;
+private final double INTAKE_DEPLOY_TICKS = 250;
 
 // number of degrees the intake deploy motor needs to be at to release tension
 private final double INTAKE_RELEASE_TENSION_TICKS = 235;
@@ -1257,7 +1259,7 @@ private final double DEPLOY_SERVO_FREE = .45;
 // Servo is OUT, deploy will be supported by servo.
 private final double DEPLOY_SERVO_ENGAGED = .7;
 
-private final double INTAKE_DEPLOY_SPEED = .9;
+private final double INTAKE_DEPLOY_SPEED = .3;
 
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED = -INTAKE_DEPLOY_SPEED;
