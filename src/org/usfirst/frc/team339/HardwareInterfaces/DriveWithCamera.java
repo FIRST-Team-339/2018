@@ -174,14 +174,10 @@ public boolean driveToSwitch (double speed)
         {
         case INIT:
             this.visionProcessor.setRelayValue(true);
+            visionProcessor.saveImage(ImageType.RAW);
+            visionProcessor.saveImage(ImageType.PROCESSED);
 
-            // take picture when we start driving with ultrasonic
-            this.takePicture = true;
-            this.visionProcessor.saveImageSafely(this.takePicture,
-                    ImageType.PROCESSED);
-            this.visionProcessor.saveImageSafely(this.takePicture,
-                    ImageType.RAW);
-            this.takePicture = false;
+            this.resetEncoders();
 
             state = DriveWithCameraState.DRIVE_WITH_CAMERA;
             break;
@@ -213,24 +209,23 @@ public boolean driveToSwitch (double speed)
                 }
 
             if (this.frontUltrasonic
-                    .getDistanceFromNearestBumper() <= CAMERA_NO_LONGER_WORKS)
+                    .getDistanceFromNearestBumper() <= CAMERA_NO_LONGER_WORKS
+                    && isAnyEncoderLargerThan(ENCODER_MIN_DISTANCE))
                 state = DriveWithCameraState.DRIVE_WITH_US;
             break;
         case DRIVE_WITH_US:
-            this.visionProcessor.setDigitalOutputValue(false);
             driveStraight(speed, false);
 
             // take a picture when we start to drive with ultrasonic
-            this.takePicture = true;
-            this.visionProcessor.saveImageSafely(this.takePicture,
-                    ImageType.PROCESSED);
-            this.visionProcessor.saveImageSafely(this.takePicture,
-                    ImageType.RAW);
-            this.takePicture = false;
+
 
             if (this.frontUltrasonic
                     .getDistanceFromNearestBumper() <= DISTANCE_FROM_WALL_TO_STOP)
+                {
+                visionProcessor.saveImage(ImageType.RAW);
+                visionProcessor.saveImage(ImageType.PROCESSED);
                 state = DriveWithCameraState.STOP;
+                }
 
             break;
         default:
@@ -406,6 +401,9 @@ public double getCameraCenterValue ()
 // the distance in inches in which we drive the robot straight using the
 // ultrasonic
 private final double CAMERA_NO_LONGER_WORKS = 36;
+
+// The minimum encoder distance we must drive before we enable the ultrasonic
+private final double ENCODER_MIN_DISTANCE = 50; // inches
 // 38 + 50;
 
 // the number in pixels that the center we are looking for can be off

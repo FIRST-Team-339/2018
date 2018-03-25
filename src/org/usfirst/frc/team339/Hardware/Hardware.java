@@ -254,7 +254,7 @@ public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 // -------------------------------------
 
 public static VisionProcessor axisCamera = new VisionProcessor(
-        "axis-camera.local", CameraModel.AXIS_M1013, tempRelay);
+        "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
 
 // -------------------------------------
 // declare the USB camera server and the
@@ -267,8 +267,8 @@ public static UsbCamera USBCam = CameraServer.getInstance()
 // declare the USB camera server and the
 // USB camera it serves at the same time
 // -------------------------------------
-public static UsbCamera USBCamUp = CameraServer.getInstance()
-        .startAutomaticCapture(1);
+// public static UsbCamera USBCamUp = CameraServer.getInstance()
+// .startAutomaticCapture(1);
 
 // **********************************************************
 // DRIVER STATION CLASSES

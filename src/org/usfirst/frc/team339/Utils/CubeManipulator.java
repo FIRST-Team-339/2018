@@ -652,6 +652,14 @@ public boolean scoreScale ()
     return false;
 }
 
+private double getRetractSpeed ()
+{
+    if (getIntakeAngle() > INTAKE_DEPLOY_TICKS || hasCube())
+        return INTAKE_RETRACT_SPEED_HIGH;
+    // else
+    return INTAKE_RETRACT_SPEED_LOW;
+}
+
 // ===================== Update Methods ========================
 
 /**
@@ -791,6 +799,12 @@ public void forkliftUpdate ()
         }
 }
 
+private boolean deployHasCube = false;
+
+private boolean deployWas45 = false;
+
+private double currentIntakeAngle = 0;
+
 /**
  * Update method for the deployIntake functions. Allows the deployIntake
  * code to use their state machine. deployIntake and related functions
@@ -834,18 +848,28 @@ public void deployIntakeUpdate ()
                     // pulling down
                     if (this.switchTimer.get() > .3)
                         {
+                        // Choose which angle the deploy should go to based on
+                        // what our current situation is
+                        if (deployWas45 == true)
+                            currentIntakeAngle = INTAKE_DEPLOY_TICKS_FROM_45;
+                        else if (hasCube() == true)
+                            currentIntakeAngle = INTAKE_DEPLOY_TICKS_CUBE;
+                        else
+                            currentIntakeAngle = INTAKE_DEPLOY_TICKS;
+
                         foldDownDeployState = FoldDownDeployState.FOLD_DOWN;
                         this.switchTimer.stop();
                         intakeDeployMotor.stopMotor();
                         }
                     else
                         {
-                        intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
+                        intakeDeployMotor.set(getRetractSpeed());
                         }
                     break;
                 case FOLD_DOWN:
                     // We are past the "deployed" distance, finish the state.
-                    if (getIntakeAngle() > INTAKE_DEPLOY_TICKS)
+
+                    if (getIntakeAngle() > currentIntakeAngle)
                         {
                         deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
                         foldDownDeployState = FoldDownDeployState.RAISE_ARM;
@@ -872,7 +896,7 @@ public void deployIntakeUpdate ()
         // brings the intake mechanism back into the robot, and sets the
         // state to NOT_DEPLOYED
         case RETRACTING:
-            this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
+            this.intakeDeployMotor.set(getRetractSpeed());
             this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
             if (this.intakeDeployEncoder.get() <= INTAKE_RETRACT_TICKS)
                 {
@@ -886,23 +910,22 @@ public void deployIntakeUpdate ()
             break;
 
         case OVERRIDE_DEPLOY:
-
             this.deployFoldingServo.set(DEPLOY_SERVO_FREE);
             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
             // If the override is let go, then stop the deploy
             deployIntakeState = DeployState.STOPPED;
-            this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
             break;
         case OVERRIDE_RETRACT:
 
             this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
-            this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
+            this.intakeDeployMotor.set(getRetractSpeed());
             // If the override is let go, then stop the deploy
             deployIntakeState = DeployState.STOPPED;
             break;
 
         case POSITION_45:
             this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
+            this.deployWas45 = true;
             // We have reached the 45 degree angle? stop the motor.
             if (getIntakeAngle() < DEPLOY_45_POSITION_TICKS)
                 {
@@ -911,7 +934,7 @@ public void deployIntakeUpdate ()
             // We are still retracting.
             else
                 {
-                intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
+                intakeDeployMotor.set(getRetractSpeed());
                 }
 
             // Only set it while we are holding the button.
@@ -949,7 +972,7 @@ public void deployIntakeUpdate ()
                         {
                         // Keep brining the arm up
                         this.intakeDeployMotor
-                                .set(INTAKE_RETRACT_SPEED);
+                                .set(getRetractSpeed());
                         }
                     break;
                 case FOLD_DOWN:
@@ -989,7 +1012,7 @@ public void deployIntakeUpdate ()
                 }
             else
                 {
-                this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED);
+                this.intakeDeployMotor.set(getRetractSpeed());
                 }
             break;
         default:
@@ -1199,7 +1222,7 @@ private scoreScaleState scaleState = scoreScaleState.MOVE_LIFT;
 
 // ================FORKLIFT================
 
-private final double FORKLIFT_MAX_HEIGHT = 69; //Changed 3/22/18 from 76
+private final double FORKLIFT_MAX_HEIGHT = 69; // Changed 3/22/18 from 76
 
 private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .55;
 
@@ -1209,7 +1232,7 @@ private final double FORKLIFT_UP_JOYSTICK_SCALAR = .9;
 
 private final double FORKLIFT_NO_CUBE_MIN_HEIGHT = 0;
 
-private final double FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT = 25;
+private final double FORKLIFT_DEPLOY_FOLDED_MIN_HEIGHT = 15;
 
 private final double FORKLIFT_DEFAULT_SPEED_UP = FORKLIFT_UP_JOYSTICK_SCALAR;
 
@@ -1224,7 +1247,7 @@ private final double USE_ARM_IR_HEIGHT = 35.0;
 
 public final static double SWITCH_HEIGHT = 26;
 
-public final static double SCALE_HEIGHT = 69;//Changed 3/22/18 from 76
+public final static double SCALE_HEIGHT = 69;// Changed 3/22/18 from 76
 
 // =========================================
 
@@ -1242,10 +1265,14 @@ public final double INTAKE_STOP_WITH_CUBE = .06;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
-private final double INTAKE_DEPLOY_TICKS = 250;
+private final double INTAKE_DEPLOY_TICKS = 150;
+
+private final double INTAKE_DEPLOY_TICKS_CUBE = 150;
+
+private final double INTAKE_DEPLOY_TICKS_FROM_45 = 165;
 
 // number of degrees the intake deploy motor needs to be at to release tension
-private final double INTAKE_RELEASE_TENSION_TICKS = 235;
+private final double INTAKE_RELEASE_TENSION_TICKS = 200;
 
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 0.0;
@@ -1255,22 +1282,23 @@ private final double INTAKE_RETRACT_TICKS = 0.0;
 private final double INTAKE_FOLDED_TICKS = 300;
 
 // Servo is IN, deploy will be able to fold down.
-private final double DEPLOY_SERVO_FREE = .45;
+private final double DEPLOY_SERVO_FREE = .9;
 
 // Servo is OUT, deploy will be supported by servo.
-private final double DEPLOY_SERVO_ENGAGED = .7;
+private final double DEPLOY_SERVO_ENGAGED = .071;
 
-private final double INTAKE_DEPLOY_SPEED = .3;
+private final double INTAKE_DEPLOY_SPEED = .1;
 
 // speed we retract the intake mechanism at
-private final double INTAKE_RETRACT_SPEED = -INTAKE_DEPLOY_SPEED;
+private final double INTAKE_RETRACT_SPEED_LOW = -.5;
+
+private final double INTAKE_RETRACT_SPEED_HIGH = -.7;
 
 private final double DEPLOY_HOLDING_VOLTAGE = -.15;
 
 private final double EJECT_TIME = 2.0;
 
-private final double DEPLOY_45_POSITION_TICKS = INTAKE_DEPLOY_TICKS
-        / 2.0;
+private final double DEPLOY_45_POSITION_TICKS = 160;
 
 private final int DEPLOY_DEADBAND = 8;
 

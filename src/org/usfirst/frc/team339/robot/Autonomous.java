@@ -90,6 +90,9 @@ public static void init ()
     Hardware.transmission.setForAutonomous();
     Hardware.autoDrive
             .setDefaultAcceleration(DRIVE_STRAIGHT_ACCELERATION_TIME);
+
+    System.out.println("Game Data: "
+            + Hardware.driverStation.getGameSpecificMessage());
 } // end Init
 
 /**
@@ -284,8 +287,8 @@ public static void periodic ()
 
             // end of autonomous; stops and resets the autotimer
             Hardware.transmission.stop();
-            Hardware.autoTimer.stop();
-            Hardware.autoTimer.reset();
+            // Hardware.autoTimer.stop();
+            // Hardware.autoTimer.reset();
             break;
 
         default:
@@ -293,8 +296,8 @@ public static void periodic ()
             // if something goes wrong, stop autonomous and go straight
             // to FINISH
             Hardware.transmission.stop();
-            Hardware.autoTimer.stop();
-            Hardware.autoTimer.reset();
+            // Hardware.autoTimer.stop();
+            // Hardware.autoTimer.reset();
             autoState = State.FINISH;
             break;
         }
@@ -401,10 +404,10 @@ public static boolean autolinePath ()
                 currentAutolineState = AutolinePathStates.DEPLOY;
             break;
         case DEPLOY:
-            if (Hardware.cubeManipulator.deployCubeIntake(false))
-                {
-                currentAutolineState = AutolinePathStates.FINISH;
-                }
+            // if (Hardware.cubeManipulator.deployCubeIntake(false))
+            // {
+            currentAutolineState = AutolinePathStates.FINISH;
+            // }
             break;
         default:
             // if something goes wrong, print we reached default and fall
@@ -460,10 +463,8 @@ public static boolean autoLineScalePath ()
             break;
 
         case DEPLOY:
-            if (Hardware.cubeManipulator.deployCubeIntake(false))
-                {
-                currentAutolineState = AutolinePathStates.FINISH;
-                }
+            Hardware.cubeManipulator.deployCubeIntake(false);
+            currentAutolineState = AutolinePathStates.FINISH;
             break;
 
         default: // prints we reached the default case, then fall through to
@@ -864,6 +865,7 @@ public static boolean centerSwitchPath ()
             Hardware.cubeManipulator.deployCubeIntake(false);
             Hardware.cubeManipulator.setLiftPosition(SWITCH_LIFT_HEIGHT,
                     FORKLIFT_SPEED);
+            Hardware.tempRelay.set(true);
             visionAuto = centerState.DRIVE_FOUR_INCHES;
             break;
         case DRIVE_FOUR_INCHES:
@@ -913,7 +915,7 @@ public static boolean centerSwitchPath ()
             break;
         case TURN_TOWARDS_RIGHT_SIDE:
             // Turn x degrees to the right, if the switch is on the right
-            if (Hardware.autoDrive.pivotTurnDegrees(38,
+            if (Hardware.autoDrive.pivotTurnDegrees(28,
                     AUTO_SPEED_VISION) == true)// Changed
                                                // from
                                                // 2stageTurn
@@ -1024,6 +1026,15 @@ public static boolean centerSwitchPath ()
                     {
                     // if we are using the camera, drive to the switch with no
                     // camera
+                    if (!firstTimeUltrasonic)
+                        {
+                        System.out.println("We are "
+                                + Hardware.frontUltraSonic
+                                        .getDistanceFromNearestBumper()
+                                + " inches away from the nearest object");
+                        firstTimeUltrasonic = true;
+                        }
+
                     visionAuto = centerState.DRIVE_STRAIGHT_NO_CAMERA;
                     }
                 }
@@ -1087,6 +1098,8 @@ public static boolean centerSwitchPath ()
 public static centerState visionAuto = centerState.CENTER_INIT;
 
 public static boolean usingAutoCamera = true;
+
+public static boolean firstTimeUltrasonic = false;
 
 /**
  * Possible states for center vision autonomous
@@ -1298,7 +1311,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                 {
                 if (Hardware.autoDrive.turnDegrees2Stage(
                         SWITCH_OR_SCALE_SCALE_ANGLE, TURN_SPEED))
-                    currentSwitchOrScaleState = SwitchOrScaleStates.RAISE_ARM;
+                    currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_TO_SCALE;
 
                 }
             // We are on the right side? turn left.
@@ -1306,12 +1319,20 @@ public static boolean switchOrScalePath (Position robotPosition)
                 {
                 if (Hardware.autoDrive.turnDegrees2Stage(
                         -SWITCH_OR_SCALE_SCALE_ANGLE, TURN_SPEED))
-                    currentSwitchOrScaleState = SwitchOrScaleStates.RAISE_ARM;
+                    currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_TO_SCALE;
                 }
             else
                 // We dont know what the heck is going on? just end it man.
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
 
+            break;
+        case DRIVE_TO_SCALE:
+            // Drive a little distance forwards before raising the arm, after
+            // turning.
+            if (Hardware.autoDrive.driveStraightInches(
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[2], SLOW_DRIVE_SPEED,
+                    false))
+                currentSwitchOrScaleState = SwitchOrScaleStates.RAISE_ARM;
             break;
         case BACK_UP_FROM_SCALE:
             // Drive away from the scale if we are too close
@@ -1396,7 +1417,7 @@ private static SwitchOrScaleStates currentSwitchOrScaleState = SwitchOrScaleStat
  */
 private static enum SwitchOrScaleStates
     {
-PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE_SWITCH, DRIVE2, DRIVE3, BRAKE_DRIVE3, TURN_TO_SCALE, RAISE_ARM, ANGLE_DEPLOY, BACK_UP_FROM_SCALE, EJECT_CUBE_SCALE, LOWER_ARM, TURN2, FINISH
+PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE_SWITCH, DRIVE2, DRIVE3, BRAKE_DRIVE3, TURN_TO_SCALE, DRIVE_TO_SCALE, RAISE_ARM, ANGLE_DEPLOY, BACK_UP_FROM_SCALE, EJECT_CUBE_SCALE, LOWER_ARM, TURN2, FINISH
     }
 
 /**
@@ -1644,7 +1665,7 @@ private static final double DRIVE_STRAIGHT_ACCELERATION_TIME = .6; // seconds
 
 private static final double DRIVE_SPEED = .5; // percent
 
-private static final double FAST_DRIVE_SPEED = .7;
+private static final double FAST_DRIVE_SPEED = .55;
 
 private static final double SLOW_DRIVE_SPEED = .2;
 
@@ -1716,9 +1737,10 @@ private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
 // distance to be perpendicular to the switch
     {(int) (AUTO_TESTING_SCALAR * 126),
             // distance to drive to the middle of the platform zone
-            (int) (AUTO_TESTING_SCALAR * 174)};
+            (int) (AUTO_TESTING_SCALAR * 174),
+            (int) (AUTO_TESTING_SCALAR) * 4};
 
-private static final int SWITCH_OR_SCALE_SCALE_ANGLE = 64;// degrees
+private static final int SWITCH_OR_SCALE_SCALE_ANGLE = 45;// degrees
 
 // OFFSET_SWITCH
 // array for storing the different driving distances used in OFFSET_SWITCH

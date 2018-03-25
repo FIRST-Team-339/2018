@@ -292,9 +292,9 @@ public void robotInit ()
         Hardware.USBCam.setResolution(320, 240);
         Hardware.USBCam.setFPS(20);
         Hardware.USBCam.setPixelFormat(VideoMode.PixelFormat.kYUYV);
-        Hardware.USBCamUp.setResolution(320, 240);
-        Hardware.USBCamUp.setFPS(20);
-        Hardware.USBCamUp.setPixelFormat(VideoMode.PixelFormat.kYUYV);
+        // Hardware.USBCamUp.setResolution(320, 240);
+        // Hardware.USBCamUp.setFPS(20);
+        // Hardware.USBCamUp.setPixelFormat(VideoMode.PixelFormat.kYUYV);
         } // end if
     else
         {
@@ -347,6 +347,18 @@ public void robotInit ()
     // ---------------------------------
     // Hardware.ringLightRelay.set(Value.kOff);
 
+    // Temporary code to set the print statements to a file
+    // ===================DON'T TURN ON!===========================
+    // try
+    // {
+    // Runtime.getRuntime().exec("touch /home/log.txt");
+    // System.setOut(new PrintStream(new FileOutputStream(new
+    // File("/home/lvuser/log.txt"))));
+    // }
+    // catch (IOException e)
+    // {
+    // e.printStackTrace();
+    // }
 
     Hardware.gyro.calibrate();
     Hardware.gyro.reset();

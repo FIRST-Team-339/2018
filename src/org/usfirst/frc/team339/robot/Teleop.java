@@ -212,6 +212,9 @@ public static void periodic ()
     // code will not be a part of the final teleop
     // -------------------------------------------
 
+    // Hardware.intakeArmPositionServo
+    // .set(Hardware.leftDriver.getThrottle());
+    // System.out.println("Servo: " + Hardware.leftDriver.getThrottle());
 
     // testingDrive();
 
@@ -648,9 +651,9 @@ public static void printStatements ()
     // SmartDashboard.putNumber("Front Ultrasonic Raw",
     // Hardware.frontUltraSonic.getRefinedDistanceValue());
     //
-    SmartDashboard.putNumber("Front ultrasonic bumper",
-            Hardware.frontUltraSonic
-                    .getOffsetDistanceFromNearestBumper());
+    // SmartDashboard.putNumber("Front ultrasonic bumper",
+    // Hardware.frontUltraSonic
+    // .getOffsetDistanceFromNearestBumper());
     // System.out.println("Rear UltraSonic "
     // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
     // SmartDashboard.putNumber("Rear Ultrasonic",
