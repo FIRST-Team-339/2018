@@ -891,6 +891,7 @@ public void deployIntakeUpdate ()
         case DEPLOYED:
             this.intakeDeployMotor.set(0.0);
             this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
+            this.deployWas45 = false;
             break;
 
         // brings the intake mechanism back into the robot, and sets the
