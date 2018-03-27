@@ -846,7 +846,7 @@ public void deployIntakeUpdate ()
                     deployFoldingServo.set(DEPLOY_SERVO_FREE);
                     // If the angle is past the "retract" distance, then start
                     // pulling down
-                    if (this.switchTimer.get() > .3)
+                    if (this.switchTimer.get() > .1)
                         {
                         // Choose which angle the deploy should go to based on
                         // what our current situation is
@@ -1209,8 +1209,6 @@ private boolean intakeOverride = false;
 
 private boolean isRunningPushOutCubeAuto = false;
 
-private double initialDeployTicks = 0;
-
 private boolean intakeArmHasBeenDroppedToClimb = false;
 
 // ========================================
@@ -1254,6 +1252,9 @@ public final static double SCALE_HEIGHT = 69;// Changed 3/22/18 from 76
 
 // ================INTAKE===================
 
+private final double ENC_250_to_360_SCALAR = 1.44; // Change to 1 for 250
+                                                   // encoder, change
+
 private final double INTAKE_SPEED = .5;
 
 private final double EJECT_SPEED_FAST = -.5;
@@ -1265,22 +1266,22 @@ private final double EJECT_CHANGE_HEIGHT = 58;
 public final double INTAKE_STOP_WITH_CUBE = .06;
 
 // how many degrees the intake deploy motor needs to turn for the intake
-// to be fully deployed
-private final double INTAKE_DEPLOY_TICKS = 150;
+// to be fully deployed, commented out is for 250
+private final double INTAKE_DEPLOY_TICKS = 195;// 170;
 
-private final double INTAKE_DEPLOY_TICKS_CUBE = 150;
+private final double INTAKE_DEPLOY_TICKS_CUBE = 170;// 150;
 
-private final double INTAKE_DEPLOY_TICKS_FROM_45 = 165;
+private final double INTAKE_DEPLOY_TICKS_FROM_45 = 190;// 165;
 
 // number of degrees the intake deploy motor needs to be at to release tension
-private final double INTAKE_RELEASE_TENSION_TICKS = 200;
+private final double INTAKE_RELEASE_TENSION_TICKS = 190;// 200;
 
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 0.0;
 
 // Set at 180 degrees instead of 90 degrees, hence double the value of
 // deployed.
-private final double INTAKE_FOLDED_TICKS = 300;
+private final double INTAKE_FOLDED_TICKS = 365;// 300;
 
 // Servo is IN, deploy will be able to fold down.
 private final double DEPLOY_SERVO_FREE = .9;
@@ -1299,7 +1300,7 @@ private final double DEPLOY_HOLDING_VOLTAGE = -.15;
 
 private final double EJECT_TIME = 2.0;
 
-private final double DEPLOY_45_POSITION_TICKS = 160;
+private final double DEPLOY_45_POSITION_TICKS = 144;// 160;
 
 private final int DEPLOY_DEADBAND = 8;
 

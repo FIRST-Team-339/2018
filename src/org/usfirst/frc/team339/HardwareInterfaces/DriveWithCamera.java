@@ -410,7 +410,7 @@ private final double ENCODER_MIN_DISTANCE = 50; // inches
 private final double CAMERA_DEADBAND = 7;
 
 // the distance from the wall (in inches) where we start stopping the robot
-private final double DISTANCE_FROM_WALL_TO_STOP = 15;
+private final double DISTANCE_FROM_WALL_TO_STOP = 13;
 // 20 + 50;
 
 private final double SWITCH_CAMERA_CENTER = 160;// Center of a 320x240 image

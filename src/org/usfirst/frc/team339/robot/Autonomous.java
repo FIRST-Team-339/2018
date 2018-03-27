@@ -1293,7 +1293,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                 currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_DRIVE3;
             // Safety encoder reading: Make sure we don't get a penalty for
             // going into the opposition zone
-            else if (Hardware.autoDrive.isAnyEncoderLargerThan(100))
+            else if (Hardware.autoDrive.isAnyEncoderLargerThan(130))
                 currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
             else
                 // Keep driving forwards
@@ -1319,11 +1319,11 @@ public static boolean switchOrScalePath (Position robotPosition)
                 {
                 if (Hardware.autoDrive.turnDegrees2Stage(
                         -SWITCH_OR_SCALE_SCALE_ANGLE, TURN_SPEED))
-                    currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_TO_SCALE;
+                    currentSwitchOrScaleState = SwitchOrScaleStates.RAISE_ARM;
                 }
             else
                 // We dont know what the heck is going on? just end it man.
-                currentSwitchOrScaleState = SwitchOrScaleStates.FINISH;
+                currentSwitchOrScaleState = SwitchOrScaleStates.RAISE_ARM;
 
             break;
         case DRIVE_TO_SCALE:
@@ -1667,7 +1667,7 @@ private static final double DRIVE_SPEED = .5; // percent
 
 private static final double FAST_DRIVE_SPEED = .55;
 
-private static final double SLOW_DRIVE_SPEED = .2;
+private static final double SLOW_DRIVE_SPEED = .15;
 
 private static final double TURN_SPEED = .25; // percent
 
@@ -1737,7 +1737,7 @@ private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
 // distance to be perpendicular to the switch
     {(int) (AUTO_TESTING_SCALAR * 126),
             // distance to drive to the middle of the platform zone
-            (int) (AUTO_TESTING_SCALAR * 174),
+            (int) (AUTO_TESTING_SCALAR * 150),
             (int) (AUTO_TESTING_SCALAR) * 4};
 
 private static final int SWITCH_OR_SCALE_SCALE_ANGLE = 45;// degrees
