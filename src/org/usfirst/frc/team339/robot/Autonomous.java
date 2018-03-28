@@ -1374,7 +1374,7 @@ public static boolean switchOrScalePath (Position robotPosition)
         case EJECT_CUBE_SCALE:
             // Push out the cube, keeping it at a 45 degree angle.
             Hardware.cubeManipulator.angleDeployForScale();
-            if (Hardware.cubeManipulator.pushOutCubeAuto() == true)
+            if (Hardware.cubeManipulator.pushOutCubeAuto(1) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.LOWER_ARM;
             break;
         case LOWER_ARM:

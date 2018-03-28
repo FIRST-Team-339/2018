@@ -548,11 +548,25 @@ public void ejectCube (boolean button)
 }
 
 /**
+ * Pushes out the cube for autonomous only, with the default speed.
+ * 
+ * @return
+ *         whether or not we have finished pushing out the cube
+ */
+public boolean pushOutCubeAuto ()
+{
+    return this.pushOutCubeAuto(this.currentEjectSpeed);
+}
+
+/**
  * Pushes out the cube. For use in autonomous only
+ * 
+ * @param speed
+ *            how fast the intake should run.
  * 
  * @return true if this function is complete, false if still going
  */
-public boolean pushOutCubeAuto ()
+public boolean pushOutCubeAuto (double speed)
 {
     // Tell the state machine to stop controlling the intake motors
     this.isRunningPushOutCubeAuto = true;
@@ -570,7 +584,7 @@ public boolean pushOutCubeAuto ()
             // EJECT_TIME seconds has not elapsed? run motors.
             if (this.switchTimer.get() < EJECT_TIME)
                 {
-                this.intakeMotor.set(this.currentEjectSpeed);
+                this.intakeMotor.set(-Math.abs(speed));
                 }
             // Time has elapsed? stop timer and move to next state.
             else
