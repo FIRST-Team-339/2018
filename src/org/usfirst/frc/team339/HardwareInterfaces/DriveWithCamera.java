@@ -415,7 +415,7 @@ private final double DISTANCE_FROM_WALL_TO_STOP = 13;
 
 private final double SWITCH_CAMERA_CENTER = 160;// Center of a 320x240 image
 
-private final double DRIVE_CORRECTION = .05;
+private final double DRIVE_CORRECTION = .1;
 
 // ================VISION TUNABLES================
 // Gets the center x value of the vision targets (average of the x values
