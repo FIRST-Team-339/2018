@@ -1290,7 +1290,11 @@ public static boolean switchOrScalePath (Position robotPosition)
             // drive SLOW to the tape in front of the scale
             // Have we reached the line yet?
             if (Hardware.redLight.isOn() == true)
+                {
+                Hardware.cubeManipulator
+                        .setLiftPosition(CubeManipulator.SCALE_HEIGHT);
                 currentSwitchOrScaleState = SwitchOrScaleStates.BRAKE_DRIVE3;
+                }
             // Safety encoder reading: Make sure we don't get a penalty for
             // going into the opposition zone
             else if (Hardware.autoDrive.isAnyEncoderLargerThan(130))

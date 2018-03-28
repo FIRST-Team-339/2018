@@ -730,15 +730,9 @@ public void forkliftUpdate ()
             // TODO test scaleIR code
             if (forkliftDirection == ForkliftDirectionState.MOVING_UP)
                 {
-                // If we have passed the value we wanted... OR the armIR
-                // is being used and is telling us to stop
-                if ((this.forkliftEncoder
+                // If we have passed the value we wanted...
+                if (this.forkliftEncoder
                         .getDistance() > forkliftTargetHeight)
-                        || (this.armIR.isOn()
-                                && this.forkliftEncoder
-                                        .getDistance() > USE_ARM_IR_HEIGHT
-                                && this.usingArmIRStop == true
-                                && this.deployIntakeState == DeployState.DEPLOYED))
                     {
                     liftState = ForkliftState.STAY_AT_POSITION;
                     // Reset the direction for next time.
@@ -824,7 +818,6 @@ public void deployIntakeUpdate ()
         // until the deployCubeIntake() function is called
         case NOT_DEPLOYED:
             this.intakeDeployMotor.set(0.0);
-            this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
             break;
 
         // moves the intake until the encoder reads that the arm has
@@ -832,105 +825,64 @@ public void deployIntakeUpdate ()
         // and
         // moves to the next state
         case DEPLOYING:
-            switch (foldDownDeployState)
+
+            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+
+            if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS)
                 {
-                // We don't need to raise the arm
-                case RAISE_ARM:
-                    foldDownDeployState = FoldDownDeployState.RELEASE_TENSION;
-                    this.switchTimer.reset();
-                    this.switchTimer.start();
-                    break;
-                // Bring up the arm just a hair to release tension on the
-                // ratchet
-                case RELEASE_TENSION:
-                    deployFoldingServo.set(DEPLOY_SERVO_FREE);
-                    // If the angle is past the "retract" distance, then start
-                    // pulling down
-                    if (this.switchTimer.get() > .1)
-                        {
-                        // Choose which angle the deploy should go to based on
-                        // what our current situation is
-                        if (deployWas45 == true)
-                            currentIntakeAngle = INTAKE_DEPLOY_TICKS_FROM_45;
-                        else if (hasCube() == true)
-                            currentIntakeAngle = INTAKE_DEPLOY_TICKS_CUBE;
-                        else
-                            currentIntakeAngle = INTAKE_DEPLOY_TICKS;
-
-                        foldDownDeployState = FoldDownDeployState.FOLD_DOWN;
-                        this.switchTimer.stop();
-                        intakeDeployMotor.stopMotor();
-                        }
-                    else
-                        {
-                        intakeDeployMotor.set(getRetractSpeed());
-                        }
-                    break;
-                case FOLD_DOWN:
-                    // We are past the "deployed" distance, finish the state.
-
-                    if (getIntakeAngle() > currentIntakeAngle)
-                        {
-                        deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
-                        foldDownDeployState = FoldDownDeployState.RAISE_ARM;
-                        deployIntakeState = DeployState.DEPLOYED;
-                        intakeDeployMotor.stopMotor();
-                        }
-                    else
-                        {
-                        // Keep going
-                        deployFoldingServo.set(DEPLOY_SERVO_FREE);
-                        intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-                        }
-                    break;
+                // stops the intake deploy motor if we've turned far enough;
+                // FINISHED does this as well, but doing it here helps
+                // keep the motor from overshooting too much
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.DEPLOYED;
                 }
+
             break;
 
         // final state in the state machine; stops the intake deploy
         // motor
         case DEPLOYED:
             this.intakeDeployMotor.set(0.0);
-            this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
-            this.deployWas45 = false;
             break;
 
         // brings the intake mechanism back into the robot, and sets the
         // state to NOT_DEPLOYED
         case RETRACTING:
             this.intakeDeployMotor.set(getRetractSpeed());
-            this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
-            if (this.intakeDeployEncoder.get() <= INTAKE_RETRACT_TICKS)
+            if (this.intakeDeployEncoder
+                    .get() <= INTAKE_RETRACT_TICKS)
                 {
                 // brings back in the intake mechanism until the intake
                 // deploy
                 // encoder reads the INTAKE_RETRACT_ANGLE (usually 0)
-                this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
                 this.intakeDeployMotor.set(0.0);
                 deployIntakeState = DeployState.NOT_DEPLOYED;
                 }
             break;
 
         case OVERRIDE_DEPLOY:
-            this.deployFoldingServo.set(DEPLOY_SERVO_FREE);
             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
             // If the override is let go, then stop the deploy
             deployIntakeState = DeployState.STOPPED;
             break;
         case OVERRIDE_RETRACT:
-
-            this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
             this.intakeDeployMotor.set(getRetractSpeed());
             // If the override is let go, then stop the deploy
             deployIntakeState = DeployState.STOPPED;
             break;
 
         case POSITION_45:
-            this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
-            this.deployWas45 = true;
-            // We have reached the 45 degree angle? stop the motor.
-            if (getIntakeAngle() < DEPLOY_45_POSITION_TICKS)
+            // If the deploy has reached the position, send constant voltage
+            if (intakeDeployEncoder.get() < DEPLOY_45_POSITION_TICKS)
                 {
-                this.intakeDeployMotor.stopMotor();
+                intakeDeployMotor.set(DEPLOY_HOLDING_VOLTAGE);
+                }
+            // If we have gone too far
+            else if (intakeDeployEncoder
+                    .get() < DEPLOY_45_POSITION_TICKS
+                            - DEPLOY_DEADBAND)
+                {
+                intakeDeployMotor.stopMotor();
                 }
             // We are still retracting.
             else
@@ -946,7 +898,6 @@ public void deployIntakeUpdate ()
 
             // Sets up a state machine INSIDE the state machine to fold the arm
             // down to climb.
-            this.deployFoldingServo.set(DEPLOY_SERVO_FREE);
             switch (foldDownDeployState)
                 {
                 case RAISE_ARM:
@@ -960,13 +911,12 @@ public void deployIntakeUpdate ()
                 // servo arm
                 case RELEASE_TENSION:
                     // If we have reached the up position?
-                    if (this.getIntakeAngle() < INTAKE_RELEASE_TENSION_TICKS)
+                    if (getIntakeAngle() < INTAKE_RETRACT_TICKS)
                         {
                         // Set the servo to the "in" position get ready to bring
                         // the arm down.
-                        deployFoldingServo.set(DEPLOY_SERVO_FREE);
+                        deployFoldingServo.set(DEPLOY_SERVO_IN);
                         this.foldDownDeployState = FoldDownDeployState.FOLD_DOWN;
-                        this.intakeDeployMotor.stopMotor();
                         }
                     // If we have not yet reached the 45 point?
                     else
@@ -978,13 +928,12 @@ public void deployIntakeUpdate ()
                     break;
                 case FOLD_DOWN:
                     // We have finished going down?
-                    if (this.getIntakeAngle() > INTAKE_FOLDED_TICKS)
+                    if (getIntakeAngle() > INTAKE_FOLDED_TICKS)
                         {
                         // Reset the state for next time and change the overall
                         // deploy state.
                         this.foldDownDeployState = FoldDownDeployState.RAISE_ARM;
                         this.deployIntakeState = DeployState.FOLDED;
-                        this.intakeDeployMotor.stopMotor();
                         }
                     // We have NOT finished going down?
                     else
@@ -999,17 +948,15 @@ public void deployIntakeUpdate ()
             break;
         case FOLDED:
             intakeDeployMotor.stopMotor();
-            this.deployFoldingServo.set(DEPLOY_SERVO_FREE);
             break;
 
         case UNFOLD_ARM_UP:
-            // Bringing the arm up? engage the rachet and start moving the
-            // motor.
-            this.deployFoldingServo.set(DEPLOY_SERVO_ENGAGED);
-            if (getIntakeAngle() < INTAKE_DEPLOY_TICKS)
+            // If the arm has reached the 45 position
+            if (getIntakeAngle() < INTAKE_RETRACT_TICKS)
                 {
-                this.intakeDeployMotor.stopMotor();
-                this.deployIntakeState = DeployState.DEPLOYED;
+                // set the servo out and begin the normal deploy motor code
+                this.deployFoldingServo.set(DEPLOY_SERVO_OUT);
+                this.deployCubeIntake(false);
                 }
             else
                 {
@@ -1176,6 +1123,8 @@ private ForkliftState liftState = ForkliftState.STAY_AT_POSITION;
 // used to tell the forklift which direction it should be moving
 private ForkliftDirectionState forkliftDirection = ForkliftDirectionState.NEUTRAL;
 
+private boolean IROverride = false;
+
 private boolean isClimbing = false;
 
 private double currentForkliftDownSpeed = 0;
@@ -1227,7 +1176,7 @@ private final double FORKLIFT_DOWN_JOYSTICK_SCALAR = .55;
 
 private final double FORKLIFT_CLIMB_SCALAR = .8;
 
-private final double FORKLIFT_UP_JOYSTICK_SCALAR = .9;
+private final double FORKLIFT_UP_JOYSTICK_SCALAR = 1.0;
 
 private final double FORKLIFT_NO_CUBE_MIN_HEIGHT = 0;
 
@@ -1252,9 +1201,6 @@ public final static double SCALE_HEIGHT = 69;// Changed 3/22/18 from 76
 
 // ================INTAKE===================
 
-private final double ENC_250_to_360_SCALAR = 1.44; // Change to 1 for 250
-                                                   // encoder, change
-
 private final double INTAKE_SPEED = .5;
 
 private final double EJECT_SPEED_FAST = -.5;
@@ -1266,15 +1212,8 @@ private final double EJECT_CHANGE_HEIGHT = 58;
 public final double INTAKE_STOP_WITH_CUBE = .06;
 
 // how many degrees the intake deploy motor needs to turn for the intake
-// to be fully deployed, commented out is for 250
-private final double INTAKE_DEPLOY_TICKS = 195;// 170;
-
-private final double INTAKE_DEPLOY_TICKS_CUBE = 170;// 150;
-
-private final double INTAKE_DEPLOY_TICKS_FROM_45 = 190;// 165;
-
-// number of degrees the intake deploy motor needs to be at to release tension
-private final double INTAKE_RELEASE_TENSION_TICKS = 190;// 200;
+// to be fully deployed
+private final double INTAKE_DEPLOY_TICKS = 245;
 
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 0.0;
@@ -1284,10 +1223,10 @@ private final double INTAKE_RETRACT_TICKS = 0.0;
 private final double INTAKE_FOLDED_TICKS = 365;// 300;
 
 // Servo is IN, deploy will be able to fold down.
-private final double DEPLOY_SERVO_FREE = .9;
+public final double DEPLOY_SERVO_IN = 0;
 
 // Servo is OUT, deploy will be supported by servo.
-private final double DEPLOY_SERVO_ENGAGED = .071;
+public final double DEPLOY_SERVO_OUT = 1;
 
 private final double INTAKE_DEPLOY_SPEED = .1;
 
@@ -1302,7 +1241,7 @@ private final double EJECT_TIME = 2.0;
 
 private final double DEPLOY_45_POSITION_TICKS = 144;// 160;
 
-private final int DEPLOY_DEADBAND = 8;
+private final int DEPLOY_DEADBAND = 15;
 
 // =========================================
 
