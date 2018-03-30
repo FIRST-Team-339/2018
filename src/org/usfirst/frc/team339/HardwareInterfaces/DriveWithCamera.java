@@ -361,6 +361,8 @@ public void visionTest (double compensationFactor, double speed)
         }
 }
 
+private int currentPictureIteration = 0;
+
 /**
  * Gets the center x value of of the vision targets (average of the x values
  * of both visions targets)
@@ -369,6 +371,15 @@ public void visionTest (double compensationFactor, double speed)
  */
 public double getCameraCenterValue ()
 {
+    // Save an image every 15 iterations: will give us between 1-3 frames per
+    // second, or a max of 10 to 15 pictures on the RIO.
+    if (currentPictureIteration++ >= 15)
+        {
+        this.visionProcessor.saveImage(ImageType.RAW);
+        this.visionProcessor.saveImage(ImageType.PROCESSED);
+        currentPictureIteration = 0;
+        }
+
     visionProcessor.processImage();
     // if we have at least two blobs, the center is equal to the average
     // center
@@ -413,9 +424,10 @@ private final double CAMERA_DEADBAND = 7;
 private final double DISTANCE_FROM_WALL_TO_STOP = 13;
 // 20 + 50;
 
-private final double SWITCH_CAMERA_CENTER = 160;// Center of a 320x240 image
+private final double SWITCH_CAMERA_CENTER = 150;// Center of a 320x240 image
+// 160 originally
 
-private final double DRIVE_CORRECTION = .1;
+private final double DRIVE_CORRECTION = .05;
 
 // ================VISION TUNABLES================
 // Gets the center x value of the vision targets (average of the x values

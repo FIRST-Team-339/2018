@@ -97,6 +97,9 @@ public static void init ()
 } // end Init
 
 // tune pid loop
+
+// private static boolean hasSeenTape = false;
+
 /**
  * User Periodic code for teleop mode should go here. Will be called
  * periodically at a regular rate while the robot is in teleop mode.
@@ -106,7 +109,22 @@ public static void init ()
  */
 public static void periodic ()
 {
+    // Hardware.tempRelay.set(true);
 
+    // if (Hardware.redLight.isOn() && hasSeenTape == false)
+    // {
+    // hasSeenTape = true;
+    // System.out.println("RL Has Seen Tape! Yay!");
+    // }
+
+    // Stress testing... TAKE OUT!
+    // if (Hardware.leftOperator.getRawButton(8) == true)
+    // {
+    // Hardware.tempRelay.set(true);
+    // Hardware.axisCamera.processImage();
+    // Hardware.axisCamera.processImage();
+    // Hardware.axisCamera.processImage();
+    // }
 
     // =================================================================
     // OPERATOR CONTROLS
@@ -515,8 +533,8 @@ public static void printStatements ()
 
         // System.out.println("6 pos = "
         // + Hardware.autoSixPosSwitch.getPosition());
-        // SmartDashboard.putNumber("6 Pos Switch",
-        // Hardware.autoSixPosSwitch.getPosition());
+        SmartDashboard.putNumber("6 Pos Switch",
+                Hardware.autoSixPosSwitch.getPosition());
 
         // ---------------------------------
         // Encoders

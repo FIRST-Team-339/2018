@@ -824,7 +824,6 @@ private double currentIntakeAngle = 0;
  */
 public void deployIntakeUpdate ()
 {
-
     // state machine for deploying the intake
     switch (deployIntakeState)
         {
@@ -966,6 +965,7 @@ public void deployIntakeUpdate ()
 
         case UNFOLD_ARM_UP:
             // If the arm has reached the 45 position
+            this.deployFoldingServo.set(DEPLOY_SERVO_OUT);
             if (getIntakeAngle() < INTAKE_RETRACT_TICKS)
                 {
                 // set the servo out and begin the normal deploy motor code
@@ -1164,6 +1164,8 @@ private IntakeState intakeState = IntakeState.STOP;
 
 private double currentEjectSpeed = -1;
 
+private double currentRetractSpeed = 0;
+
 private boolean isPullingIn = true;
 
 private boolean lastIntakeButtonStatus = false;
@@ -1237,17 +1239,17 @@ private final double INTAKE_RETRACT_TICKS = 0.0;
 private final double INTAKE_FOLDED_TICKS = 365;// 300;
 
 // Servo is IN, deploy will be able to fold down.
-public final double DEPLOY_SERVO_IN = 0;
+public final double DEPLOY_SERVO_IN = .4;
 
 // Servo is OUT, deploy will be supported by servo.
-public final double DEPLOY_SERVO_OUT = 1;
+public final double DEPLOY_SERVO_OUT = .9;
 
-private final double INTAKE_DEPLOY_SPEED = .1;
+private final double INTAKE_DEPLOY_SPEED = .5;
 
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED_LOW = -.5;
 
-private final double INTAKE_RETRACT_SPEED_HIGH = -.7;
+private final double INTAKE_RETRACT_SPEED_HIGH = -1;
 
 private final double DEPLOY_HOLDING_VOLTAGE = -.15;
 
