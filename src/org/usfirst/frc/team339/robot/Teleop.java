@@ -143,7 +143,8 @@ public static void periodic ()
             Hardware.rightOperator.getTrigger(),
             Hardware.rightOperator.getRawButton(2));
     Hardware.cubeManipulator
-            .ejectCube(Hardware.leftOperator.getTrigger());
+            .ejectCube(Hardware.leftOperator.getTrigger(),
+                    Hardware.leftOperator.getRawButton(3));
 
     // -----------------------------------------
     // Deploy Intake controls
@@ -715,8 +716,8 @@ public static void printStatements ()
         // ---------------------------------
         // System.out.println("The camera center is: "
         // + Hardware.driveWithCamera.getCameraCenterValue());
-        SmartDashboard.putNumber("Camera Center",
-                Hardware.driveWithCamera.getCameraCenterValue());
+        // SmartDashboard.putNumber("Camera Center",
+        // Hardware.driveWithCamera.getCameraCenterValue());
 
         // =================================
         // Driver station

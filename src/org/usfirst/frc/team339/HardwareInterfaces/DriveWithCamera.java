@@ -189,7 +189,7 @@ public boolean driveToSwitch (double speed)
 
             // if the switch center is to the right of our center set by the
             // SWITCH_CAMERA_CENTER, correct by driving faster on the left
-            if (centerX >= SWITCH_CAMERA_CENTER)
+            if (centerX > SWITCH_CAMERA_CENTER)
                 {
                 // the switch's center is too far right, drive faster on the
                 // left
@@ -199,13 +199,17 @@ public boolean driveToSwitch (double speed)
                 }
             // if the switch center is to the left of our center set by the
             // SWITCH_CAMERA_CENTER, correct by driving faster on the right
-            else
+            else if (centerX < SWITCH_CAMERA_CENTER)
                 {
                 // the switch's center is too far left, drive faster on the
                 // right
                 // System.out.println("WE ARE TOO LEFT");
                 this.getTransmission().drive(speed - DRIVE_CORRECTION,
                         speed + DRIVE_CORRECTION);
+                }
+            else
+                {
+                this.getTransmission().drive(speed, speed);
                 }
 
             if (this.frontUltrasonic
@@ -371,6 +375,7 @@ private int currentPictureIteration = 0;
  */
 public double getCameraCenterValue ()
 {
+    double center = 0;
     // Save an image every 15 iterations: will give us between 1-3 frames per
     // second, or a max of 10 to 15 pictures on the RIO.
     if (currentPictureIteration++ >= 15)
@@ -424,15 +429,9 @@ private final double CAMERA_DEADBAND = 7;
 private final double DISTANCE_FROM_WALL_TO_STOP = 13;
 // 20 + 50;
 
-private final double SWITCH_CAMERA_CENTER = 150;// Center of a 320x240 image
+private final double SWITCH_CAMERA_CENTER = 160;// Center of a 320x240 image
 // 160 originally
 
-private final double DRIVE_CORRECTION = .05;
-
-// ================VISION TUNABLES================
-// Gets the center x value of the vision targets (average of the x values
-// of both vision targets, or of the only one if there is only one blob: see
-// getCameraCenterValue())
-private double center = 160;
+private final double DRIVE_CORRECTION = .15;
 
 }

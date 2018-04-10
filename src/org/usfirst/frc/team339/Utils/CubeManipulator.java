@@ -538,14 +538,21 @@ public void intakeCube (boolean button, boolean override)
 /**
  * Ejects the cube based on a button.
  * 
- * @param button
- *            If the button is pressed, then eject the cube.
+ * @param eject
+ *            If the button is pressed, then eject the cube at high speed
+ * @param place
+ *            If the button is pressed, then eject the cube at low speed,
+ *            effectively dropping it.
  */
-public void ejectCube (boolean button)
+public void ejectCube (boolean eject, boolean place)
 {
-    if (button)
+    if (eject || place)
         this.intakeState = IntakeState.PUSH_OUT;
+
+    isLowEject = place;
 }
+
+private boolean isLowEject = false;
 
 /**
  * Pushes out the cube for autonomous only, with the default speed.
@@ -1005,7 +1012,15 @@ public void intakeUpdate ()
         return;
         }
 
-    if (this.forkliftEncoder.getDistance() > EJECT_CHANGE_HEIGHT)
+    if (this.isLowEject == true)
+        {
+        this.currentEjectSpeed = EJECT_SPEED_DROP;
+        }
+    else if (this.deployIntakeState == DeployState.POSITION_45)
+        {
+        this.currentEjectSpeed = EJECT_SPEED_45;
+        }
+    else if (this.forkliftEncoder.getDistance() > EJECT_CHANGE_HEIGHT)
         {
         this.currentEjectSpeed = EJECT_SPEED_FAST;
         }
@@ -1219,9 +1234,13 @@ public final static double SCALE_HEIGHT = 69;// Changed 3/22/18 from 76
 
 private final double INTAKE_SPEED = .5;
 
-private final double EJECT_SPEED_FAST = -.5;
+private final double EJECT_SPEED_45 = -1;
 
-private final double EJECT_SPEED_SLOW = -.4;
+private final double EJECT_SPEED_FAST = -.7;
+
+private final double EJECT_SPEED_SLOW = -.45;
+
+private final double EJECT_SPEED_DROP = -.3;
 
 private final double EJECT_CHANGE_HEIGHT = 58;
 
@@ -1244,18 +1263,18 @@ public final double DEPLOY_SERVO_IN = .4;
 // Servo is OUT, deploy will be supported by servo.
 public final double DEPLOY_SERVO_OUT = .9;
 
-private final double INTAKE_DEPLOY_SPEED = .5;
+private final double INTAKE_DEPLOY_SPEED = .3;
 
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED_LOW = -.5;
 
-private final double INTAKE_RETRACT_SPEED_HIGH = -1;
+private final double INTAKE_RETRACT_SPEED_HIGH = -.9;
 
 private final double DEPLOY_HOLDING_VOLTAGE = -.15;
 
 private final double EJECT_TIME = 2.0;
 
-private final double DEPLOY_45_POSITION_TICKS = 144;// 160;
+private final double DEPLOY_45_POSITION_TICKS = 130;// 160;
 
 private final int DEPLOY_DEADBAND = 15;
 

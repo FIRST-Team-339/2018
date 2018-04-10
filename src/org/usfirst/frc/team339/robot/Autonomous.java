@@ -34,7 +34,6 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
-import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -315,6 +314,8 @@ public static void periodic ()
  */
 public static Position grabData (GameDataType dataType)
 {
+    Position position = Position.NULL;
+
     // gets the game data the driver station provides us with
     String gameData = DriverStation.getInstance()
             .getGameSpecificMessage();
@@ -322,32 +323,34 @@ public static Position grabData (GameDataType dataType)
     // Stay in this state if there are not 3 letters in the game data
     // provided
     if (gameData.length() < 3)
-        return Position.NULL;
+        position = Position.NULL;
     // return null
 
     // sets the switch position based on the game data
     if (dataType == GameDataType.SWITCH && gameData.charAt(0) == 'L')
         {
-        return Position.LEFT;
+        position = Position.LEFT;
         }
     else if (dataType == GameDataType.SWITCH
             && gameData.charAt(0) == 'R')
         {
-        return Position.RIGHT;
+        position = Position.RIGHT;
         }
 
     // sets the scale position based on the game data
     if (dataType == GameDataType.SCALE && gameData.charAt(1) == 'L')
         {
-        return Position.LEFT;
+        position = Position.LEFT;
         }
     else if (dataType == GameDataType.SCALE
             && gameData.charAt(1) == 'R')
         {
-        return Position.RIGHT;
+        position = Position.RIGHT;
         }
-    // basically default if something goes wrong
-    return Position.NULL;
+    // FORCING for testing
+    // position = Position.LEFT;
+    // position = Position.RIGHT;
+    return position;
 }
 
 /**
@@ -845,6 +848,8 @@ public static boolean rightAutoLineExchangePath ()
     return false;
 }
 
+public static centerState visionAuto = centerState.CENTER_INIT;
+
 /**
  * Left Plan: Drive ten inches, brake, turn 90 degrees to left, drive 53 inches,
  * turn 90 degrees to right, drive 54 inches with camera, drive 24 inches with
@@ -873,7 +878,7 @@ public static boolean centerSwitchPath ()
             // drive 4 inches to make the turn and sets state to BRAKE_1
             // -Hardware.autoDrive.getBrakeStoppingDistance()
             if (Hardware.autoDrive.driveStraightInches(4,
-                    AUTO_SPEED_VISION, false) == true)
+                    MID_DRIVE_SPEED, false) == true)
                 {
                 visionAuto = centerState.GRAB_DATA;// Bypass the first brake
                 }
@@ -906,9 +911,9 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_LEFT_SIDE:
             // Turn x degrees to the left, if the switch is on the left
             if (Hardware.autoDrive.pivotTurnDegrees(-80,
-                    AUTO_SPEED_VISION) == true)// Changed
-                                               // from
-                                               // 2stageturn
+                    MID_DRIVE_SPEED) == true)// Changed
+                                             // from
+                                             // 2stageturn
                 {
                 visionAuto = centerState.DRIVE_STRAIGHT_TO_SWITCH_LEFT;// Bypass
                                                                        // brake
@@ -917,9 +922,9 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_RIGHT_SIDE:
             // Turn x degrees to the right, if the switch is on the right
             if (Hardware.autoDrive.pivotTurnDegrees(80,
-                    AUTO_SPEED_VISION) == true)// Changed
-                                               // from
-                                               // 2stageTurn
+                    MID_DRIVE_SPEED) == true)// Changed
+                                             // from
+                                             // 2stageTurn
                 {
                 visionAuto = centerState.DRIVE_STRAIGHT_TO_SWITCH_RIGHT;// bypass
                                                                         // brake
@@ -976,7 +981,7 @@ public static boolean centerSwitchPath ()
             // turn 90 to the left and sets the state to DRIVE_WITH_CAMERA this
             // is the right side auto
             if (Hardware.autoDrive.pivotTurnDegrees(-80,
-                    AUTO_SPEED_VISION) == true)
+                    MID_DRIVE_SPEED) == true)
                 {
                 visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
@@ -984,8 +989,8 @@ public static boolean centerSwitchPath ()
         case TURN_AGAIN_LEFT:
             // turns 90 to the right then brakes and sets the state to
             // DRIVE_WITH_CAMERA this is the left side auto
-            if (Hardware.autoDrive.turnDegrees2Stage(80,
-                    AUTO_SPEED_VISION) == true)
+            if (Hardware.autoDrive.pivotTurnDegrees(65,
+                    MID_DRIVE_SPEED) == true)
                 {
                 visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
@@ -1015,8 +1020,6 @@ public static boolean centerSwitchPath ()
                 if (usingAutoCamera == true)
                     {
                     visionAuto = centerState.DRIVE_WITH_CAMERA;
-                    Hardware.axisCamera.saveImage(ImageType.RAW);
-                    Hardware.axisCamera.saveImage(ImageType.PROCESSED);
                     }
                 else
                     {
@@ -1090,8 +1093,6 @@ public static boolean centerSwitchPath ()
         }
     return false;
 }
-
-public static centerState visionAuto = centerState.CENTER_INIT;
 
 public static boolean usingAutoCamera = true;
 
@@ -1370,7 +1371,15 @@ public static boolean switchOrScalePath (Position robotPosition)
         case EJECT_CUBE_SCALE:
             // Push out the cube, keeping it at a 45 degree angle.
             Hardware.cubeManipulator.angleDeployForScale();
-            if (Hardware.cubeManipulator.pushOutCubeAuto(.7) == true)
+            if (Hardware.cubeManipulator.pushOutCubeAuto(.6) == true)
+                currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_4;
+            break;
+        case DRIVE_4:
+            // SLOWLY drive away from the scale with arm up to avoid getting a
+            // penalty
+            if (Hardware.autoDrive.driveStraightInches(
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[3], SLOW_DRIVE_SPEED,
+                    true))
                 currentSwitchOrScaleState = SwitchOrScaleStates.LOWER_ARM;
             break;
         case LOWER_ARM:
@@ -1395,7 +1404,7 @@ public static boolean switchOrScalePath (Position robotPosition)
                 }
             break;
         default: // prints that we reached the default, then falls through to
-                 // FINISH
+                 // FINISH--
             System.out.println(
                     "REACHED THE DEFAULT CASE for switchOrScalePath()");
         case FINISH:
@@ -1417,7 +1426,7 @@ private static SwitchOrScaleStates currentSwitchOrScaleState = SwitchOrScaleStat
  */
 private static enum SwitchOrScaleStates
     {
-PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE_SWITCH, DRIVE2, DRIVE3, BRAKE_DRIVE3, TURN_TO_SCALE, DRIVE_TO_SCALE, RAISE_ARM, ANGLE_DEPLOY, BACK_UP_FROM_SCALE, EJECT_CUBE_SCALE, LOWER_ARM, TURN2, FINISH
+PATH_INIT, DRIVE1, BRAKE_DRIVE1, TURN1, BRAKE_TURN1, DRIVE_WITH_ULTRSNC, BRAKE_ULTRSNC, EJECT_CUBE_SWITCH, DRIVE2, DRIVE3, BRAKE_DRIVE3, TURN_TO_SCALE, DRIVE_TO_SCALE, RAISE_ARM, ANGLE_DEPLOY, BACK_UP_FROM_SCALE, EJECT_CUBE_SCALE, DRIVE_4, LOWER_ARM, TURN2, FINISH
     }
 
 /**
@@ -1667,6 +1676,8 @@ private static final double DRIVE_SPEED = .5; // percent
 
 private static final double FAST_DRIVE_SPEED = .55;
 
+private static final double MID_DRIVE_SPEED = .3;
+
 private static final double SLOW_DRIVE_SPEED = .15;
 
 private static final double TURN_SPEED = .25; // percent
@@ -1729,7 +1740,7 @@ private final static double DRIVE_NO_CAMERA_RIGHT = 16.3;// inches
 private final static double CENTER_ACCEL = .6;
 
 // TODO change for actual auto speed
-private final static double AUTO_SPEED_VISION = .3;
+private final static double AUTO_SPEED_VISION = .25;
 
 // SWITCH_OR_SCALE
 // array for storing the different driving distances in SWITH_OR_SCALE
@@ -1738,9 +1749,10 @@ private static final int[] SWITCH_OR_SCALE_DRIVE_DISTANCE = new int[]
     {(int) (AUTO_TESTING_SCALAR * 126),
             // distance to drive to the middle of the platform zone
             (int) (AUTO_TESTING_SCALAR * 150),
-            (int) (AUTO_TESTING_SCALAR) * 4};
+            (int) (AUTO_TESTING_SCALAR * 4),
+            (int) (AUTO_TESTING_SCALAR) * -6};
 
-private static final int SWITCH_OR_SCALE_SCALE_ANGLE = 45;// degrees
+private static final int SWITCH_OR_SCALE_SCALE_ANGLE = 53;// degrees
 
 // OFFSET_SWITCH
 // array for storing the different driving distances used in OFFSET_SWITCH
