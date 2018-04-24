@@ -97,6 +97,9 @@ public static void init ()
 } // end Init
 
 // tune pid loop
+
+// private static boolean hasSeenTape = false;
+
 /**
  * User Periodic code for teleop mode should go here. Will be called
  * periodically at a regular rate while the robot is in teleop mode.
@@ -106,7 +109,22 @@ public static void init ()
  */
 public static void periodic ()
 {
+    // Hardware.tempRelay.set(true);
 
+    // if (Hardware.redLight.isOn() && hasSeenTape == false)
+    // {
+    // hasSeenTape = true;
+    // System.out.println("RL Has Seen Tape! Yay!");
+    // }
+
+    // Stress testing... TAKE OUT!
+    // if (Hardware.leftOperator.getRawButton(8) == true)
+    // {
+    // Hardware.tempRelay.set(true);
+    // Hardware.axisCamera.processImage();
+    // Hardware.axisCamera.processImage();
+    // Hardware.axisCamera.processImage();
+    // }
 
     // =================================================================
     // OPERATOR CONTROLS
@@ -125,7 +143,8 @@ public static void periodic ()
             Hardware.rightOperator.getTrigger(),
             Hardware.rightOperator.getRawButton(2));
     Hardware.cubeManipulator
-            .ejectCube(Hardware.leftOperator.getTrigger());
+            .ejectCube(Hardware.leftOperator.getTrigger(),
+                    Hardware.leftOperator.getRawButton(3));
 
     // -----------------------------------------
     // Deploy Intake controls
@@ -426,329 +445,338 @@ private static void liftTest ()
  */
 public static void printStatements ()
 {
-    // ==================================
-    // Scale Alignment
-    // ==================================
-    // SmartDashboard.putString("Relative to scale",
-    // Hardware.scaleAlignment.RelativeScale);
+    if (Hardware.driverStation.isFMSAttached() == false)
+        {
+        // ==================================
+        // Scale Alignment
+        // ==================================
+        // SmartDashboard.putString("Relative to scale",
+        // Hardware.scaleAlignment.RelativeScale);
 
-    // SmartDashboard.putNumber("RearUltraSonic",
-    // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+        // SmartDashboard.putNumber("RearUltraSonic",
+        // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
-    // =================================
-    // Motor
-    // Prints the value of motors
-    // =================================
-    // System.out.println(
-    // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-    SmartDashboard.putNumber("R Drive Motor",
-            Hardware.rightDriveMotor.get());
-    // System.out.println(
-    // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-    SmartDashboard.putNumber("L Drive Motor",
-            Hardware.leftDriveMotor.get());
+        // =================================
+        // Motor
+        // Prints the value of motors
+        // =================================
+        // System.out.println(
+        // "Right Drive Motor " + Hardware.rightDriveMotor.get());
+        SmartDashboard.putNumber("R Drive Motor",
+                Hardware.rightDriveMotor.get());
+        // System.out.println(
+        // "Left Drive Motor " + Hardware.leftDriveMotor.get());
+        SmartDashboard.putNumber("L Drive Motor",
+                Hardware.leftDriveMotor.get());
 
-    // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-    // SmartDashboard.putNumber("Lifting Motor",
-    // Hardware.liftingMotor.get());
+        // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+        // SmartDashboard.putNumber("Lifting Motor",
+        // Hardware.liftingMotor.get());
 
-    // System.out.println(
-    // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-    SmartDashboard.putNumber("Cube Motor",
-            Hardware.cubeIntakeMotor.get());
-    // System.out.println(
-    // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-    // SmartDashboard.putNumber("Intake Deploy Motor",
-    // Hardware.intakeDeployArm.get());
-    // =================================
-    // CAN items
-    // prints value of the CAN controllers
-    // =================================
-    //
-    // =================================
-    // Relay
-    // =================================
-    // System.out.println(
-    // "Relay " + Hardware.ringLightRelay.get());
-    //
-    // =================================
-    // // Digital Inputs
-    // =================================
-    //
-    // ---------------------------------
-    // Switches
-    // prints state of switches
-    // ---------------------------------
-    // if (Hardware.disableAutonomousSwitch.isOn() == false)
-    // {
-    // System.out.println(
-    // "Disable = off");
-    // }
-    // else
-    // {
-    // System.out.println(
-    // "Disable = on");
-    // }
-    // SmartDashboard.putBoolean("Disable SW",
-    // Hardware.disableAutonomousSwitch.isOn());
+        // System.out.println(
+        // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+        SmartDashboard.putNumber("Cube Motor",
+                Hardware.cubeIntakeMotor.get());
+        // System.out.println(
+        // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+        // SmartDashboard.putNumber("Intake Deploy Motor",
+        // Hardware.intakeDeployArm.get());
+        // =================================
+        // CAN items
+        // prints value of the CAN controllers
+        // =================================
+        //
+        // =================================
+        // Relay
+        // =================================
+        // System.out.println(
+        // "Relay " + Hardware.ringLightRelay.get());
+        //
+        // =================================
+        // // Digital Inputs
+        // =================================
+        //
+        // ---------------------------------
+        // Switches
+        // prints state of switches
+        // ---------------------------------
+        // if (Hardware.disableAutonomousSwitch.isOn() == false)
+        // {
+        // System.out.println(
+        // "Disable = off");
+        // }
+        // else
+        // {
+        // System.out.println(
+        // "Disable = on");
+        // }
+        // SmartDashboard.putBoolean("Disable SW",
+        // Hardware.disableAutonomousSwitch.isOn());
 
-    // if (Hardware.leftAutoSwitch.isOn() == false)
-    // System.out.println(
-    // "Left = off");
-    // else
-    // System.out.println(
-    // "Left = on");
-    // SmartDashboard.putBoolean("L Auto SW",
-    // Hardware.leftAutoSwitch.isOn());
-    //
-    // if (Hardware.rightAutoSwitch.isOn() == false)
-    // System.out.println(
-    // "Right = off");
-    // else
-    // System.out.println(
-    // "Right = on");
-    // SmartDashboard.putBoolean("R Auto SW",
-    // Hardware.rightAutoSwitch.isOn());
-
-
-    // System.out.println("6 pos = "
-    // + Hardware.autoSixPosSwitch.getPosition());
-    // SmartDashboard.putNumber("6 Pos Switch",
-    // Hardware.autoSixPosSwitch.getPosition());
-
-    // ---------------------------------
-    // Encoders
-    // ---------------------------------
-    // System.out.println("Left Front Encoder Inches = "
-    // + Hardware.leftFrontDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Left Front Encoder Inches",
-            Hardware.leftFrontDriveEncoder.getDistance());
-
-    // System.out.println("Left Front Encoder Ticks "
-    // + Hardware.leftFrontDriveEncoder.get());
-    SmartDashboard.putNumber("Left Front Encoder Ticks",
-            Hardware.leftFrontDriveEncoder.get());
-
-    // System.out.println("Right Front Inches = "
-    // + Hardware.rightFrontDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Right Front Encoder Inches",
-            Hardware.rightFrontDriveEncoder.getDistance());
-
-    // System.out.println("Right Front Ticks "
-    // + Hardware.rightFrontDriveEncoder.get());
-    SmartDashboard.putNumber("Right Front Encoder Ticks",
-            Hardware.rightFrontDriveEncoder.get());
-
-    // System.out.println("Left Rear Encoder Inches = "
-    // + Hardware.leftRearDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Left Rear Encoder Inches",
-            Hardware.leftRearDriveEncoder.getDistance());
-
-    // System.out.println("Left Rear Encoder Ticks "
-    // + Hardware.leftRearDriveEncoder.get());
-    SmartDashboard.putNumber("Left Rear Encoder Ticks",
-            Hardware.leftRearDriveEncoder.get());
-
-    // System.out.println("Right Rear Inches = "
-    // + Hardware.rightRearDriveEncoder.getDistance());
-    SmartDashboard.putNumber("Right Rear Encoder Inches",
-            Hardware.rightRearDriveEncoder.getDistance());
-
-    // System.out.println("Right Rear Ticks "
-    // + Hardware.rightRearDriveEncoder.get());
-    SmartDashboard.putNumber("Right Rear Encoder Ticks",
-            Hardware.rightRearDriveEncoder.get());
-
-    // System.out.println("Lift Encoder Inches = "
-    // + Hardware.liftingEncoder.getDistance());
-    SmartDashboard.putNumber("Lift Encoder Inches",
-            Hardware.liftingEncoder.getDistance());
-
-    // System.out.println(
-    // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
-    SmartDashboard.putNumber("Lift Encoder Ticks",
-            Hardware.liftingEncoder.get());
-
-    // System.out.println("Intake Deploy Encoder "
-    // + Hardware.intakeDeployEncoder.getDistance());
-    SmartDashboard.putNumber("Intake Deploy Encoder",
-            Hardware.intakeDeployEncoder.getDistance());
-
-    // System.out.println("Intake Deploy Encoder Ticks "
-    // + Hardware.intakeDeployEncoder.get());
-    SmartDashboard.putNumber("Intake Deploy Ticks",
-            Hardware.intakeDeployEncoder.get());
-
-    // ---------------------------------
-    // Red Light/IR Sensors
-    // prints the state of the sensor
-    // ---------------------------------
-    // System.out
-    // .println("Right Red Light " + Hardware.rightRedLight.isOn());
-    // SmartDashboard.putBoolean("R Red Light",
-    // Hardware.rightRedLight.isOn());
-    // System.out.println("Left Red Light " + Hardware.leftRedLight.isOn());
-    // SmartDashboard.putBoolean("L Red Light",
-    // Hardware.leftRedLight.isOn());
-    // System.out.println(
-    // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
-    SmartDashboard.putBoolean("Photo SW",
-            Hardware.cubePhotoSwitch.isOn());
-
-    SmartDashboard.putBoolean("IR is On", Hardware.armIR.isOn());
-
-    SmartDashboard.putBoolean("Bottom RL: ", Hardware.redLight.isOn());
+        // if (Hardware.leftAutoSwitch.isOn() == false)
+        // System.out.println(
+        // "Left = off");
+        // else
+        // System.out.println(
+        // "Left = on");
+        // SmartDashboard.putBoolean("L Auto SW",
+        // Hardware.leftAutoSwitch.isOn());
+        //
+        // if (Hardware.rightAutoSwitch.isOn() == false)
+        // System.out.println(
+        // "Right = off");
+        // else
+        // System.out.println(
+        // "Right = on");
+        // SmartDashboard.putBoolean("R Auto SW",
+        // Hardware.rightAutoSwitch.isOn());
 
 
-    // =================================
-    // Pneumatics
-    // =================================
+        // System.out.println("6 pos = "
+        // + Hardware.autoSixPosSwitch.getPosition());
+        SmartDashboard.putNumber("6 Pos Switch",
+                Hardware.autoSixPosSwitch.getPosition());
 
-    // ---------------------------------
-    // Compressor
-    // prints information on the compressor
-    // ---------------------------------
+        // ---------------------------------
+        // Encoders
+        // ---------------------------------
+        // System.out.println("Left Front Encoder Inches = "
+        // + Hardware.leftFrontDriveEncoder.getDistance());
+        SmartDashboard.putNumber("Left Front Encoder Inches",
+                Hardware.leftFrontDriveEncoder.getDistance());
 
-    // ---------------------------------
-    // Solenoids
-    // ---------------------------------
+        // System.out.println("Left Front Encoder Ticks "
+        // + Hardware.leftFrontDriveEncoder.get());
+        SmartDashboard.putNumber("Left Front Encoder Ticks",
+                Hardware.leftFrontDriveEncoder.get());
 
-    // Analogs
-    // =================================
+        // System.out.println("Right Front Inches = "
+        // + Hardware.rightFrontDriveEncoder.getDistance());
+        SmartDashboard.putNumber("Right Front Encoder Inches",
+                Hardware.rightFrontDriveEncoder.getDistance());
 
-    // ---------------------------------
-    // pots
-    // where the pot is turned to
-    // ---------------------------------
-    // System.out
-    // .println("Delay Pot " + Hardware.delayPot.get(0, 5));
-    // SmartDashboard.putNumber("Delay Pot",
-    // Hardware.delayPot.get(0, 5));
+        // System.out.println("Right Front Ticks "
+        // + Hardware.rightFrontDriveEncoder.get());
+        SmartDashboard.putNumber("Right Front Encoder Ticks",
+                Hardware.rightFrontDriveEncoder.get());
 
-    // ---------------------------------
-    // GYRO
-    // ---------------------------------
+        // System.out.println("Left Rear Encoder Inches = "
+        // + Hardware.leftRearDriveEncoder.getDistance());
+        SmartDashboard.putNumber("Left Rear Encoder Inches",
+                Hardware.leftRearDriveEncoder.getDistance());
 
-    // System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
-    SmartDashboard.putNumber("AnalogGyro",
-            Hardware.gyroAnalog.getAngle());
+        // System.out.println("Left Rear Encoder Ticks "
+        // + Hardware.leftRearDriveEncoder.get());
+        SmartDashboard.putNumber("Left Rear Encoder Ticks",
+                Hardware.leftRearDriveEncoder.get());
 
-    // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+        // System.out.println("Right Rear Inches = "
+        // + Hardware.rightRearDriveEncoder.getDistance());
+        SmartDashboard.putNumber("Right Rear Encoder Inches",
+                Hardware.rightRearDriveEncoder.getDistance());
+
+        // System.out.println("Right Rear Ticks "
+        // + Hardware.rightRearDriveEncoder.get());
+        SmartDashboard.putNumber("Right Rear Encoder Ticks",
+                Hardware.rightRearDriveEncoder.get());
+
+        // System.out.println("Lift Encoder Inches = "
+        // + Hardware.liftingEncoder.getDistance());
+        SmartDashboard.putNumber("Lift Encoder Inches",
+                Hardware.liftingEncoder.getDistance());
+
+        // System.out.println(
+        // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
+        SmartDashboard.putNumber("Lift Encoder Ticks",
+                Hardware.liftingEncoder.get());
+
+        // System.out.println("Intake Deploy Encoder "
+        // + Hardware.intakeDeployEncoder.getDistance());
+        SmartDashboard.putNumber("Intake Deploy Encoder",
+                Hardware.intakeDeployEncoder.getDistance());
+
+        // System.out.println("Intake Deploy Encoder Ticks "
+        // + Hardware.intakeDeployEncoder.get());
+        SmartDashboard.putNumber("Intake Deploy Ticks",
+                Hardware.intakeDeployEncoder.get());
+
+        // ---------------------------------
+        // Red Light/IR Sensors
+        // prints the state of the sensor
+        // ---------------------------------
+        // System.out
+        // .println("Right Red Light " + Hardware.rightRedLight.isOn());
+        // SmartDashboard.putBoolean("R Red Light",
+        // Hardware.rightRedLight.isOn());
+        // System.out.println("Left Red Light " + Hardware.leftRedLight.isOn());
+        // SmartDashboard.putBoolean("L Red Light",
+        // Hardware.leftRedLight.isOn());
+        // System.out.println(
+        // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+        SmartDashboard.putBoolean("Photo SW",
+                Hardware.cubePhotoSwitch.isOn());
+
+        SmartDashboard.putBoolean("IR is On", Hardware.armIR.isOn());
+
+        SmartDashboard.putBoolean("Bottom RL: ",
+                Hardware.redLight.isOn());
 
 
-    // ---------------------------------
-    // Sonar/UltraSonic
-    // ---------------------------------
-    // SmartDashboard.putNumber("Rear Ultrasonic distance",
-    // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+        // =================================
+        // Pneumatics
+        // =================================
 
-    // System.out.println("Front UltraSonic "
-    // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    SmartDashboard.putNumber("Front Ultrasonic",
-            Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-    //
-    // SmartDashboard.putNumber("Front Ultrasonic Raw",
-    // Hardware.frontUltraSonic.getRefinedDistanceValue());
-    //
-    // SmartDashboard.putNumber("Front ultrasonic bumper",
-    // Hardware.frontUltraSonic
-    // .getOffsetDistanceFromNearestBumper());
-    // System.out.println("Rear UltraSonic "
-    // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-    // SmartDashboard.putNumber("Rear Ultrasonic",
-    // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-    // SmartDashboard.putNumber("Rear Ultrasonic Raw",
-    // Hardware.rearUltraSonic.getRefinedDistanceValue());
+        // ---------------------------------
+        // Compressor
+        // prints information on the compressor
+        // ---------------------------------
 
-    // =========================
-    // Servos
-    // =========================
-    // System.out.println("Climbing Mechanism Servo" +
-    // Hardware.climbingMechanismServo.getAngle());
-    // SmartDashboard.putNumber("Climb Servo",
-    // Hardware.climbingMechanismServo.getAngle());
+        // ---------------------------------
+        // Solenoids
+        // ---------------------------------
 
-    // System.out.println("Intake Arm Servo " +
-    // Hardware.intakeArmPositionServo.getAngle());
+        // Analogs
+        // =================================
 
-    // =================================
-    // SPI Bus
-    // =================================
+        // ---------------------------------
+        // pots
+        // where the pot is turned to
+        // ---------------------------------
+        // System.out
+        // .println("Delay Pot " + Hardware.delayPot.get(0, 5));
+        // SmartDashboard.putNumber("Delay Pot",
+        // Hardware.delayPot.get(0, 5));
 
-    // -------------------------------------
-    // Analog Interfaces
-    // -------------------------------------
+        // ---------------------------------
+        // GYRO
+        // ---------------------------------
 
-    // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+        // System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
+        SmartDashboard.putNumber("AnalogGyro",
+                Hardware.gyroAnalog.getAngle());
 
-    // =================================
-    // Connection Items
-    // =================================
+        // System.out.println("Gyro: " + Hardware.gyro.getAngle());
+        // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
-    // ---------------------------------
-    // Cameras
-    // prints any camera information required
-    // ---------------------------------
-    // System.out.println("The camera center is: "
-    // + Hardware.driveWithCamera.getCameraCenterValue());
-    SmartDashboard.putNumber("Camera Center",
-            Hardware.driveWithCamera.getCameraCenterValue());
 
-    // =================================
-    // Driver station
-    // =================================
+        // ---------------------------------
+        // Sonar/UltraSonic
+        // ---------------------------------
+        // SmartDashboard.putNumber("Rear Ultrasonic distance",
+        // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
-    // ---------------------------------
-    // Joysticks
-    // information about the joysticks
-    // ---------------------------------
-    // System.out.println(
-    // "Right Driver Joystick " + Hardware.rightDriver.getY());
-    // SmartDashboard.putNumber("R Driver Y Joy",
-    // Hardware.rightDriver.getY());
-    // System.out.println(
-    // "Left Driver Joystick " + Hardware.leftDriver.getY());
-    // SmartDashboard.putNumber("L Driver Y Joy",
-    // Hardware.leftDriver.getY());
-    // System.out.println(
-    // "Right Operator Joystick " + Hardware.rightOperator.getY());
-    // SmartDashboard.putNumber("R Operator Y Joy",
-    // Hardware.rightOperator.getY());
-    // System.out.println(
-    // "Left Operator Joystick " + Hardware.leftOperator.getY());
-    // SmartDashboard.putNumber("L Operator Y Joy",
-    // Hardware.leftOperator.getY());
+        // System.out.println("Front UltraSonic "
+        // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+        SmartDashboard.putNumber("Front Ultrasonic",
+                Hardware.frontUltraSonic
+                        .getDistanceFromNearestBumper());
+        //
+        // SmartDashboard.putNumber("Front Ultrasonic Raw",
+        // Hardware.frontUltraSonic.getRefinedDistanceValue());
+        //
+        // SmartDashboard.putNumber("Front ultrasonic bumper",
+        // Hardware.frontUltraSonic
+        // .getOffsetDistanceFromNearestBumper());
+        // System.out.println("Rear UltraSonic "
+        // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+        // SmartDashboard.putNumber("Rear Ultrasonic",
+        // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+        // SmartDashboard.putNumber("Rear Ultrasonic Raw",
+        // Hardware.rearUltraSonic.getRefinedDistanceValue());
 
-    // =================================
-    // KILROY ANCILLARY ITEMS
-    // =================================
-    // ---------------------------------
-    // Gear number displayed to driver
-    // ---------------------------------
-    // System.out.println(
-    // "Gear = " + Hardware.transmission.getCurrentGear() + 1);
-    // SmartDashboard.putNumber("Gear",
-    // Hardware.transmission.getCurrentGear() + 1);
+        // =========================
+        // Servos
+        // =========================
+        // System.out.println("Climbing Mechanism Servo" +
+        // Hardware.climbingMechanismServo.getAngle());
+        // SmartDashboard.putNumber("Climb Servo",
+        // Hardware.climbingMechanismServo.getAngle());
 
-    // ---------------------------------
-    // timers
-    // what time does the timer have now
-    // ---------------------------------
+        // System.out.println("Intake Arm Servo " +
+        // Hardware.intakeArmPositionServo.getAngle());
 
-    // ---------------------------------
-    // Final SmartDasboard
-    // code for values we want on the final dashboard layout we use during
-    // matches
-    // ---------------------------------
+        // =================================
+        // SPI Bus
+        // =================================
 
-    // set of if elses to properly set the two boolean boxes on the
-    // SmartDashboard that are used to track the status of the cube. On the
-    // actual SmartDashboard, the boolean boxes are layered so between the two
-    // of them, the layered box is green when we have a cube, red when we are
-    // intaking a cube, and transparent if we don't have a cube and are not
-    // intaking
+        // -------------------------------------
+        // Analog Interfaces
+        // -------------------------------------
+
+        // System.out.println("Gyro: " + Hardware.gyro.getAngle());
+        SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+
+        // =================================
+        // Connection Items
+        // =================================
+
+        // ---------------------------------
+        // Cameras
+        // prints any camera information required
+        // ---------------------------------
+        // System.out.println("The camera center is: "
+        // + Hardware.driveWithCamera.getCameraCenterValue());
+        // SmartDashboard.putNumber("Camera Center",
+        // Hardware.driveWithCamera.getCameraCenterValue());
+
+        // =================================
+        // Driver station
+        // =================================
+
+        // ---------------------------------
+        // Joysticks
+        // information about the joysticks
+        // ---------------------------------
+        // System.out.println(
+        // "Right Driver Joystick " + Hardware.rightDriver.getY());
+        // SmartDashboard.putNumber("R Driver Y Joy",
+        // Hardware.rightDriver.getY());
+        // System.out.println(
+        // "Left Driver Joystick " + Hardware.leftDriver.getY());
+        // SmartDashboard.putNumber("L Driver Y Joy",
+        // Hardware.leftDriver.getY());
+        // System.out.println(
+        // "Right Operator Joystick " + Hardware.rightOperator.getY());
+        // SmartDashboard.putNumber("R Operator Y Joy",
+        // Hardware.rightOperator.getY());
+        // System.out.println(
+        // "Left Operator Joystick " + Hardware.leftOperator.getY());
+        // SmartDashboard.putNumber("L Operator Y Joy",
+        // Hardware.leftOperator.getY());
+
+        // =================================
+        // KILROY ANCILLARY ITEMS
+        // =================================
+        // ---------------------------------
+        // Gear number displayed to driver
+        // ---------------------------------
+        // System.out.println(
+        // "Gear = " + Hardware.transmission.getCurrentGear() + 1);
+        // SmartDashboard.putNumber("Gear",
+        // Hardware.transmission.getCurrentGear() + 1);
+
+        // ---------------------------------
+        // timers
+        // what time does the timer have now
+        // ---------------------------------
+
+        // ---------------------------------
+        // Final SmartDasboard
+        // code for values we want on the final dashboard layout we use during
+        // matches
+        // ---------------------------------
+
+        // set of if elses to properly set the two boolean boxes on the
+        // SmartDashboard that are used to track the status of the cube. On the
+        // actual SmartDashboard, the boolean boxes are layered so between the
+        // two
+        // of them, the layered box is green when we have a cube, red when we
+        // are
+        // intaking a cube, and transparent if we don't have a cube and are not
+        // intaking
+
+        }
+
     if (Hardware.cubeManipulator.hasCube() == true)
         {
         // SmartDashboard value that is used to tell whether or not we have a

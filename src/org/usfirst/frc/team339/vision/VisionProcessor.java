@@ -1,8 +1,10 @@
 package org.usfirst.frc.team339.vision;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -174,7 +176,7 @@ private final int M1013_VERT_FOV = 51;
  */
 
 // the file path where we save the images we take
-private final String SAVE_IMAGE_PATH = "/home/lvuser/images/";
+private final String SAVE_IMAGE_PATH = "/home/lvuser/images";
 
 private Mat image = new Mat(); // The stored "image" (in a matrix format)
 
@@ -442,12 +444,14 @@ public void saveImage (ImageType type)
 {
     String fileName = "";
 
+
     // Create the path the images will be saved in. If the path already
     // exists, do nothing.
     try
         {
         // system command that creates the path the image will be saved in
-        Runtime.getRuntime().exec("mkdir -p /home/lvuser/images");
+        Runtime.getRuntime()
+                .exec("mkdir -p " + SAVE_IMAGE_PATH + timeStamp);
         } // end try
     catch (IOException e)
         {
@@ -515,7 +519,9 @@ public void saveImage (ImageType type)
 
     // TODO this is what is printing Cole's problem
 
-    Imgcodecs.imwrite(SAVE_IMAGE_PATH + fileName, tempImage);
+    Imgcodecs.imwrite(SAVE_IMAGE_PATH + timeStamp + "/" + fileName,
+            tempImage);
+    System.out.println("Image: " + SAVE_IMAGE_PATH + timeStamp + "/");
     // else
     // System.out.println("saveImage: Image was empty; was not saved");
 } // end saveImage()
@@ -812,4 +818,8 @@ private final int maxProcessedImagesAllowedToCollect = 25;
 // Max number of raw images allowed on the roboRIO
 // -------------------------------------
 private final int maxRawImagesAllowedToCollect = 25;
+
+private final static String timeStamp = new SimpleDateFormat("MMddHHmm")
+        .format(new Date());
+
 } // end class

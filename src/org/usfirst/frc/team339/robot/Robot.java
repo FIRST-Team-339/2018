@@ -220,6 +220,9 @@ public void robotInit ()
     // User code goes below here
     // =========================================================
 
+    // REMOVE ME!!!
+    // Hardware.autoDrive.setGyro(Hardware.gyroAnalog);
+
     // -------------------------------------
     // Resets encoder values
     // -------------------------------------
