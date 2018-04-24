@@ -10,27 +10,29 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SpeedController;
 
 /**
- * One of the most complex and rewarding drivetrains to both fabricate and program.
- * Swerve Drive uses motorized caster wheels to control the angle of four traction wheels.
- * Think office roller chair where you can control the direction each wheel faces. This
- * allows the maneuverability of mecanum drive, coupled with the traction, power and speed of 
- * a 4 wheel traction system.
+ * One of the most complex and rewarding drivetrains to both fabricate and
+ * program. Swerve Drive uses motorized caster wheels to control the angle of
+ * four traction wheels. Think office roller chair where you can control the
+ * direction each wheel faces. This allows the maneuverability of mecanum drive,
+ * coupled with the traction, power and speed of a 4 wheel traction system.
  * 
- * There are two main ways to accomplish this: To have one single directional motor 
- * connected by a chain to all four wheels, or a directional motor on each wheel independently.
+ * There are two main ways to accomplish this: To have one single directional
+ * motor connected by a chain to all four wheels, or a directional motor on each
+ * wheel independently.
  * 
- * As for software, each directional motor requires a continuous sensor that can accurately measure
- * position, for use in a PID loop. 
+ * As for software, each directional motor requires a continuous sensor that can
+ * accurately measure position, for use in a PID loop.
  * 
  * @author Ryan McGee
  *
  */
-public class SwerveTransmission extends TransmissionBase
-{
+public class SwerveTransmission extends TransmissionBase {
 
 	private final BaseMotorController[] multiPID;
 
 	private final PIDController monoPID;
+
+	private final SpeedController directionalController;
 
 	private final PIDSource monoSensor;
 
@@ -39,21 +41,22 @@ public class SwerveTransmission extends TransmissionBase
 	/**
 	 * Create the SwerveTransmission Object
 	 * 
-	 * If we are using a single motor with a chain wrapped around 
-	 * all four motors to control direction, use this constructor.
+	 * If we are using a single motor with a chain wrapped around all four motors to
+	 * control direction, use this constructor.
+	 * 
 	 * @param leftRear
 	 * @param rightRear
 	 * @param leftFront
 	 * @param rightFront
 	 * @param monoDirectionalController
-	 * @param directionalSensor 
+	 * @param directionalSensor
 	 */
 	public SwerveTransmission(SpeedController leftRear, SpeedController rightRear, SpeedController leftFront,
-			SpeedController rightFront, SpeedController monoDirectionalController, PIDSource directionalSensor)
-	{
+			SpeedController rightFront, SpeedController monoDirectionalController, PIDSource directionalSensor) {
 		super(leftRear, rightRear, leftFront, rightFront);
 		directionalSensor.setPIDSourceType(PIDSourceType.kDisplacement);
 		this.monoPID = new PIDController(0, 0, 0, directionalSensor, monoDirectionalController);
+		this.directionalController = monoDirectionalController;
 		this.monoSensor = directionalSensor;
 
 		this.multiPID = null;
@@ -65,15 +68,16 @@ public class SwerveTransmission extends TransmissionBase
 	/**
 	 * Creates the SwerveTransmission Object
 	 *
-	 * If we are using separate motors to control direction on each wheel, use this constructor.
-	 * We are using CAN speed controllers  because this would require 16 DIO ports and 8 pwm ports 
-	 * for the drivetrain alone otherwise.
-	 * Controlling the wheel speed:
-	 * @param leftRear 
-	 * @param rightRear 
-	 * @param leftFront 
-	 * @param rightFront 
-	 * Controlling the wheel direction:
+	 * If we are using separate motors to control direction on each wheel, use this
+	 * constructor. We are using CAN speed controllers because this would require 16
+	 * DIO ports and 8 pwm ports for the drivetrain alone otherwise. Controlling the
+	 * wheel speed:
+	 * 
+	 * @param leftRear
+	 * @param rightRear
+	 * @param leftFront
+	 * @param rightFront
+	 *            Controlling the wheel direction:
 	 * @param leftRearDirection
 	 * @param rightRearDirection
 	 * @param leftFrontDirection
@@ -81,19 +85,18 @@ public class SwerveTransmission extends TransmissionBase
 	 */
 	public SwerveTransmission(SpeedController leftRear, SpeedController rightRear, SpeedController leftFront,
 			SpeedController rightFront, BaseMotorController leftRearDirection, BaseMotorController rightRearDirection,
-			BaseMotorController leftFrontDirection, BaseMotorController rightFrontDirection)
-	{
+			BaseMotorController leftFrontDirection, BaseMotorController rightFrontDirection) {
 		super(leftRear, rightRear, leftFront, rightFront);
-		this.multiPID = new BaseMotorController[]
-		{ leftRearDirection, rightRearDirection, leftFrontDirection, rightFrontDirection };
+		this.multiPID = new BaseMotorController[] { leftRearDirection, rightRearDirection, leftFrontDirection,
+				rightFrontDirection };
 
-		for (BaseMotorController motor : multiPID)
-		{
+		for (BaseMotorController motor : multiPID) {
 			motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 			motor.setSelectedSensorPosition(0, 0, 0);
 		}
 
 		this.monoPID = null;
+		this.directionalController = null;
 		this.monoSensor = null;
 
 		this.currentControlScheme = SwerveControlType.MULTI_DIRECTIONAL_CONTROLLER;
@@ -102,20 +105,22 @@ public class SwerveTransmission extends TransmissionBase
 
 	/**
 	 * Sets up PID variables for the directional motors.
-	 * @param p	Proportional loop: basic correction based on error.
-	 * @param i Integral loop: Correction based on total accumulated error.
-	 * @param d Derivative loop: Correction based on slope of distance from setpoint.
+	 * 
+	 * @param p
+	 *            Proportional loop: basic correction based on error.
+	 * @param i
+	 *            Integral loop: Correction based on total accumulated error.
+	 * @param d
+	 *            Derivative loop: Correction based on slope of distance from
+	 *            setpoint.
 	 */
-	public void setPID(double p, double i, double d)
-	{
-		switch (currentControlScheme)
-		{
+	public void setPID(double p, double i, double d) {
+		switch (currentControlScheme) {
 		case MONO_DIRECTIONAL_CONTROLLER:
 			this.monoPID.setPID(p, i, d);
 			break;
 		case MULTI_DIRECTIONAL_CONTROLLER:
-			for (BaseMotorController tempPID : multiPID)
-			{
+			for (BaseMotorController tempPID : multiPID) {
 				tempPID.config_kP(0, p, 0);
 				tempPID.config_kI(0, i, 0);
 				tempPID.config_kD(0, d, 0);
@@ -127,41 +132,43 @@ public class SwerveTransmission extends TransmissionBase
 	}
 
 	/**
-	 * sets how close the directional motors must be for the drive motors to start running.
-	 * @param ticks Encoder ticks: Directly compared to the error of the PID loop.
+	 * sets how close the directional motors must be for the drive motors to start
+	 * running.
+	 * 
+	 * @param ticks
+	 *            Encoder ticks: Directly compared to the error of the PID loop.
 	 */
-	public void setOnTargetTolerance(int ticks)
-	{
+	public void setOnTargetTolerance(int ticks) {
 		this.onTargetTolerance = ticks;
 	}
 
 	/**
 	 * Sets the number of ticks per full rotation of the directional motors.
+	 * 
 	 * @param ticks
 	 */
-	public void setTicksPerRotation(int ticks)
-	{
+	public void setTicksPerRotation(int ticks) {
 		this.ticksPerRotation = ticks;
 	}
 
 	/**
 	 * Sets how much the robot should rotate based on the joystick input.
-	 * @param scalar Percentage, from 0.0 to 1.0
+	 * 
+	 * @param scalar
+	 *            Percentage, from 0.0 to 1.0
 	 */
-	public void setRotationScalar(double scalar)
-	{
+	public void setRotationScalar(double scalar) {
 		this.rotationScalar = Math.abs(scalar);
 	}
 
 	/**
 	 * 
-	 * @param wheel which directional wheel's encoder should be returned
+	 * @param wheel
+	 *            which directional wheel's encoder should be returned
 	 * @return the encoder position of the sensor attached to the Talon's CAN bus.
 	 */
-	public int getRawEncoderPosition(MotorPosition wheel)
-	{
-		switch (wheel)
-		{
+	public int getRawEncoderPosition(MotorPosition wheel) {
+		switch (wheel) {
 		case LEFT_REAR:
 			return multiPID[0].getSensorCollection().getQuadraturePosition();
 
@@ -183,13 +190,121 @@ public class SwerveTransmission extends TransmissionBase
 	}
 
 	/**
-	 * Drives the robot using raw values
-	 * @param magnitude Overall speed in percentage: 0.0 to 1.0
-	 * @param direction Direction in degrees: -180 (backwards) to 0 (forwards) to 180 (backwards again)
-	 * @param rotation Rotation, in percent: -1.0 (left) to 1.0 (right)
+	 * Gets how far off the current position is from it's setpoint.
+	 * 
+	 * @param wheel
+	 *            Which directional motor to grab the error from
+	 * @return The error, in ticks
 	 */
-	public void drive(double magnitude, double direction, double rotation)
-	{
+	public double getError(MotorPosition wheel) {
+		switch (wheel) {
+		case LEFT_REAR:
+			return multiPID[0].getClosedLoopError(0);
+		case RIGHT_REAR:
+			return multiPID[1].getClosedLoopError(0);
+		case LEFT_FRONT:
+			return multiPID[2].getClosedLoopError(0);
+		case RIGHT_FRONT:
+			return multiPID[3].getClosedLoopError(0);
+		case ALL:
+			return monoPID.getError();
+		default:
+			return 0;
+		}
+	}
+
+	/**
+	 * Calibrates the motors using a digital sensor to detect whether each wheel is
+	 * centered.
+	 * 
+	 * @param leftRearCondition
+	 * @param rightRearCondition
+	 * @param leftFrontCondition
+	 * @param rightFrontCondition
+	 * @return
+	 */
+	public boolean calibrateMotors(boolean leftRearCondition, boolean rightRearCondition, boolean leftFrontCondition,
+			boolean rightFrontCondition, boolean override) {
+		// Make sure that we don't completely lock out driver control, in case of
+		// emergency.
+		if (override == true)
+			return true;
+		// Make sure the transmission can't move while calibrating
+		super.stop();
+		// Left Rear Motor Calibration
+		if (leftRearCondition == true)
+			multiPID[0].set(ControlMode.PercentOutput, 0);
+		else
+			multiPID[0].set(ControlMode.PercentOutput, calibrationSpeed);
+
+		// Right Rear Motor Calibration
+		if (rightRearCondition == true)
+			multiPID[1].set(ControlMode.PercentOutput, 0);
+		else
+			multiPID[1].set(ControlMode.PercentOutput, calibrationSpeed);
+
+		// Left Front Motor Calibration
+		if (leftFrontCondition == true)
+			multiPID[2].set(ControlMode.PercentOutput, 0);
+		else
+			multiPID[2].set(ControlMode.PercentOutput, calibrationSpeed);
+
+		// Right Front Motor Calibration
+		if (rightFrontCondition == true)
+			multiPID[3].set(ControlMode.PercentOutput, 0);
+		else
+			multiPID[3].set(ControlMode.PercentOutput, calibrationSpeed);
+
+		// If all motors are in the right orientation, then stop everything, reset
+		// encoders, and continue
+		if (leftRearCondition == true && rightRearCondition == true && leftFrontCondition == true
+				&& rightFrontCondition == true) {
+			// Reset the CAN encoders
+			for (BaseMotorController ctrlr : multiPID) {
+				ctrlr.setSelectedSensorPosition(0, 0, 0);
+				ctrlr.set(ControlMode.PercentOutput, 0);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Calibrates the single directional motor to make sure what the robot thinks is
+	 * forwards is actually forwards.
+	 * 
+	 * @param centeredCondition
+	 *            The digital sensor that determines if the calibration is complete
+	 * @param override
+	 *            If this is true, then the calibration will stop immediately
+	 *            without changing the encoder position.
+	 * @return Whether or not calibration has completed.
+	 */
+	public boolean calibrateMotor(boolean centeredCondition, boolean override) {
+		if (centeredCondition == true) {
+			directionalController.stopMotor();
+			return true;
+		}
+
+		directionalController.set(calibrationSpeed);
+
+		return false;
+	}
+
+	/**
+	 * Drives the robot using raw values
+	 * 
+	 * @param magnitude
+	 *            Overall speed in percentage: 0.0 to 1.0
+	 * @param direction
+	 *            Direction in degrees: -180 (backwards) to 0 (forwards) to 180
+	 *            (backwards again)
+	 * @param rotation
+	 *            Rotation, in percent: -1.0 (left) to 1.0 (right)
+	 */
+	public void drive(double magnitude, double direction, double rotation) {
 		double adjustedMagnitude = super.scaleJoystickForDeadband(magnitude) * super.getCurrentGearRatio();
 		double adjustedDirection = ((direction / 180) + 1) * 180;// Change -180
 																	// -> 180 to
@@ -216,8 +331,7 @@ public class SwerveTransmission extends TransmissionBase
 		rightFrontFinal = normalized[3];
 
 		// Are we using one directional motor or four?
-		switch (currentControlScheme)
-		{
+		switch (currentControlScheme) {
 		case MONO_DIRECTIONAL_CONTROLLER:
 			// The direction that the single directional motor should face all
 			// the wheels toward, based on what's most time efficient.
@@ -235,8 +349,7 @@ public class SwerveTransmission extends TransmissionBase
 			double leftFrontSpeed = -rightRearSpeed;
 			double rightFrontSpeed = -leftRearSpeed;
 
-			if (Math.abs(monoPID.getError()) < this.onTargetTolerance)
-			{
+			if (Math.abs(monoPID.getError()) < this.onTargetTolerance) {
 				super.getSpeedController(MotorPosition.LEFT_REAR)
 						.set((leftRearSpeed * Math.abs(adjustedRotation)) + (adjustedMagnitude * motorSigns[4]));
 				super.getSpeedController(MotorPosition.RIGHT_REAR)
@@ -245,8 +358,7 @@ public class SwerveTransmission extends TransmissionBase
 						.set((leftFrontSpeed * Math.abs(adjustedRotation)) * (adjustedMagnitude * motorSigns[4]));
 				super.getSpeedController(MotorPosition.RIGHT_FRONT)
 						.set((rightFrontSpeed * Math.abs(adjustedRotation)) * (adjustedMagnitude * motorSigns[4]));
-			} else
-			{
+			} else {
 				super.stop();
 			}
 
@@ -275,16 +387,14 @@ public class SwerveTransmission extends TransmissionBase
 							MotorPosition.RIGHT_FRONT));
 
 			// If the motors are on target, run them at speed.
-			if (canRunMotors == true)
-			{
+			if (canRunMotors == true) {
 				// If the motors are being reversed to improve efficiency, then
 				// motorSigns contains that data.
 				super.getSpeedController(MotorPosition.LEFT_REAR).set(leftRearFinal.mag * motorSigns[0]);
 				super.getSpeedController(MotorPosition.RIGHT_REAR).set(rightRearFinal.mag * motorSigns[1]);
 				super.getSpeedController(MotorPosition.LEFT_FRONT).set(leftFrontFinal.mag * motorSigns[2]);
 				super.getSpeedController(MotorPosition.RIGHT_FRONT).set(rightFrontFinal.mag * motorSigns[3]);
-			} else
-			{
+			} else {
 				super.stop();
 			}
 			break;
@@ -296,29 +406,31 @@ public class SwerveTransmission extends TransmissionBase
 	}
 
 	/**
-	 * Changes whatever the encoder reads to match 0 to 360 degrees, clockwise increasing.
-	 * @param original the raw encoder value
+	 * Changes whatever the encoder reads to match 0 to 360 degrees, clockwise
+	 * increasing.
+	 * 
+	 * @param original
+	 *            the raw encoder value
 	 * @return the adjusted angle the encoder reads, in degrees.
 	 */
-	private int adjustEncoderAngle(double original)
-	{
+	private int adjustEncoderAngle(double original) {
 		// Turn whatever the encoder reads to 0 to 360 degrees in rotation.
 		int angle = (int) (((original / ticksPerRotation) * 360) % 360);
 		return angle;
 	}
 
 	/**
-	 * Finds the shortest route to a desired angle for the direction motors, as we can simply reverse 
-	 * the motor direction for quick strafe changes
+	 * Finds the shortest route to a desired angle for the direction motors, as we
+	 * can simply reverse the motor direction for quick strafe changes
+	 * 
 	 * @param angle
-	 * 			The desired angle
+	 *            The desired angle
 	 * @param wheel
-	 * 			Which wheel we're finding the shortest route for
-	 * @return
-	 * 			Either the input angle or 180 degrees from the input angle based on which is the shortest distance.
+	 *            Which wheel we're finding the shortest route for
+	 * @return Either the input angle or 180 degrees from the input angle based on
+	 *         which is the shortest distance.
 	 */
-	private int findShortestRouteTo(int angle, MotorPosition wheel)
-	{
+	private int findShortestRouteTo(int angle, MotorPosition wheel) {
 		// Get the current encoder position
 		int encoderPosition = adjustEncoderAngle(getRawEncoderPosition(wheel));
 		int output = 0;
@@ -336,8 +448,7 @@ public class SwerveTransmission extends TransmissionBase
 		else
 			output = adjustEncoderAngle(angle + 180);
 
-		switch (wheel)
-		{
+		switch (wheel) {
 		case LEFT_REAR:
 			if (output == angle)
 				motorSigns[0] = 1;
@@ -376,17 +487,18 @@ public class SwerveTransmission extends TransmissionBase
 	}
 
 	/**
-	 * Calculates a number based on the angle input and the encoder of the wheel input
-	 * to find the final encoder ticks we want the PID loop to set the directional motors to.
+	 * Calculates a number based on the angle input and the encoder of the wheel
+	 * input to find the final encoder ticks we want the PID loop to set the
+	 * directional motors to.
+	 * 
 	 * @param angle
-	 * 			What angle the wheel will be angling to
+	 *            What angle the wheel will be angling to
 	 * @param wheel
-	 * 			Which wheel is being articulated
-	 * @return an adjusted encoder position based on it's current position.
-	 *  (ex. go to encoder ticks 370 if the encoder reads 400 and we want 10 degrees)
+	 *            Which wheel is being articulated
+	 * @return an adjusted encoder position based on it's current position. (ex. go
+	 *         to encoder ticks 370 if the encoder reads 400 and we want 10 degrees)
 	 */
-	private int findDesiredEncoderTicks(int angle, MotorPosition wheel)
-	{
+	private int findDesiredEncoderTicks(int angle, MotorPosition wheel) {
 		int encPos = getRawEncoderPosition(wheel);
 		int adjustedEncPos = adjustEncoderAngle(encPos);
 
@@ -401,8 +513,7 @@ public class SwerveTransmission extends TransmissionBase
 		// If it will cross the 0 degree mark (we figure this out by finding the
 		// total delta
 		// angle)
-		if ((360 - Math.max(adjustedEncPos, angle)) + Math.min(adjustedEncPos, angle) < 180)
-		{
+		if ((360 - Math.max(adjustedEncPos, angle)) + Math.min(adjustedEncPos, angle) < 180) {
 			// The wheel will turn clockwise?
 			if (adjustedEncPos > angle)
 				return possibility2_CW;
@@ -415,23 +526,26 @@ public class SwerveTransmission extends TransmissionBase
 	}
 
 	/**
-	 * Calculates the vector of each wheel given the robot's lateral vector,
-	 *  by adding it to a vector defined by the wheel's "turn on spot" position 
-	 *  and the amount of rotation from the joystick.
-	 * @param magnitude Magnitude of the Robot
-	 * @param direction Direction of the Robot, in degrees
-	 * @param rotation Rotation of the Robot, in percentage (-1 to 1)
-	 * @param wheel which wheel to choose the rotation position for
-	 * @return the resultant vector of the given wheel: The magnitude should be 
-	 * fed into the power of the drive wheel, and the direction fed into the 
-	 * directional motor's PID loop.
+	 * Calculates the vector of each wheel given the robot's lateral vector, by
+	 * adding it to a vector defined by the wheel's "turn on spot" position and the
+	 * amount of rotation from the joystick.
+	 * 
+	 * @param magnitude
+	 *            Magnitude of the Robot
+	 * @param direction
+	 *            Direction of the Robot, in degrees
+	 * @param rotation
+	 *            Rotation of the Robot, in percentage (-1 to 1)
+	 * @param wheel
+	 *            which wheel to choose the rotation position for
+	 * @return the resultant vector of the given wheel: The magnitude should be fed
+	 *         into the power of the drive wheel, and the direction fed into the
+	 *         directional motor's PID loop.
 	 */
-	private Vector calculateWheelVector(double magnitude, double direction, double rotation, MotorPosition wheel)
-	{
+	private Vector calculateWheelVector(double magnitude, double direction, double rotation, MotorPosition wheel) {
 		Vector robotVector = new Vector(magnitude, direction);
 		int specificRotationAngle = 0;
-		switch (wheel)
-		{
+		switch (wheel) {
 		case LEFT_REAR:
 			specificRotationAngle = 135;
 			break;
@@ -452,37 +566,35 @@ public class SwerveTransmission extends TransmissionBase
 	/**
 	 * The kinds of swerve drive available:
 	 * 
-	 * mono-directional-control: One motor controls a chain around the whole bot that controls 
-	 * 				which direction it goes. Simpler and more power efficient.
+	 * mono-directional-control: One motor controls a chain around the whole bot
+	 * that controls which direction it goes. Simpler and more power efficient.
 	 * 
-	 * mulit-directional-control: Each wheel has a different motor that controls it's direction
-	 * 				More flexible programming and smoother control.
+	 * mulit-directional-control: Each wheel has a different motor that controls
+	 * it's direction More flexible programming and smoother control.
 	 * 
 	 * @author Ryan McGee
 	 */
-	private enum SwerveControlType
-	{
+	private enum SwerveControlType {
 		MONO_DIRECTIONAL_CONTROLLER, MULTI_DIRECTIONAL_CONTROLLER
 	}
 
 	// ================Variables================
 
-	private int[] motorSigns = new int[]
-	{ 1, 1, 1, 1, 1 };
+	private int[] motorSigns = new int[] { 1, 1, 1, 1, 1 };
 	private int ticksPerRotation = 360;
 	private int onTargetTolerance = 3;
 	private double maxTurningCircle = 20;// feet
 	private double wheelRadius = 12;
 	private double rotationScalar = 1;
+	private double calibrationSpeed = .3;
 
 	/**
 	 * Basic vector class designed to do math with said vectors easier
+	 * 
 	 * @author Ryan McGee
 	 */
-	static class Vector
-	{
-		enum VectorIn
-		{
+	static class Vector {
+		enum VectorIn {
 			Point, Vector
 		}
 
@@ -490,13 +602,13 @@ public class SwerveTransmission extends TransmissionBase
 
 		/**
 		 * Creates the Vector object with a given magnitude and direction
+		 * 
 		 * @param mag
-		 * 			Magnitude of the vector: the hypotenuse of the x and y points.
+		 *            Magnitude of the vector: the hypotenuse of the x and y points.
 		 * @param dir
-		 * 			Direction of the vector: tan-1(x / y) of the points.
+		 *            Direction of the vector: tan-1(x / y) of the points.
 		 */
-		public Vector(double mag, double dir)
-		{
+		public Vector(double mag, double dir) {
 			this.mag = mag;
 			this.dirRad = dir;
 			this.dirDeg = Math.toDegrees(dirRad);
@@ -507,11 +619,12 @@ public class SwerveTransmission extends TransmissionBase
 
 		/**
 		 * Creates a vector based on an x and y coordinate pair.
+		 * 
 		 * @param point
-		 * 			the given point, and the vector will be based on it's position from 0,0.
+		 *            the given point, and the vector will be based on it's position
+		 *            from 0,0.
 		 */
-		public Vector(Point point)
-		{
+		public Vector(Point point) {
 			this.x = point.x;
 			this.y = point.y;
 
@@ -522,34 +635,39 @@ public class SwerveTransmission extends TransmissionBase
 
 		/**
 		 * Adds two vectors together
-		 * @param a First vector to add
-		 * @param b Second vector to add to the first
+		 * 
+		 * @param a
+		 *            First vector to add
+		 * @param b
+		 *            Second vector to add to the first
 		 * @return the resultant vector
 		 */
-		public static Vector add(Vector a, Vector b)
-		{
+		public static Vector add(Vector a, Vector b) {
 			return new Vector(new Point(a.x + b.x, a.y + b.y));
 		}
 
 		/**
 		 * Subtracts vector b from vector a
-		 * @param a The initial vector
-		 * @param b What's subtracted from the initial vector
+		 * 
+		 * @param a
+		 *            The initial vector
+		 * @param b
+		 *            What's subtracted from the initial vector
 		 * @return The resultant vector
 		 */
-		public static Vector subtract(Vector a, Vector b)
-		{
+		public static Vector subtract(Vector a, Vector b) {
 			return new Vector(new Point(a.x - b.x, a.y - b.y));
 		}
 
 		/**
-		 * Change the magnitudes of all vectors input to be a maximum at one,
-		 *  but keep the ratio between each magnitude in the array constant.
-		 * @param vec The vectors to be normalized
+		 * Change the magnitudes of all vectors input to be a maximum at one, but keep
+		 * the ratio between each magnitude in the array constant.
+		 * 
+		 * @param vec
+		 *            The vectors to be normalized
 		 * @return the normalized vectors
 		 */
-		public static Vector[] normalize(Vector... vec)
-		{
+		public static Vector[] normalize(Vector... vec) {
 			// Make sure that the max isn't more than one: We don't need it to
 			// be. Search for the maximum magnitude.
 			double maxMag = 1;
@@ -569,20 +687,20 @@ public class SwerveTransmission extends TransmissionBase
 
 	/**
 	 * Basic class to store a single x/y coordinate pair
+	 * 
 	 * @author Ryan McGee
 	 *
 	 */
-	static class Point
-	{
+	static class Point {
 		public double x = 0, y = 0;
 
 		/**
 		 * Create the Point object.
+		 * 
 		 * @param x
 		 * @param y
 		 */
-		public Point(double x, double y)
-		{
+		public Point(double x, double y) {
 			this.x = x;
 			this.y = y;
 		}
