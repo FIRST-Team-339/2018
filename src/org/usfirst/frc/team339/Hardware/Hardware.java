@@ -134,6 +134,9 @@ public static SingleThrowSwitch rightAutoSwitch = new SingleThrowSwitch(
 public static DoubleThrowSwitch disableAutonomousSwitch = new DoubleThrowSwitch(
         leftAutoSwitch, rightAutoSwitch);
 
+public static SingleThrowSwitch demoModeSwitch = new SingleThrowSwitch(
+        8);
+
 public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(
         1, 2, 3, 4, 5, 6);
 

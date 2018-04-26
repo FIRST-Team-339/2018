@@ -94,6 +94,13 @@ public static void init ()
     // SmartDashboard.putNumber("Turn Degrees", 0);
     SmartDashboard.putNumber("Drive Distance", 0);
 
+    if (Hardware.demoModeSwitch.isOn() == true)
+        {
+        Hardware.transmission.setGearPercentage(0,
+                Hardware.delayPot.get(0, .7));
+        Hardware.transmission.setGear(0);
+        }
+
 } // end Init
 
 // tune pid loop
@@ -139,52 +146,74 @@ public static void periodic ()
     // Hardware.leftOperator.getRawButton(4));
 
 
-    Hardware.cubeManipulator.intakeCube(
-            Hardware.rightOperator.getTrigger(),
-            Hardware.rightOperator.getRawButton(2));
-    Hardware.cubeManipulator
-            .ejectCube(Hardware.leftOperator.getTrigger(),
-                    Hardware.leftOperator.getRawButton(3));
+
+    if (Hardware.demoModeSwitch.isOn() == false)
+        {
+        Hardware.cubeManipulator.intakeCube(
+                Hardware.rightOperator.getTrigger(),
+                Hardware.rightOperator.getRawButton(2));
+        Hardware.cubeManipulator
+                .ejectCube(Hardware.leftOperator.getTrigger(),
+                        (Hardware.leftOperator.getRawButton(3)));
+        }
+    else
+        {
+        Hardware.cubeManipulator
+                .intakeCube(Hardware.rightOperator.getTrigger(), false);
+        Hardware.cubeManipulator.ejectCube(false,
+                Hardware.leftOperator.getTrigger());
+        }
 
     // -----------------------------------------
     // Deploy Intake controls
     // -----------------------------------------
     // Button 11 to deploy, 10 to retract, and 9 for override for both.
-    if (Hardware.leftOperator.getRawButton(11))
-        Hardware.cubeManipulator.deployCubeIntake(
-                Hardware.leftOperator.getRawButton(9));
-    else if (Hardware.leftOperator.getRawButton(10))
-        Hardware.cubeManipulator.retractCubeIntake(
-                Hardware.leftOperator.getRawButton(9));
-    else if (Hardware.rightOperator.getRawButton(11))
-        Hardware.cubeManipulator.setDeployForClimb();
+    if (Hardware.demoModeSwitch.isOn() == false)
+        {
+        if (Hardware.leftOperator.getRawButton(11))
+            Hardware.cubeManipulator.deployCubeIntake(
+                    Hardware.leftOperator.getRawButton(9));
+        else if (Hardware.leftOperator.getRawButton(10))
+            Hardware.cubeManipulator.retractCubeIntake(
+                    Hardware.leftOperator.getRawButton(9));
+        else if (Hardware.rightOperator.getRawButton(11))
+            Hardware.cubeManipulator.setDeployForClimb();
 
-    if (Hardware.leftOperator.getRawButton(2))
-        Hardware.cubeManipulator.angleDeployForScale();
+        if (Hardware.leftOperator.getRawButton(2))
+            Hardware.cubeManipulator.angleDeployForScale();
+        }
 
     // -----------------------------------------
     // Forklift (not Cube Manipulator) controls
     // -----------------------------------------
 
-    Hardware.cubeManipulator
-            .moveForkliftWithController(
-                    Hardware.rightOperator.getY(),
-                    Hardware.rightOperator.getRawButton(5),
-                    Hardware.climbButton.isOnCheckNow());
-
-    if (Hardware.rightOperator.getRawButton(6) == true)
+    if (Hardware.demoModeSwitch.isOn() == false)
         Hardware.cubeManipulator
-                .setLiftPosition(CubeManipulator.SCALE_HEIGHT, .6);
-    else if (Hardware.rightOperator.getRawButton(7) == true)
-        Hardware.cubeManipulator
-                .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
-
-    if (Hardware.climbButton.isOnCheckNow() == true)
-        Hardware.climbingMechanismServo
-                .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
+                .moveForkliftWithController(
+                        Hardware.rightOperator.getY(),
+                        Hardware.rightOperator.getRawButton(5),
+                        Hardware.climbButton.isOnCheckNow());
     else
-        Hardware.climbingMechanismServo
-                .set(Robot.CLIMB_SERVO_INIT_POSITION);
+        Hardware.cubeManipulator.moveForkliftWithController(
+                Hardware.rightOperator.getY() * Robot.demoForkliftSpeed,
+                false, false);
+
+    if (Hardware.demoModeSwitch.isOn() == false)
+        {
+        if (Hardware.rightOperator.getRawButton(6) == true)
+            Hardware.cubeManipulator
+                    .setLiftPosition(CubeManipulator.SCALE_HEIGHT, .6);
+        else if (Hardware.rightOperator.getRawButton(7) == true)
+            Hardware.cubeManipulator
+                    .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
+
+        if (Hardware.climbButton.isOnCheckNow() == true)
+            Hardware.climbingMechanismServo
+                    .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
+        else
+            Hardware.climbingMechanismServo
+                    .set(Robot.CLIMB_SERVO_INIT_POSITION);
+        }
 
 
     // update for the cube manipulator (forklift, intake, etc.) and its state
@@ -195,18 +224,31 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
-    Hardware.axisCamera
-            .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-                    && Hardware.leftOperator.getRawButton(7));
+    if (Hardware.demoModeSwitch.isOn() == false)
+        Hardware.axisCamera
+                .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+                        && Hardware.leftOperator.getRawButton(7));
 
     // =================================================================
     // DRIVING CODE
     // =================================================================
     // if the right driver button 3 is pressed, shift up a gear, if the left
     // driver button 3 id pressed, shift down a gear
-    Hardware.transmission.shiftGears(
-            Hardware.rightDriver.getRawButton(3),
-            Hardware.leftDriver.getRawButton(3));
+    if (Hardware.demoModeSwitch.isOn() == false)
+        Hardware.transmission.shiftGears(
+                Hardware.rightDriver.getRawButton(3),
+                Hardware.leftDriver.getRawButton(3));
+    else
+        {
+        if (Hardware.leftDriver.getRawButton(7) == true)
+            Hardware.transmission.setGearPercentage(0, .6);
+        else if (Hardware.leftDriver.getRawButton(8) == true)
+            Hardware.transmission.setGearPercentage(0,
+                    Hardware.delayPot.get(0, .6));
+        else if (Hardware.leftDriver.getRawButton(9) == true)
+            Hardware.transmission.setGearPercentage(0, .4);
+
+        }
 
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
@@ -536,6 +578,9 @@ public static void printStatements ()
         // + Hardware.autoSixPosSwitch.getPosition());
         SmartDashboard.putNumber("6 Pos Switch",
                 Hardware.autoSixPosSwitch.getPosition());
+
+        SmartDashboard.putBoolean("Demo Switch",
+                Hardware.demoModeSwitch.isOn());
 
         // ---------------------------------
         // Encoders
