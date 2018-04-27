@@ -90,6 +90,8 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
 
+    this.currentForkliftMaxHeight = FORKLIFT_MAX_HEIGHT;
+
 }
 
 // CONSTRUCTOR TO INCLUDE THE ARMIR and the new code boolean
@@ -136,6 +138,8 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
     this.armIR = armIRSensor;
+
+    this.currentForkliftMaxHeight = FORKLIFT_MAX_HEIGHT;
 }
 
 // ========================FORKLIFT FUNCTIONS========================
@@ -193,7 +197,8 @@ public void moveForkliftWithController (double speed,
         // If we are past the max height or below the min, or we are using the
         // armIR and it is telling us to stop don't move the motors.
         if ((speed > 0
-                && forkliftEncoder.getDistance() > FORKLIFT_MAX_HEIGHT)
+                && forkliftEncoder
+                        .getDistance() > currentForkliftMaxHeight)
                 || (speed < 0 && forkliftEncoder
                         .getDistance() < currentMinLiftPosition)
                 || Math.abs(speed) < JOYSTICK_DEADBAND
@@ -299,6 +304,17 @@ public boolean setLiftPosition (double position)
         }
 
     return setLiftPosition(position, defaultSpeed);
+}
+
+/**
+ * Sets the maximum height for the lift. Use only for demo mode.
+ * 
+ * @param inches
+ *            Maximum height, in inches.
+ */
+public void setMaxLiftHeight (int inches)
+{
+    this.currentForkliftMaxHeight = inches;
 }
 
 // ========================INTAKE FUNCTIONS========================
@@ -538,14 +554,21 @@ public void intakeCube (boolean button, boolean override)
 /**
  * Ejects the cube based on a button.
  * 
- * @param button
- *            If the button is pressed, then eject the cube.
+ * @param eject
+ *            If the button is pressed, then eject the cube at high speed
+ * @param place
+ *            If the button is pressed, then eject the cube at low speed,
+ *            effectively dropping it.
  */
-public void ejectCube (boolean button)
+public void ejectCube (boolean eject, boolean place)
 {
-    if (button)
+    if (eject || place)
         this.intakeState = IntakeState.PUSH_OUT;
+
+    isLowEject = place;
 }
+
+private boolean isLowEject = false;
 
 /**
  * Pushes out the cube for autonomous only, with the default speed.
@@ -723,7 +746,7 @@ public void forkliftUpdate ()
         {
         case MOVING_TO_POSITION:
             // Make sure we don't move past the MAX or MIN position
-            if ((this.forkliftTargetHeight > FORKLIFT_MAX_HEIGHT)
+            if ((this.forkliftTargetHeight > currentForkliftMaxHeight)
                     || (this.forkliftTargetHeight < currentMinLiftPosition))
                 {
                 liftState = ForkliftState.STAY_AT_POSITION;
@@ -824,7 +847,6 @@ private double currentIntakeAngle = 0;
  */
 public void deployIntakeUpdate ()
 {
-
     // state machine for deploying the intake
     switch (deployIntakeState)
         {
@@ -966,6 +988,7 @@ public void deployIntakeUpdate ()
 
         case UNFOLD_ARM_UP:
             // If the arm has reached the 45 position
+            this.deployFoldingServo.set(DEPLOY_SERVO_OUT);
             if (getIntakeAngle() < INTAKE_RETRACT_TICKS)
                 {
                 // set the servo out and begin the normal deploy motor code
@@ -1005,7 +1028,15 @@ public void intakeUpdate ()
         return;
         }
 
-    if (this.forkliftEncoder.getDistance() > EJECT_CHANGE_HEIGHT)
+    if (this.isLowEject == true)
+        {
+        this.currentEjectSpeed = EJECT_SPEED_DROP;
+        }
+    else if (this.deployIntakeState == DeployState.POSITION_45)
+        {
+        this.currentEjectSpeed = EJECT_SPEED_45;
+        }
+    else if (this.forkliftEncoder.getDistance() > EJECT_CHANGE_HEIGHT)
         {
         this.currentEjectSpeed = EJECT_SPEED_FAST;
         }
@@ -1143,6 +1174,8 @@ private boolean isClimbing = false;
 
 private double currentForkliftDownSpeed = 0;
 
+private double currentForkliftMaxHeight = 0;
+
 private double forkliftTargetHeight = 0.0;
 
 private double forkliftTargetSpeed = 0.0;
@@ -1163,6 +1196,8 @@ private pushOutState pushState = pushOutState.INIT;
 private IntakeState intakeState = IntakeState.STOP;
 
 private double currentEjectSpeed = -1;
+
+private double currentRetractSpeed = 0;
 
 private boolean isPullingIn = true;
 
@@ -1217,9 +1252,13 @@ public final static double SCALE_HEIGHT = 69;// Changed 3/22/18 from 76
 
 private final double INTAKE_SPEED = .5;
 
-private final double EJECT_SPEED_FAST = -.5;
+private final double EJECT_SPEED_45 = -1;
 
-private final double EJECT_SPEED_SLOW = -.4;
+private final double EJECT_SPEED_FAST = -.7;
+
+private final double EJECT_SPEED_SLOW = -.45;
+
+private final double EJECT_SPEED_DROP = -.3;
 
 private final double EJECT_CHANGE_HEIGHT = 58;
 
@@ -1237,23 +1276,23 @@ private final double INTAKE_RETRACT_TICKS = 0.0;
 private final double INTAKE_FOLDED_TICKS = 365;// 300;
 
 // Servo is IN, deploy will be able to fold down.
-public final double DEPLOY_SERVO_IN = 0;
+public final double DEPLOY_SERVO_IN = .4;
 
 // Servo is OUT, deploy will be supported by servo.
-public final double DEPLOY_SERVO_OUT = 1;
+public final double DEPLOY_SERVO_OUT = .9;
 
-private final double INTAKE_DEPLOY_SPEED = .1;
+private final double INTAKE_DEPLOY_SPEED = .3;
 
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED_LOW = -.5;
 
-private final double INTAKE_RETRACT_SPEED_HIGH = -.7;
+private final double INTAKE_RETRACT_SPEED_HIGH = -.9;
 
 private final double DEPLOY_HOLDING_VOLTAGE = -.15;
 
 private final double EJECT_TIME = 2.0;
 
-private final double DEPLOY_45_POSITION_TICKS = 144;// 160;
+private final double DEPLOY_45_POSITION_TICKS = 130;// 160;
 
 private final int DEPLOY_DEADBAND = 15;
 

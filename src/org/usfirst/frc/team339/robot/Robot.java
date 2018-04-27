@@ -108,7 +108,8 @@ public void autonomousInit ()
     // =========================================================
     // User code goes below here
     // =========================================================
-    Autonomous.init();
+    if (Hardware.demoModeSwitch.isOn() == false)
+        Autonomous.init();
 
     // =========================================================
     // User code goes above here
@@ -138,7 +139,8 @@ public void autonomousPeriodic ()
     // =========================================================
     // User code goes below here
     // =========================================================
-    Autonomous.periodic();
+    if (Hardware.demoModeSwitch.isOn() == false)
+        Autonomous.periodic();
     // =========================================================
     // User code goes above here
     // =========================================================
@@ -219,6 +221,9 @@ public void robotInit ()
     // =========================================================
     // User code goes below here
     // =========================================================
+
+    // REMOVE ME!!!
+    // Hardware.autoDrive.setGyro(Hardware.gyroAnalog);
 
     // -------------------------------------
     // Resets encoder values
@@ -347,18 +352,11 @@ public void robotInit ()
     // ---------------------------------
     // Hardware.ringLightRelay.set(Value.kOff);
 
-    // Temporary code to set the print statements to a file
-    // ===================DON'T TURN ON!===========================
-    // try
-    // {
-    // Runtime.getRuntime().exec("touch /home/log.txt");
-    // System.setOut(new PrintStream(new FileOutputStream(new
-    // File("/home/lvuser/log.txt"))));
-    // }
-    // catch (IOException e)
-    // {
-    // e.printStackTrace();
-    // }
+    if (Hardware.demoModeSwitch.isOn())
+        {
+        Hardware.cubeManipulator
+                .setMaxLiftHeight(demoForkliftMaxHeight);
+        }
 
     Hardware.gyro.calibrate();
     Hardware.gyro.reset();
@@ -483,6 +481,10 @@ public void testPeriodic ()
 // ==========================================
 // TUNEABLES
 // ==========================================
+private static final int demoForkliftMaxHeight = 30;
+
+public static final double demoForkliftSpeed = .5;
+
 private static final double KILROY_XV_ENCODER_DPP = .0174;
 
 private static final double KILROY_XIX_ENCODER_DPP = 0.0346;
