@@ -34,10 +34,11 @@ public class KilroyPID
 	 * PID loop calculations built in, leading to a smaller load on the RIO.
 	 * 
 	 * @param canMotorCont
-	 *            The CAN motor controller w/ sensor attached
+	 *            The CAN motor controller w/ sensor attached.
 	 */
 	public KilroyPID(BaseMotorController canMotorCont)
 	{
+
 		offBoardController = canMotorCont;
 		this.sensor = null;
 		onBoardController = null;
@@ -68,6 +69,12 @@ public class KilroyPID
 	/**
 	 * Sets the PIDF values for the current PID controller.
 	 * 
+	 * Sent motor value = (p * error) + (i * integral of error) + (d * derivative of
+	 * error) + (f * setpoint)
+	 * 
+	 * While calculating the PID values for tuning, remember that the motor values
+	 * is between -1023 and +1023, NOT -1 and 1.
+	 * 
 	 * @param p
 	 *            The Proportional value: the error multiplied by this scalar
 	 *            directly. This is good for speeding up correction based on how far
@@ -84,8 +91,8 @@ public class KilroyPID
 	 *            reaches it.
 	 * @param f
 	 *            The Feed-Forward value: A base line for what should be sent to the
-	 *            motor while the rest of the PID is calculating 0. In y = mx + b,
-	 *            this would be the b.
+	 *            motor. This is multiplied by the setpoint, and is used mostly by
+	 *            veolocity loops.
 	 */
 	public void setPIDF(double p, double i, double d, double f)
 	{
@@ -177,6 +184,44 @@ public class KilroyPID
 			{
 				this.setPIDF(p, i, d, f);
 			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * If this PID controller is using a CAN sensor connected to the CAN motor
+	 * controller, then this will invert it if it is "out of phase" (motor
+	 * controller and sensor are not in the same direction)
+	 */
+	public void setCANSensorInverted(boolean inverted)
+	{
+		switch (type)
+		{
+		case CAN:
+			this.offBoardController.setSensorPhase(inverted);
+			break;
+		default:
+			break;
+
+		}
+	}
+
+	/**
+	 * If a PID is in use on a differential drive, for instance, then the front and
+	 * rear motors can be tethered to one sensor / PID loop.
+	 * 
+	 * @param controller
+	 *            Any CAN motor controller
+	 */
+	public void tetherCANMotorControllers(BaseMotorController... controller)
+	{
+		switch (type)
+		{
+		case CAN:
+			for (BaseMotorController bmc : controller)
+				bmc.follow(this.offBoardController);
 			break;
 		default:
 			break;
