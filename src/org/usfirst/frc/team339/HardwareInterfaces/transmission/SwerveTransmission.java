@@ -54,6 +54,7 @@ public class SwerveTransmission extends TransmissionBase {
 	 */
 	public SwerveTransmission(SpeedController leftRear, SpeedController rightRear, SpeedController leftFront,
 			SpeedController rightFront, SpeedController monoDirectionalController, Encoder directionalSensor) {
+
 		super(leftRear, rightRear, leftFront, rightFront);
 		directionalSensor.setPIDSourceType(PIDSourceType.kDisplacement);
 		this.monoPID = new PIDController(0, 0, 0, directionalSensor, monoDirectionalController);
