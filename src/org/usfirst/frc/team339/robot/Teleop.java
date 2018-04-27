@@ -32,9 +32,11 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.Utils.Telemetry;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -86,13 +88,28 @@ public static void init ()
     // SmartDashboard.putNumber("Turn Power", 0);
     // SmartDashboard.putNumber("Turn Brake Power", 0);
     // SmartDashboard.putNumber("Turn Brake Deadband", 0);
-    SmartDashboard.putNumber("Drive Power", 0);
-    SmartDashboard.putNumber("Drive Straight Constant", 0);
+    // SmartDashboard.putNumber("Drive Power", 0);
+    // SmartDashboard.putNumber("Drive Straight Constant", 0);
     // SmartDashboard.putNumber("Drive Brake Power", 0);
     // SmartDashboard.putNumber("Drive Brake Deadband", 0);
     //
     // SmartDashboard.putNumber("Turn Degrees", 0);
-    SmartDashboard.putNumber("Drive Distance", 0);
+    // SmartDashboard.putNumber("Drive Distance", 0);
+
+    SmartDashboard.putNumber("P Value", 0);
+    SmartDashboard.putNumber("I Value", 0);
+    SmartDashboard.putNumber("D Value", 0);
+    SmartDashboard.putNumber("F Value", 0);
+    SmartDashboard.putNumber("On Target Tolerance", 0);
+    SmartDashboard.putNumber("Angle", 0);
+
+
+    if (Hardware.demoModeSwitch.isOn() == true)
+        {
+        Hardware.transmission.setGearPercentage(0,
+                Hardware.delayPot.get(0, .7));
+        Hardware.transmission.setGear(0);
+        }
 
 } // end Init
 
@@ -139,52 +156,74 @@ public static void periodic ()
     // Hardware.leftOperator.getRawButton(4));
 
 
-    Hardware.cubeManipulator.intakeCube(
-            Hardware.rightOperator.getTrigger(),
-            Hardware.rightOperator.getRawButton(2));
-    Hardware.cubeManipulator
-            .ejectCube(Hardware.leftOperator.getTrigger(),
-                    Hardware.leftOperator.getRawButton(3));
+
+    if (Hardware.demoModeSwitch.isOn() == false)
+        {
+        Hardware.cubeManipulator.intakeCube(
+                Hardware.rightOperator.getTrigger(),
+                Hardware.rightOperator.getRawButton(2));
+        Hardware.cubeManipulator
+                .ejectCube(Hardware.leftOperator.getTrigger(),
+                        (Hardware.leftOperator.getRawButton(3)));
+        }
+    else
+        {
+        Hardware.cubeManipulator
+                .intakeCube(Hardware.rightOperator.getTrigger(), false);
+        Hardware.cubeManipulator.ejectCube(false,
+                Hardware.leftOperator.getTrigger());
+        }
 
     // -----------------------------------------
     // Deploy Intake controls
     // -----------------------------------------
     // Button 11 to deploy, 10 to retract, and 9 for override for both.
-    if (Hardware.leftOperator.getRawButton(11))
-        Hardware.cubeManipulator.deployCubeIntake(
-                Hardware.leftOperator.getRawButton(9));
-    else if (Hardware.leftOperator.getRawButton(10))
-        Hardware.cubeManipulator.retractCubeIntake(
-                Hardware.leftOperator.getRawButton(9));
-    else if (Hardware.rightOperator.getRawButton(11))
-        Hardware.cubeManipulator.setDeployForClimb();
+    if (Hardware.demoModeSwitch.isOn() == false)
+        {
+        if (Hardware.leftOperator.getRawButton(11))
+            Hardware.cubeManipulator.deployCubeIntake(
+                    Hardware.leftOperator.getRawButton(9));
+        else if (Hardware.leftOperator.getRawButton(10))
+            Hardware.cubeManipulator.retractCubeIntake(
+                    Hardware.leftOperator.getRawButton(9));
+        else if (Hardware.rightOperator.getRawButton(11))
+            Hardware.cubeManipulator.setDeployForClimb();
 
-    if (Hardware.leftOperator.getRawButton(2))
-        Hardware.cubeManipulator.angleDeployForScale();
+        if (Hardware.leftOperator.getRawButton(2))
+            Hardware.cubeManipulator.angleDeployForScale();
+        }
 
     // -----------------------------------------
     // Forklift (not Cube Manipulator) controls
     // -----------------------------------------
 
-    Hardware.cubeManipulator
-            .moveForkliftWithController(
-                    Hardware.rightOperator.getY(),
-                    Hardware.rightOperator.getRawButton(5),
-                    Hardware.climbButton.isOnCheckNow());
-
-    if (Hardware.rightOperator.getRawButton(6) == true)
+    if (Hardware.demoModeSwitch.isOn() == false)
         Hardware.cubeManipulator
-                .setLiftPosition(CubeManipulator.SCALE_HEIGHT, .6);
-    else if (Hardware.rightOperator.getRawButton(7) == true)
-        Hardware.cubeManipulator
-                .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
-
-    if (Hardware.climbButton.isOnCheckNow() == true)
-        Hardware.climbingMechanismServo
-                .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
+                .moveForkliftWithController(
+                        Hardware.rightOperator.getY(),
+                        Hardware.rightOperator.getRawButton(5),
+                        Hardware.climbButton.isOnCheckNow());
     else
-        Hardware.climbingMechanismServo
-                .set(Robot.CLIMB_SERVO_INIT_POSITION);
+        Hardware.cubeManipulator.moveForkliftWithController(
+                Hardware.rightOperator.getY() * Robot.demoForkliftSpeed,
+                false, false);
+
+    if (Hardware.demoModeSwitch.isOn() == false)
+        {
+        if (Hardware.rightOperator.getRawButton(6) == true)
+            Hardware.cubeManipulator
+                    .setLiftPosition(CubeManipulator.SCALE_HEIGHT, .6);
+        else if (Hardware.rightOperator.getRawButton(7) == true)
+            Hardware.cubeManipulator
+                    .setLiftPosition(CubeManipulator.SWITCH_HEIGHT, .6);
+
+        if (Hardware.climbButton.isOnCheckNow() == true)
+            Hardware.climbingMechanismServo
+                    .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
+        else
+            Hardware.climbingMechanismServo
+                    .set(Robot.CLIMB_SERVO_INIT_POSITION);
+        }
 
 
     // update for the cube manipulator (forklift, intake, etc.) and its state
@@ -195,18 +234,31 @@ public static void periodic ()
     // CAMERA CODE
     // =================================================================
 
-    Hardware.axisCamera
-            .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-                    && Hardware.leftOperator.getRawButton(7));
+    if (Hardware.demoModeSwitch.isOn() == false)
+        Hardware.axisCamera
+                .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+                        && Hardware.leftOperator.getRawButton(7));
 
     // =================================================================
     // DRIVING CODE
     // =================================================================
     // if the right driver button 3 is pressed, shift up a gear, if the left
     // driver button 3 id pressed, shift down a gear
-    Hardware.transmission.shiftGears(
-            Hardware.rightDriver.getRawButton(3),
-            Hardware.leftDriver.getRawButton(3));
+    if (Hardware.demoModeSwitch.isOn() == false)
+        Hardware.transmission.shiftGears(
+                Hardware.rightDriver.getRawButton(3),
+                Hardware.leftDriver.getRawButton(3));
+    else
+        {
+        if (Hardware.leftDriver.getRawButton(7) == true)
+            Hardware.transmission.setGearPercentage(0, .6);
+        else if (Hardware.leftDriver.getRawButton(8) == true)
+            Hardware.transmission.setGearPercentage(0,
+                    Hardware.delayPot.get(0, .6));
+        else if (Hardware.leftDriver.getRawButton(9) == true)
+            Hardware.transmission.setGearPercentage(0, .4);
+
+        }
 
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
@@ -224,7 +276,9 @@ public static void periodic ()
     // display on the drivers station
     // ------------------------------------
 
-    printStatements();
+    // printStatements();
+    Telemetry.printToConsole();
+    Telemetry.printToShuffleboard();
 
     // -------------------------------------------
     // Put anything you need to test, but the
@@ -331,84 +385,71 @@ private static void beckyTest ()
     // }
 } // end beckyTest()
 
+private static PIDController leftPID = new PIDController(0, 0, 0,
+        Hardware.leftFrontDriveEncoder, Hardware.leftDriveMotor);
+
+private static PIDController rightPID = new PIDController(0, 0, 0,
+        Hardware.rightFrontDriveEncoder, Hardware.rightDriveMotor);
+
+private static boolean runningPID = false;
+
+private static boolean runningPIDInit = false;
+
 private static void testingDrive ()
 {
-    // Hardware.autoDrive.setBrakeDeadband(
-    // (int) SmartDashboard.getNumber("Turn Brake Deadband", 0),
-    // BrakeType.AFTER_TURN);
-    // Hardware.autoDrive.setBrakePower(
-    // SmartDashboard.getNumber("Turn Brake Power", 0),
-    // BrakeType.AFTER_TURN);
-    //
-    // Hardware.autoDrive.setBrakeDeadband(
-    // (int) SmartDashboard.getNumber("Drive Brake Deadband", 0),
-    // BrakeType.AFTER_DRIVE);
-    // Hardware.autoDrive.setBrakePower(
-    // SmartDashboard.getNumber("Drive Brake Power", 0),
-    // BrakeType.AFTER_DRIVE);
 
-    Hardware.autoDrive.setDriveStraightConstant(
-            SmartDashboard.getNumber("Drive Straight Constant", 0));
+    double p, i, d, f, tolerance, setpoint;
+    p = SmartDashboard.getNumber("P Value", 0);
+    i = SmartDashboard.getNumber("I Value", 0);
+    d = SmartDashboard.getNumber("D Value", 0);
+    f = SmartDashboard.getNumber("F Value", 0);
+    tolerance = SmartDashboard.getNumber("On Target Tolerance", 0);
+    setpoint = (/* 24.75 */22.25
+            * ((Math.PI / 180) * SmartDashboard.getNumber("Angle", 0)));
 
-    if (Hardware.leftDriver.getRawButton(9) == true)
+
+    leftPID.setPID(p, i, d, f);
+    rightPID.setPID(p, i, d, f);
+    leftPID.setAbsoluteTolerance(tolerance);
+
+    if (Hardware.rightDriver.getRawButton(7) == true)
         {
-        isTestingDrive = true;
-        }
-    else if (Hardware.leftDriver.getRawButton(7) == true)
-        {
-        isTestingEncoderTurn = true;
+        runningPID = true;
+        runningPIDInit = true;
         }
 
-    if (isTestingDrive == true)
+    if (runningPID == true)
         {
-        Hardware.transmission.setForAutonomous();
-        Hardware.autoDrive.setDefaultAcceleration(.5);
+        if (runningPIDInit == true)
+            {
+            Hardware.leftFrontDriveEncoder.reset();
+            Hardware.rightFrontDriveEncoder.reset();
 
-        if (isTestingDrive == true && driveState == 0
-                && Hardware.autoDrive.driveStraightInches(
-                        SmartDashboard.getNumber("Drive Distance", 0),
-                        SmartDashboard.getNumber("Drive Power",
-                                0),
-                        true) == true)
-            {
-            driveState = 1;
-            }
-        else if (isTestingEncoderTurn == true && driveState == 0
-                && Hardware.autoDrive.turnDegrees(
-                        (int) SmartDashboard.getNumber("Turn Degrees",
-                                0),
-                        SmartDashboard.getNumber("Turn Power",
-                                0)) == true)
-            {
-            driveState = 3;
-            }
-        else if (driveState == 1
-                && Hardware.autoDrive
-                        .brake(BrakeType.AFTER_DRIVE) == true)
-            {
-            driveState = 2;
-            }
-        else if (driveState == 3
-                && Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
-            {
-            driveState = 2;
+            Hardware.leftFrontDriveEncoder
+                    .setPIDSourceType(PIDSourceType.kDisplacement);
+            Hardware.rightFrontDriveEncoder
+                    .setPIDSourceType(PIDSourceType.kDisplacement);
+            leftPID.reset();
+            rightPID.reset();
+
+            leftPID.setSetpoint(setpoint);
+            rightPID.setSetpoint(setpoint);
+
+            leftPID.enable();
+            rightPID.enable();
+            runningPIDInit = false;
             }
 
-        if (Hardware.leftDriver.getRawButton(10) == true
-                || driveState == 2)
-            {
-            Hardware.transmission.stop();
-            driveState = 0;
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
-            Hardware.autoDrive.reset();
-            isTestingDrive = false;
-            }
-        }
 
-    if (Hardware.leftDriver.getRawButton(8) == true)
-        {
-        Hardware.autoDrive.resetEncoders();
+
+        if (Hardware.rightOperator.getRawButton(8)
+                || (leftPID.onTarget() == true
+                        && rightPID.onTarget() == true))
+            {
+            leftPID.disable();
+            rightPID.disable();
+            runningPIDInit = true;
+            }
         }
 
 } // end of testingDrive()
@@ -536,6 +577,9 @@ public static void printStatements ()
         // + Hardware.autoSixPosSwitch.getPosition());
         SmartDashboard.putNumber("6 Pos Switch",
                 Hardware.autoSixPosSwitch.getPosition());
+
+        SmartDashboard.putBoolean("Demo Switch",
+                Hardware.demoModeSwitch.isOn());
 
         // ---------------------------------
         // Encoders

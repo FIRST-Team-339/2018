@@ -90,6 +90,8 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
 
+    this.currentForkliftMaxHeight = FORKLIFT_MAX_HEIGHT;
+
 }
 
 // CONSTRUCTOR TO INCLUDE THE ARMIR and the new code boolean
@@ -136,6 +138,8 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
     this.armIR = armIRSensor;
+
+    this.currentForkliftMaxHeight = FORKLIFT_MAX_HEIGHT;
 }
 
 // ========================FORKLIFT FUNCTIONS========================
@@ -193,7 +197,8 @@ public void moveForkliftWithController (double speed,
         // If we are past the max height or below the min, or we are using the
         // armIR and it is telling us to stop don't move the motors.
         if ((speed > 0
-                && forkliftEncoder.getDistance() > FORKLIFT_MAX_HEIGHT)
+                && forkliftEncoder
+                        .getDistance() > currentForkliftMaxHeight)
                 || (speed < 0 && forkliftEncoder
                         .getDistance() < currentMinLiftPosition)
                 || Math.abs(speed) < JOYSTICK_DEADBAND
@@ -299,6 +304,17 @@ public boolean setLiftPosition (double position)
         }
 
     return setLiftPosition(position, defaultSpeed);
+}
+
+/**
+ * Sets the maximum height for the lift. Use only for demo mode.
+ * 
+ * @param inches
+ *            Maximum height, in inches.
+ */
+public void setMaxLiftHeight (int inches)
+{
+    this.currentForkliftMaxHeight = inches;
 }
 
 // ========================INTAKE FUNCTIONS========================
@@ -730,7 +746,7 @@ public void forkliftUpdate ()
         {
         case MOVING_TO_POSITION:
             // Make sure we don't move past the MAX or MIN position
-            if ((this.forkliftTargetHeight > FORKLIFT_MAX_HEIGHT)
+            if ((this.forkliftTargetHeight > currentForkliftMaxHeight)
                     || (this.forkliftTargetHeight < currentMinLiftPosition))
                 {
                 liftState = ForkliftState.STAY_AT_POSITION;
@@ -1157,6 +1173,8 @@ private boolean IROverride = false;
 private boolean isClimbing = false;
 
 private double currentForkliftDownSpeed = 0;
+
+private double currentForkliftMaxHeight = 0;
 
 private double forkliftTargetHeight = 0.0;
 
