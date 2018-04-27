@@ -32,9 +32,10 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -86,13 +87,21 @@ public static void init ()
     // SmartDashboard.putNumber("Turn Power", 0);
     // SmartDashboard.putNumber("Turn Brake Power", 0);
     // SmartDashboard.putNumber("Turn Brake Deadband", 0);
-    SmartDashboard.putNumber("Drive Power", 0);
-    SmartDashboard.putNumber("Drive Straight Constant", 0);
+    // SmartDashboard.putNumber("Drive Power", 0);
+    // SmartDashboard.putNumber("Drive Straight Constant", 0);
     // SmartDashboard.putNumber("Drive Brake Power", 0);
     // SmartDashboard.putNumber("Drive Brake Deadband", 0);
     //
     // SmartDashboard.putNumber("Turn Degrees", 0);
-    SmartDashboard.putNumber("Drive Distance", 0);
+    // SmartDashboard.putNumber("Drive Distance", 0);
+
+    SmartDashboard.putNumber("P Value", 0);
+    SmartDashboard.putNumber("I Value", 0);
+    SmartDashboard.putNumber("D Value", 0);
+    SmartDashboard.putNumber("F Value", 0);
+    SmartDashboard.putNumber("On Target Tolerance", 0);
+    SmartDashboard.putNumber("Angle", 0);
+
 
     if (Hardware.demoModeSwitch.isOn() == true)
         {
@@ -373,84 +382,71 @@ private static void beckyTest ()
     // }
 } // end beckyTest()
 
+private static PIDController leftPID = new PIDController(0, 0, 0,
+        Hardware.leftFrontDriveEncoder, Hardware.leftDriveMotor);
+
+private static PIDController rightPID = new PIDController(0, 0, 0,
+        Hardware.rightFrontDriveEncoder, Hardware.rightDriveMotor);
+
+private static boolean runningPID = false;
+
+private static boolean runningPIDInit = false;
+
 private static void testingDrive ()
 {
-    // Hardware.autoDrive.setBrakeDeadband(
-    // (int) SmartDashboard.getNumber("Turn Brake Deadband", 0),
-    // BrakeType.AFTER_TURN);
-    // Hardware.autoDrive.setBrakePower(
-    // SmartDashboard.getNumber("Turn Brake Power", 0),
-    // BrakeType.AFTER_TURN);
-    //
-    // Hardware.autoDrive.setBrakeDeadband(
-    // (int) SmartDashboard.getNumber("Drive Brake Deadband", 0),
-    // BrakeType.AFTER_DRIVE);
-    // Hardware.autoDrive.setBrakePower(
-    // SmartDashboard.getNumber("Drive Brake Power", 0),
-    // BrakeType.AFTER_DRIVE);
 
-    Hardware.autoDrive.setDriveStraightConstant(
-            SmartDashboard.getNumber("Drive Straight Constant", 0));
+    double p, i, d, f, tolerance, setpoint;
+    p = SmartDashboard.getNumber("P Value", 0);
+    i = SmartDashboard.getNumber("I Value", 0);
+    d = SmartDashboard.getNumber("D Value", 0);
+    f = SmartDashboard.getNumber("F Value", 0);
+    tolerance = SmartDashboard.getNumber("On Target Tolerance", 0);
+    setpoint = (/* 24.75 */22.25
+            * ((Math.PI / 180) * SmartDashboard.getNumber("Angle", 0)));
 
-    if (Hardware.leftDriver.getRawButton(9) == true)
+
+    leftPID.setPID(p, i, d, f);
+    rightPID.setPID(p, i, d, f);
+    leftPID.setAbsoluteTolerance(tolerance);
+
+    if (Hardware.rightDriver.getRawButton(7) == true)
         {
-        isTestingDrive = true;
-        }
-    else if (Hardware.leftDriver.getRawButton(7) == true)
-        {
-        isTestingEncoderTurn = true;
+        runningPID = true;
+        runningPIDInit = true;
         }
 
-    if (isTestingDrive == true)
+    if (runningPID == true)
         {
-        Hardware.transmission.setForAutonomous();
-        Hardware.autoDrive.setDefaultAcceleration(.5);
+        if (runningPIDInit == true)
+            {
+            Hardware.leftFrontDriveEncoder.reset();
+            Hardware.rightFrontDriveEncoder.reset();
 
-        if (isTestingDrive == true && driveState == 0
-                && Hardware.autoDrive.driveStraightInches(
-                        SmartDashboard.getNumber("Drive Distance", 0),
-                        SmartDashboard.getNumber("Drive Power",
-                                0),
-                        true) == true)
-            {
-            driveState = 1;
-            }
-        else if (isTestingEncoderTurn == true && driveState == 0
-                && Hardware.autoDrive.turnDegrees(
-                        (int) SmartDashboard.getNumber("Turn Degrees",
-                                0),
-                        SmartDashboard.getNumber("Turn Power",
-                                0)) == true)
-            {
-            driveState = 3;
-            }
-        else if (driveState == 1
-                && Hardware.autoDrive
-                        .brake(BrakeType.AFTER_DRIVE) == true)
-            {
-            driveState = 2;
-            }
-        else if (driveState == 3
-                && Hardware.autoDrive.brake(BrakeType.AFTER_TURN))
-            {
-            driveState = 2;
+            Hardware.leftFrontDriveEncoder
+                    .setPIDSourceType(PIDSourceType.kDisplacement);
+            Hardware.rightFrontDriveEncoder
+                    .setPIDSourceType(PIDSourceType.kDisplacement);
+            leftPID.reset();
+            rightPID.reset();
+
+            leftPID.setSetpoint(setpoint);
+            rightPID.setSetpoint(setpoint);
+
+            leftPID.enable();
+            rightPID.enable();
+            runningPIDInit = false;
             }
 
-        if (Hardware.leftDriver.getRawButton(10) == true
-                || driveState == 2)
-            {
-            Hardware.transmission.stop();
-            driveState = 0;
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
-            Hardware.autoDrive.reset();
-            isTestingDrive = false;
-            }
-        }
 
-    if (Hardware.leftDriver.getRawButton(8) == true)
-        {
-        Hardware.autoDrive.resetEncoders();
+
+        if (Hardware.rightOperator.getRawButton(8)
+                || (leftPID.onTarget() == true
+                        && rightPID.onTarget() == true))
+            {
+            leftPID.disable();
+            rightPID.disable();
+            runningPIDInit = true;
+            }
         }
 
 } // end of testingDrive()

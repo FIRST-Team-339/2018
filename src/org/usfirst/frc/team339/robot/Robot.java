@@ -481,7 +481,7 @@ public void testPeriodic ()
 // ==========================================
 // TUNEABLES
 // ==========================================
-private static final int demoForkliftMaxHeight = 30;
+private static final int demoForkliftMaxHeight = 40;
 
 public static final double demoForkliftSpeed = .5;
 
