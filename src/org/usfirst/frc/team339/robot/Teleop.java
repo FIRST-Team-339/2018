@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.Utils.Telemetry;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -275,7 +276,9 @@ public static void periodic ()
     // display on the drivers station
     // ------------------------------------
 
-    printStatements();
+    // printStatements();
+    Telemetry.printToConsole();
+    Telemetry.printToShuffleboard();
 
     // -------------------------------------------
     // Put anything you need to test, but the
