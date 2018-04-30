@@ -167,10 +167,10 @@ public class KilroyPID
 		case CAN:
 			if (enabled == false)
 			{
-				this.offBoardController.config_kP(0, p, 0);
-				this.offBoardController.config_kI(0, i, 0);
-				this.offBoardController.config_kD(0, d, 0);
-				this.offBoardController.config_kF(0, f, 0);
+				this.offBoardController.config_kP(0, 0, 0);
+				this.offBoardController.config_kI(0, 0, 0);
+				this.offBoardController.config_kD(0, 0, 0);
+				this.offBoardController.config_kF(0, 0, 0);
 			} else
 			{
 				this.setPIDF(p, i, d, f);
@@ -179,10 +179,10 @@ public class KilroyPID
 		case ONBOARD:
 			if (enabled == false)
 			{
-				this.onBoardController.setPID(0, 0, 0, 0);
+				this.onBoardController.disable();
 			} else
 			{
-				this.setPIDF(p, i, d, f);
+				this.onBoardController.enable();
 			}
 			break;
 		default:
