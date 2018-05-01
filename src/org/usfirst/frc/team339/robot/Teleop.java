@@ -35,8 +35,6 @@ import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.Telemetry;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -159,6 +157,7 @@ public static void periodic ()
 
     if (Hardware.demoModeSwitch.isOn() == false)
         {
+        // We are in COMPETITION MODE!!!
         Hardware.cubeManipulator.intakeCube(
                 Hardware.rightOperator.getTrigger(),
                 Hardware.rightOperator.getRawButton(2));
@@ -168,10 +167,11 @@ public static void periodic ()
         }
     else
         {
+        // We are in DEMO MODE!!!
         Hardware.cubeManipulator
                 .intakeCube(Hardware.rightOperator.getTrigger(), false);
         Hardware.cubeManipulator.ejectCube(false,
-                Hardware.leftOperator.getTrigger());
+                Hardware.rightOperator.getRawButton(2));
         }
 
     // -----------------------------------------
@@ -180,6 +180,7 @@ public static void periodic ()
     // Button 11 to deploy, 10 to retract, and 9 for override for both.
     if (Hardware.demoModeSwitch.isOn() == false)
         {
+        // We are in COMPETITION MODE!!!
         if (Hardware.leftOperator.getRawButton(11))
             Hardware.cubeManipulator.deployCubeIntake(
                     Hardware.leftOperator.getRawButton(9));
@@ -198,18 +199,21 @@ public static void periodic ()
     // -----------------------------------------
 
     if (Hardware.demoModeSwitch.isOn() == false)
+        // We are in COMPETITION MODE!!!
         Hardware.cubeManipulator
                 .moveForkliftWithController(
                         Hardware.rightOperator.getY(),
                         Hardware.rightOperator.getRawButton(5),
                         Hardware.climbButton.isOnCheckNow());
     else
+        // We are in DEMO MODE!!!
         Hardware.cubeManipulator.moveForkliftWithController(
                 Hardware.rightOperator.getY() * Robot.demoForkliftSpeed,
                 false, false);
 
     if (Hardware.demoModeSwitch.isOn() == false)
         {
+        // We are in COMPETITION MODE!!!
         if (Hardware.rightOperator.getRawButton(6) == true)
             Hardware.cubeManipulator
                     .setLiftPosition(CubeManipulator.SCALE_HEIGHT, .6);
@@ -235,6 +239,7 @@ public static void periodic ()
     // =================================================================
 
     if (Hardware.demoModeSwitch.isOn() == false)
+        // We are in COMPETITION MODE!!!
         Hardware.axisCamera
                 .takeLitPicture(Hardware.leftOperator.getRawButton(6)
                         && Hardware.leftOperator.getRawButton(7));
@@ -245,11 +250,13 @@ public static void periodic ()
     // if the right driver button 3 is pressed, shift up a gear, if the left
     // driver button 3 id pressed, shift down a gear
     if (Hardware.demoModeSwitch.isOn() == false)
+        // We are in COMPETITION MODE!!!
         Hardware.transmission.shiftGears(
                 Hardware.rightDriver.getRawButton(3),
                 Hardware.leftDriver.getRawButton(3));
     else
         {
+        // We are in DEMO MODE!!!
         if (Hardware.leftDriver.getRawButton(7) == true)
             Hardware.transmission.setGearPercentage(0, .6);
         else if (Hardware.leftDriver.getRawButton(8) == true)
@@ -385,73 +392,8 @@ private static void beckyTest ()
     // }
 } // end beckyTest()
 
-private static PIDController leftPID = new PIDController(0, 0, 0,
-        Hardware.leftFrontDriveEncoder, Hardware.leftDriveMotor);
-
-private static PIDController rightPID = new PIDController(0, 0, 0,
-        Hardware.rightFrontDriveEncoder, Hardware.rightDriveMotor);
-
-private static boolean runningPID = false;
-
-private static boolean runningPIDInit = false;
-
 private static void testingDrive ()
 {
-
-    double p, i, d, f, tolerance, setpoint;
-    p = SmartDashboard.getNumber("P Value", 0);
-    i = SmartDashboard.getNumber("I Value", 0);
-    d = SmartDashboard.getNumber("D Value", 0);
-    f = SmartDashboard.getNumber("F Value", 0);
-    tolerance = SmartDashboard.getNumber("On Target Tolerance", 0);
-    setpoint = (/* 24.75 */22.25
-            * ((Math.PI / 180) * SmartDashboard.getNumber("Angle", 0)));
-
-
-    leftPID.setPID(p, i, d, f);
-    rightPID.setPID(p, i, d, f);
-    leftPID.setAbsoluteTolerance(tolerance);
-
-    if (Hardware.rightDriver.getRawButton(7) == true)
-        {
-        runningPID = true;
-        runningPIDInit = true;
-        }
-
-    if (runningPID == true)
-        {
-        if (runningPIDInit == true)
-            {
-            Hardware.leftFrontDriveEncoder.reset();
-            Hardware.rightFrontDriveEncoder.reset();
-
-            Hardware.leftFrontDriveEncoder
-                    .setPIDSourceType(PIDSourceType.kDisplacement);
-            Hardware.rightFrontDriveEncoder
-                    .setPIDSourceType(PIDSourceType.kDisplacement);
-            leftPID.reset();
-            rightPID.reset();
-
-            leftPID.setSetpoint(setpoint);
-            rightPID.setSetpoint(setpoint);
-
-            leftPID.enable();
-            rightPID.enable();
-            runningPIDInit = false;
-            }
-
-
-
-        if (Hardware.rightOperator.getRawButton(8)
-                || (leftPID.onTarget() == true
-                        && rightPID.onTarget() == true))
-            {
-            leftPID.disable();
-            rightPID.disable();
-            runningPIDInit = true;
-            }
-        }
-
 } // end of testingDrive()
 
 private static void liftTest ()
