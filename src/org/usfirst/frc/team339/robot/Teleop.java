@@ -33,6 +33,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.Utils.KilroyPID;
 import org.usfirst.frc.team339.Utils.Telemetry;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -93,14 +94,6 @@ public static void init ()
     //
     // SmartDashboard.putNumber("Turn Degrees", 0);
     // SmartDashboard.putNumber("Drive Distance", 0);
-
-    SmartDashboard.putNumber("P Value", 0);
-    SmartDashboard.putNumber("I Value", 0);
-    SmartDashboard.putNumber("D Value", 0);
-    SmartDashboard.putNumber("F Value", 0);
-    SmartDashboard.putNumber("On Target Tolerance", 0);
-    SmartDashboard.putNumber("Angle", 0);
-
 
     if (Hardware.demoModeSwitch.isOn() == true)
         {
@@ -274,8 +267,10 @@ public static void periodic ()
     // && Hardware.scaleAlignment.allowAlignment == false
     // && isBeckyTest == false
     // && isTestingEncoderTurn == false)
-    Hardware.transmission.drive(Hardware.leftDriver,
-            Hardware.rightDriver);
+    if (isTestingDrive == false
+            || Hardware.demoModeSwitch.isOn() == false)
+        Hardware.transmission.drive(Hardware.leftDriver,
+                Hardware.rightDriver);
     // update
 
     // ------------------------------------
@@ -296,14 +291,13 @@ public static void periodic ()
     // .set(Hardware.leftDriver.getThrottle());
     // System.out.println("Servo: " + Hardware.leftDriver.getThrottle());
 
-    // testingDrive();
 
-    // alignScale();
-
-    // testingDrive();
-    // liftTest();
-    // beckyTest();
-
+    if (Hardware.demoModeSwitch.isOn() == false)
+        {
+        testingDrive();
+        // liftTest();
+        // beckyTest();
+        }
 } // end Periodic()
 
 private static boolean allowAlignment = false;
@@ -392,8 +386,37 @@ private static void beckyTest ()
     // }
 } // end beckyTest()
 
+static KilroyPID leftPID = new KilroyPID(Hardware.leftDriveMotor,
+        Hardware.leftFrontDriveEncoder);
+
+static KilroyPID rightPID = new KilroyPID(Hardware.rightDriveMotor,
+        Hardware.rightFrontDriveEncoder);
+
 private static void testingDrive ()
 {
+    leftPID.tunePIDSmartDashboard("leftPID");
+    rightPID.tunePIDSmartDashboard("rightPID");
+
+    if (Hardware.rightOperator.getRawButton(7) == true)
+        Hardware.autoDrive.resetEncoders();
+
+    if (Hardware.rightOperator.getRawButton(8) == true)
+        {
+        isTestingDrive = true;
+        leftPID.setEnabled(true);
+        rightPID.setEnabled(true);
+        }
+    else
+        {
+        isTestingDrive = false;
+        leftPID.setEnabled(false);
+        rightPID.setEnabled(false);
+        leftPID.resetPID();
+        rightPID.resetPID();
+        }
+
+
+
 } // end of testingDrive()
 
 private static void liftTest ()
