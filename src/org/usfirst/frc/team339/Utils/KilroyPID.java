@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * A unifying PID class that allows the programmer to choose whether to process
@@ -131,6 +132,11 @@ public class KilroyPID
 	public void setSetpoint(double value, PIDType pidType)
 	{
 		this.setpoint = value;
+		this.lastSetpointType = pidType;
+		// If the KilroyPID is not enabled, then don't set the setpoint in the controller itself.
+		if (isEnabled == false)
+			return;
+		
 		switch (type)
 		{
 		case CAN:
@@ -162,18 +168,18 @@ public class KilroyPID
 	 */
 	public void setEnabled(boolean enabled)
 	{
+		this.isEnabled = enabled;
+
 		switch (type)
 		{
 		case CAN:
 			if (enabled == false)
 			{
-				this.offBoardController.config_kP(0, 0, 0);
-				this.offBoardController.config_kI(0, 0, 0);
-				this.offBoardController.config_kD(0, 0, 0);
-				this.offBoardController.config_kF(0, 0, 0);
-			} else
+				this.offBoardController.set(ControlMode.PercentOutput, 0);
+			}
+			else
 			{
-				this.setPIDF(p, i, d, f);
+				this.setSetpoint(setpoint, lastSetpointType);
 			}
 			break;
 		case ONBOARD:
@@ -183,6 +189,7 @@ public class KilroyPID
 			} else
 			{
 				this.onBoardController.enable();
+				this.setSetpoint(setpoint, lastSetpointType);
 			}
 			break;
 		default:
@@ -263,6 +270,25 @@ public class KilroyPID
 			break;
 		}
 	}
+	
+	public void tunePIDSmartDashboard(String pidName)
+	{
+		if(initTune == false)
+		{
+			SmartDashboard.putNumber(pidName + "_p", 0);
+			SmartDashboard.putNumber(pidName + "_i", 0);
+			SmartDashboard.putNumber(pidName + "_d", 0);
+			SmartDashboard.putNumber(pidName + "_f", 0);
+			initTune = true;
+		}
+		p = SmartDashboard.getNumber(pidName + "_p", 0);
+		i = SmartDashboard.getNumber(pidName + "_i", 0);
+		d = SmartDashboard.getNumber(pidName + "_d", 0);
+		f = SmartDashboard.getNumber(pidName + "_f", 0);
+		
+		this.setPIDF(p, i, d, f);
+		
+	}
 
 	public enum ControllerType
 	{
@@ -271,8 +297,11 @@ public class KilroyPID
 
 	public enum PIDType
 	{
-		POSITION, VELOCITY
+		POSITION, VELOCITY, NULL
 	}
 
 	private double p, i, d, f, setpoint;
+	private PIDType lastSetpointType = PIDType.NULL;
+	private boolean isEnabled = true;
+	private boolean initTune = false;
 }
