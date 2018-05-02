@@ -32,7 +32,9 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.Utils.KilroyPID;
 import org.usfirst.frc.team339.Utils.Telemetry;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 
@@ -48,8 +50,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Teleop
 {
 	/**
-	 * User Initialization code for teleop mode should go here. Will be called
-	 * once when the robot enters teleop mode.
+	 * User Initialization code for teleop mode should go here. Will be called once
+	 * when the robot enters teleop mode.
 	 *
 	 * @author Nathanial Lydick
 	 * @written Jan 13, 2015
@@ -359,6 +361,9 @@ public class Teleop
 		// }
 	} // end beckyTest()
 
+	static DrivePID drivepid = new DrivePID(Hardware.transmission, Hardware.leftFrontDriveEncoder,
+			Hardware.rightFrontDriveEncoder, Hardware.gyro);
+
 	private static void testingDrive()
 	{
 
@@ -380,13 +385,13 @@ public class Teleop
 	}
 
 	/**
-	 * stores print statements for future use in the print "bank", statements
-	 * are commented out when not in use, when you write a new print statement,
-	 * "deposit" the statement in the correct "bank" do not "withdraw"
-	 * statements, unless directed to.
+	 * stores print statements for future use in the print "bank", statements are
+	 * commented out when not in use, when you write a new print statement,
+	 * "deposit" the statement in the correct "bank" do not "withdraw" statements,
+	 * unless directed to.
 	 * 
-	 * NOTE: Keep the groupings below, which correspond in number and order as
-	 * the hardware declarations in the HARDWARE class
+	 * NOTE: Keep the groupings below, which correspond in number and order as the
+	 * hardware declarations in the HARDWARE class
 	 * 
 	 * @author Ashley Espeland
 	 * @written 1/28/16
@@ -732,9 +737,8 @@ public class Teleop
 
 		} else if (Hardware.cubeManipulator.getIntakeMotorSpeed() > Hardware.cubeManipulator.INTAKE_STOP_WITH_CUBE
 				+ .1 /*
-						 * the .1 here is just a magic number that wasn't worth
-						 * making a constant for; is meant to prevent false
-						 * positives in cases where the getIntakeMotorSpeed is
+						 * the .1 here is just a magic number that wasn't worth making a constant for;
+						 * is meant to prevent false positives in cases where the getIntakeMotorSpeed is
 						 * returning .2000001 or something
 						 */)
 		{

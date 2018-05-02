@@ -62,6 +62,11 @@ public class DrivePID extends Drive
 		leftFrontPID = null;
 		rightFrontPID = null;
 	}
+	
+	public boolean turnDegrees(int degrees, double speed)
+	{
+		return false;
+	}
 
 	/**
 	* Sets what the PID loops will be looking at while running

@@ -35,9 +35,10 @@ public class KilroyPID
 	 * 
 	 * @param canMotorCont
 	 *            The CAN motor controller w/ sensor attached.
-	 * @param pidType Describes the function for the PID controller. If velocity,
-	 *  then it is continuous rotation and the setpoint will be based on rate. 
-	 *  If position, then the setpoint will move to a certain position.
+	 * @param pidType
+	 *            Describes the function for the PID controller. If velocity, then
+	 *            it is continuous rotation and the setpoint will be based on rate.
+	 *            If position, then the setpoint will move to a certain position.
 	 */
 	public KilroyPID(BaseMotorController canMotorCont)
 	{
@@ -58,9 +59,10 @@ public class KilroyPID
 	 * @param sensor
 	 *            The sensor that will pull data to compute the value sent to the
 	 *            motor.
-	 * @param pidType Describes the function for the PID controller. If velocity,
-	 *  then it is continuous rotation and the setpoint will be based on rate. 
-	 *  If position, then the setpoint will move to a certain position.
+	 * @param pidType
+	 *            Describes the function for the PID controller. If velocity, then
+	 *            it is continuous rotation and the setpoint will be based on rate.
+	 *            If position, then the setpoint will move to a certain position.
 	 */
 	public KilroyPID(SpeedController motorCont, PIDSource sensor)
 	{
@@ -127,7 +129,9 @@ public class KilroyPID
 
 	/**
 	 * Sets at what point the PID loop is considered "on target"
-	 * @param tolerance "on target" range (plus or minus), in correct units.
+	 * 
+	 * @param tolerance
+	 *            "on target" range (plus or minus), in correct units.
 	 */
 	public void setTolerance(double tolerance)
 	{
@@ -230,6 +234,25 @@ public class KilroyPID
 	}
 
 	/**
+	 * Sets the maximum velocity the robot is allowed to move while using the PID loop.
+	 * @param velocity Maximum speed (forwards or backwards), in feet per second.
+	 */
+	public void setSpeed(double velocity)
+	{
+		switch (type)
+		{
+		case CAN:
+			// Units is in inches per 100ms. To turn ft/s into this, divide ft/s by 10 (to
+			// get in/s) and multiply by 12.
+			this.offBoardController.configMotionCruiseVelocity((int) (velocity * (12.0 / 10.0)), 0);
+			return;
+		case ONBOARD:
+			//Assuming the max velocity is stated below
+			this.onBoardController.setOutputRange(-velocity/maxVelocity, velocity/maxVelocity);
+		}
+	}
+
+	/**
 	 * @return Gets the last setpoint, or the one used in tuning.
 	 */
 	public double getSetpoint()
@@ -276,7 +299,8 @@ public class KilroyPID
 	}
 
 	/**
-	 * @return Whether or not the PID loop says it is "on target", defined by the tolerance set previously.
+	 * @return Whether or not the PID loop says it is "on target", defined by the
+	 *         tolerance set previously.
 	 */
 	public boolean isOnTarget()
 	{
@@ -366,4 +390,6 @@ public class KilroyPID
 	private boolean initTune = false;
 
 	private PIDType pidType = PIDType.POSITION;
+	
+	private final double maxVelocity = 8; //ft/second
 }
