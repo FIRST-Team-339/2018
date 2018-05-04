@@ -1250,7 +1250,7 @@ public final static double SCALE_HEIGHT = 69;// Changed 3/22/18 from 76
 
 // ================INTAKE===================
 
-private final double INTAKE_SPEED = .5;
+private final double INTAKE_SPEED = .35;
 
 private final double EJECT_SPEED_45 = -1;
 

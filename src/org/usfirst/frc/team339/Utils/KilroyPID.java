@@ -3,8 +3,6 @@ package org.usfirst.frc.team339.Utils;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -23,8 +21,9 @@ public class KilroyPID
 {
 
 	private final PIDController onBoardController;
-	private final PIDSource sensor;
+
 	private final BaseMotorController offBoardController;
+
 	private final ControllerType type;
 
 	/**
@@ -36,12 +35,14 @@ public class KilroyPID
 	 * 
 	 * @param canMotorCont
 	 *            The CAN motor controller w/ sensor attached.
+	 * @param pidType
+	 *            Describes the function for the PID controller. If velocity, then
+	 *            it is continuous rotation and the setpoint will be based on rate.
+	 *            If position, then the setpoint will move to a certain position.
 	 */
 	public KilroyPID(BaseMotorController canMotorCont)
 	{
-
 		offBoardController = canMotorCont;
-		this.sensor = null;
 		onBoardController = null;
 		type = ControllerType.CAN;
 	}
@@ -58,11 +59,20 @@ public class KilroyPID
 	 * @param sensor
 	 *            The sensor that will pull data to compute the value sent to the
 	 *            motor.
+	 * @param pidType
+	 *            Describes the function for the PID controller. If velocity, then
+	 *            it is continuous rotation and the setpoint will be based on rate.
+	 *            If position, then the setpoint will move to a certain position.
 	 */
 	public KilroyPID(SpeedController motorCont, PIDSource sensor)
 	{
 		onBoardController = new PIDController(0, 0, 0, sensor, motorCont);
-		this.sensor = sensor;
+
+		if (pidType == PIDType.POSITION)
+			sensor.setPIDSourceType(PIDSourceType.kDisplacement);
+		else if (pidType == PIDType.VELOCITY)
+			sensor.setPIDSourceType(PIDSourceType.kRate);
+
 		offBoardController = null;
 		type = ControllerType.ONBOARD;
 	}
@@ -118,6 +128,25 @@ public class KilroyPID
 	}
 
 	/**
+	 * Sets at what point the PID loop is considered "on target"
+	 * 
+	 * @param tolerance
+	 *            "on target" range (plus or minus), in correct units.
+	 */
+	public void setTolerance(double tolerance)
+	{
+		this.tolerance = tolerance;
+		switch (type)
+		{
+		case ONBOARD:
+			this.onBoardController.setAbsoluteTolerance(tolerance);
+			return;
+		default:
+			return;
+		}
+	}
+
+	/**
 	 * Sets the setpoint of the PID loop. Whatever value and type of value is input,
 	 * the motor will use the PID loop and attempt to reach that value.
 	 * 
@@ -129,14 +158,10 @@ public class KilroyPID
 	 *            is a move and stop. If it's velocity, it will try to go the speed
 	 *            input in value.
 	 */
-	public void setSetpoint(double value, PIDType pidType)
+	public void setSetpoint(double value)
 	{
 		this.setpoint = value;
-		this.lastSetpointType = pidType;
-		// If the KilroyPID is not enabled, then don't set the setpoint in the controller itself.
-		if (isEnabled == false)
-			return;
-		
+
 		switch (type)
 		{
 		case CAN:
@@ -147,17 +172,17 @@ public class KilroyPID
 				offBoardController.set(ControlMode.Velocity, value);
 			break;
 		case ONBOARD:
-			// Set the type of movement
-			if (pidType == PIDType.POSITION)
-				this.sensor.setPIDSourceType(PIDSourceType.kDisplacement);
-			else if (pidType == PIDType.VELOCITY)
-				this.sensor.setPIDSourceType(PIDSourceType.kRate);
 			// Set the setpoint
 			this.onBoardController.setSetpoint(value);
 			break;
 		default:
 			break;
 		}
+	}
+
+	public void setSensorType(PIDType pidType)
+	{
+		this.pidType = pidType;
 	}
 
 	/**
@@ -168,29 +193,19 @@ public class KilroyPID
 	 */
 	public void setEnabled(boolean enabled)
 	{
-		this.isEnabled = enabled;
-
 		switch (type)
 		{
 		case CAN:
 			if (enabled == false)
 			{
 				this.offBoardController.set(ControlMode.PercentOutput, 0);
-			}
-			else
+			} else
 			{
-				this.setSetpoint(setpoint, lastSetpointType);
+				this.setSetpoint(setpoint);
 			}
 			break;
 		case ONBOARD:
-			if (enabled == false)
-			{
-				this.onBoardController.disable();
-			} else
-			{
-				this.onBoardController.enable();
-				this.setSetpoint(setpoint, lastSetpointType);
-			}
+			this.onBoardController.setEnabled(enabled);
 			break;
 		default:
 			break;
@@ -201,6 +216,9 @@ public class KilroyPID
 	 * If this PID controller is using a CAN sensor connected to the CAN motor
 	 * controller, then this will invert it if it is "out of phase" (motor
 	 * controller and sensor are not in the same direction)
+	 * 
+	 * @param inverted
+	 *            Whether or not the sensor is going backwards
 	 */
 	public void setCANSensorInverted(boolean inverted)
 	{
@@ -213,6 +231,33 @@ public class KilroyPID
 			break;
 
 		}
+	}
+
+	/**
+	 * Sets the maximum velocity the robot is allowed to move while using the PID loop.
+	 * @param velocity Maximum speed (forwards or backwards), in feet per second.
+	 */
+	public void setSpeed(double velocity)
+	{
+		switch (type)
+		{
+		case CAN:
+			// Units is in inches per 100ms. To turn ft/s into this, divide ft/s by 10 (to
+			// get in/s) and multiply by 12.
+			this.offBoardController.configMotionCruiseVelocity((int) (velocity * (12.0 / 10.0)), 0);
+			return;
+		case ONBOARD:
+			//Assuming the max velocity is stated below
+			this.onBoardController.setOutputRange(-velocity/maxVelocity, velocity/maxVelocity);
+		}
+	}
+
+	/**
+	 * @return Gets the last setpoint, or the one used in tuning.
+	 */
+	public double getSetpoint()
+	{
+		return setpoint;
 	}
 
 	/**
@@ -253,55 +298,98 @@ public class KilroyPID
 		}
 	}
 
-	public void resetContinuousSensor()
+	/**
+	 * @return Whether or not the PID loop says it is "on target", defined by the
+	 *         tolerance set previously.
+	 */
+	public boolean isOnTarget()
 	{
 		switch (type)
 		{
 		case CAN:
-			this.offBoardController.setSelectedSensorPosition(0, 0, 0);
-			break;
+			return (Math.abs(this.offBoardController.getClosedLoopError(0)) < this.tolerance);
 		case ONBOARD:
-			if (this.sensor instanceof Encoder)
-				((Encoder) sensor).reset();
-			else if (this.sensor instanceof GyroBase)
-				((GyroBase) sensor).reset();
-			break;
+			return this.onBoardController.onTarget();
 		default:
-			break;
+			return true;
 		}
 	}
-	
+
+	/**
+	 * Allows the easy tuning of a PID loop via shuffleboard / smartdashboard.
+	 * 
+	 * @param pidName
+	 *            What to call the PID numbers. this will show up as [name]_p,
+	 *            [name]_i, etc.
+	 */
 	public void tunePIDSmartDashboard(String pidName)
 	{
-		if(initTune == false)
+		if (initTune == false)
 		{
 			SmartDashboard.putNumber(pidName + "_p", 0);
 			SmartDashboard.putNumber(pidName + "_i", 0);
 			SmartDashboard.putNumber(pidName + "_d", 0);
 			SmartDashboard.putNumber(pidName + "_f", 0);
+			SmartDashboard.putNumber(pidName + "_Tolerance", 0);
+			SmartDashboard.putNumber(pidName + "_setPoint", 0);
 			initTune = true;
 		}
 		p = SmartDashboard.getNumber(pidName + "_p", 0);
 		i = SmartDashboard.getNumber(pidName + "_i", 0);
 		d = SmartDashboard.getNumber(pidName + "_d", 0);
 		f = SmartDashboard.getNumber(pidName + "_f", 0);
-		
+		tolerance = SmartDashboard.getNumber(pidName + "_Tolerance", 0);
+		setpoint = SmartDashboard.getNumber(pidName + "_setPoint", 0);
+
 		this.setPIDF(p, i, d, f);
-		
+		this.setTolerance(tolerance);
 	}
 
+	/**
+	 * Describes the kind of PID motor controller used
+	 * 
+	 * @author Kilroy
+	 *
+	 */
 	public enum ControllerType
 	{
-		CAN, ONBOARD
+		/**
+		 * We are using the PID built into the CAN motor controller
+		 */
+		CAN,
+		/**
+		 * We are calculating the PID values on the roboRIO
+		 */
+		ONBOARD
 	}
 
+	/**
+	 * What kind of PID is being used
+	 * 
+	 * @author Kilroy
+	 *
+	 */
 	public enum PIDType
 	{
-		POSITION, VELOCITY, NULL
+		/**
+		 * Going to a set position / displacement
+		 */
+		POSITION,
+		/**
+		 * Going at a fixed rate, continuous
+		 */
+		VELOCITY,
+		/**
+		 * We have not yet set a pid type
+		 */
+		NULL
 	}
 
-	private double p, i, d, f, setpoint;
-	private PIDType lastSetpointType = PIDType.NULL;
-	private boolean isEnabled = true;
+	private double p, i, d, f, setpoint, tolerance;
+
 	private boolean initTune = false;
+
+	private PIDType pidType = PIDType.POSITION;
+	
+	private final double maxVelocity = 8; //ft/second
 }
