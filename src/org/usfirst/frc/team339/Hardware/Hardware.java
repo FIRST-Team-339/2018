@@ -14,6 +14,7 @@
 // ====================================================================
 package org.usfirst.frc.team339.Hardware;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.DriveWithCamera;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroySPIGyro;
@@ -110,6 +111,10 @@ public static Servo intakeArmPositionServo = new Servo(6);
 // ====================================
 // CAN classes
 // ====================================
+
+public static WPI_TalonSRX rightCANMotor = new WPI_TalonSRX(0);
+
+public static WPI_TalonSRX leftCANMotor = new WPI_TalonSRX(1);
 
 // ====================================
 // Relay classes

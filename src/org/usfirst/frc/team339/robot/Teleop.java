@@ -31,6 +31,7 @@
 // ====================================================================
 package org.usfirst.frc.team339.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.Telemetry;
@@ -155,6 +156,13 @@ public static void periodic ()
     // Hardware.scaleAlignment.alignToScaleByButtons(
     // Hardware.leftOperator.getRawButton(4));
 
+    //--------------------------------------------------------------
+    //CAN TESTING CODE
+    //--------------------------------------------------------------
+    Hardware.rightCANMotor.set(ControlMode.PercentOutput, Hardware.rightDriver.getY());
+    Hardware.leftCANMotor.set(ControlMode.PercentOutput, Hardware.leftDriver.getY());
+
+    //--------------------------------------------------------------
 
 
     if (Hardware.demoModeSwitch.isOn() == false)
