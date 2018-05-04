@@ -19,30 +19,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DrivePID extends Drive
 {
 
-	private final KilroyPID[] motorPID;
+	private final KilroyPID[] encoderPID;
+//	private final KilroyPID[] gyroPID;
 	private final Encoder[] encoders;
-	private final PIDSubsystem turnGyroPID = new PIDSubsystem(0, 0, 0)
-	{
-		// The PID controller for turning by Gyro
-		@Override
-		protected double returnPIDInput()
-		{
-			return getGyro().getAngle();
-		}
-
-		@Override
-		protected void usePIDOutput(double output)
-		{
-			getTransmission().drive(output, -output);
-		}
-
-		@Override
-		protected void initDefaultCommand()
-		{
-
-		}
-
-	};
+	
 
 	private final PIDSubsystem driveStraightPID = new PIDSubsystem(0, 0, 0)
 	{
@@ -94,11 +74,13 @@ public class DrivePID extends Drive
 		// to use PID instead of static constants.
 		super(transmission, leftFrontEncoder, rightFrontEncoder, leftRearEncoder, rightRearEncoder, gyro);
 		this.encoders = new Encoder[4];
-		motorPID = new KilroyPID[4];
-		motorPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), leftRearEncoder);
-		motorPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), rightRearEncoder);
-		motorPID[2] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_FRONT), leftFrontEncoder);
-		motorPID[3] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_FRONT), rightFrontEncoder);
+		encoderPID = new KilroyPID[4];
+		encoderPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), leftRearEncoder);
+		encoderPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), rightRearEncoder);
+		encoderPID[2] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_FRONT), leftFrontEncoder);
+		encoderPID[3] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_FRONT), rightFrontEncoder);
+//		this.gyroPID = new KilroyPID[4];
+//		gyroPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), gyro);
 		this.encoders[0] = leftRearEncoder;
 		this.encoders[1] = rightRearEncoder;
 		this.encoders[2] = leftFrontEncoder;
@@ -117,9 +99,9 @@ public class DrivePID extends Drive
 	public DrivePID(TransmissionBase transmission, Encoder leftEncoder, Encoder rightEncoder, GyroBase gyro)
 	{
 		super(transmission, leftEncoder, rightEncoder, gyro);
-		motorPID = new KilroyPID[2];
-		motorPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), leftEncoder);
-		motorPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), rightEncoder);
+		encoderPID = new KilroyPID[2];
+		encoderPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), leftEncoder);
+		encoderPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), rightEncoder);
 		this.encoders = new Encoder[2];
 		this.encoders[0] = leftEncoder;
 		this.encoders[1] = rightEncoder;
@@ -133,9 +115,9 @@ public class DrivePID extends Drive
 		super.reset();
 		this.turnDegreesInit = true;
 		this.turnDegreesGyroInit = true;
-		for (KilroyPID pid : motorPID)
+		for (KilroyPID pid : encoderPID)
 			pid.setEnabled(false);
-		this.turnGyroPID.disable();
+//		this.turnGyroPID.disable();
 	}
 
 	/**
@@ -157,7 +139,7 @@ public class DrivePID extends Drive
 		{
 			// Reset the sensors
 			super.resetEncoders();
-			for (KilroyPID pid : motorPID)
+			for (KilroyPID pid : encoderPID)
 			{
 				// Set PID settings
 				pid.resetPID();
@@ -167,22 +149,22 @@ public class DrivePID extends Drive
 			// Set the setpoint to each motor. If it's even (0 or 2), then it's
 			// the
 			// left side of the robot. Odds (1 or 3) are right.
-			for (int i = 0; i < motorPID.length; i++)
+			for (int i = 0; i < encoderPID.length; i++)
 			{
 				if (i % 2 == 0)
-					motorPID[i].setSetpoint(degreesToEncoderInches(degrees, false));
+					encoderPID[i].setSetpoint(degreesToEncoderInches(degrees, false));
 				else
-					motorPID[i].setSetpoint(-degreesToEncoderInches(degrees, false));
+					encoderPID[i].setSetpoint(-degreesToEncoderInches(degrees, false));
 				// Left or right, set them to enabled.
-				motorPID[i].setSpeed(speed);
-				motorPID[i].setEnabled(true);
+				encoderPID[i].setSpeed(speed);
+				encoderPID[i].setEnabled(true);
 			}
 			turnDegreesInit = false;
 		}
 
 		// If ANY motor is not on target, then keep running.
 		boolean isOnTarget = true;
-		for (KilroyPID pid : motorPID)
+		for (KilroyPID pid : encoderPID)
 			if (pid.isOnTarget() == false)
 			{
 				isOnTarget = false;
@@ -192,7 +174,7 @@ public class DrivePID extends Drive
 		if (isOnTarget == true)
 		{
 			// We have reached the destination.
-			for (KilroyPID pid : motorPID)
+			for (KilroyPID pid : encoderPID)
 				pid.setEnabled(false);
 
 			turnDegreesInit = true;
@@ -210,36 +192,36 @@ public class DrivePID extends Drive
 	 * 
 	 * @return whether or not the robot has finished turning
 	 */
-	public boolean turnDegreesGyro(int degrees, double speed)
-	{
-		if (turnDegreesGyroInit == true)
-		{
-			// Reset the Sensor \ PID controller
-			this.getGyro().reset();
-			this.turnGyroPID.getPIDController().reset();
-
-			// Sets the PID speed, values, tolerance, and setpoint.
-			this.turnGyroPID.getPIDController().setInputRange(-Math.abs(speed), Math.abs(speed));
-			this.turnGyroPID.getPIDController().setPID(this.turnGyroPIDTolerance[0], this.turnGyroPIDTolerance[1],
-					this.turnGyroPIDTolerance[2]);
-			this.turnGyroPID.getPIDController().setAbsoluteTolerance(this.turnGyroPIDTolerance[3]);
-			this.turnGyroPID.setSetpoint(degrees);
-			// Start the PID loop
-			this.turnGyroPID.enable();
-			this.turnDegreesGyroInit = false;
-		}
-
-		// If the robot has reached it's angle, then we are good.
-		if (this.turnGyroPID.onTarget() == true)
-		{
-			// Turn off the PID loop and return true.
-			this.turnDegreesGyroInit = true;
-			this.turnGyroPID.disable();
-			return true;
-		}
-		// We have not yet finished turning.
-		return false;
-	}
+//	public boolean turnDegreesGyro(int degrees, double speed)
+//	{
+//		if (turnDegreesGyroInit == true)
+//		{
+//			// Reset the Sensor \ PID controller
+//			this.getGyro().reset();
+//			this.turnGyroPID.getPIDController().reset();
+//
+//			// Sets the PID speed, values, tolerance, and setpoint.
+//			this.turnGyroPID.getPIDController().setInputRange(-Math.abs(speed), Math.abs(speed));
+//			this.turnGyroPID.getPIDController().setPID(this.turnGyroPIDTolerance[0], this.turnGyroPIDTolerance[1],
+//					this.turnGyroPIDTolerance[2]);
+//			this.turnGyroPID.getPIDController().setAbsoluteTolerance(this.turnGyroPIDTolerance[3]);
+//			this.turnGyroPID.setSetpoint(degrees);
+//			// Start the PID loop
+//			this.turnGyroPID.enable();
+//			this.turnDegreesGyroInit = false;
+//		}
+//
+//		// If the robot has reached it's angle, then we are good.
+//		if (this.turnGyroPID.onTarget() == true)
+//		{
+//			// Turn off the PID loop and return true.
+//			this.turnDegreesGyroInit = true;
+//			this.turnGyroPID.disable();
+//			return true;
+//		}
+//		// We have not yet finished turning.
+//		return false;
+//	}
 
 	/**
 	 * 
