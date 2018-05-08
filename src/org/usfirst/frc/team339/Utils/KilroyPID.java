@@ -23,83 +23,71 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class KilroyPID
 {
 
-	private final BaseMotorController offBoardController;
+	private BaseMotorController offBoardController = null;
 
-	private final PIDSubsystem onBoardController;
+	private PIDSubsystem onBoardController = null;
 
-	private final PIDSource sensor;
+	private PIDSource sensor = null;
 
 	private final ControllerType type;
 
 	/**
 	 * Creates the KilroyPID object.
 	 * 
-	 * This constructor is for either PWM motors or CAN controllers using the
-	 * "x_wpi" motor controller classes. It allows for a wider array of sensors, at
-	 * the cost of PWM and sensor ports, and more strain on the RIO.
+	 * If a KilroyEncoder object is input as the sensor, and it is CAN, and it is
+	 * attached to the motor controller input, then this will run the PID loop on
+	 * the CAN motor controller to save processing power.
+	 * 
+	 * In any other case, it will automatically create a new PID object that will
+	 * run on the RIO.
 	 * 
 	 * @param motorCont
-	 *            The motor controller that will be manipulated by this class.
+	 *            The motor controller that will be manipulated by this class. To
+	 *            use a CAN controller, use the talon / victor WPI_xx classes.
 	 * @param sensor
 	 *            The sensor that will pull data to compute the value sent to the
 	 *            motor.
-	 * @param pidType
-	 *            Describes the function for the PID controller. If velocity, then
-	 *            it is continuous rotation and the setpoint will be based on rate.
-	 *            If position, then the setpoint will move to a certain position.
 	 */
 	public KilroyPID(SpeedController motorCont, PIDSource sensor)
 	{
+		// IF the sensor is a kilroy encoder, AND it is the same object as the motor
+		// controller (it's attached), then setup to use its CAN PID stuffs.
 		if (sensor instanceof KilroyEncoder && ((KilroyEncoder) sensor).getAttachedCANDevice() == motorCont)
 		{
-			initCAN();
+			onBoardController = null;
+			offBoardController = (BaseMotorController) motorCont;
+			type = ControllerType.CAN;
 		} else
 		{
-			initOnBoard();
+			// Any other case, create the PIDSubsystem object.
+			offBoardController = null;
+			type = ControllerType.ONBOARD;
+			onBoardController = new PIDSubsystem(0, 0, 0)
+			{
+				@Override
+				protected double returnPIDInput()
+				{
+					if (isSensorReversed == true)
+						return -sensor.pidGet();
+					// else
+					return sensor.pidGet();
+				}
+
+				@Override
+				protected void usePIDOutput(double output)
+				{
+					motorCont.set(output);
+				}
+
+				@Override
+				protected void initDefaultCommand()
+				{
+					// We don't use command base.
+				}
+			};
 		}
 
 		this.sensor = sensor;
-
-		if (pidType == PIDType.POSITION)
-			sensor.setPIDSourceType(PIDSourceType.kDisplacement);
-		else if (pidType == PIDType.VELOCITY)
-			sensor.setPIDSourceType(PIDSourceType.kRate);
-
-		onBoardController = new PIDSubsystem(0, 0, 0)
-		{
-			@Override
-			protected double returnPIDInput()
-			{
-				if (isSensorReversed == true)
-					return -sensor.pidGet();
-				// else
-				return sensor.pidGet();
-			}
-
-			@Override
-			protected void usePIDOutput(double output)
-			{
-				motorCont.set(output);
-			}
-
-			@Override
-			protected void initDefaultCommand()
-			{
-
-			}
-		};
-		offBoardController = null;
-		type = ControllerType.ONBOARD;
-	}
-
-	private void initCAN()
-	{
-
-	}
-
-	private void initOnBoard()
-	{
-
 	}
 
 	/**
@@ -178,7 +166,8 @@ public class KilroyPID
 	 * @param value
 	 *            The value (in correct units based on the type) the motor will move
 	 *            to.
-	 * @param runSensorReversed TODO
+	 * @param runSensorReversed
+	 *            TODO
 	 * @param pidType
 	 *            What the PID loop will see the value as. If it's position, then it
 	 *            is a move and stop. If it's velocity, it will try to go the speed
@@ -251,22 +240,41 @@ public class KilroyPID
 	}
 
 	/**
-	 * If this PID controller is using a CAN sensor connected to the CAN motor
-	 * controller, then this will invert it if it is "out of phase" (motor
-	 * controller and sensor are not in the same direction)
+	 * If the sensor is always inverted, and it needs to be corrected at startup,
+	 * use this method.
+	 * 
+	 * @param inverted
+	 *            Whether or not the sensor is reversed in comparison to the motor
+	 */
+	public void setSensorNormallyInverted(boolean inverted)
+	{
+		this.isSensorNormallyInverted = inverted;
+		this.setSensorInverted(isSensorReversed);
+	}
+
+	/**
+	 * If the sensor and motors need to be inverted for an application, use this.
+	 * For example, if using a gyro to turn, one side is not inverted, but one side
+	 * is (in relation to the gyro), but goes back normally for other uses.
 	 * 
 	 * @param inverted
 	 *            Whether or not the sensor is going backwards
 	 */
-	public void setSensorInverted(boolean inverted)
+	private void setSensorInverted(boolean inverted)
 	{
 		switch (type)
 		{
 		case CAN:
-			this.offBoardController.setSensorPhase(inverted);
+			if (isSensorNormallyInverted == true)
+				this.offBoardController.setSensorPhase(!inverted);
+			else
+				this.offBoardController.setSensorPhase(inverted);
 			break;
 		case ONBOARD:
-			this.isSensorReversed = inverted;
+			if (isSensorNormallyInverted == true)
+				this.isSensorReversed = !inverted;
+			else
+				this.isSensorReversed = inverted;
 			break;
 		default:
 			break;
@@ -446,6 +454,8 @@ public class KilroyPID
 	private boolean initTune = false;
 
 	private boolean isSensorReversed = false;
+
+	private boolean isSensorNormallyInverted = false;
 
 	private PIDType pidType = PIDType.POSITION;
 }

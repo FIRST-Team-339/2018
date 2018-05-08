@@ -33,10 +33,10 @@ package org.usfirst.frc.team339.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import org.usfirst.frc.team339.Hardware.Hardware;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID.PIDDriveFunction;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.Telemetry;
+import org.usfirst.frc.team339.Utils.drive.DrivePID;
+import org.usfirst.frc.team339.Utils.drive.DrivePID.PIDDriveFunction;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

@@ -60,8 +60,9 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
+import org.usfirst.frc.team339.Utils.drive.Drive.BrakeType;
+
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -228,10 +229,10 @@ public void robotInit ()
     // -------------------------------------
     // Resets encoder values
     // -------------------------------------
-    Hardware.rightFrontDriveEncoder.setReverseDirection(false);
-    Hardware.leftFrontDriveEncoder.setReverseDirection(false);
-    Hardware.rightRearDriveEncoder.setReverseDirection(false);
-    Hardware.leftRearDriveEncoder.setReverseDirection(false);
+    Hardware.rightFrontDriveEncoder.setInverted(false);
+    Hardware.leftFrontDriveEncoder.setInverted(false);
+    Hardware.rightRearDriveEncoder.setInverted(false);
+    Hardware.leftRearDriveEncoder.setInverted(false);
     Hardware.rightFrontDriveEncoder.reset();
     Hardware.leftFrontDriveEncoder.reset();
     Hardware.rightRearDriveEncoder.reset();
