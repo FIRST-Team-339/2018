@@ -17,7 +17,6 @@ package org.usfirst.frc.team339.Hardware;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.DriveWithCamera;
-import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroySPIGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
@@ -25,10 +24,10 @@ import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.ScaleAlignment;
-import org.usfirst.frc.team339.Utils.drive.Drive;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
@@ -153,13 +152,13 @@ public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(
 // ------------------------------------
 // Encoders
 // ------------------------------------
-public static KilroyEncoder leftRearDriveEncoder = new KilroyEncoder(10, 11);
+public static Encoder leftRearDriveEncoder = new Encoder(10, 11);
 
-public static KilroyEncoder rightRearDriveEncoder = new KilroyEncoder(12, 13);
+public static Encoder rightRearDriveEncoder = new Encoder(12, 13);
 
-public static KilroyEncoder leftFrontDriveEncoder = new KilroyEncoder(14, 15);
+public static Encoder leftFrontDriveEncoder = new Encoder(14, 15);
 
-public static KilroyEncoder rightFrontDriveEncoder = new KilroyEncoder(16, 17);
+public static Encoder rightFrontDriveEncoder = new Encoder(16, 17);
 
 public static Encoder liftingEncoder = new Encoder(18, 19);
 

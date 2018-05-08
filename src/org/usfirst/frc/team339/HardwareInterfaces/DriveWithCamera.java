@@ -1,11 +1,11 @@
 package org.usfirst.frc.team339.HardwareInterfaces;
 
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.MecanumTransmission;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TankTransmission;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
-import org.usfirst.frc.team339.Utils.drive.Drive;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.DigitalOutput;
@@ -27,7 +27,7 @@ private TractionTransmission tractionTransmission = null;
 
 private MecanumTransmission mecanumTransmission = null;
 
-private KilroyEncoder leftFrontEncoder = null, rightFrontEncoder = null,
+private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
         leftRearEncoder = null, rightRearEncoder = null;
 
 private UltraSonic frontUltrasonic = null;
@@ -64,8 +64,8 @@ private final TransmissionType transmissionType;
  *            The camera's vision processing code, as a sensor.
  */
 public DriveWithCamera (TransmissionBase transmission,
-		KilroyEncoder leftFrontEncoder, KilroyEncoder rightFrontEncoder,
-		KilroyEncoder leftRearEncoder, KilroyEncoder rightRearEncoder,
+        Encoder leftFrontEncoder, Encoder rightFrontEncoder,
+        Encoder leftRearEncoder, Encoder rightRearEncoder,
         GyroBase gyro, VisionProcessor visionProcessor)
 {
     super(transmission, leftFrontEncoder, rightFrontEncoder,
@@ -101,7 +101,7 @@ public DriveWithCamera (TransmissionBase transmission,
  * 
  */
 public DriveWithCamera (TransmissionBase transmission,
-		KilroyEncoder leftEncoder, KilroyEncoder rightEncoder,
+        Encoder leftEncoder, Encoder rightEncoder,
         UltraSonic frontUltrasonic, UltraSonic rearUltrasonic,
         GyroBase gyro, VisionProcessor visionProcessor)
 {
@@ -138,7 +138,7 @@ public DriveWithCamera (TransmissionBase transmission,
  * 
  */
 public DriveWithCamera (TransmissionBase transmission,
-		KilroyEncoder leftEncoder, KilroyEncoder rightEncoder,
+        Encoder leftEncoder, Encoder rightEncoder,
         UltraSonic frontUltrasonic, UltraSonic rearUltrasonic,
         GyroBase gyro, VisionProcessor visionProcessor,
         DigitalOutput ringlightRelay)

@@ -48,7 +48,7 @@ public class KilroyEncoder implements PIDSource
 	 * 
 	 * @return the number of pulses that has taken place since last reset.
 	 */
-	public int get()
+	public int getTicks()
 	{
 		switch (type)
 		{
@@ -72,11 +72,11 @@ public class KilroyEncoder implements PIDSource
 		switch (type)
 		{
 		case CAN:
-			return distancePerTick * this.get();
+			return distancePerTick * this.getTicks();
 		case D_IO:
 			return dioSensor.getDistance();
 		default:
-			return this.get();
+			return this.getTicks();
 		}
 	}
 

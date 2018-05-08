@@ -1,11 +1,9 @@
-package org.usfirst.frc.team339.Utils.drive;
+package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
-import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.Utils.KilroyPID;
-import org.usfirst.frc.team339.Utils.KilroyPID.PIDType;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
@@ -31,30 +29,30 @@ public class DrivePID extends Drive
 	 * @param rightRearEncoder
 	 * @param gyro
 	 */
-	public DrivePID(TransmissionBase transmission, KilroyEncoder leftFrontEncoder, KilroyEncoder rightFrontEncoder,
-			KilroyEncoder leftRearEncoder, KilroyEncoder rightRearEncoder, GyroBase gyro)
+	public DrivePID(TransmissionBase transmission, Encoder leftFrontEncoder, Encoder rightFrontEncoder,
+			Encoder leftRearEncoder, Encoder rightRearEncoder, GyroBase gyro)
 	{
 		// Create the Drive class this is extending, as to override the methods
 		// to use PID instead of static constants.
 		super(transmission, leftFrontEncoder, rightFrontEncoder, leftRearEncoder, rightRearEncoder, gyro);
 
 		this.encoderPID = new KilroyPID[4];
-		this.encoderPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), leftRearEncoder);
-		this.encoderPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), rightRearEncoder);
-		this.encoderPID[2] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_FRONT), leftFrontEncoder);
-		this.encoderPID[3] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_FRONT), rightFrontEncoder);
+		encoderPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), leftRearEncoder);
+		encoderPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), rightRearEncoder);
+		encoderPID[2] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_FRONT), leftFrontEncoder);
+		encoderPID[3] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_FRONT), rightFrontEncoder);
 
 		this.gyroPID = new KilroyPID[4];
-		this.gyroPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), gyro);
-		this.gyroPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), gyro);
-		this.gyroPID[2] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_FRONT), gyro);
-		this.gyroPID[3] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_FRONT), gyro);
+		gyroPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), gyro);
+		gyroPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), gyro);
+		gyroPID[2] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_FRONT), gyro);
+		gyroPID[3] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_FRONT), gyro);
 
-		this.encoders = new KilroyEncoder[4];
-		this.encoders[0] = leftRearEncoder;
-		this.encoders[1] = rightRearEncoder;
-		this.encoders[2] = leftFrontEncoder;
-		this.encoders[3] = rightFrontEncoder;
+		this.encoders = new Encoder[4];
+		encoders[0] = leftRearEncoder;
+		encoders[1] = rightRearEncoder;
+		encoders[2] = leftFrontEncoder;
+		encoders[3] = rightFrontEncoder;
 	}
 
 	/**
@@ -65,18 +63,15 @@ public class DrivePID extends Drive
 	 * @param rightEncoder
 	 * @param gyro
 	 */
-	public DrivePID(TransmissionBase transmission, KilroyEncoder leftEncoder, KilroyEncoder rightEncoder, GyroBase gyro)
+	public DrivePID(TransmissionBase transmission, Encoder leftEncoder, Encoder rightEncoder, GyroBase gyro)
 	{
 		super(transmission, leftEncoder, rightEncoder, gyro);
-		
-		this.encoderPID = new KilroyPID[2];
-		this.encoderPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), leftEncoder);
-		this.encoderPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), rightEncoder);
-		
-		this.encoders = new KilroyEncoder[2];
+		encoderPID = new KilroyPID[2];
+		encoderPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), leftEncoder);
+		encoderPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), rightEncoder);
+		this.encoders = new Encoder[2];
 		this.encoders[0] = leftEncoder;
 		this.encoders[1] = rightEncoder;
-		
 		this.gyroPID = new KilroyPID[2];
 		this.gyroPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), gyro);
 		this.gyroPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), gyro);
@@ -118,7 +113,6 @@ public class DrivePID extends Drive
 			{
 				// Set PID settings
 				pid.resetPID();
-				pid.setSensorType(PIDType.POSITION);
 				pid.setPIDF(turnPIDTolerance[0], turnPIDTolerance[1], turnPIDTolerance[2], 0);
 				pid.setTolerance(turnPIDTolerance[3]);
 			}
@@ -179,7 +173,6 @@ public class DrivePID extends Drive
 				// Reset PID accumulated values, setup P, I, D and Tolerance,
 				// set setpoint, and enable PID.
 				this.gyroPID[i].resetPID();
-				this.gyroPID[i].setSensorType(PIDType.POSITION);
 				this.gyroPID[i].setPIDF(this.turnGyroPIDTolerance[0], this.turnGyroPIDTolerance[1],
 						this.turnGyroPIDTolerance[2], 0);
 				this.gyroPID[i].setTolerance(this.turnGyroPIDTolerance[3]);
@@ -230,8 +223,6 @@ public class DrivePID extends Drive
 		{
 			this.driveStraightPIDOutput = speed;
 			this.driveStraightPID.getPIDController().reset();
-			for(KilroyEncoder ke : encoders)
-				ke.setPIDSourceType(PIDSourceType.kDisplacement);
 			this.driveStraightPID.getPIDController().setPID(driveStraightPIDTolerance[0], driveStraightPIDTolerance[1],
 					driveStraightPIDTolerance[2]);
 			this.driveStraightPID.setSetpoint(0);
@@ -241,6 +232,27 @@ public class DrivePID extends Drive
 		super.accelerateTo(speed + driveStraightPIDOutput, speed - driveStraightPIDOutput, acceleration);
 
 		driveStraightLastTime = System.currentTimeMillis();
+	}
+
+	/**
+	 * Sets what the PID loops will be looking at while running
+	 * 
+	 * @param sourceType
+	 *            Use kDisplacement for absolute positioning (i.e. turning to a
+	 *            degree), Use kRate for speed adjustments (i.e. controlling RPM)
+	 */
+	private void setAllPIDSourceTypes(PIDSourceType sourceType)
+	{
+		// Rear Encoders or both encoders if 2 wheel drive
+		if (getEncoder(MotorPosition.LEFT_REAR) != null)
+			getEncoder(MotorPosition.LEFT_REAR).setPIDSourceType(sourceType);
+		if (getEncoder(MotorPosition.RIGHT_REAR) != null)
+			getEncoder(MotorPosition.RIGHT_REAR).setPIDSourceType(sourceType);
+		// Front encoders, if they exist
+		if (getEncoder(MotorPosition.LEFT_FRONT) != null)
+			getEncoder(MotorPosition.LEFT_FRONT).setPIDSourceType(sourceType);
+		if (getEncoder(MotorPosition.RIGHT_FRONT) != null)
+			getEncoder(MotorPosition.RIGHT_FRONT).setPIDSourceType(sourceType);
 	}
 
 	// ======================PID Tuning=====================
@@ -364,7 +376,7 @@ public class DrivePID extends Drive
 
 	private final KilroyPID[] encoderPID;
 	private final KilroyPID[] gyroPID;
-	private final KilroyEncoder[] encoders;
+	private final Encoder[] encoders;
 
 	// ======================Variables======================
 
