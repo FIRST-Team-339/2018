@@ -3,6 +3,8 @@ package org.usfirst.frc.team339.Utils;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 
+import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
+
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -32,28 +34,6 @@ public class KilroyPID
 	/**
 	 * Creates the KilroyPID object.
 	 * 
-	 * This constructor is for off-board CAN devices. It uses the CAN encoders /
-	 * sensors attached directly to the motor controller. CAN motor controllers have
-	 * PID loop calculations built in, leading to a smaller load on the RIO.
-	 * 
-	 * @param canMotorCont
-	 *            The CAN motor controller w/ sensor attached.
-	 * @param pidType
-	 *            Describes the function for the PID controller. If velocity, then
-	 *            it is continuous rotation and the setpoint will be based on rate.
-	 *            If position, then the setpoint will move to a certain position.
-	 */
-	public KilroyPID(BaseMotorController canMotorCont)
-	{
-		offBoardController = canMotorCont;
-		onBoardController = null;
-		sensor = null;
-		type = ControllerType.CAN;
-	}
-
-	/**
-	 * Creates the KilroyPID object.
-	 * 
 	 * This constructor is for either PWM motors or CAN controllers using the
 	 * "x_wpi" motor controller classes. It allows for a wider array of sensors, at
 	 * the cost of PWM and sensor ports, and more strain on the RIO.
@@ -70,6 +50,14 @@ public class KilroyPID
 	 */
 	public KilroyPID(SpeedController motorCont, PIDSource sensor)
 	{
+		if (sensor instanceof KilroyEncoder && ((KilroyEncoder) sensor).getAttachedCANDevice() == motorCont)
+		{
+			initCAN();
+		} else
+		{
+			initOnBoard();
+		}
+
 		this.sensor = sensor;
 
 		if (pidType == PIDType.POSITION)
@@ -102,6 +90,16 @@ public class KilroyPID
 		};
 		offBoardController = null;
 		type = ControllerType.ONBOARD;
+	}
+
+	private void initCAN()
+	{
+
+	}
+
+	private void initOnBoard()
+	{
+
 	}
 
 	/**
