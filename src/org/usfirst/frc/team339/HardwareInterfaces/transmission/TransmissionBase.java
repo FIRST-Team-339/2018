@@ -15,8 +15,7 @@ public abstract class TransmissionBase
 public static final double DEFAULT_JOYSTICK_DEADBAND = .2;
 // =========================================
 
-private final SpeedController leftRear, rightRear, leftFront,
-        rightFront;
+private final SpeedController[] motors;
 
 protected double[] gearRatios =
     {.6, .8, 1};
@@ -43,10 +42,11 @@ public TransmissionBase (SpeedController leftRear,
         SpeedController rightRear, SpeedController leftFront,
         SpeedController rightFront)
 {
-    this.leftRear = leftRear;
-    this.rightRear = rightRear;
-    this.leftFront = leftFront;
-    this.rightFront = rightFront;
+    this.motors = new SpeedController[4];
+    this.motors[0] = leftRear;
+    this.motors[1] = rightRear;
+    this.motors[2] = leftFront;
+    this.motors[3] = rightFront;
 }
 
 /**
@@ -59,10 +59,9 @@ public TransmissionBase (SpeedController leftRear,
 public TransmissionBase (SpeedController leftMotor,
         SpeedController rightMotor)
 {
-    this.leftRear = leftMotor;
-    this.rightRear = rightMotor;
-    this.leftFront = leftMotor;
-    this.rightFront = rightMotor;
+    this.motors = new SpeedController[2];
+    this.motors[0] = leftMotor;
+    this.motors[1] = rightMotor;
 }
 
 /**
@@ -122,15 +121,15 @@ public SpeedController getSpeedController (MotorPosition position)
         // Left is the same as left rear
         case LEFT:
         case LEFT_REAR:
-            return leftRear;
+            return this.motors[0];
         // Right is the same as right rear
         case RIGHT:
         case RIGHT_REAR:
-            return rightRear;
+            return this.motors[1];
         case LEFT_FRONT:
-            return leftFront;
+            return this.motors[2];
         case RIGHT_FRONT:
-            return rightFront;
+            return this.motors[3];
         default:
             return null;
         }
@@ -358,14 +357,8 @@ public double scaleJoystickForDeadband (double input)
  */
 public void stop ()
 {
-    leftRear.stopMotor();
-    rightRear.stopMotor();
-
-    if (getType() != TransmissionType.TRACTION)
-        {
-        leftFront.stopMotor();
-        rightFront.stopMotor();
-        }
+    for (SpeedController sc : motors)
+        sc.set(0);
 }
 
 /**
@@ -380,18 +373,21 @@ public void stop ()
  */
 public void drive (double leftVal, double rightVal)
 {
-    double leftY = scaleJoystickForDeadband(leftVal)
-            * gearRatios[currentGear];
-    double rightY = scaleJoystickForDeadband(rightVal)
-            * gearRatios[currentGear];
 
-    leftRear.set(leftY);
-    rightRear.set(rightY);
-    if (getType() != TransmissionType.TRACTION)
-        {
-        leftFront.set(leftY);
-        leftRear.set(rightY);
-        }
+}
+
+/**
+ * 
+ * @param leftVal
+ * @param rightVal
+ */
+public void driveRaw (double leftVal, double rightVal)
+{
+    for (int i = 0; i < motors.length; i++)
+        if (i % 2 == 0)
+            motors[i].set(leftVal);
+        else
+            motors[i].set(rightVal);
 }
 
 }

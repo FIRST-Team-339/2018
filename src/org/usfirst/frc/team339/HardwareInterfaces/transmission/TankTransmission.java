@@ -37,6 +37,17 @@ public TankTransmission (SpeedController leftFrontMotor,
 }
 
 /**
+ * 
+ * @param leftMotor
+ * @param rightMotor
+ */
+public TankTransmission (SpeedController leftMotor,
+        SpeedController rightMotor)
+{
+    super(leftMotor, rightMotor);
+}
+
+/**
  * Controls the robot with the aid of deadbands and software gear ratios.
  * 
  * @param leftJoystick

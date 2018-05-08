@@ -39,7 +39,24 @@ public TractionTransmission (PWMSpeedController leftMotor,
  */
 public void drive (Joystick leftJoystick, Joystick rightJoystick)
 {
-    super.drive(-leftJoystick.getY(), -rightJoystick.getY());
+    this.drive(-leftJoystick.getY(), -rightJoystick.getY());
+}
+
+/**
+ * Drives the robot based on raw double values, scaled for the deadband and gear
+ * ratios.
+ * 
+ * @param leftVal
+ * @param rightVal
+ */
+public void drive (double leftVal, double rightVal)
+{
+    double leftOut = super.scaleJoystickForDeadband(leftVal)
+            * super.getCurrentGearRatio();
+    double rightOut = super.scaleJoystickForDeadband(rightVal)
+            * super.getCurrentGearRatio();
+
+    super.driveRaw(leftOut, rightOut);
 }
 
 }
