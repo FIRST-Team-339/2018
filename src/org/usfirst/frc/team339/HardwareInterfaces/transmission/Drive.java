@@ -1,7 +1,10 @@
 package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
+import org.usfirst.frc.team339.Utils.transmission.MecanumTransmission;
+import org.usfirst.frc.team339.Utils.transmission.TankTransmission;
+import org.usfirst.frc.team339.Utils.transmission.TransmissionBase;
+import org.usfirst.frc.team339.Utils.transmission.TransmissionBase.MotorPosition;
+import org.usfirst.frc.team339.Utils.transmission.TransmissionBase.TransmissionType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -23,8 +26,6 @@ public class Drive
 // values. Thus, inheritance is hard.
 
 private TankTransmission tankTransmission = null;
-
-private TractionTransmission tractionTransmission = null;
 
 private MecanumTransmission mecanumTransmission = null;
 
@@ -105,24 +106,10 @@ private void init (TransmissionBase transmission)
 
     // Only sets the transmission if it is the same type. Other transmission
     // objects get set to null.
-    switch (transmissionType)
-        {
-        case MECANUM:
-            this.mecanumTransmission = (MecanumTransmission) transmission;
-            break;
-        case TANK:
-            this.tankTransmission = (TankTransmission) transmission;
-            break;
-        case TRACTION:
-            this.tractionTransmission = (TractionTransmission) transmission;
-            break;
-        default:
-            System.out.println(
-                    "There was an error setting up the DRIVE class. "
-                            + "Please check the declaration for a valid transmission object.");
-            break;
-
-        }
+	if(transmission instanceof MecanumTransmission)
+		this.mecanumTransmission = (MecanumTransmission) transmission;
+	else if(transmission instanceof TankTransmission)
+		this.tankTransmission = (TankTransmission) transmission;
 }
 
 /**
@@ -158,8 +145,6 @@ public TransmissionBase getTransmission ()
             return mecanumTransmission;
         case TANK:
             return tankTransmission;
-        case TRACTION:
-            return tractionTransmission;
         default:
             return null;
         }
@@ -741,7 +726,7 @@ public boolean driveInches (int distance, double speed)
         }
 
     // sets transmission speed to the input
-    this.getTransmission().drive(speed, speed);
+    this.getTransmission().driveRaw(speed, speed);
     return false;
 }
 
@@ -826,7 +811,7 @@ public boolean strafeStraightInches (int inches, double speed,
         return true;
         }
     // Run the rotation in a proportional loop based on the gyro.
-    this.mecanumTransmission.drive(speed,
+    this.mecanumTransmission.driveRaw(speed,
             Math.toRadians(directionDegrees),
             -(gyro.getAngle() * strafeStraightScalar));
 
@@ -876,7 +861,7 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
     // Avoid a divideByZero error.
     if (time <= 0)
         {
-        this.getTransmission().drive(leftSpeed, rightSpeed);
+        this.getTransmission().driveRaw(leftSpeed, rightSpeed);
         return true;
         }
 
@@ -895,7 +880,7 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
     accelMotorPower += deltaSeconds / time;
 
     // Drive the robot based on the times and speeds
-    this.getTransmission().drive(leftSpeed * inRange(accelMotorPower),
+    this.getTransmission().driveRaw(leftSpeed * inRange(accelMotorPower),
             rightSpeed * inRange(accelMotorPower));
 
     // Reset the "timer"
@@ -1075,7 +1060,7 @@ public void driveStraight_old (double speed, boolean accelerate)
         this.accelerateTo(leftMotorVal, rightMotorVal,
                 getDefaultAcceleration());
     else
-        this.getTransmission().drive(leftMotorVal, rightMotorVal);
+        this.getTransmission().driveRaw(leftMotorVal, rightMotorVal);
 
 }
 
@@ -1139,11 +1124,11 @@ public boolean turnDegrees (int angle, double speed)
     // positive or negative
     if (angle < 0)
         {
-        this.getTransmission().drive(-speed, speed);
+        this.getTransmission().driveRaw(-speed, speed);
         }
     else
         {
-        this.getTransmission().drive(speed, -speed);
+        this.getTransmission().driveRaw(speed, -speed);
         }
 
     return false;
@@ -1180,11 +1165,11 @@ public boolean turnDegreesGyro (int angle, double speed)
     // Turn the robot based on whether we are going left or right.
     if (angle < 0)
         {
-        this.getTransmission().drive(-speed, speed);
+        this.getTransmission().driveRaw(-speed, speed);
         }
     else
         {
-        this.getTransmission().drive(speed, -speed);
+        this.getTransmission().driveRaw(speed, -speed);
         }
 
     return false;
@@ -1227,7 +1212,7 @@ public boolean pivotTurnDegrees (int degrees, double power)
             pivotTurnDegreesInit = true;
             return true;
             }
-        this.getTransmission().drive(power,
+        this.getTransmission().driveRaw(power,
                 -pivotDegreesStationaryPercentage);
         }
     // Turning counter-clockwise
@@ -1241,7 +1226,7 @@ public boolean pivotTurnDegrees (int degrees, double power)
             pivotTurnDegreesInit = true;
             return true;
             }
-        this.getTransmission().drive(-pivotDegreesStationaryPercentage,
+        this.getTransmission().driveRaw(-pivotDegreesStationaryPercentage,
                 power);
         }
     return false;
@@ -1285,14 +1270,14 @@ public boolean turnDegrees2Stage (int degrees, double power)
     if (Math.abs(this.gyro.getAngle()) > Math.abs(degrees)
             - turnDegreesTriggerStage)
         {
-        this.getTransmission().drive(
+        this.getTransmission().driveRaw(
                 Math.signum(degrees) * turnDegrees2ndStagePower,
                 -Math.signum(degrees) * turnDegrees2ndStagePower);
         }
     // 1st stage run (power)
     else
         {
-        this.getTransmission().drive(Math.signum(degrees) * power,
+        this.getTransmission().driveRaw(Math.signum(degrees) * power,
                 -Math.signum(degrees) * power);
         }
 
@@ -1333,10 +1318,6 @@ private double turnDegrees2ndStagePower = .19;
 private double distanceRequiredToBrake = 3.0;
 
 // ================TUNABLES================
-
-// Number of milliseconds that will pass before collecting data on encoders
-// for driveStraight and brake
-private static final int COLLECTION_TIME = 100;
 
 // The distance from the left side wheel to the right-side wheel divided by
 // 2, in inches. Used in turnDegrees.

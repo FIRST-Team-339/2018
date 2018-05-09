@@ -365,5 +365,22 @@ public abstract class TransmissionBase
 		for (SpeedController sc : motors)
 			sc.set(0);
 	}
-
+	
+	/**
+	 * Drives the transmission based on a Tank drive system, but without gear ratios
+	 * or joystick deadbands. Use for autonomous purposes.
+	 * 
+	 * @param leftVal
+	 * 			The left value of the robot, in percentage (-1.0 to 1.0)
+	 * @param rightVal
+	 * 			The right value of the robot, in percentage (-1.0 to 1.0)
+	 */
+	public void driveRaw(double leftVal, double rightVal)
+	{
+		for (int i = 0; i < this.motors.length; i++)
+			if (i % 2 == 0)
+				this.motors[i].set(leftVal);
+			else
+				this.motors[i].set(rightVal);
+	}
 }

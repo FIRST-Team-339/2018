@@ -80,22 +80,6 @@ public class TankTransmission extends TransmissionBase
 		this.driveRaw(leftOut, rightOut);
 	}
 
-	/**
-	 * Drives the transmission based on a Tank drive system, but without gear ratios
-	 * or joystick deadbands. Use for autonomous purposes.
-	 * 
-	 * @param leftVal
-	 * 			The left value of the robot, in percentage (-1.0 to 1.0)
-	 * @param rightVal
-	 * 			The right value of the robot, in percentage (-1.0 to 1.0)
-	 */
-	public void driveRaw(double leftVal, double rightVal)
-	{
-		for (int i = 0; i < super.getAllSpeedControllers().length; i++)
-			if (i % 2 == 0)
-				super.getAllSpeedControllers()[i].set(leftVal);
-			else
-				super.getAllSpeedControllers()[i].set(rightVal);
-	}
+	
 
 }

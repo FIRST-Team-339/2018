@@ -1,6 +1,7 @@
 package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
+import org.usfirst.frc.team339.Utils.transmission.TransmissionBase;
+import org.usfirst.frc.team339.Utils.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.Utils.KilroyPID;
 
 import edu.wpi.first.wpilibj.Encoder;
