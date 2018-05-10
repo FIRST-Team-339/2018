@@ -1,4 +1,4 @@
-package org.usfirst.frc.team339.HardwareInterfaces.transmission;
+package org.usfirst.frc.team339.Utils.drive;
 
 import org.usfirst.frc.team339.Utils.transmission.TransmissionBase;
 import org.usfirst.frc.team339.Utils.transmission.TransmissionBase.MotorPosition;

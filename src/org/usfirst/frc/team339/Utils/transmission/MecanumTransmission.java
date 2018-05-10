@@ -32,7 +32,7 @@ public class MecanumTransmission extends TransmissionBase
 	{
 		super(leftRearMotor, rightRearMotor, leftFrontMotor, rightFrontMotor);
 
-		super.type = TransmissionType.MECANUM;
+		super.type = TransmissionType.OMNI_DIR;
 	}
 
 	/**
@@ -55,6 +55,7 @@ public class MecanumTransmission extends TransmissionBase
 	{
 		super(leftRearMotor, rightRearMotor, leftFrontMotor, rightFrontMotor);
 		this.gyro = gyro;
+		super.type = TransmissionType.OMNI_DIR;
 	}
 
 	/**
@@ -88,9 +89,9 @@ public class MecanumTransmission extends TransmissionBase
 	{
 		double altMagnitude, altDirection, altRotation;
 
-		altMagnitude = super.scaleJoystickForDeadband(magnitude) * super.gearRatios[super.currentGear];
+		altMagnitude = super.scaleJoystickForDeadband(magnitude) * super.getCurrentGearRatio();
 		altDirection = direction;
-		altRotation = super.scaleJoystickForDeadband(rotation) * super.gearRatios[super.currentGear];
+		altRotation = super.scaleJoystickForDeadband(rotation) * super.getCurrentGearRatio();
 
 		// Check between the deadbands for the strafing cushion and and 90
 		// degree "snap".
@@ -108,6 +109,7 @@ public class MecanumTransmission extends TransmissionBase
 
 	}
 
+	@Override
 	/**
 	 * Drives the robot based on raw inputs, for autonomous uses.
 	 * Also, can use a correction PID loop for rotation, if that is enabled.

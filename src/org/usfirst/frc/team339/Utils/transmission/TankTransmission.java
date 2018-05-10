@@ -77,9 +77,6 @@ public class TankTransmission extends TransmissionBase
 		double leftOut = super.scaleJoystickForDeadband(leftVal) * super.getCurrentGearRatio();
 		double rightOut = super.scaleJoystickForDeadband(rightVal) * super.getCurrentGearRatio();
 
-		this.driveRaw(leftOut, rightOut);
+		super.driveRaw(leftOut, rightOut);
 	}
-
-	
-
 }

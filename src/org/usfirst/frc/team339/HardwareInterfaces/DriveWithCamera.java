@@ -1,6 +1,6 @@
 package org.usfirst.frc.team339.HardwareInterfaces;
 
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
+import org.usfirst.frc.team339.Utils.drive.Drive;
 import org.usfirst.frc.team339.Utils.transmission.MecanumTransmission;
 import org.usfirst.frc.team339.Utils.transmission.TankTransmission;
 import org.usfirst.frc.team339.Utils.transmission.TransmissionBase;

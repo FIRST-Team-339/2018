@@ -60,7 +60,7 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
+import org.usfirst.frc.team339.Utils.drive.Drive.BrakeType;
 import org.usfirst.frc.team339.Utils.transmission.TransmissionBase.MotorPosition;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -268,7 +268,7 @@ public void robotInit ()
         Hardware.intakeDeployEncoder
                 .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
 
-        Hardware.transmission.setAllGearRatios(KILROY_XIX_GEAR_1_SPEED,
+        Hardware.transmission.setAllGearPercentages(KILROY_XIX_GEAR_1_SPEED,
                 KILROY_XIX_GEAR_2_SPEED);
 
         Hardware.frontUltraSonic.setOffsetDistanceFromNearestBumper(
@@ -312,7 +312,7 @@ public void robotInit ()
         Hardware.intakeDeployEncoder
                 .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
 
-        Hardware.transmission.setAllGearRatios(KILROY_XV_GEAR_1_SPEED,
+        Hardware.transmission.setAllGearPercentages(KILROY_XV_GEAR_1_SPEED,
                 KILROY_XV_GEAR_2_SPEED);
         Hardware.autoDrive.setTurningRadius(KILROY_XV_TURNING_RADIUS);
         // Hardware.ringLightRelay.setDirection(Direction.kReverse);
@@ -325,7 +325,7 @@ public void robotInit ()
         {
         Hardware.leftDriveMotor.setInverted(false);
         Hardware.rightDriveMotor.setInverted(false);
-        Hardware.transmission.setAllGearRatios(NESSIE_GEAR_1_SPEED,
+        Hardware.transmission.setAllGearPercentages(NESSIE_GEAR_1_SPEED,
                 NESSIE_GEAR_2_SPEED);
         } // if
     else
