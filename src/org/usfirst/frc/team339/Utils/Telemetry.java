@@ -495,8 +495,8 @@ public static void printToShuffleboard ()
     // prints any camera information required
     // ---------------------------------
 
-    SmartDashboard.putNumber("Camera Center",
-            Hardware.driveWithCamera.getCameraCenterValue());
+    // SmartDashboard.putNumber("Camera Center",
+    // Hardware.driveWithCamera.getCameraCenterValue());
 
     // =================================
     // Driver station
