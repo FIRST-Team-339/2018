@@ -2,7 +2,6 @@ package org.usfirst.frc.team339.Utils;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.UltraSonic;
-import org.usfirst.frc.team339.robot.Robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ScaleAlignment
@@ -46,10 +45,6 @@ public void alignToScaleByButtons (boolean button)
         if (allowAlignment == false
                 && alignButtonPressedLastTime == false)
             {
-            // set the transmission for autonomous mode and set allowAlignment
-            // to true, which is used elsewhere in the code to lock out the
-            // driver's joystick inputs
-            Hardware.transmission.setForAutonomous();
             allowAlignment = true;
             }
 
@@ -59,13 +54,6 @@ public void alignToScaleByButtons (boolean button)
             if (Hardware.scaleAlignment.alignToScale(.3, 3,
                     false) == true)
                 {
-                // after the robot has aligned, set the transmission back to the
-                // appropriate values for teleop, tell the robot to stop trying
-                // to align by setting allowAlignment to false
-                // TODO check to see if the gear speed inputted into
-                // setForTeleop is the right one
-                Hardware.transmission
-                        .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
                 allowAlignment = false;
                 }
             }
@@ -77,11 +65,7 @@ public void alignToScaleByButtons (boolean button)
         allowAlignment = false;
         // resets the transmission for teleop once, immediately after we stop
         // hold down the align button
-        if (alignButtonPressedLastTime == true)
-            {
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
-            }
+
         }
     // used like a momentary switch to prevent an infinite alignment loop
     alignButtonPressedLastTime = button;

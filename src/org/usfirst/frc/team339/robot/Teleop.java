@@ -82,7 +82,6 @@ public static void init ()
     // ---------------------------------
     // setup motors
     // ---------------------------------
-    Hardware.transmission.setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
     Hardware.rightDriveMotor.set(0);
     Hardware.leftDriveMotor.set(0);
 
@@ -95,7 +94,7 @@ public static void init ()
     // SmartDashboard.putNumber("Drive Brake Deadband", 0);
     //
     SmartDashboard.putNumber("Turn Degrees", 0);
-    drivepid.tunePID(PIDDriveFunction.TURN);
+    drivepid.tunePID(PIDDriveFunction.TURN_ENC);
     // SmartDashboard.putNumber("Drive Distance", 0);
 
     if (Hardware.demoModeSwitch.isOn() == true)
@@ -326,7 +325,6 @@ private static void beckyTest ()
     // Hardware.ringLightRelay.set(Value.kForward);
     if (Hardware.rightOperator.getRawButton(2) == true)
         {
-        Hardware.transmission.setForAutonomous();
         isBeckyTest = true;
         }
 
@@ -335,8 +333,6 @@ private static void beckyTest ()
 
         if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
             {
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
             isBeckyTest = false;
             }
         Hardware.tempRelay.set(true);
@@ -402,7 +398,7 @@ private static void testingDrive ()
         Hardware.autoDrive.resetEncoders();
 
     if (Hardware.rightDriver.getRawButton(9) == true)
-        drivepid.tunePID(PIDDriveFunction.TURN);
+        drivepid.tunePID(PIDDriveFunction.TURN_ENC);
 
     if (Hardware.rightDriver.getRawButton(7) == true)
         isTestingDrive = true;

@@ -17,6 +17,7 @@ package org.usfirst.frc.team339.Hardware;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.DriveWithCamera;
+import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroySPIGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
@@ -152,17 +153,22 @@ public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(
 // ------------------------------------
 // Encoders
 // ------------------------------------
-public static Encoder leftRearDriveEncoder = new Encoder(10, 11);
+public static KilroyEncoder leftRearDriveEncoder = new KilroyEncoder(10,
+        11);
 
-public static Encoder rightRearDriveEncoder = new Encoder(12, 13);
+public static KilroyEncoder rightRearDriveEncoder = new KilroyEncoder(
+        12, 13);
 
-public static Encoder leftFrontDriveEncoder = new Encoder(14, 15);
+public static KilroyEncoder leftFrontDriveEncoder = new KilroyEncoder(
+        14, 15);
 
-public static Encoder rightFrontDriveEncoder = new Encoder(16, 17);
+public static KilroyEncoder rightFrontDriveEncoder = new KilroyEncoder(
+        16, 17);
 
 public static Encoder liftingEncoder = new Encoder(18, 19);
 
-public static Encoder intakeDeployEncoder = new Encoder(23, 24);
+public static Encoder intakeDeployEncoder = new Encoder(23,
+        24);
 
 // -----------------------
 // Wiring diagram
