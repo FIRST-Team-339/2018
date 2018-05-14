@@ -95,7 +95,8 @@ public abstract class TransmissionBase
 	 */
 	public void driveRaw(double magnitude, double direction, double rotation)
 	{
-		// If this object is MecanumTransmission and this method is called,
+		this.stop();
+		// If this object is an omni-directional drive and this method is called,
 		// it will be overridden by the superclass. This prevents a tank style
 		// transmission from forcing the motors against each other, as it will
 		// by default to do nothing.
