@@ -321,6 +321,19 @@ public class SwerveTransmission extends TransmissionBase
 	}
 
 	/**
+	 * Drives the robot using joystick deadbands and gear ratios. Useful for teleop.
+	 * @param magnitude Overall speed in percentage: 0.0 to 1.0
+	 * @param direction Direction in degrees: -180 (backwards) to 0 (forwards) to 180
+	 *            (backwards again)
+	 * @param rotation Rotation, in percent: -1.0 (left) to 1.0 (right)
+	 */
+	public void drive(double magnitude, double direction, double rotation)
+	{
+		this.driveRaw(scaleJoystickForDeadband(magnitude) * getCurrentGearRatio(), direction,
+				scaleJoystickForDeadband(rotation) * getCurrentGearRatio() * rotationScalar);
+	}
+
+	/**
 	 * Drives the robot using raw values
 	 * 
 	 * @param magnitude
@@ -331,13 +344,13 @@ public class SwerveTransmission extends TransmissionBase
 	 * @param rotation
 	 *            Rotation, in percent: -1.0 (left) to 1.0 (right)
 	 */
-	public void drive(double magnitude, double direction, double rotation)
+	public void driveRaw(double magnitude, double direction, double rotation)
 	{
-		double adjustedMagnitude = super.scaleJoystickForDeadband(magnitude) * super.getCurrentGearRatio();
+		double adjustedMagnitude = magnitude;
 		double adjustedDirection = ((direction / 180) + 1) * 180;// Change -180
 																	// -> 180 to
 																	// 0 -> 360
-		double adjustedRotation = super.scaleJoystickForDeadband(rotation) * rotationScalar;
+		double adjustedRotation = rotation;
 
 		// Are we using one directional motor or four?
 		switch (currentControlScheme)
@@ -432,6 +445,22 @@ public class SwerveTransmission extends TransmissionBase
 			return;
 		}
 
+	}
+
+	/**
+	 * Drives the robot using Tank style controls, WHILE turning the wheels to account for rotation correctly.
+	 */
+	public void driveRaw(double leftVal, double rightVal)
+	{
+		double direction = 0;
+		double magnitude = (leftVal + rightVal) / 2.0;
+		double rotation = (leftVal - rightVal) / 2.0;
+
+		if (magnitude < 0)
+			direction = 180;
+		magnitude = Math.abs(magnitude);
+
+		this.driveRaw(magnitude, direction, rotation);
 	}
 
 	/**
