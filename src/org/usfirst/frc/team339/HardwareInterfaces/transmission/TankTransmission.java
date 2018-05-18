@@ -1,7 +1,7 @@
 package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 /**
  * Like the traction drive system, except with four motors, usually all as
@@ -17,35 +17,15 @@ public class TankTransmission extends TransmissionBase
 	/**
 	 * Creates the Transmission object.
 	 * 
-	 * @param leftFrontMotor
-	 *            The left-front motor controller
-	 * @param rightFrontMotor
-	 *            The right-front motor controller
-	 * @param leftRearMotor
-	 *            The left-rear motor controller
-	 * @param rightRearMotor
-	 *            The right-rear motor controller
+	 * @param leftSide the grouped motor controllers on the left side of the robot
+	 * 
+	 * @param rightSide the grouped motor controllers on the right side of the robot
 	 */
-	public TankTransmission(SpeedController leftRearMotor, SpeedController rightRearMotor,
-			SpeedController leftFrontMotor, SpeedController rightFrontMotor)
+	public TankTransmission(SpeedControllerGroup leftSide, SpeedControllerGroup rightSide)
 	{
-		super(leftRearMotor, rightRearMotor, leftFrontMotor, rightFrontMotor);
+		super(leftSide, rightSide);
 
 		super.type = TransmissionType.TANK;
-	}
-
-	/**
-	 * Creates the Transmission object with two speed controllers.
-	 * (either through a Y cable, or only 2 driven wheels)
-	 * 
-	 * @param leftMotor
-	 * 			The motor controlling the left side of the robot
-	 * @param rightMotor
-	 * 			The motor controlling the right side of the robot
-	 */
-	public TankTransmission(SpeedController leftMotor, SpeedController rightMotor)
-	{
-		super(leftMotor, rightMotor);
 	}
 
 	/**
