@@ -1,4 +1,4 @@
-package org.usfirst.frc.team339.Utils.transmission;
+package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;

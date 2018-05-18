@@ -1,10 +1,10 @@
 package org.usfirst.frc.team339.HardwareInterfaces;
 
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.MecanumTransmission;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TankTransmission;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
 import org.usfirst.frc.team339.Utils.drive.Drive;
-import org.usfirst.frc.team339.Utils.transmission.MecanumTransmission;
-import org.usfirst.frc.team339.Utils.transmission.TankTransmission;
-import org.usfirst.frc.team339.Utils.transmission.TransmissionBase;
-import org.usfirst.frc.team339.Utils.transmission.TransmissionBase.TransmissionType;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.DigitalOutput;

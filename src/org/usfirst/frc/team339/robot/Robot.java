@@ -60,8 +60,8 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.Utils.drive.Drive.BrakeType;
-import org.usfirst.frc.team339.Utils.transmission.TransmissionBase.MotorPosition;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 

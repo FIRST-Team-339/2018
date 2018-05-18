@@ -1,9 +1,9 @@
 package org.usfirst.frc.team339.Utils.drive;
 
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.Utils.KilroyPID;
-import org.usfirst.frc.team339.Utils.transmission.TransmissionBase;
-import org.usfirst.frc.team339.Utils.transmission.TransmissionBase.MotorPosition;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
