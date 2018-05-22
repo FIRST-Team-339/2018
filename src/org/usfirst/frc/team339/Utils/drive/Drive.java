@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
- * The class that controls autonomous driving functions or
- * driver-assisting functions based on sensors.
+ * The class that controls autonomous driving functions or driver-assisting
+ * functions based on sensors.
  * 
  * @author Ryan McGee
  * @written 7/26/2017
@@ -20,8 +20,7 @@ public class Drive
 
 	/**
 	 * Creates the Drive object. If a sensor listed is not used (except for
-	 * encoders), set it to null.
-	 * Setup for Traction drive (only 2 motors/encoders)
+	 * encoders), set it to null. Setup for Traction drive (only 2 motors/encoders)
 	 * 
 	 * @param transmission
 	 *            The robot's transmission object
@@ -96,8 +95,7 @@ public class Drive
 	 *            The target speed for the right drive motors
 	 * @param time
 	 *            The time period accelerated over, in seconds. When the time
-	 *            reaches this
-	 *            number, it will be running full speed.
+	 *            reaches this number, it will be running full speed.
 	 * 
 	 * @return True if we are done accelerating. It WILL continue driving after
 	 *         acceleration is done, at the input speed.
@@ -137,14 +135,68 @@ public class Drive
 	}
 
 	/**
+	 * Drive the robot in an arc around a point defined as 'radius' inches away from
+	 * the center of the robot. This calculates the percentage based on the ratio of
+	 * the circumference of the circle created by the left wheel and right wheel.
+	 * 
+	 * This can be used as a less accurate, but MUCH faster way of turning the
+	 * robot, rather than turning in place. Related to pivotTurn.
+	 * 
+	 * @param speed
+	 *            How fast the robot should travel, in percentage. Positive is forwards, negative is backwards.
+	 * @param radius
+	 *            The distance between the center point of the arc and the center of
+	 *            the bot. Positive is for a right turn, negative is for a left turn.
+	 * @param arcLength
+	 *            How far the robot should travel along that arc length
+	 * @param acceleration
+	 *            Over how much time, in seconds, the robot should accelerate over.
+	 * @return Whether or not the robot has driven it's arc length.
+	 */
+	public boolean arc(double speed, double radius, double arcLength, double acceleration)
+	{
+		//Initialize by resetting the sensor.
+		if (arcInit == true)
+		{
+			this.resetEncoders();
+			arcInit = false;
+		}
+		
+		//We have reached the arc length? then we are done.
+		if (getEncoderDistanceAverage(MotorPosition.ALL) > arcLength)
+		{
+			getTransmission().stop();
+			return true;
+		}
+
+		double innerCircle = 2 * (radius - turningRadius) * Math.PI;// The circumference of the smaller circle
+		double outerCircle = 2 * (radius + turningRadius) * Math.PI;// The circumference of the larger circle
+
+		//Determines which way we are turning, based on if the radius is positive or negative.
+		double leftSide = 0, rightSide = 0;
+		if (radius > 0)
+		{
+			leftSide = 1;
+			rightSide = innerCircle / outerCircle;
+		} else if (radius < 0)
+		{
+			rightSide = 1;
+			leftSide = innerCircle / outerCircle;
+		}
+
+		this.accelerateTo(speed * leftSide, speed * rightSide, acceleration);
+
+		return false;
+	}
+
+	/**
 	 * Stops the robot suddenly, to prevent drifting during autonomous functions,
 	 * and increase the precision.
 	 * 
 	 * @param type
 	 *            TODO
 	 * 
-	 * @return
-	 *         Whether or not the robot has stopped moving.
+	 * @return Whether or not the robot has stopped moving.
 	 */
 	public boolean brake(BrakeType type)
 	{
@@ -264,9 +316,9 @@ public class Drive
 	}
 
 	/**
-	 * Drives the robot a certain distance without encoder correction.
-	 * Not using correction increases reliability but decreases precision.
-	 * If one encoder fails, it will instead look for other encoders for input.
+	 * Drives the robot a certain distance without encoder correction. Not using
+	 * correction increases reliability but decreases precision. If one encoder
+	 * fails, it will instead look for other encoders for input.
 	 * 
 	 * @param distance
 	 *            how far the robot should travel. Should always remain positive!
@@ -358,9 +410,8 @@ public class Drive
 	}
 
 	/**
-	 * Drives the robot a certain distance based on the encoder values.
-	 * If the robot should go backwards, set speed to be negative instead of
-	 * distance.
+	 * Drives the robot a certain distance based on the encoder values. If the robot
+	 * should go backwards, set speed to be negative instead of distance.
 	 * 
 	 * If the acceleration does not seem to be working, run reset() between states.
 	 * 
@@ -401,8 +452,7 @@ public class Drive
 	/**
 	 * Expected distance that it will take to stop during brake()
 	 * 
-	 * @return
-	 *         expected distance during brake()
+	 * @return expected distance during brake()
 	 */
 	public double getBrakeStoppingDistance()
 	{
@@ -458,8 +508,7 @@ public class Drive
 
 	/**
 	 * Gets the averages of certain wheel groups. If ALL is selected, then the
-	 * absolute value is
-	 * run to avoid issues where the average cancels them out.
+	 * absolute value is run to avoid issues where the average cancels them out.
 	 * 
 	 * @param encoderGroup
 	 *            Which wheel / set to find the average of. only LEFT, RIGHT and ALL
@@ -493,13 +542,12 @@ public class Drive
 	}
 
 	/**
-	 * Gets how many ticks is on each motor controller and adds the
-	 * two of a side if multiple to get the total ticks per side
+	 * Gets how many ticks is on each motor controller and adds the two of a side if
+	 * multiple to get the total ticks per side
 	 * 
 	 * @param encoder
 	 *            Which encoder position to get.
-	 * @return
-	 *         Number of Ticks
+	 * @return Number of Ticks
 	 */
 	public int getEncoderTicks(MotorPosition encoder)
 	{
@@ -535,8 +583,8 @@ public class Drive
 	}
 
 	/**
-	 * Gets the transmission object stored. ONLY use it for transmission.stop()
-	 * and transmission.driveRaw()
+	 * Gets the transmission object stored. ONLY use it for transmission.stop() and
+	 * transmission.driveRaw()
 	 * 
 	 * @return The current transmission object used in the Drive class
 	 */
@@ -547,8 +595,7 @@ public class Drive
 
 	/**
 	 * Tests whether any encoder reads larger than the input length. Useful for
-	 * knowing
-	 * when to stop the robot.
+	 * knowing when to stop the robot.
 	 * 
 	 * @param length
 	 *            The desired length
@@ -573,8 +620,7 @@ public class Drive
 	 * @param usingGyro
 	 *            If true, then the method will rely on the Gyro as it's sensor. If
 	 *            false, then it will rely on encoders.
-	 * @return
-	 *         Whether or not the robot has finished turning.
+	 * @return Whether or not the robot has finished turning.
 	 */
 	public boolean pivotTurnDegrees(int degrees, double power, boolean usingGyro)
 	{
@@ -739,11 +785,9 @@ public class Drive
 	/**
 	 * Store the expected distance that it will take to stop during brake()
 	 * 
-	 * @param
-	 *            brakeStoppingDistance
+	 * @param brakeStoppingDistance
 	 *            - new stopping distance during braking
-	 * @return
-	 *         new stored distance during brake()
+	 * @return new stored distance during brake()
 	 */
 	public double setBrakeStoppingDistance(double brakeStoppingDistance)
 	{
@@ -776,13 +820,12 @@ public class Drive
 	}
 
 	/**
-	 * Sets how far the robot has driven per pulse the encoder reads.
-	 * This value should be much lower than one, as there are usually
-	 * hundreds of pulses per rotation.
+	 * Sets how far the robot has driven per pulse the encoder reads. This value
+	 * should be much lower than one, as there are usually hundreds of pulses per
+	 * rotation.
 	 * 
-	 * To calculate, reset the encoders and
-	 * push the robot forwards, say, five feet. Then count the number of pulses
-	 * and do: (5x12)/pulses to get this in inches.
+	 * To calculate, reset the encoders and push the robot forwards, say, five feet.
+	 * Then count the number of pulses and do: (5x12)/pulses to get this in inches.
 	 * 
 	 * @param value
 	 *            The encoder distance per pulse.
@@ -856,8 +899,8 @@ public class Drive
 
 	/**
 	 * Strafe to a target using a mecanum transmission, and a gyro for
-	 * stabilization.
-	 * This will NOT be accurate because of mecanum's slippery properties.
+	 * stabilization. This will NOT be accurate because of mecanum's slippery
+	 * properties.
 	 * 
 	 * @param inches
 	 *            How far we should travel
@@ -866,8 +909,7 @@ public class Drive
 	 * @param directionDegrees
 	 *            In which direction we should travel, 0 being forwards, -90 for
 	 *            left and 90 for right.
-	 * @return
-	 *         Whether or not we have finished strafing.
+	 * @return Whether or not we have finished strafing.
 	 */
 	public boolean strafeStraightInches(int inches, double speed, int directionDegrees)
 	{
@@ -901,9 +943,8 @@ public class Drive
 	 * Turns the robot to a certain angle using the robot's turning circle to find
 	 * the arc-length.
 	 * 
-	 * @deprecated Use instead
-	 *             {@link #turnDegrees(int, double, boolean) turnDegrees(degrees,
-	 *             speed, usingGyro)}
+	 * @deprecated Use instead {@link #turnDegrees(int, double, boolean)
+	 *             turnDegrees(degrees, speed, usingGyro)}
 	 * 
 	 * @param angle
 	 *            How far the robot should turn. Negative angle turns left, positive
@@ -952,16 +993,15 @@ public class Drive
 	 * Turns the robot using the gyro, and slows down after passing
 	 * "turnDegreesTriggerStage" degrees from the requested degrees.
 	 * 
-	 * @deprecated Slow and inaccurate at variable speeds. Use
-	 *             turnDegrees in DrivePID instead for dynamic turning.
+	 * @deprecated Slow and inaccurate at variable speeds. Use turnDegrees in
+	 *             DrivePID instead for dynamic turning.
 	 * 
 	 * @param degrees
 	 *            How much the robot should turn, in degrees. Positive for
 	 *            clockwise, negative for counter-clockwise.
 	 * @param power
 	 *            How fast the robot should turn, in percentage (0.0 to 1.0)
-	 * @return
-	 *         Whether or not the robot has finished turning.
+	 * @return Whether or not the robot has finished turning.
 	 */
 	@Deprecated
 	public boolean turnDegrees2Stage(int degrees, double power)
@@ -1000,17 +1040,15 @@ public class Drive
 	/**
 	 * Turns the robot based on values obtained from a gyroscopic sensor.
 	 * 
-	 * @deprecated Use instead
-	 *             {@link #turnDegrees(int, double, boolean) turnDegrees(degrees,
-	 *             speed, usingGyro)}
+	 * @deprecated Use instead {@link #turnDegrees(int, double, boolean)
+	 *             turnDegrees(degrees, speed, usingGyro)}
 	 * 
 	 * @param angle
 	 *            At what angle we should turn, in degrees. Negative is left,
 	 *            positive is right.
 	 * @param speed
 	 *            How fast we should turn, in decimal percentage (0.0 to 1.0)
-	 * @return
-	 *         Whether or not we have finished turning.
+	 * @return Whether or not we have finished turning.
 	 */
 	public boolean turnDegreesGyro(int angle, double speed)
 	{
@@ -1143,6 +1181,8 @@ public class Drive
 	// ================VARIABLES================
 
 	// METHOD INITIALIZATION BOOLEANS
+
+	private boolean arcInit = true;
 
 	private boolean driveStraightInchesInit = true;
 
