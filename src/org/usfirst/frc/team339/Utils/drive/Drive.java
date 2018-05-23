@@ -1,11 +1,15 @@
 package org.usfirst.frc.team339.Utils.drive;
 
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.MecanumTransmission;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.SwerveTransmission;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TankTransmission;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
 
 import edu.wpi.first.wpilibj.GyroBase;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
@@ -143,10 +147,12 @@ public class Drive
 	 * robot, rather than turning in place. Related to pivotTurn.
 	 * 
 	 * @param speed
-	 *            How fast the robot should travel, in percentage. Positive is forwards, negative is backwards.
+	 *            How fast the robot should travel, in percentage. Positive is
+	 *            forwards, negative is backwards.
 	 * @param radius
 	 *            The distance between the center point of the arc and the center of
-	 *            the bot. Positive is for a right turn, negative is for a left turn.
+	 *            the bot. Positive is for a right turn, negative is for a left
+	 *            turn.
 	 * @param arcLength
 	 *            How far the robot should travel along that arc length
 	 * @param acceleration
@@ -155,14 +161,14 @@ public class Drive
 	 */
 	public boolean arc(double speed, double radius, double arcLength, double acceleration)
 	{
-		//Initialize by resetting the sensor.
+		// Initialize by resetting the sensor.
 		if (arcInit == true)
 		{
 			this.resetEncoders();
 			arcInit = false;
 		}
-		
-		//We have reached the arc length? then we are done.
+
+		// We have reached the arc length? then we are done.
 		if (getEncoderDistanceAverage(MotorPosition.ALL) > arcLength)
 		{
 			getTransmission().stop();
@@ -172,7 +178,8 @@ public class Drive
 		double innerCircle = 2 * (radius - turningRadius) * Math.PI;// The circumference of the smaller circle
 		double outerCircle = 2 * (radius + turningRadius) * Math.PI;// The circumference of the larger circle
 
-		//Determines which way we are turning, based on if the radius is positive or negative.
+		// Determines which way we are turning, based on if the radius is positive or
+		// negative.
 		double leftSide = 0, rightSide = 0;
 		if (radius > 0)
 		{
@@ -194,7 +201,7 @@ public class Drive
 	 * and increase the precision.
 	 * 
 	 * @param type
-	 *            TODO
+	 *            What kind of brake is being used, after driving, or after turning.
 	 * 
 	 * @return Whether or not the robot has stopped moving.
 	 */
@@ -316,6 +323,32 @@ public class Drive
 	}
 
 	/**
+	 * Drives the robot with the use of two joysticks, for Tank drive.
+	 * 
+	 * @param leftJoystick
+	 * @param rightJoystick
+	 */
+	public void drive(Joystick leftJoystick, Joystick rightJoystick)
+	{
+		if (transmission instanceof TankTransmission)
+			((TankTransmission) transmission).drive(leftJoystick, rightJoystick);
+	}
+
+	/**
+	 * Drives the robot with a omni-directional drive, with a single 3 axis
+	 * joystick.
+	 * 
+	 * @param joystick
+	 */
+	public void drive(Joystick joystick)
+	{
+		if (transmission instanceof MecanumTransmission)
+			((MecanumTransmission) transmission).drive(joystick);
+		else if (transmission instanceof SwerveTransmission)
+			((SwerveTransmission) transmission).drive(joystick);
+	}
+
+	/**
 	 * Drives the robot a certain distance without encoder correction. Not using
 	 * correction increases reliability but decreases precision. If one encoder
 	 * fails, it will instead look for other encoders for input.
@@ -358,7 +391,7 @@ public class Drive
 	 * @param acceleration
 	 *            Whether or not the robot should accelerate to the requested speed.
 	 * @param isUsingGyro
-	 *            TODO
+	 *            If true, the chosen sensor is a gyro. If false, it uses encoders.
 	 */
 	public void driveStraight(double speed, boolean acceleration, boolean isUsingGyro)
 	{
@@ -420,9 +453,9 @@ public class Drive
 	 * @param speed
 	 *            How fast the robot should travel
 	 * @param accelerate
-	 *            TODO
+	 *            Whether or not the robot is accelerating
 	 * @param isUsingGyro
-	 *            TODO
+	 *            If true, the chosen sensor is a gyro. If false, it uses encoders.
 	 * @return Whether or not the robot has finished traveling that given distance.
 	 */
 	public boolean driveStraightInches(double distance, double speed, boolean accelerate, boolean isUsingGyro)

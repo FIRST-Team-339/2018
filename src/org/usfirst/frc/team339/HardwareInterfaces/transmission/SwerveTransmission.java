@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -229,18 +230,21 @@ public class SwerveTransmission extends TransmissionBase
 	}
 
 	/**
-	 * Calibrates the directional motors using a digital sensor to detect whether each wheel is
-	 * centered.
+	 * Calibrates the directional motors using a digital sensor to detect whether
+	 * each wheel is centered.
 	 * 
-	 * @param leftRearCondition When will the left rear be done calibrating?
-	 * @param rightRearCondition When will the right rear be done calibrating?
-	 * @param leftFrontCondition When will the left front be done calibrating?
-	 * @param rightFrontCondition When will the right front be done calibrating?
-	 * @param override 
-	 * 			If this button is pressed, then calibration ceases. 
-	 * 			This is to make sure users don't get locked out if calibration fails.
-	 * @return
-	 *		Whether or not calibration is complete.
+	 * @param leftRearCondition
+	 *            When will the left rear be done calibrating?
+	 * @param rightRearCondition
+	 *            When will the right rear be done calibrating?
+	 * @param leftFrontCondition
+	 *            When will the left front be done calibrating?
+	 * @param rightFrontCondition
+	 *            When will the right front be done calibrating?
+	 * @param override
+	 *            If this button is pressed, then calibration ceases. This is to
+	 *            make sure users don't get locked out if calibration fails.
+	 * @return Whether or not calibration is complete.
 	 */
 	public boolean calibrateMotors(boolean leftRearCondition, boolean rightRearCondition, boolean leftFrontCondition,
 			boolean rightFrontCondition, boolean override)
@@ -321,11 +325,24 @@ public class SwerveTransmission extends TransmissionBase
 	}
 
 	/**
+	 * Drives the robot using a single 3 axis joystick
+	 * @param joystick
+	 */
+	public void drive(Joystick joystick)
+	{
+		this.drive(joystick.getMagnitude(), joystick.getDirectionDegrees(), joystick.getTwist());
+	}
+
+	/**
 	 * Drives the robot using joystick deadbands and gear ratios. Useful for teleop.
-	 * @param magnitude Overall speed in percentage: 0.0 to 1.0
-	 * @param direction Direction in degrees: -180 (backwards) to 0 (forwards) to 180
+	 * 
+	 * @param magnitude
+	 *            Overall speed in percentage: 0.0 to 1.0
+	 * @param direction
+	 *            Direction in degrees: -180 (backwards) to 0 (forwards) to 180
 	 *            (backwards again)
-	 * @param rotation Rotation, in percent: -1.0 (left) to 1.0 (right)
+	 * @param rotation
+	 *            Rotation, in percent: -1.0 (left) to 1.0 (right)
 	 */
 	public void drive(double magnitude, double direction, double rotation)
 	{
@@ -448,7 +465,8 @@ public class SwerveTransmission extends TransmissionBase
 	}
 
 	/**
-	 * Drives the robot using Tank style controls, WHILE turning the wheels to account for rotation correctly.
+	 * Drives the robot using Tank style controls, WHILE turning the wheels to
+	 * account for rotation correctly.
 	 */
 	public void driveRaw(double leftVal, double rightVal)
 	{
