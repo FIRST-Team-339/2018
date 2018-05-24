@@ -194,11 +194,36 @@ public static void periodic ()
     // --------------------------------------------------------------
     // CAN TESTING CODE
     // --------------------------------------------------------------
-    Hardware.rightCANMotor.set(ControlMode.PercentOutput,
+    
+    
+    //tank code
+//    if (Hardware.leftDriver.getY() > 0)
+//        leftInput = Hardware.leftDriver.getY() * .8 + .2;
+//    else if (Hardware.leftDriver.getY() < 0)
+//        leftInput = Hardware.leftDriver.getY() * .8 - .2;
+//    else
+//        leftInput = 0.0;
+//    
+//    if (Hardware.rightDriver.getY() > 0)
+//        rightInput = Hardware.rightDriver.getY() * .8 + .2;
+//    else if (Hardware.rightDriver.getY() < 0)
+//        rightInput = Hardware.rightDriver.getY() * .8 - .2;
+//    else
+//        rightInput = 0.0;
+//
+//    
+//    Hardware.rightRearCANMotor.follow(Hardware.rightFrontCANMotor);
+//    Hardware.leftRearCANMotor.follow(Hardware.leftFrontCANMotor);
+//    
+//    
+    Hardware.rightFrontCANMotor.set(ControlMode.PercentOutput,
             Hardware.rightDriver.getY());
-    Hardware.leftCANMotor.set(ControlMode.PercentOutput,
-            Hardware.leftDriver.getY());
-
+    Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
+            Hardware.leftDriver.getY());    
+    System.out.println("CAN " + Hardware.rightFrontCANMotor.getMotorOutputPercent()); 
+    
+    
+    
     // --------------------------------------------------------------
     if (Hardware.demoModeSwitch.isOn() == false)
         // We are in COMPETITION MODE!!!
@@ -241,9 +266,10 @@ public static void periodic ()
 
     if (Hardware.demoModeSwitch.isOn() == false)
         // We are in COMPETITION MODE!!!
-        Hardware.axisCamera
-                .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-                        && Hardware.leftOperator.getRawButton(7));
+        //TODO @ANE uncomment
+//        Hardware.axisCamera
+//                .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+//                        && Hardware.leftOperator.getRawButton(7));
 
     // =================================================================
     // DRIVING CODE
@@ -321,76 +347,76 @@ public static void alignScale ()
 
 private static boolean isBeckyTest = false;
 
-private static void beckyTest ()
-{
-    // Hardware.ringLightRelay.set(Value.kForward);
-    if (Hardware.rightOperator.getRawButton(2) == true)
-        {
-        Hardware.transmission.setForAutonomous();
-        isBeckyTest = true;
-        }
-
-    if (isBeckyTest == true)
-        {
-
-        if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
-            {
-            Hardware.transmission
-                    .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
-            isBeckyTest = false;
-            }
-        Hardware.tempRelay.set(true);
-        // Hardware.tempRelay.set(true);
-        Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-        }
-
-    // if (Hardware.rightOperator.getRawButton(2))
-    // {
-    // Hardware.tempRelay.set(true);
-    // }
-    // else
-    // {
-    // Hardware.tempRelay.set(false);
-    // }
-    //
-    // if(Hardware.rightOperator.getRawButton(3))
-    // {
-    // Hardware.ringLightRelay.setDirection(Direction.kForward);
-    // }
-    // else
-    // {
-    // Hardware.ringLightRelay.setDirection(Direction.kReverse);
-    // }
-
-    // if (Hardware.leftOperator.getRawButton(7))
-    // {
-    // Hardware.ringLightRelay.set(Value.kForward);
-    // }
-    // else
-    // {
-    // Hardware.ringLightRelay.set(Value.kReverse);
-    // }
-
-    // Hardware.axisCamera.saveImage(ImageType.RAW);
-
-    // Hardware.driveWithCamera.getCameraCenterValue();
-
-    // if (Hardware.visionTestButton.isOnCheckNow())
-    // {
-    // Hardware.axisCamera.processImage();
-    // Hardware.autoDrive.visionTest(1.3, .6);
-    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-    // for (int i = 0; i < Hardware.axisCamera
-    // .getParticleReports().length; i++)
-    // {
-    // System.out.println("The center of " + i + " is: "
-    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
-    // }
-    // System.out.println("The center is : " + (Hardware.axisCamera
-    // .getNthSizeBlob(0).center.x
-    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
-    // }
-} // end beckyTest()
+//private static void beckyTest ()
+//{
+//    // Hardware.ringLightRelay.set(Value.kForward);
+//    if (Hardware.rightOperator.getRawButton(2) == true)
+//        {
+//        Hardware.transmission.setForAutonomous();
+//        isBeckyTest = true;
+//        }
+//
+//    if (isBeckyTest == true)
+//        {
+//
+//        if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
+//            {
+//            Hardware.transmission
+//                    .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
+//            isBeckyTest = false;
+//            }
+//        Hardware.tempRelay.set(true);
+//        // Hardware.tempRelay.set(true);
+//        Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+//        }
+//
+//    // if (Hardware.rightOperator.getRawButton(2))
+//    // {
+//    // Hardware.tempRelay.set(true);
+//    // }
+//    // else
+//    // {
+//    // Hardware.tempRelay.set(false);
+//    // }
+//    //
+//    // if(Hardware.rightOperator.getRawButton(3))
+//    // {
+//    // Hardware.ringLightRelay.setDirection(Direction.kForward);
+//    // }
+//    // else
+//    // {
+//    // Hardware.ringLightRelay.setDirection(Direction.kReverse);
+//    // }
+//
+//    // if (Hardware.leftOperator.getRawButton(7))
+//    // {
+//    // Hardware.ringLightRelay.set(Value.kForward);
+//    // }
+//    // else
+//    // {
+//    // Hardware.ringLightRelay.set(Value.kReverse);
+//    // }
+//
+//    // Hardware.axisCamera.saveImage(ImageType.RAW);
+//
+//    // Hardware.driveWithCamera.getCameraCenterValue();
+//
+//    // if (Hardware.visionTestButton.isOnCheckNow())
+//    // {
+//    // Hardware.axisCamera.processImage();
+//    // Hardware.autoDrive.visionTest(1.3, .6);
+//    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+//    // for (int i = 0; i < Hardware.axisCamera
+//    // .getParticleReports().length; i++)
+//    // {
+//    // System.out.println("The center of " + i + " is: "
+//    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+//    // }
+//    // System.out.println("The center is : " + (Hardware.axisCamera
+//    // .getNthSizeBlob(0).center.x
+//    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+//    // }
+//} // end beckyTest()
 
 static DrivePID drivepid = new DrivePID(Hardware.transmission,
         Hardware.leftFrontDriveEncoder,
@@ -850,5 +876,13 @@ public static final int INTAKE_ARM_SERVO_UP_POSITION = 0;
 public static final int INTAKE_ARM_SERVO_DOWN_POSITION = 180;
 
 public static final double FORKLIFT_HEIGHT_TO_PUT_DOWN_SERVO = 20.0;
+
+//================================
+//Variables
+//================================
+public static double rightInput = 0.0;
+
+public static double leftInput = 0.0;
+
 
 } // end class

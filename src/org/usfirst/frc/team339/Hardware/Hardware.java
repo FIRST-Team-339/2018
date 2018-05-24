@@ -112,9 +112,13 @@ public static Servo intakeArmPositionServo = new Servo(6);
 // CAN classes
 // ====================================
 
-public static WPI_TalonSRX rightCANMotor = new WPI_TalonSRX(0);
+public static WPI_TalonSRX rightFrontCANMotor = new WPI_TalonSRX(14);
 
-public static WPI_TalonSRX leftCANMotor = new WPI_TalonSRX(1);
+public static WPI_TalonSRX leftFrontCANMotor = new WPI_TalonSRX(12);
+
+public static WPI_TalonSRX rightRearCANMotor = new WPI_TalonSRX(11);//fix number
+
+public static WPI_TalonSRX leftRearCANMotor = new WPI_TalonSRX(13);//fix number
 
 // ====================================
 // Relay classes
@@ -261,8 +265,8 @@ public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 // Axis/USB Camera class
 // -------------------------------------
 
-public static VisionProcessor axisCamera = new VisionProcessor(
-        "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
+//public static VisionProcessor axisCamera = new VisionProcessor(
+//        "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
 
 // -------------------------------------
 // declare the USB camera server and the
@@ -342,9 +346,9 @@ public static Drive autoDrive = new Drive(transmission,
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 // TODO change back to this once relays actually work
-public static DriveWithCamera driveWithCamera = new DriveWithCamera(
-        transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
-        frontUltraSonic, rearUltraSonic, gyro, axisCamera);
+//public static DriveWithCamera driveWithCamera = new DriveWithCamera(
+//        transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
+//        frontUltraSonic, rearUltraSonic, gyro, axisCamera);
 
 // this is a janky fix for the ringlight not working
 // public static DriveWithCamera driveWithCamera = new DriveWithCamera(
