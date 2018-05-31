@@ -49,27 +49,27 @@ public class DriveTesting
 		@Override
 		protected void usePIDOutput(double output)
 		{
-			Hardware.transmission.driveRaw(output, output);
+			pidOutput = output;
 		}
 
 		@Override
 		protected void initDefaultCommand()
 		{
+			this.setName("Testing PID Controller");
 		}
 	};
 
 	private static boolean pidDriveInchesInit = true;
+	
+	private static double pidOutput = 0;
 
-	public static boolean pidDriveInches(double p, double i, double d, double tolerance, double distance,
-			double acceleration)
+	public static boolean pidDriveInches(double speed, double distance, double acceleration)
 	{
 		if (pidDriveInchesInit)
 		{
-			testingPID.setName("Testing PID Controller");
 			Hardware.drive.resetEncoders();
+			testingPID.getPIDController().setInputRange(-speed, speed);
 			testingPID.getPIDController().reset();
-			testingPID.getPIDController().setPID(p, i, d);
-			testingPID.setAbsoluteTolerance(tolerance);
 			testingPID.setSetpoint(distance);
 			testingPID.enable();
 			pidDriveInchesInit = false;
@@ -81,14 +81,19 @@ public class DriveTesting
 			pidDriveInchesInit = true;
 			return true;
 		}
+		
+		Hardware.drive.accelerateTo(pidOutput, pidOutput, acceleration);
+		
 		return false;
 	}
 
 	public static void reset()
 	{
+		testingPID.disable();
 		testingPID.getPIDController().reset();
 		pidDriveInchesInit = true;
 		bangBangInit = true;
+		Hardware.drive.reset();
 	}
 
 }

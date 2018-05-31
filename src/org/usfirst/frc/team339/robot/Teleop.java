@@ -38,6 +38,7 @@ import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.Telemetry;
 import org.usfirst.frc.team339.Utils.drive.DrivePID;
 import org.usfirst.frc.team339.Utils.drive.DrivePID.PIDDriveFunction;
+import org.usfirst.frc.team339.Utils.drive.DriveTesting;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -255,7 +256,7 @@ public class Teleop
 		// && Hardware.scaleAlignment.allowAlignment == false
 		// && isBeckyTest == false
 		// && isTestingEncoderTurn == false)
-		if (isTestingDrive == false)
+		if (Hardware.demoModeSwitch.isOn() || (!isTestingBangBang && !isTestingPID))
 			Hardware.drive.drive(Hardware.leftDriver, Hardware.rightDriver);
 		// update
 
@@ -285,18 +286,6 @@ public class Teleop
 		}
 	} // end Periodic()
 
-	private static boolean allowAlignment = false;
-
-	private static boolean isTestingDrive = false;
-
-	private static boolean isTestingEncoderTurn = false;
-
-	private static int driveState = 0;
-
-	public static void alignScale()
-	{
-
-	}
 
 	private static boolean isBeckyTest = false;
 
@@ -371,27 +360,31 @@ public class Teleop
 	static DrivePID drivepid = new DrivePID(Hardware.transmission, Hardware.leftFrontDriveEncoder,
 			Hardware.rightFrontDriveEncoder, Hardware.gyro);
 
+	private static boolean isTestingPID = false;
+	private static boolean isTestingBangBang = false;
+
 	private static void testingDrive()
 	{
-		if (Hardware.rightDriver.getRawButton(10) == true)
-			Hardware.drive.resetEncoders();
-
-		if (Hardware.rightDriver.getRawButton(9) == true)
-			drivepid.tunePID(PIDDriveFunction.TURN_ENC);
-
-		if (Hardware.rightDriver.getRawButton(7) == true)
-			isTestingDrive = true;
-
-		if (isTestingDrive == true)
+		if (Hardware.rightDriver.getRawButton(8))
+			isTestingPID = true;
+		else if (Hardware.rightDriver.getRawButton(7))
+			isTestingBangBang = true;
+		else if(Hardware.rightDriver.getRawButton(9))
 		{
-			if (Hardware.rightDriver.getRawButton(8) == true || drivepid.turnDegrees(
-					(int) SmartDashboard.getNumber("Turn Degrees", 0), SmartDashboard.getNumber("Turn Power", 0)))
-			{
-				drivepid.reset();
-				isTestingDrive = false;
-			}
+			isTestingPID = false;
+			isTestingBangBang = false;
+			DriveTesting.reset();
 		}
 
+		if (isTestingPID)
+		{
+			if (DriveTesting.pidDriveInches(.5, 5 * 12, 1))
+				isTestingPID = false;
+		} else if (isTestingBangBang)
+		{
+			if (DriveTesting.bangBangDriveInches(.35, 5 * 12, 1))
+				isTestingBangBang = false;
+		}
 	} // end of testingDrive()
 
 	private static void liftTest()
@@ -762,9 +755,8 @@ public class Teleop
 
 		} else if (Hardware.cubeManipulator.getIntakeMotorSpeed() > Hardware.cubeManipulator.INTAKE_STOP_WITH_CUBE
 				+ .1 /*
-						 * the .1 here is just a magic number that wasn't worth
-						 * making a constant for; is meant to prevent false
-						 * positives in cases where the getIntakeMotorSpeed is
+						 * the .1 here is just a magic number that wasn't worth making a constant for;
+						 * is meant to prevent false positives in cases where the getIntakeMotorSpeed is
 						 * returning .2000001 or something
 						 */)
 		{
