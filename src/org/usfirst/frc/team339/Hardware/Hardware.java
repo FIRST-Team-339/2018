@@ -328,7 +328,7 @@ public class Hardware
 	// ------------------------------------
 	// Drive system
 	// ------------------------------------
-	public static Drive autoDrive = new Drive(transmission, leftRearDriveEncoder, rightRearDriveEncoder,
+	public static Drive drive = new Drive(transmission, leftRearDriveEncoder, rightRearDriveEncoder,
 			leftFrontDriveEncoder, rightFrontDriveEncoder, gyro);
 	// TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 

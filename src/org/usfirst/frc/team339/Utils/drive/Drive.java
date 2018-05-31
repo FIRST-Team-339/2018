@@ -175,10 +175,19 @@ public class Drive
 			return true;
 		}
 
-		double innerCircle = 2 * (radius - turningRadius) * Math.PI;// The circumference of the smaller circle
-		double outerCircle = 2 * (radius + turningRadius) * Math.PI;// The circumference of the larger circle
+		double innerCircle = 2 * (radius - turningRadius) * Math.PI;// The
+																	// circumference
+																	// of the
+																	// smaller
+																	// circle
+		double outerCircle = 2 * (radius + turningRadius) * Math.PI;// The
+																	// circumference
+																	// of the
+																	// larger
+																	// circle
 
-		// Determines which way we are turning, based on if the radius is positive or
+		// Determines which way we are turning, based on if the radius is
+		// positive or
 		// negative.
 		double leftSide = 0, rightSide = 0;
 		if (radius > 0)
@@ -335,6 +344,18 @@ public class Drive
 	}
 
 	/**
+	 * Drives the robot with the use of two values, for Tank drive.
+	 * This DOES use gear ratios and joystick deadbands.
+	 * @param leftVal From -1.0 (backwards) to 1.0 (forwards)
+	 * @param rightVal From -1.0 (backwards) to 1.0 (forwards)
+	 */
+	public void drive(double leftVal, double rightVal)
+	{
+		if (transmission instanceof TankTransmission)
+			((TankTransmission) transmission).drive(leftVal, rightVal);
+	}
+
+	/**
 	 * Drives the robot with a omni-directional drive, with a single 3 axis
 	 * joystick.
 	 * 
@@ -346,6 +367,21 @@ public class Drive
 			((MecanumTransmission) transmission).drive(joystick);
 		else if (transmission instanceof SwerveTransmission)
 			((SwerveTransmission) transmission).drive(joystick);
+	}
+
+	/**
+	 * Drives the robot with a omni-directional drive, with 3 separate raw values.
+	 * This DOES use deadbands and gear ratios.
+	 * @param magnitude Speed, from 0.0 to 1.0
+	 * @param direction Angle for strafing, from -180 to 180
+	 * @param rotation Speed in turns, from -1.0 (left) to 1.0 (right)
+	 */
+	public void drive(double magnitude, double direction, double rotation)
+	{
+		if (transmission instanceof MecanumTransmission)
+			((MecanumTransmission) transmission).drive(magnitude, direction, rotation);
+		else if (transmission instanceof SwerveTransmission)
+			((SwerveTransmission) transmission).drive(magnitude, direction, rotation);
 	}
 
 	/**
@@ -492,6 +528,23 @@ public class Drive
 		// return distance required to brake
 		return (this.distanceRequiredToBrake);
 	} // end getBrakeStoppingDistance()
+
+	/**
+	 * @return the current software gear, starting at 0 as the slowest.
+	 */
+	public int getCurrentGear()
+	{
+		return transmission.getCurrentGear();
+	}
+
+	/**
+	 * @return the current ratio that is being multiplied onto the
+	 *  drive inputs, from 0.0 to 1.0
+	 */
+	public double getCurrentGearRatio()
+	{
+		return transmission.getCurrentGearRatio();
+	}
 
 	/**
 	 * @return the defaultAcceleration, in seconds
@@ -759,6 +812,16 @@ public class Drive
 	}
 
 	/**
+	 * Sets all the gear ratios of the robot, from lowest to highest.
+	 * This corresponds with gear 0, gear 1, gear 2, etc.
+	 * @param ratios The ratios, from 0.0 to 1.0.
+	 */
+	public void setAllGearPercentages(double... ratios)
+	{
+		this.transmission.setAllGearPercentages(ratios);
+	}
+
+	/**
 	 * Sets the deadband for brake()... how close to stopped we are.
 	 * 
 	 * @param ticks
@@ -895,6 +958,25 @@ public class Drive
 	}
 
 	/**
+	 * Sets the current gear of the robot, 0 being the lowest max being the highest.
+	 * @param gear 
+	 */
+	public void setGear(int gear)
+	{
+		this.transmission.setGear(gear);
+	}
+
+	/**
+	 * Sets a single gear to the given percentage.
+	 * @param gear 0 is the lowest, increases.
+	 * @param percent value from 0.0 to 1.0
+	 */
+	public void setGearPercentage(int gear, double percent)
+	{
+		this.transmission.setGearPercentage(gear, percent);
+	}
+
+	/**
 	 * 
 	 * @param newGyro
 	 *            - Gyro for drive to use
@@ -904,6 +986,16 @@ public class Drive
 	public Gyro setGyro(GyroBase newGyro)
 	{
 		return (this.gyro = newGyro);
+	}
+
+	/**
+	 * Sets between what negative and positive percent the joystick 
+	 * will return 0, and scales the remaining accordingly.
+	 * @param value between 0.0 and 1.0
+	 */
+	public void setJoystickDeadband(double value)
+	{
+		this.transmission.setJoystickDeadband(value);
 	}
 
 	/**
@@ -928,6 +1020,26 @@ public class Drive
 	public void setTurningRadius(double radius)
 	{
 		turningRadius = radius;
+	}
+
+	/**
+	 * Shifts the robot's current software gears either down or up,
+	 * based on a button. This also makes sure that if a button is
+	 * held, it doesn't constantly cycle through gears.
+	 * @param upShiftButton Button that controls the up shifting
+	 * @param downShiftButton Button that controls the down shifting
+	 */
+	public void shiftGears(boolean upShiftButton, boolean downShiftButton)
+	{
+		this.transmission.shiftGears(upShiftButton, downShiftButton);
+	}
+
+	/**
+	 * Set all motor percentages to 0.
+	 */
+	public void stop()
+	{
+		this.transmission.stop();
 	}
 
 	/**
