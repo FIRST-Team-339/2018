@@ -37,7 +37,6 @@ import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID.PIDDriveFunction;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.Telemetry;
-import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -194,36 +193,47 @@ public static void periodic ()
     // --------------------------------------------------------------
     // CAN TESTING CODE
     // --------------------------------------------------------------
-    
-    
-    //tank code
-//    if (Hardware.leftDriver.getY() > 0)
-//        leftInput = Hardware.leftDriver.getY() * .8 + .2;
-//    else if (Hardware.leftDriver.getY() < 0)
-//        leftInput = Hardware.leftDriver.getY() * .8 - .2;
-//    else
-//        leftInput = 0.0;
-//    
-//    if (Hardware.rightDriver.getY() > 0)
-//        rightInput = Hardware.rightDriver.getY() * .8 + .2;
-//    else if (Hardware.rightDriver.getY() < 0)
-//        rightInput = Hardware.rightDriver.getY() * .8 - .2;
-//    else
-//        rightInput = 0.0;
-//
-//    
-//    Hardware.rightRearCANMotor.follow(Hardware.rightFrontCANMotor);
-//    Hardware.leftRearCANMotor.follow(Hardware.leftFrontCANMotor);
-//    
-//    
+
+
+    // tank code
+    if (Hardware.leftDriver.getY() > .2)
+        leftInput = Hardware.leftDriver.getY() * .8 - .2;
+    else if (Hardware.leftDriver.getY() < -.2)
+        leftInput = Hardware.leftDriver.getY() * .8 + .2;
+    else
+        leftInput = 0.0;
+
+    if (Hardware.rightDriver.getY() > .2)
+        rightInput = Hardware.rightDriver.getY() * .8 - .2;
+    else if (Hardware.rightDriver.getY() < -.2)
+        rightInput = Hardware.rightDriver.getY() * .8 + .2;
+    else
+        rightInput = 0.0;
+
+    rightInput *= .4;
+    leftInput *= .4;
+
+
+    Hardware.rightRearCANMotor.follow(Hardware.rightFrontCANMotor);
+    Hardware.leftRearCANMotor.follow(Hardware.leftFrontCANMotor);
+
+
+    // Hardware.leftRearCANMotor.set(ControlMode.PercentOutput,
+    // Hardware.leftOperator.getY());
+    //
+    // Hardware.rightRearCANMotor.set(ControlMode.PercentOutput,
+    // Hardware.rightOperator.getY());
+
     Hardware.rightFrontCANMotor.set(ControlMode.PercentOutput,
-            Hardware.rightDriver.getY());
+            rightInput);
+
     Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
-            Hardware.leftDriver.getY());    
-    System.out.println("CAN " + Hardware.rightFrontCANMotor.getMotorOutputPercent()); 
-    
-    
-    
+            leftInput);
+    // System.out.println("CAN " +
+    // Hardware.rightFrontCANMotor.getMotorOutputPercent());
+
+
+
     // --------------------------------------------------------------
     if (Hardware.demoModeSwitch.isOn() == false)
         // We are in COMPETITION MODE!!!
@@ -266,33 +276,33 @@ public static void periodic ()
 
     if (Hardware.demoModeSwitch.isOn() == false)
         // We are in COMPETITION MODE!!!
-        //TODO @ANE uncomment
-//        Hardware.axisCamera
-//                .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-//                        && Hardware.leftOperator.getRawButton(7));
+        // TODO @ANE uncomment
+        // Hardware.axisCamera
+        // .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+        // && Hardware.leftOperator.getRawButton(7));
 
-    // =================================================================
-    // DRIVING CODE
-    // =================================================================
-    // if the right driver button 3 is pressed, shift up a gear, if the left
-    // driver button 3 id pressed, shift down a gear
-    if (Hardware.demoModeSwitch.isOn() == false)
-        // We are in COMPETITION MODE!!!
-        Hardware.transmission.shiftGears(
-                Hardware.rightDriver.getRawButton(3),
-                Hardware.leftDriver.getRawButton(3));
-    else
-        {
-        // We are in DEMO MODE!!!
-        if (Hardware.leftDriver.getRawButton(7) == true)
-            Hardware.transmission.setGearPercentage(0, .6);
-        else if (Hardware.leftDriver.getRawButton(8) == true)
-            Hardware.transmission.setGearPercentage(0,
-                    Hardware.delayPot.get(0, .6));
-        else if (Hardware.leftDriver.getRawButton(9) == true)
-            Hardware.transmission.setGearPercentage(0, .4);
+        // =================================================================
+        // DRIVING CODE
+        // =================================================================
+        // if the right driver button 3 is pressed, shift up a gear, if the left
+        // driver button 3 id pressed, shift down a gear
+        if (Hardware.demoModeSwitch.isOn() == false)
+            // We are in COMPETITION MODE!!!
+            Hardware.transmission.shiftGears(
+                    Hardware.rightDriver.getRawButton(3),
+                    Hardware.leftDriver.getRawButton(3));
+        else
+            {
+            // We are in DEMO MODE!!!
+            if (Hardware.leftDriver.getRawButton(7) == true)
+                Hardware.transmission.setGearPercentage(0, .6);
+            else if (Hardware.leftDriver.getRawButton(8) == true)
+                Hardware.transmission.setGearPercentage(0,
+                        Hardware.delayPot.get(0, .6));
+            else if (Hardware.leftDriver.getRawButton(9) == true)
+                Hardware.transmission.setGearPercentage(0, .4);
 
-        }
+            }
 
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
@@ -347,76 +357,76 @@ public static void alignScale ()
 
 private static boolean isBeckyTest = false;
 
-//private static void beckyTest ()
-//{
-//    // Hardware.ringLightRelay.set(Value.kForward);
-//    if (Hardware.rightOperator.getRawButton(2) == true)
-//        {
-//        Hardware.transmission.setForAutonomous();
-//        isBeckyTest = true;
-//        }
+// private static void beckyTest ()
+// {
+// // Hardware.ringLightRelay.set(Value.kForward);
+// if (Hardware.rightOperator.getRawButton(2) == true)
+// {
+// Hardware.transmission.setForAutonomous();
+// isBeckyTest = true;
+// }
 //
-//    if (isBeckyTest == true)
-//        {
+// if (isBeckyTest == true)
+// {
 //
-//        if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
-//            {
-//            Hardware.transmission
-//                    .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
-//            isBeckyTest = false;
-//            }
-//        Hardware.tempRelay.set(true);
-//        // Hardware.tempRelay.set(true);
-//        Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-//        }
+// if (Hardware.driveWithCamera.driveToSwitch(.3) == true)
+// {
+// Hardware.transmission
+// .setForTeleop(Robot.KILROY_XV_GEAR_2_SPEED);
+// isBeckyTest = false;
+// }
+// Hardware.tempRelay.set(true);
+// // Hardware.tempRelay.set(true);
+// Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+// }
 //
-//    // if (Hardware.rightOperator.getRawButton(2))
-//    // {
-//    // Hardware.tempRelay.set(true);
-//    // }
-//    // else
-//    // {
-//    // Hardware.tempRelay.set(false);
-//    // }
-//    //
-//    // if(Hardware.rightOperator.getRawButton(3))
-//    // {
-//    // Hardware.ringLightRelay.setDirection(Direction.kForward);
-//    // }
-//    // else
-//    // {
-//    // Hardware.ringLightRelay.setDirection(Direction.kReverse);
-//    // }
+// // if (Hardware.rightOperator.getRawButton(2))
+// // {
+// // Hardware.tempRelay.set(true);
+// // }
+// // else
+// // {
+// // Hardware.tempRelay.set(false);
+// // }
+// //
+// // if(Hardware.rightOperator.getRawButton(3))
+// // {
+// // Hardware.ringLightRelay.setDirection(Direction.kForward);
+// // }
+// // else
+// // {
+// // Hardware.ringLightRelay.setDirection(Direction.kReverse);
+// // }
 //
-//    // if (Hardware.leftOperator.getRawButton(7))
-//    // {
-//    // Hardware.ringLightRelay.set(Value.kForward);
-//    // }
-//    // else
-//    // {
-//    // Hardware.ringLightRelay.set(Value.kReverse);
-//    // }
+// // if (Hardware.leftOperator.getRawButton(7))
+// // {
+// // Hardware.ringLightRelay.set(Value.kForward);
+// // }
+// // else
+// // {
+// // Hardware.ringLightRelay.set(Value.kReverse);
+// // }
 //
-//    // Hardware.axisCamera.saveImage(ImageType.RAW);
+// // Hardware.axisCamera.saveImage(ImageType.RAW);
 //
-//    // Hardware.driveWithCamera.getCameraCenterValue();
+// // Hardware.driveWithCamera.getCameraCenterValue();
 //
-//    // if (Hardware.visionTestButton.isOnCheckNow())
-//    // {
-//    // Hardware.axisCamera.processImage();
-//    // Hardware.autoDrive.visionTest(1.3, .6);
-//    // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
-//    // for (int i = 0; i < Hardware.axisCamera
-//    // .getParticleReports().length; i++)
-//    // {
-//    // System.out.println("The center of " + i + " is: "
-//    // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
-//    // }
-//    // System.out.println("The center is : " + (Hardware.axisCamera
-//    // .getNthSizeBlob(0).center.x
-//    // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
-//    // }
-//} // end beckyTest()
+// // if (Hardware.visionTestButton.isOnCheckNow())
+// // {
+// // Hardware.axisCamera.processImage();
+// // Hardware.autoDrive.visionTest(1.3, .6);
+// // Hardware.axisCamera.saveImage(ImageType.PROCESSED);
+// // for (int i = 0; i < Hardware.axisCamera
+// // .getParticleReports().length; i++)
+// // {
+// // System.out.println("The center of " + i + " is: "
+// // + Hardware.axisCamera.getNthSizeBlob(i).center.x);
+// // }
+// // System.out.println("The center is : " + (Hardware.axisCamera
+// // .getNthSizeBlob(0).center.x
+// // + Hardware.axisCamera.getNthSizeBlob(1).center.x) / 2);
+// // }
+// } // end beckyTest()
 
 static DrivePID drivepid = new DrivePID(Hardware.transmission,
         Hardware.leftFrontDriveEncoder,
@@ -480,6 +490,20 @@ private static void liftTest ()
  */
 public static void printStatements ()
 {
+    System.out.println("pdp 0 = " + Hardware.pdp.getCurrent(0));
+    System.out.println("pdp 1 = " + Hardware.pdp.getCurrent(1));
+    System.out.println("pdp 2 = " + Hardware.pdp.getCurrent(2) + "\n");
+
+    System.out.println("pdp 3 = " + Hardware.pdp.getCurrent(3));
+    System.out.println("pdp 4 = " + Hardware.pdp.getCurrent(4));
+    System.out.println("pdp 5 = " + Hardware.pdp.getCurrent(5) + "\n");
+
+    System.out.println("pdp 6 = " + Hardware.pdp.getCurrent(6));
+    System.out.println("pdp 7 = " + Hardware.pdp.getCurrent(7));
+    System.out.println("pdp 8 = " + Hardware.pdp.getCurrent(8));
+
+
+
     if (Hardware.driverStation.isFMSAttached() == false)
         {
         // ==================================
@@ -877,9 +901,9 @@ public static final int INTAKE_ARM_SERVO_DOWN_POSITION = 180;
 
 public static final double FORKLIFT_HEIGHT_TO_PUT_DOWN_SERVO = 20.0;
 
-//================================
-//Variables
-//================================
+// ================================
+// Variables
+// ================================
 public static double rightInput = 0.0;
 
 public static double leftInput = 0.0;
