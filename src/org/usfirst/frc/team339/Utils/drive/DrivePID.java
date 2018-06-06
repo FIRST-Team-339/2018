@@ -4,9 +4,11 @@ import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.Utils.KilroyPID;
+
 import edu.wpi.first.wpilibj.GyroBase;
+import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 /**
  * An extension of the Drive class that overrides the methods to use PID loops
@@ -52,6 +54,11 @@ public class DrivePID extends Drive
 		encoders[1] = rightRearEncoder;
 		encoders[2] = leftFrontEncoder;
 		encoders[3] = rightFrontEncoder;
+
+		driveStraightInchesPID.setName("Drive Straight Inches");
+		driveStraightPID_enc.setName("Encoder Drive Straight");
+		driveStraightPID_gyro.setName("Gyro Drive Straight");
+
 	}
 
 	/**
@@ -78,6 +85,7 @@ public class DrivePID extends Drive
 
 	/**
 	 * Resets the all drive function's initialization.
+	 * @return 
 	 */
 	public void reset()
 	{
@@ -100,8 +108,10 @@ public class DrivePID extends Drive
 	 *            the Integral value
 	 * @param d
 	 *            the Derivative value
+	 * @param tolerance 
+	 * 				How far when we are considered "on target", in default sensor units.
 	 */
-	public void setPID(PIDDriveFunction driveFunction, double p, double i, double d)
+	public void setPIDTolerance(PIDDriveFunction driveFunction, double p, double i, double d, double tolerance)
 	{
 		switch (driveFunction)
 		{
@@ -109,22 +119,31 @@ public class DrivePID extends Drive
 			this.driveStraightPIDTolerance[0] = p;
 			this.driveStraightPIDTolerance[1] = i;
 			this.driveStraightPIDTolerance[2] = d;
+			this.driveStraightPIDTolerance[3] = tolerance;
 			return;
 		case DRIVESTRAIGHT_GYRO:
 			this.driveStraightGyroPIDTolerance[0] = p;
 			this.driveStraightGyroPIDTolerance[1] = i;
 			this.driveStraightGyroPIDTolerance[2] = d;
+			this.driveStraightGyroPIDTolerance[3] = tolerance;
 			return;
 		case TURN_ENC:
 			this.turnPIDTolerance[0] = p;
 			this.turnPIDTolerance[1] = i;
 			this.turnPIDTolerance[2] = d;
+			this.turnPIDTolerance[3] = tolerance;
 			return;
 		case TURN_GYRO:
 			this.turnGyroPIDTolerance[0] = p;
 			this.turnGyroPIDTolerance[1] = i;
 			this.turnGyroPIDTolerance[2] = d;
+			this.turnGyroPIDTolerance[3] = tolerance;
 			return;
+		case DRIVESTRAIGHTINCHES:
+			this.driveStraightInchesPIDTolerance[0] = p;
+			this.driveStraightInchesPIDTolerance[1] = i;
+			this.driveStraightInchesPIDTolerance[2] = d;
+			this.driveStraightInchesPIDTolerance[3] = tolerance;
 		default:
 			return;
 		}
@@ -294,113 +313,87 @@ public class DrivePID extends Drive
 		driveStraightLastTime = System.currentTimeMillis();
 	}
 
+	/**
+	 * Drives a set number of inches forwards in a straight line, based on encoder distance, correcting for 
+	 * misalignment based on Gyro and encoder PID tunings.
+	 * 
+	 * If tuned properly, this will give the robot a nice acceleration and deceleration curve,
+	 *  while correcting it's position.
+	 * 
+	 * @param speed
+	 * 			The robot's maximum speed after acceleration, in percentage
+	 * @param distance
+	 * 			How far the robot must travel, in inches
+	 * @param acceleration
+	 * 			How fast to accelerate from 0, in seconds
+	 * @param isUsingGyro 
+	 * 			Whether or not the driveStraight part of this is using the gyro for correction. 
+	 * 			If false, the encoders are used.
+	 * @return
+	 * 		Whether or not the robot has reached it's destination.
+	 */
+	public boolean driveStraightInches(double speed, double distance, double acceleration, boolean isUsingGyro)
+	{
+		// On initialization, reset encoders and the PID controller, set
+		// PIDTolerance values and setpoint,
+		/// set maximum speed, and begin moving.
+		if (driveStraightInchesInit == true)
+		{
+			resetEncoders();
+			driveStraightInchesPID.getPIDController().setPID(driveStraightInchesPIDTolerance[0],
+					driveStraightInchesPIDTolerance[1], driveStraightInchesPIDTolerance[2]);
+			driveStraightInchesPID.setAbsoluteTolerance(driveStraightInchesPIDTolerance[3]);
+			driveStraightInchesPID.getPIDController().reset();
+			driveStraightInchesPID.setSetpoint(distance);
+			driveStraightInchesPID.setOutputRange(-speed, speed);
+			driveStraightInchesPID.enable();
+			driveStraightInchesInit = false;
+		}
+
+		// If we have reached the setpoint, then disable the PID loop and stop
+		// moving.
+		if (driveStraightInchesPID.onTarget() == true)
+		{
+			this.stop();
+			driveStraightInchesPID.disable();
+			driveStraightInchesInit = true;
+			return true;
+		}
+
+		// If we have not reached the setpoint, then keep driving.
+		driveStraight(this.driveStraightInchesSpeed, acceleration, isUsingGyro);
+
+		return false;
+	}
+
 	// ======================PID Tuning=====================
 
-	/**
+	/*
 	 * Tunes the PID loop for turning via encoders.
-	 * <p>
-	 * P - Proportional function: Value adds P percent per inch the encoder is off
-	 * currently.
-	 * <p>
-	 * I - Integral function: Value adds I percent per inch the encoder has been off
-	 * cumulatively
-	 * <p>
-	 * D - Derivative function: Value adds D percent per inch per second the error
-	 * is changing in relation to the setpoint (slope of current position vs error
-	 * get smaller as the controller slows down to reach it's target)
-	 * <p>
+	 * 
+	 * P - Proportional function: Value adds P percent per inch the encoder is
+	 * off currently.
+	 * 
+	 * I - Integral function: Value adds I percent per inch the encoder has been
+	 * off cumulatively
+	 * 
+	 * D - Derivative function: Value adds D percent per inch per second the
+	 * error is changing in relation to the setpoint (slope of current position
+	 * vs error get smaller as the controller slows down to reach it's target)
+	 * 
 	 * A high P value will give you a more aggressive correction, but may induce
-	 * oscillation: Try to avoid that... A high I value will correct any long term
-	 * "drifting to a side" problems, but again may induce oscillation. A high D
-	 * value will give you a longer drawn out deceleration curve, and may fix
-	 * oscillation, but will make the robot take longer reach it's setpoint.
-	 * <p>
-	 * A low tolerance will result in more accurate turns, but may induce a little
-	 * "wiggle" at the end (which is not bad, but takes more time.)
-	 * <p>
+	 * oscillation: Try to avoid that... A high I value will correct any long
+	 * term "drifting to a side" problems, but again may induce oscillation. A
+	 * high D value will give you a longer drawn out deceleration curve, and may
+	 * fix oscillation, but will make the robot take longer reach it's setpoint.
+	 * 
+	 * A low tolerance will result in more accurate turns, but may induce a
+	 * little "wiggle" at the end (which is not bad, but takes more time.)
+	 * 
 	 * The point of using a PID loop for turning is to increase the speed of the
 	 * turn and reduce overshoot / undershoot.
 	 * 
-	 * @param type
-	 *            Describes which PID loop will be tuned
 	 */
-	public void tunePID(PIDDriveFunction type)
-	{
-		switch (type)
-		{
-		case TURN_ENC:
-			if (tuneTurnDegreesPIDInit == true)
-			{
-				SmartDashboard.putNumber("Turn P", turnPIDTolerance[0]);
-				SmartDashboard.putNumber("Turn I", turnPIDTolerance[1]);
-				SmartDashboard.putNumber("Turn D", turnPIDTolerance[2]);
-				SmartDashboard.putNumber("Turn Tolerance", turnPIDTolerance[3]);
-				tuneTurnDegreesPIDInit = false;
-			}
-
-			this.turnPIDTolerance[0] = SmartDashboard.getNumber("Turn P", turnPIDTolerance[0]);
-			this.turnPIDTolerance[1] = SmartDashboard.getNumber("Turn I", turnPIDTolerance[1]);
-			this.turnPIDTolerance[2] = SmartDashboard.getNumber("Turn D", turnPIDTolerance[2]);
-			this.turnPIDTolerance[3] = SmartDashboard.getNumber("Turn Tolerance", turnPIDTolerance[3]);
-			return;
-		case TURN_GYRO:
-			if (tuneTurnDegreesGyroPIDInit == true)
-			{
-				SmartDashboard.putNumber("Turn Gyro P", turnGyroPIDTolerance[0]);
-				SmartDashboard.putNumber("Turn Gyro I", turnGyroPIDTolerance[1]);
-				SmartDashboard.putNumber("Turn Gyro D", turnGyroPIDTolerance[2]);
-				SmartDashboard.putNumber("Turn Gyro Tolerance", turnGyroPIDTolerance[3]);
-				tuneTurnDegreesGyroPIDInit = false;
-			}
-
-			this.turnGyroPIDTolerance[0] = SmartDashboard.getNumber("Turn Gyro P", turnGyroPIDTolerance[0]);
-			this.turnGyroPIDTolerance[1] = SmartDashboard.getNumber("Turn Gyro I", turnGyroPIDTolerance[1]);
-			this.turnGyroPIDTolerance[2] = SmartDashboard.getNumber("Turn Gyro D", turnGyroPIDTolerance[2]);
-			this.turnGyroPIDTolerance[3] = SmartDashboard.getNumber("Turn Gyro Tolerance", turnGyroPIDTolerance[3]);
-			return;
-		case DRIVESTRAIGHT_ENC:
-			if (tuneDriveStraightPIDInit == true)
-			{
-				SmartDashboard.putNumber("Drive Straight P", driveStraightPIDTolerance[0]);
-				SmartDashboard.putNumber("Drive Straight I", driveStraightPIDTolerance[1]);
-				SmartDashboard.putNumber("Drive Straight D", driveStraightPIDTolerance[2]);
-				SmartDashboard.putNumber("Drive Straight Tolerance", driveStraightPIDTolerance[3]);
-				tuneDriveStraightPIDInit = false;
-			}
-
-			this.driveStraightPIDTolerance[0] = SmartDashboard.getNumber("Drive Straight P",
-					driveStraightPIDTolerance[0]);
-			this.driveStraightPIDTolerance[1] = SmartDashboard.getNumber("Drive Straight I",
-					driveStraightPIDTolerance[1]);
-			this.driveStraightPIDTolerance[2] = SmartDashboard.getNumber("Drive Straight D",
-					driveStraightPIDTolerance[2]);
-			this.driveStraightPIDTolerance[3] = SmartDashboard.getNumber("Drive Straight Tolerance",
-					driveStraightPIDTolerance[3]);
-			return;
-		case DRIVESTRAIGHT_GYRO:
-			if (tuneDriveStraightGyroInit == true)
-			{
-				SmartDashboard.putNumber("Drive Straight Gyro P", driveStraightGyroPIDTolerance[0]);
-				SmartDashboard.putNumber("Drive Straight Gyro I", driveStraightGyroPIDTolerance[1]);
-				SmartDashboard.putNumber("Drive Straight Gyro D", driveStraightGyroPIDTolerance[2]);
-				SmartDashboard.putNumber("Drive Straight Gyro Tolerance", driveStraightGyroPIDTolerance[3]);
-				tuneDriveStraightGyroInit = false;
-			}
-
-			this.driveStraightGyroPIDTolerance[0] = SmartDashboard.getNumber("Drive Straight Gyro P",
-					driveStraightPIDTolerance[0]);
-			this.driveStraightGyroPIDTolerance[1] = SmartDashboard.getNumber("Drive Straight Gyro I",
-					driveStraightPIDTolerance[1]);
-			this.driveStraightGyroPIDTolerance[2] = SmartDashboard.getNumber("Drive Straight Gyro D",
-					driveStraightPIDTolerance[2]);
-			this.driveStraightGyroPIDTolerance[3] = SmartDashboard.getNumber("Drive Straight Gyro Tolerance",
-					driveStraightPIDTolerance[3]);
-			return;
-		default:
-			return;
-		}
-
-	}
 
 	/**
 	 * Describes the different drive-by-pid functions
@@ -416,7 +409,9 @@ public class DrivePID extends Drive
 		/** Driving straight via encoders */
 		DRIVESTRAIGHT_ENC,
 		/** Driving straight via gyro sensor */
-		DRIVESTRAIGHT_GYRO
+		DRIVESTRAIGHT_GYRO,
+		/**Driving straight X number of inches*/
+		DRIVESTRAIGHTINCHES
 	}
 
 	private final PIDSubsystem driveStraightPID_enc = new PIDSubsystem(0, 0, 0)
@@ -461,6 +456,29 @@ public class DrivePID extends Drive
 		}
 	};
 
+	private final PIDSubsystem driveStraightInchesPID = new PIDSubsystem(0, 0, 0)
+	{
+
+		@Override
+		protected double returnPIDInput()
+		{
+			return (getEncoderDistanceAverage(MotorPosition.LEFT) + getEncoderDistanceAverage(MotorPosition.RIGHT))
+					/ 2.0;
+		}
+
+		@Override
+		protected void usePIDOutput(double output)
+		{
+			driveStraightInchesSpeed = output;
+		}
+
+		@Override
+		protected void initDefaultCommand()
+		{
+		}
+
+	};
+
 	private final KilroyPID[] encoderPID;
 
 	private final KilroyPID[] gyroPID;
@@ -469,22 +487,16 @@ public class DrivePID extends Drive
 
 	// ======================Variables======================
 
-	private boolean tuneTurnDegreesPIDInit = true;
-
 	private double[] turnPIDTolerance =
 			// {P, I, D, Tolerance}
 			{ 0, 0, 0, 0 };
 
 	private boolean turnDegreesInit = true;
 
-	private boolean tuneTurnDegreesGyroPIDInit = true;
-
 	private double[] turnGyroPIDTolerance =
 	{ 0, 0, 0, 0 };
 
 	private boolean turnDegreesGyroInit = true;
-
-	private boolean tuneDriveStraightPIDInit = true;
 
 	private double driveStraightPIDOutput_enc = 0;
 
@@ -494,11 +506,29 @@ public class DrivePID extends Drive
 			// {P, I, D, Tolerance}
 			{ 0, 0, 0, 0 };
 
-	private boolean tuneDriveStraightGyroInit = true;
-
 	private double[] driveStraightGyroPIDTolerance =
 	{ 0, 0, 0, 0 };
 
 	private double driveStraightPIDOutput_gyro = 0;
+
+	private boolean driveStraightInchesInit = true;
+
+	private double driveStraightInchesSpeed = 0;
+
+	private double[] driveStraightInchesPIDTolerance =
+	{ 0, 0, 0, 0 };
+
+	class PIDTuner
+	{
+		SendableBase sendable = new SendableBase()
+		{
+			@Override
+			public void initSendable(SendableBuilder builder)
+			{
+				builder.setSmartDashboardType("PIDController");
+			}
+		};
+
+	}
 
 }
