@@ -37,6 +37,8 @@ import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.usfirst.frc.team339.Utils.ErrorMessage;
+
 /**
  * This class contains all of the user code for the Autonomous part of the
  * match, namely, the Init and Periodic code
@@ -116,6 +118,11 @@ public static void init ()
  */
 public static void periodic ()
 {
+	ErrorMessage Msg = new ErrorMessage();
+	Msg.printError("StringError", true);
+	
+	
+	
     // Hardware.tempRelay.set(true);
 
     // if (Hardware.redLight.isOn() && hasSeenTape == false)
