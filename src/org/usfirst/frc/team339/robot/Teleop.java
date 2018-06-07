@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID.PIDDriveFunction;
@@ -197,31 +198,33 @@ public static void periodic ()
     
     
     //tank code
-//    if (Hardware.leftDriver.getY() > 0)
-//        leftInput = Hardware.leftDriver.getY() * .8 + .2;
-//    else if (Hardware.leftDriver.getY() < 0)
-//        leftInput = Hardware.leftDriver.getY() * .8 - .2;
-//    else
-//        leftInput = 0.0;
+    if (Hardware.leftDriver.getY() > 0)
+        leftInput = Hardware.leftDriver.getY() * .8 + .2;
+    else if (Hardware.leftDriver.getY() < 0)
+        leftInput = Hardware.leftDriver.getY() * .8 - .2;
+    else
+        leftInput = 0.0;
+    
+    if (Hardware.rightDriver.getY() > 0)
+        rightInput = Hardware.rightDriver.getY() * .8 + .2;
+    else if (Hardware.rightDriver.getY() < 0)
+        rightInput = Hardware.rightDriver.getY() * .8 - .2;
+    else
+        rightInput = 0.0;
+
+    
+    Hardware.rightRearCANMotor.follow(Hardware.rightFrontCANMotor);
+    Hardware.leftRearCANMotor.follow(Hardware.leftFrontCANMotor);
 //    
-//    if (Hardware.rightDriver.getY() > 0)
-//        rightInput = Hardware.rightDriver.getY() * .8 + .2;
-//    else if (Hardware.rightDriver.getY() < 0)
-//        rightInput = Hardware.rightDriver.getY() * .8 - .2;
-//    else
-//        rightInput = 0.0;
-//
-//    
-//    Hardware.rightRearCANMotor.follow(Hardware.rightFrontCANMotor);
-//    Hardware.leftRearCANMotor.follow(Hardware.leftFrontCANMotor);
-//    
+////    
+//    Hardware.leftFrontCANMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 //    
     Hardware.rightFrontCANMotor.set(ControlMode.PercentOutput,
-            Hardware.rightDriver.getY());
+            rightInput);
     Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
-            Hardware.leftDriver.getY());    
-    System.out.println("CAN " + Hardware.rightFrontCANMotor.getMotorOutputPercent()); 
-    
+            leftInput);    
+//    System.out.println("CAN " + Hardware.rightFrontCANMotor.getMotorOutputPercent()); 
+//    
     
     
     // --------------------------------------------------------------
