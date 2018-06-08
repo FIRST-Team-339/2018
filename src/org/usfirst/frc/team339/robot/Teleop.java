@@ -33,7 +33,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
-import org.usfirst.frc.team339.Utils.Telemetry;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -58,8 +57,13 @@ public class Teleop
 
 public static void init ()
 {
-    // User code goes below here
 
+
+    // User code goes below here
+    // temporary timer
+    Hardware.telemetry.printToShuffleboard();
+    Hardware.testTimer.start();
+    Hardware.telemetry.setTimeBetweenPrints(10000);
     // --------------------------------------
     // reset the MotorSafetyHelpers for each
     // of the drive motors
@@ -277,8 +281,41 @@ public static void periodic ()
     // ------------------------------------
 
     // printStatements();
-    Telemetry.printToConsole();
-    Telemetry.printToShuffleboard();
+
+
+
+
+    Hardware.telemetry.printToConsole();
+
+
+    // temporary timer
+
+
+
+
+
+
+
+
+
+    if (Hardware.testTimer.get() >= 30
+            && Hardware.testTimerFlag == false)
+        {
+        Hardware.telemetry.setTimeBetweenPrints(1000);
+        Hardware.testTimer.reset();
+
+
+        Hardware.testTimerFlag = true;
+
+        }
+    if (Hardware.testTimer.get() >= 30
+            && Hardware.testTimerFlag == true)
+        {
+        Hardware.telemetry.setTimeBetweenPrints(5000);
+        Hardware.testTimer.reset();
+
+        Hardware.testTimerFlag = false;
+        }
 
     // -------------------------------------------
     // Put anything you need to test, but the
@@ -503,12 +540,12 @@ public static void printStatements ()
         // =================================
         // System.out.println(
         // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-        SmartDashboard.putNumber("R Drive Motor",
-                Hardware.rightDriveMotor.get());
+        // SmartDashboard.putNumber("R Drive Motor",
+        // Hardware.rightDriveMotor.get());
         // System.out.println(
         // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-        SmartDashboard.putNumber("L Drive Motor",
-                Hardware.leftDriveMotor.get());
+        // SmartDashboard.putNumber("L Drive Motor",
+        // Hardware.leftDriveMotor.get());
 
         // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
         // SmartDashboard.putNumber("Lifting Motor",
@@ -516,8 +553,8 @@ public static void printStatements ()
 
         // System.out.println(
         // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-        SmartDashboard.putNumber("Cube Motor",
-                Hardware.cubeIntakeMotor.get());
+        // SmartDashboard.putNumber("Cube Motor",
+        // Hardware.cubeIntakeMotor.get());
         // System.out.println(
         // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
         // SmartDashboard.putNumber("Intake Deploy Motor",
@@ -574,75 +611,75 @@ public static void printStatements ()
 
 
         // System.out.println("6 pos = "
-        // + Hardware.autoSixPosSwitch.getPosition());
-        SmartDashboard.putNumber("6 Pos Switch",
-                Hardware.autoSixPosSwitch.getPosition());
-
-        SmartDashboard.putBoolean("Demo Switch",
-                Hardware.demoModeSwitch.isOn());
+        // // + Hardware.autoSixPosSwitch.getPosition());
+        // SmartDashboard.putNumber("6 Pos Switch",
+        // Hardware.autoSixPosSwitch.getPosition());
+        //
+        // SmartDashboard.putBoolean("Demo Switch",
+        // Hardware.demoModeSwitch.isOn());
 
         // ---------------------------------
         // Encoders
         // ---------------------------------
         // System.out.println("Left Front Encoder Inches = "
         // + Hardware.leftFrontDriveEncoder.getDistance());
-        SmartDashboard.putNumber("Left Front Encoder Inches",
-                Hardware.leftFrontDriveEncoder.getDistance());
+        // SmartDashboard.putNumber("Left Front Encoder Inches",
+        // Hardware.leftFrontDriveEncoder.getDistance());
 
         // System.out.println("Left Front Encoder Ticks "
         // + Hardware.leftFrontDriveEncoder.get());
-        SmartDashboard.putNumber("Left Front Encoder Ticks",
-                Hardware.leftFrontDriveEncoder.get());
+        // SmartDashboard.putNumber("Left Front Encoder Ticks",
+        // Hardware.leftFrontDriveEncoder.get());
 
         // System.out.println("Right Front Inches = "
         // + Hardware.rightFrontDriveEncoder.getDistance());
-        SmartDashboard.putNumber("Right Front Encoder Inches",
-                Hardware.rightFrontDriveEncoder.getDistance());
+        // SmartDashboard.putNumber("Right Front Encoder Inches",
+        // Hardware.rightFrontDriveEncoder.getDistance());
 
         // System.out.println("Right Front Ticks "
         // + Hardware.rightFrontDriveEncoder.get());
-        SmartDashboard.putNumber("Right Front Encoder Ticks",
-                Hardware.rightFrontDriveEncoder.get());
-
+        // SmartDashboard.putNumber("Right Front Encoder Ticks",
+        // Hardware.rightFrontDriveEncoder.get());
+        //
         // System.out.println("Left Rear Encoder Inches = "
         // + Hardware.leftRearDriveEncoder.getDistance());
-        SmartDashboard.putNumber("Left Rear Encoder Inches",
-                Hardware.leftRearDriveEncoder.getDistance());
+        // SmartDashboard.putNumber("Left Rear Encoder Inches",
+        // Hardware.leftRearDriveEncoder.getDistance());
 
         // System.out.println("Left Rear Encoder Ticks "
         // + Hardware.leftRearDriveEncoder.get());
-        SmartDashboard.putNumber("Left Rear Encoder Ticks",
-                Hardware.leftRearDriveEncoder.get());
+        // SmartDashboard.putNumber("Left Rear Encoder Ticks",
+        // Hardware.leftRearDriveEncoder.get());
 
         // System.out.println("Right Rear Inches = "
         // + Hardware.rightRearDriveEncoder.getDistance());
-        SmartDashboard.putNumber("Right Rear Encoder Inches",
-                Hardware.rightRearDriveEncoder.getDistance());
+        // SmartDashboard.putNumber("Right Rear Encoder Inches",
+        // Hardware.rightRearDriveEncoder.getDistance());
 
         // System.out.println("Right Rear Ticks "
         // + Hardware.rightRearDriveEncoder.get());
-        SmartDashboard.putNumber("Right Rear Encoder Ticks",
-                Hardware.rightRearDriveEncoder.get());
+        // SmartDashboard.putNumber("Right Rear Encoder Ticks",
+        // Hardware.rightRearDriveEncoder.get());
 
         // System.out.println("Lift Encoder Inches = "
         // + Hardware.liftingEncoder.getDistance());
-        SmartDashboard.putNumber("Lift Encoder Inches",
-                Hardware.liftingEncoder.getDistance());
+        // SmartDashboard.putNumber("Lift Encoder Inches",
+        // Hardware.liftingEncoder.getDistance());
 
         // System.out.println(
         // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
-        SmartDashboard.putNumber("Lift Encoder Ticks",
-                Hardware.liftingEncoder.get());
+        // SmartDashboard.putNumber("Lift Encoder Ticks",
+        // Hardware.liftingEncoder.get());
 
         // System.out.println("Intake Deploy Encoder "
         // + Hardware.intakeDeployEncoder.getDistance());
-        SmartDashboard.putNumber("Intake Deploy Encoder",
-                Hardware.intakeDeployEncoder.getDistance());
+        // SmartDashboard.putNumber("Intake Deploy Encoder",
+        // Hardware.intakeDeployEncoder.getDistance());
 
         // System.out.println("Intake Deploy Encoder Ticks "
         // + Hardware.intakeDeployEncoder.get());
-        SmartDashboard.putNumber("Intake Deploy Ticks",
-                Hardware.intakeDeployEncoder.get());
+        // SmartDashboard.putNumber("Intake Deploy Ticks",
+        // Hardware.intakeDeployEncoder.get());
 
         // ---------------------------------
         // Red Light/IR Sensors
@@ -657,13 +694,13 @@ public static void printStatements ()
         // Hardware.leftRedLight.isOn());
         // System.out.println(
         // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
-        SmartDashboard.putBoolean("Photo SW",
-                Hardware.cubePhotoSwitch.isOn());
-
-        SmartDashboard.putBoolean("IR is On", Hardware.armIR.isOn());
-
-        SmartDashboard.putBoolean("Bottom RL: ",
-                Hardware.redLight.isOn());
+        // SmartDashboard.putBoolean("Photo SW",
+        // Hardware.cubePhotoSwitch.isOn());
+        //
+        // SmartDashboard.putBoolean("IR is On", Hardware.armIR.isOn());
+        //
+        // SmartDashboard.putBoolean("Bottom RL: ",
+        // Hardware.redLight.isOn());
 
 
         // =================================
@@ -696,9 +733,9 @@ public static void printStatements ()
         // ---------------------------------
 
         // System.out.println("AnalogGyro: " + Hardware.gyroAnalog.getAngle());
-        SmartDashboard.putNumber("AnalogGyro",
-                Hardware.gyroAnalog.getAngle());
-
+        // SmartDashboard.putNumber("AnalogGyro",
+        // Hardware.gyroAnalog.getAngle());
+        //
         // System.out.println("Gyro: " + Hardware.gyro.getAngle());
         // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
@@ -711,9 +748,9 @@ public static void printStatements ()
 
         // System.out.println("Front UltraSonic "
         // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
-        SmartDashboard.putNumber("Front Ultrasonic",
-                Hardware.frontUltraSonic
-                        .getDistanceFromNearestBumper());
+        // SmartDashboard.putNumber("Front Ultrasonic",
+        // Hardware.frontUltraSonic
+        // .getDistanceFromNearestBumper());
         //
         // SmartDashboard.putNumber("Front Ultrasonic Raw",
         // Hardware.frontUltraSonic.getRefinedDistanceValue());
@@ -748,7 +785,7 @@ public static void printStatements ()
         // -------------------------------------
 
         // System.out.println("Gyro: " + Hardware.gyro.getAngle());
-        SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+        // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
         // =================================
         // Connection Items
@@ -821,47 +858,49 @@ public static void printStatements ()
 
         }
 
-    if (Hardware.cubeManipulator.hasCube() == true)
-        {
-        // SmartDashboard value that is used to tell whether or not we have a
-        // cube; true sets the boolean box to green; false sets the boolean box
-        // to transparent
-        SmartDashboard.putBoolean("Has Cube", true);
-        // SmartDashboard value that tracks if the intake is intaking; has the
-        // the same key as the cube one, except with a space at the end, for
-        // aesthetic reasons when it shows up on the SmartDashboard; true sets
-        // the box to red; false sets the box to transparent
-        SmartDashboard.putBoolean("Has Cube ", false);
+    // if (Hardware.cubeManipulator.hasCube() == true)
+    // {
+    // SmartDashboard value that is used to tell whether or not we have a
+    // cube; true sets the boolean box to green; false sets the boolean box
+    // to transparent
+    // SmartDashboard.putBoolean("Has Cube", true);
+    // SmartDashboard value that tracks if the intake is intaking; has the
+    // the same key as the cube one, except with a space at the end, for
+    // aesthetic reasons when it shows up on the SmartDashboard; true sets
+    // the box to red; false sets the box to transparent
+    // SmartDashboard.putBoolean("Has Cube ", false);
 
-        }
-    else if (Hardware.cubeManipulator
-            .getIntakeMotorSpeed() > Hardware.cubeManipulator.INTAKE_STOP_WITH_CUBE
-                    + .1 /*
-                          * the .1 here is just a magic number that
-                          * wasn't worth making a constant for; is meant
-                          * to prevent false positives in cases where
-                          * the getIntakeMotorSpeed is returning
-                          * .2000001 or something
-                          */)
-        {
-        // sets the boolean box to transparent
-        SmartDashboard.putBoolean("Has Cube", false);
-        // sets the other boolean box to red
-        SmartDashboard.putBoolean("Has Cube ", true);
-        }
-    else
-        {
-        // sets the boolean box to transparent
-        SmartDashboard.putBoolean("Has Cube", false);
-        // sets the other boolean box to transparent
-        SmartDashboard.putBoolean("Has Cube ", false);
-        }
+    // }
+    // else if (Hardware.cubeManipulator
+    // .getIntakeMotorSpeed() > Hardware.cubeManipulator.INTAKE_STOP_WITH_CUBE
+    // + .1
+    /*
+     * the .1 here is just a magic number that
+     * wasn't worth making a constant for; is meant
+     * to prevent false positives in cases where
+     * the getIntakeMotorSpeed is returning
+     * .2000001 or something
+     */
+    // )
+    // {
+    // sets the boolean box to transparent
+    // SmartDashboard.putBoolean("Has Cube", false);
+    // sets the other boolean box to red
+    // SmartDashboard.putBoolean("Has Cube ", true);
+    // }
+    // else
+    // {
+    // sets the boolean box to transparent
+    // SmartDashboard.putBoolean("Has Cube", false);
+    // sets the other boolean box to transparent
+    // SmartDashboard.putBoolean("Has Cube ", false);
+    // }
 
 
-    SmartDashboard.putBoolean("Too close to scale",
-            Hardware.armIR.isOn());
-
-    SmartDashboard.updateValues();
+    // SmartDashboard.putBoolean("Too close to scale",
+    // Hardware.armIR.isOn());
+    //
+    // SmartDashboard.updateValues();
 } // end printStatements()
 
 // ================================

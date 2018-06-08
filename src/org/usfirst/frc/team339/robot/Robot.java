@@ -366,7 +366,7 @@ public void robotInit ()
     // done setup - tell the user we are complete
     // setup
     // ---------------------------------------
-    Teleop.printStatements();
+    // Teleop.printStatements();
 
     System.out.println(
             "Kilroy XIX is started.  All hardware items created.");
