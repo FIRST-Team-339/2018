@@ -16,7 +16,6 @@ package org.usfirst.frc.team339.Hardware;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
-import org.usfirst.frc.team339.HardwareInterfaces.DriveWithCamera;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroySPIGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
@@ -28,8 +27,6 @@ import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.ScaleAlignment;
-import org.usfirst.frc.team339.vision.VisionProcessor;
-import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -37,6 +34,7 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
@@ -93,7 +91,10 @@ public static Talon leftDriveMotor = new Talon(3);
 // ------------------------------------
 // Victor Classes
 // ------------------------------------
-public static VictorSP liftingMotor = new VictorSP(0);
+
+public static WPI_TalonSRX liftingMotor = new WPI_TalonSRX(4);// change
+
+// public static VictorSP liftingMotor = new VictorSP(0);
 
 public static VictorSP cubeIntakeMotor = new VictorSP(1);
 
@@ -112,17 +113,21 @@ public static Servo intakeArmPositionServo = new Servo(6);
 // CAN classes
 // ====================================
 
+public static PowerDistributionPanel pdp = new PowerDistributionPanel(2); 
+
 public static WPI_TalonSRX rightFrontCANMotor = new WPI_TalonSRX(14);
 
-public static WPI_TalonSRX leftFrontCANMotor = new WPI_TalonSRX(12);
+public static WPI_TalonSRX leftFrontCANMotor = new WPI_TalonSRX(11);
 
-public static WPI_TalonSRX rightRearCANMotor = new WPI_TalonSRX(11);//fix number
+public static WPI_TalonSRX rightRearCANMotor = new WPI_TalonSRX(12);// fix
+                                                                    // number
 
-public static WPI_TalonSRX leftRearCANMotor = new WPI_TalonSRX(13);//fix number
-
+public static WPI_TalonSRX leftRearCANMotor = new WPI_TalonSRX(13);// fix number
+// 0
 // ====================================
 // Relay classes
 // ====================================
+
 public static Relay ringLightRelay = new Relay(1);
 
 // JANKY temporary fix until wpi gets their crap together with the Relay class.
@@ -265,8 +270,8 @@ public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 // Axis/USB Camera class
 // -------------------------------------
 
-//public static VisionProcessor axisCamera = new VisionProcessor(
-//        "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
+// public static VisionProcessor axisCamera = new VisionProcessor(
+// "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
 
 // -------------------------------------
 // declare the USB camera server and the
@@ -346,9 +351,9 @@ public static Drive autoDrive = new Drive(transmission,
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 // TODO change back to this once relays actually work
-//public static DriveWithCamera driveWithCamera = new DriveWithCamera(
-//        transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
-//        frontUltraSonic, rearUltraSonic, gyro, axisCamera);
+// public static DriveWithCamera driveWithCamera = new DriveWithCamera(
+// transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
+// frontUltraSonic, rearUltraSonic, gyro, axisCamera);
 
 // this is a janky fix for the ringlight not working
 // public static DriveWithCamera driveWithCamera = new DriveWithCamera(

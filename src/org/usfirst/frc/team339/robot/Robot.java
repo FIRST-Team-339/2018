@@ -328,6 +328,11 @@ public void robotInit ()
         Hardware.transmission.setAllGearRatios(NESSIE_GEAR_1_SPEED,
                 NESSIE_GEAR_2_SPEED);
         } // if
+    else if (CANEnabled)
+        {
+        Hardware.leftFrontCANMotor.setInverted(true);
+        Hardware.leftRearCANMotor.setInverted(true);
+        }
     else
     // ----------------------------------
     // this years configuration
@@ -481,6 +486,8 @@ public void testPeriodic ()
 // ==========================================
 // TUNEABLES
 // ==========================================
+private static final boolean CANEnabled = true;
+
 private static final int demoForkliftMaxHeight = 49;
 
 public static final double demoForkliftSpeed = .5;
