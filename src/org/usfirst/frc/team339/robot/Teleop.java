@@ -94,7 +94,6 @@ public static void init ()
     // SmartDashboard.putNumber("Drive Brake Deadband", 0);
     //
     SmartDashboard.putNumber("Turn Degrees", 0);
-    drivepid.tunePID(PIDDriveFunction.TURN_ENC);
     // SmartDashboard.putNumber("Drive Distance", 0);
 
     if (Hardware.demoModeSwitch.isOn() == true)
@@ -271,8 +270,7 @@ public static void periodic ()
     // && Hardware.scaleAlignment.allowAlignment == false
     // && isBeckyTest == false
     // && isTestingEncoderTurn == false)
-    if (Hardware.demoModeSwitch.isOn()
-            || (!isTestingBangBang && !isTestingPID))
+    if (!drivepid.tunePID(PIDDriveFunction.TURN_ENC))
         Hardware.drive.drive(Hardware.leftDriver, Hardware.rightDriver);
     // update
 
