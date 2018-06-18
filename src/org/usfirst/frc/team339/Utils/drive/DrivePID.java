@@ -392,12 +392,19 @@ public class DrivePID extends Drive
 	 * high D value will give you a longer drawn out deceleration curve, and may
 	 * fix oscillation, but will make the robot take longer reach it's setpoint.
 	 * 
+	 * In order to tune, start by changing P. Think of P like this: for every 1
+	 * sensor unit, x percent will be added. After P, start tuning D. End with
+	 * I, and only use it where you see fit. I is great for longer, more precise
+	 * movements, and must be small.
+	 * 
 	 * A low tolerance will result in more accurate turns, but may induce a
 	 * little "wiggle" at the end (which is not bad, but takes more time.)
 	 * 
 	 * The point of using a PID loop for turning is to increase the speed of the
 	 * turn and reduce overshoot / undershoot.
 	 * 
+	 * ...Good luck...
+	 *
 	 */
 
 	/**
@@ -429,6 +436,24 @@ public class DrivePID extends Drive
 				reset();
 			}
 			return encoderPIDTuner.enabled;
+		case TURN_GYRO:
+			// Set the PID and tolerance values
+			turnGyroPIDTolerance = new double[]
+			{ gyroPIDTuner.p, gyroPIDTuner.i, gyroPIDTuner.d, gyroPIDTuner.tolerance };
+			// If enabled, then turn the x degrees. If not, stop.
+			if (gyroPIDTuner.enabled)
+			{
+				if (this.turnDegreesGyro((int) gyroPIDTuner.setpoint, gyroPIDTuner.speed))
+				{
+					stop();
+					gyroPIDTuner.enabled = false;
+				}
+
+			} else
+			{
+				reset();
+			}
+			return gyroPIDTuner.enabled;
 		default:
 			return false;
 		}
@@ -461,6 +486,9 @@ public class DrivePID extends Drive
 		DRIVESTRAIGHTINCHES
 	}
 
+	/**
+	 * The PID controller behind the driveStraight function when using encoders
+	 */
 	private final PIDSubsystem driveStraightPID_enc = new PIDSubsystem(0, 0, 0)
 	{
 
@@ -483,6 +511,9 @@ public class DrivePID extends Drive
 
 	};
 
+	/**
+	 * The PID controller behind the driveStraight function when using the gyroscopic sensor
+	 */
 	private final PIDSubsystem driveStraightPID_gyro = new PIDSubsystem(0, 0, 0)
 	{
 		@Override
@@ -503,6 +534,9 @@ public class DrivePID extends Drive
 		}
 	};
 
+	/**
+	 * The PID loop behind the driveStraightInches function, for distance
+	 */
 	private final PIDSubsystem driveStraightInchesPID = new PIDSubsystem(0, 0, 0)
 	{
 
@@ -572,7 +606,14 @@ public class DrivePID extends Drive
 	{ 0, 0, 0, 0 };
 
 	/**
-	 * A class designed to use the Shuffleboard built in tuner for PID loops
+	 * A class designed to use the Shuffleboard built in tuner for PID loops. This is useful if you have multiple PID
+	 * controllers that all need the same tuning at once, so you don't have to change 24 values for a 4 wheel robot.
+	 * When values are changed in the shuffleboard, the stored values p,i,d,setpoint,tolerance,speed, and enabled will
+	 * reflect it.
+	 * 
+	 * You are able to get a specific widget from this by finding the "LiveWindow" tab on the left, and finding the 
+	 * name of the PID controller (for example, "EncoderPID") and dragging it onto the screen, if there's not
+	 * already a saved view for it
 	 * 
 	 * @author Ryan McGee
 	 * @written 6/2018
@@ -580,20 +621,36 @@ public class DrivePID extends Drive
 	 */
 	class PIDTuner
 	{
+		// Store the P (proportional), I (integral), D (derivative), setpoint,
+		// tolerance, speed and enabled in variables inside
+		// the object
 		double p, i, d, setpoint, tolerance, speed;
 		boolean enabled;
 
+		/**
+		 * Creates the PIDTuner class, sets the name and creates / sends the PID widget to shuffleboard.
+		 * 
+		 * @param name what the PID tuner will show up as in the list under "LiveWindow".
+		 */
 		public PIDTuner(String name)
 		{
 			sendable.setName(name);
 		}
 
+		// Creating the sendable creates the widget and sends the values to the
+		// shuffleboard.
 		SendableBase sendable = new SendableBase()
 		{
 			@Override
 			public void initSendable(SendableBuilder builder)
 			{
+				// Telling shuffleboard we want this specific widget
 				builder.setSmartDashboardType("PIDController");
+
+				// the "() -> variable" is a way of sending the variable to
+				// shuffleboard
+				// the "(arg0) -> variable = arg0" is a way of getting the
+				// variable from the shuffleboard
 				builder.addDoubleProperty("P", () -> p, (arg0) -> p = arg0);
 				builder.addDoubleProperty("I", () -> i, (arg0) -> i = arg0);
 				builder.addDoubleProperty("D", () -> d, (arg0) -> d = arg0);
