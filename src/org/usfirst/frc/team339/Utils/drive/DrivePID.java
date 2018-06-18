@@ -85,6 +85,7 @@ public class DrivePID extends Drive
 
 	/**
 	 * Resets the all drive function's initialization.
+	* 
 	 * @return 
 	 */
 	public void reset()
@@ -109,7 +110,8 @@ public class DrivePID extends Drive
 	 * @param d
 	 *            the Derivative value
 	 * @param tolerance 
-	 * 				How far when we are considered "on target", in default sensor units.
+	*            How far when we are considered "on target", in default sensor
+	*            units.
 	 */
 	public void setPIDTolerance(PIDDriveFunction driveFunction, double p, double i, double d, double tolerance)
 	{
@@ -314,10 +316,12 @@ public class DrivePID extends Drive
 	}
 
 	/**
-	 * Drives a set number of inches forwards in a straight line, based on encoder distance, correcting for 
+	* Drives a set number of inches forwards in a straight line, based on encoder
+	* distance, correcting for
 	 * misalignment based on Gyro and encoder PID tunings.
 	 * 
-	 * If tuned properly, this will give the robot a nice acceleration and deceleration curve,
+	* If tuned properly, this will give the robot a nice acceleration and
+	* deceleration curve,
 	 *  while correcting it's position.
 	 * 
 	 * @param speed
@@ -327,7 +331,8 @@ public class DrivePID extends Drive
 	 * @param acceleration
 	 * 			How fast to accelerate from 0, in seconds
 	 * @param isUsingGyro 
-	 * 			Whether or not the driveStraight part of this is using the gyro for correction. 
+	*            Whether or not the driveStraight part of this is using the gyro
+	*            for correction.
 	 * 			If false, the encoders are used.
 	 * @return
 	 * 		Whether or not the robot has reached it's destination.
@@ -396,10 +401,52 @@ public class DrivePID extends Drive
 	 */
 
 	/**
-	 * Describes the different drive-by-pid functions
-	 * 
-	 * @author Ryan McGee
+	* Tunes the PID controllers for the drive fuctions of the robot
+	* 
+	* @param type
+	*            Which driving function is being tuned
+	* @return whether the PID is enabled or not.
+	*/
+	public boolean tunePID(PIDDriveFunction type)
+	{
+		switch (type)
+		{
+		case TURN_ENC:
+			// Set the PID and tolerance values
+			turnPIDTolerance = new double[]
+			{ encoderPIDTuner.p, encoderPIDTuner.i, encoderPIDTuner.d, encoderPIDTuner.tolerance };
+			// If enabled, then turn the x degrees. If not, stop.
+			if (encoderPIDTuner.enabled)
+			{
+				if (this.turnDegrees((int) encoderPIDTuner.setpoint, encoderPIDTuner.speed))
+				{
+					stop();
+					encoderPIDTuner.enabled = false;
+				}
+
+			} else
+			{
+				reset();
+			}
+			return encoderPIDTuner.enabled;
+		default:
+			return false;
+		}
+	}
+
+	/**
+	 * @return Whether or not the PID loops are being tuned.
 	 */
+	public boolean isTuningPID()
+	{
+		return isTuningPID;
+	}
+
+	/**
+		 * Describes the different drive-by-pid functions
+		 * 
+		 * @author Ryan McGee
+		 */
 	public enum PIDDriveFunction
 	{
 		/** Turning via encoders */
@@ -487,6 +534,12 @@ public class DrivePID extends Drive
 
 	// ======================Variables======================
 
+	private PIDTuner encoderPIDTuner = new PIDTuner("EncoderPID");
+
+	private PIDTuner gyroPIDTuner = new PIDTuner("GyroPID");
+
+	private boolean isTuningPID = false;
+
 	private double[] turnPIDTolerance =
 			// {P, I, D, Tolerance}
 			{ 0, 0, 0, 0 };
@@ -518,10 +571,22 @@ public class DrivePID extends Drive
 	private double[] driveStraightInchesPIDTolerance =
 	{ 0, 0, 0, 0 };
 
+	/**
+	 * A class designed to use the Shuffleboard built in tuner for PID loops
+	 * 
+	 * @author Ryan McGee
+	 * @written 6/2018
+	 *
+	 */
 	class PIDTuner
 	{
 		double p, i, d, setpoint, tolerance, speed;
 		boolean enabled;
+
+		public PIDTuner(String name)
+		{
+			sendable.setName(name);
+		}
 
 		SendableBase sendable = new SendableBase()
 		{
