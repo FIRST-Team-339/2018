@@ -520,12 +520,22 @@ public class DrivePID extends Drive
 
 	class PIDTuner
 	{
+		double p, i, d, setpoint, tolerance, speed;
+		boolean enabled;
+
 		SendableBase sendable = new SendableBase()
 		{
 			@Override
 			public void initSendable(SendableBuilder builder)
 			{
 				builder.setSmartDashboardType("PIDController");
+				builder.addDoubleProperty("P", () -> p, (arg0) -> p = arg0);
+				builder.addDoubleProperty("I", () -> i, (arg0) -> i = arg0);
+				builder.addDoubleProperty("D", () -> d, (arg0) -> d = arg0);
+				builder.addDoubleProperty("Setpoint", () -> setpoint, (arg0) -> setpoint = arg0);
+				builder.addDoubleProperty("Speed", () -> speed, (arg0) -> speed = arg0);
+				builder.addDoubleProperty("Tolerance", () -> tolerance, (arg0) -> tolerance = arg0);
+				builder.addBooleanProperty("Enabled", () -> enabled, (arg0) -> enabled = arg0);
 			}
 		};
 
