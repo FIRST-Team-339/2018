@@ -93,7 +93,7 @@ public static boolean pidDriveInches (double speed, double distance,
         return true;
         }
 
-    Hardware.drive.accelerateTo(pidOutput, pidOutput, acceleration);
+    Hardware.drive.accelerateTo_old(pidOutput, pidOutput, acceleration);
 
     return false;
 }

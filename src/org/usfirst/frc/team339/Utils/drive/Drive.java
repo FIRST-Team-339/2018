@@ -104,7 +104,7 @@ public class Drive
 	 * @return True if we are done accelerating. It WILL continue driving after
 	 *         acceleration is done, at the input speed.
 	 */
-	public boolean accelerateTo(double leftSpeed, double rightSpeed, double time)
+	public boolean accelerateTo_old(double leftSpeed, double rightSpeed, double time)
 	{
 		// Avoid a divideByZero error.
 		if (time <= 0)
@@ -135,6 +135,36 @@ public class Drive
 			return true;
 		}
 		// We are not done accelerating
+		return false;
+	}
+
+	public boolean accelerateTo(double leftSpeed, double rightSpeed, double percentPerSecond)
+	{
+		// If the acceleration is 0, then just simply drive at speed. (disabled)
+		if (percentPerSecond == 0)
+		{
+			transmission.driveRaw(leftSpeed, rightSpeed);
+			return true;
+		}
+
+		// If we timeout, then reset all the accelerate values
+		if (System.currentTimeMillis() - lastAccelerateTime > INIT_TIMEOUT)
+		{
+			lastAccelerateTime = System.currentTimeMillis();
+			timeSinceLastAccelReset = System.currentTimeMillis();
+		}
+
+		double leftOut, rightOut;
+		// Math.max(Math.min( makes sure the output stays within the range of
+		// the speed provided, Signum returns -1 if it's negative and 1 if it's
+		// positive. Simple integration from that point on, acceleration to
+		// velocity.
+		leftOut = Math.max(
+				Math.min(Math.signum(leftSpeed) * timeSinceLastAccelReset * percentPerSecond, Math.abs(leftSpeed)),
+				-Math.abs(leftSpeed));
+		rightOut = Math.max(
+				Math.min(Math.signum(rightSpeed) * timeSinceLastAccelReset * percentPerSecond, Math.abs(rightSpeed)),
+				-Math.abs(rightSpeed));
 		return false;
 	}
 
@@ -200,7 +230,7 @@ public class Drive
 			leftSide = innerCircle / outerCircle;
 		}
 
-		this.accelerateTo(speed * leftSide, speed * rightSide, acceleration);
+		this.accelerateTo_old(speed * leftSide, speed * rightSide, acceleration);
 
 		return false;
 	}
@@ -470,9 +500,9 @@ public class Drive
 		}
 
 		if (acceleration)
-			this.accelerateTo(leftSpeed, rightSpeed, getDefaultAcceleration());
+			this.accelerateTo_old(leftSpeed, rightSpeed, getDefaultAcceleration());
 		else
-			this.accelerateTo(leftSpeed, rightSpeed, 0);
+			this.accelerateTo_old(leftSpeed, rightSpeed, 0);
 		// Reset the "timer" to know when to "reset" the encoders for this
 		// method.
 		driveStraightLastTime = System.currentTimeMillis();
@@ -1269,9 +1299,9 @@ public class Drive
 
 		// If degrees is positive, then turn left. If not, then turn right.
 		if (degrees > 0)
-			this.accelerateTo(speed, -speed, acceleration);
+			this.accelerateTo_old(speed, -speed, acceleration);
 		else
-			this.accelerateTo(-speed, speed, acceleration);
+			this.accelerateTo_old(-speed, speed, acceleration);
 
 		return false;
 	}
@@ -1344,6 +1374,8 @@ public class Drive
 	private boolean turnDegreesGyroInit = true;
 
 	// VARIABLES
+	private long timeSinceLastAccelReset = 0;// Milliseconds
+
 	private int currentBrakeIteration = 0;
 
 	private long driveStraightLastTime = 0;

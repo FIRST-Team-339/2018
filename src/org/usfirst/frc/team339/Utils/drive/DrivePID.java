@@ -3,11 +3,11 @@ package org.usfirst.frc.team339.Utils.drive;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
-import org.usfirst.frc.team339.Utils.KilroyPID;
 
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 /**
@@ -37,17 +37,7 @@ public class DrivePID extends Drive
 		// to use PID instead of static constants.
 		super(transmission, leftFrontEncoder, rightFrontEncoder, leftRearEncoder, rightRearEncoder, gyro);
 
-		this.encoderPID = new KilroyPID[4];
-		encoderPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), leftRearEncoder);
-		encoderPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), rightRearEncoder);
-		encoderPID[2] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_FRONT), leftFrontEncoder);
-		encoderPID[3] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_FRONT), rightFrontEncoder);
-
-		this.gyroPID = new KilroyPID[4];
-		gyroPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), gyro);
-		gyroPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), gyro);
-		gyroPID[2] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_FRONT), gyro);
-		gyroPID[3] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_FRONT), gyro);
+		initPIDControllers();
 
 		this.encoders = new KilroyEncoder[4];
 		encoders[0] = leftRearEncoder;
@@ -72,15 +62,22 @@ public class DrivePID extends Drive
 	public DrivePID(TransmissionBase transmission, KilroyEncoder leftEncoder, KilroyEncoder rightEncoder, GyroBase gyro)
 	{
 		super(transmission, leftEncoder, rightEncoder, gyro);
-		encoderPID = new KilroyPID[2];
-		encoderPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), leftEncoder);
-		encoderPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), rightEncoder);
+		initPIDControllers();
 		this.encoders = new KilroyEncoder[2];
 		this.encoders[0] = leftEncoder;
 		this.encoders[1] = rightEncoder;
-		this.gyroPID = new KilroyPID[2];
-		this.gyroPID[0] = new KilroyPID(transmission.getSpeedController(MotorPosition.LEFT_REAR), gyro);
-		this.gyroPID[1] = new KilroyPID(transmission.getSpeedController(MotorPosition.RIGHT_REAR), gyro);
+	}
+
+	/**
+	 * Removes the PID controllers from the shuffleboard list to make sure that there is no confusion when tuning PID
+	 * loops on which PID to tune. Instead the custom PIDTuner class will be used to display / input PID values, as it
+	 * adds in speed, tolerance and acceleration. (You will need to drag those values out separately from the widget)
+	 */
+	private void initPIDControllers()
+	{
+		LiveWindow.remove(driveStraightInchesPID);
+		LiveWindow.remove(driveStraightPID_enc);
+		LiveWindow.remove(driveStraightPID_gyro);
 	}
 
 	/**
@@ -93,8 +90,6 @@ public class DrivePID extends Drive
 		super.reset();
 		this.turnDegreesInit = true;
 		this.turnDegreesGyroInit = true;
-		for (KilroyPID pid : encoderPID)
-			pid.setEnabled(false);
 		// this.turnGyroPID.disable();
 	}
 
@@ -112,8 +107,11 @@ public class DrivePID extends Drive
 	 * @param tolerance 
 	*            How far when we are considered "on target", in default sensor
 	*            units.
+	*        
+	*  @param accel the acceleration part of the motion profile. This is only useful for turns, as the driving acceleration 
 	 */
-	public void setPIDTolerance(PIDDriveFunction driveFunction, double p, double i, double d, double tolerance)
+	public void setPIDToleranceAccel(PIDDriveFunction driveFunction, double p, double i, double d, double tolerance,
+			double accel)
 	{
 		switch (driveFunction)
 		{
@@ -130,16 +128,18 @@ public class DrivePID extends Drive
 			this.driveStraightGyroPIDTolerance[3] = tolerance;
 			return;
 		case TURN_ENC:
-			this.turnPIDTolerance[0] = p;
-			this.turnPIDTolerance[1] = i;
-			this.turnPIDTolerance[2] = d;
-			this.turnPIDTolerance[3] = tolerance;
+			this.turnPIDToleranceAccel[0] = p;
+			this.turnPIDToleranceAccel[1] = i;
+			this.turnPIDToleranceAccel[2] = d;
+			this.turnPIDToleranceAccel[3] = tolerance;
+			this.turnPIDToleranceAccel[4] = accel;
 			return;
 		case TURN_GYRO:
-			this.turnGyroPIDTolerance[0] = p;
-			this.turnGyroPIDTolerance[1] = i;
-			this.turnGyroPIDTolerance[2] = d;
-			this.turnGyroPIDTolerance[3] = tolerance;
+			this.turnGyroPIDToleranceAccel[0] = p;
+			this.turnGyroPIDToleranceAccel[1] = i;
+			this.turnGyroPIDToleranceAccel[2] = d;
+			this.turnGyroPIDToleranceAccel[3] = tolerance;
+			this.turnGyroPIDToleranceAccel[4] = accel;
 			return;
 		case DRIVESTRAIGHTINCHES:
 			this.driveStraightInchesPIDTolerance[0] = p;
@@ -165,51 +165,15 @@ public class DrivePID extends Drive
 	 */
 	public boolean turnDegrees(int degrees, double speed)
 	{
-		// Reset the PID loop and set the PID values if first start
 		if (turnDegreesInit == true)
 		{
-			// Reset the sensors
 			super.resetEncoders();
-			for (KilroyPID pid : encoderPID)
-			{
-				// Set PID settings
-				pid.resetPID();
-				pid.setPIDF(turnPIDTolerance[0], turnPIDTolerance[1], turnPIDTolerance[2], 0);
-				pid.setTolerance(turnPIDTolerance[3]);
-			}
-			// Set the setpoint to each motor. If it's even (0 or 2), then it's
-			// the
-			// left side of the robot. Odds (1 or 3) are right.
-			for (int i = 0; i < encoderPID.length; i++)
-			{
-				if (i % 2 == 0)
-					encoderPID[i].setSetpoint(degreesToEncoderInches(degrees, false), false);
-				else
-					encoderPID[i].setSetpoint(-degreesToEncoderInches(degrees, false), false);
-				// Left or right, set them to enabled.
-				encoderPID[i].setSpeed(speed);
-				encoderPID[i].setEnabled(true);
-			}
-			turnDegreesInit = false;
-		}
+			this.turnDegreesPID_enc.getPIDController().reset();
+			this.turnDegreesPID_enc.getPIDController().setPID(turnPIDToleranceAccel[0], turnPIDToleranceAccel[1],
+					turnPIDToleranceAccel[2]);
+			this.turnDegreesPID_enc.setAbsoluteTolerance(turnPIDToleranceAccel[3]);
+			this.turnDegreesPID_enc.getPIDController().setOutputRange(-speed, speed);
 
-		// If ANY motor is not on target, then keep running.
-		boolean isOnTarget = true;
-		for (KilroyPID pid : encoderPID)
-			if (pid.isOnTarget() == false)
-			{
-				isOnTarget = false;
-				break;
-			}
-
-		if (isOnTarget == true)
-		{
-			// We have reached the destination.
-			for (KilroyPID pid : encoderPID)
-				pid.setEnabled(false);
-
-			turnDegreesInit = true;
-			return true;
 		}
 		return false;
 	}
@@ -229,50 +193,6 @@ public class DrivePID extends Drive
 	 */
 	public boolean turnDegreesGyro(int degrees, double speed)
 	{
-		if (turnDegreesGyroInit == true)
-		{
-			// Reset the Sensor \ PID controller
-			this.getGyro().reset();
-			for (int i = 0; i < this.gyroPID.length; i++)
-			{
-				// Reset PID accumulated values, setup P, I, D and Tolerance,
-				// set setpoint, and enable PID.
-				this.gyroPID[i].resetPID();
-				this.gyroPID[i].setPIDF(this.turnGyroPIDTolerance[0], this.turnGyroPIDTolerance[1],
-						this.turnGyroPIDTolerance[2], 0);
-				this.gyroPID[i].setTolerance(this.turnGyroPIDTolerance[3]);
-				if (i % 2 == 0)
-					// Left side goes forward if degrees is positive, right goes
-					// backwards.
-					this.gyroPID[i].setSetpoint(degrees, false);
-				else
-					this.gyroPID[i].setSetpoint(degrees, true);
-				this.gyroPID[i].setEnabled(true);
-			}
-
-			this.turnDegreesGyroInit = false;
-		}
-
-		// If any one PID loop is not on target, then keep running.
-		boolean isOnTarget = false;
-		for (KilroyPID pid : gyroPID)
-			if (pid.isOnTarget() == false)
-			{
-				isOnTarget = false;
-				break;
-			}
-
-		// If the robot has reached it's angle, then we are good.
-		if (isOnTarget == true)
-		{
-			// Turn off the PID loop and return true.
-			this.turnDegreesGyroInit = true;
-			for (KilroyPID pid : gyroPID)
-				pid.setEnabled(false);
-			// We have finished turning! Yay!
-			return true;
-		}
-		// We have not yet finished turning.
 		return false;
 	}
 
@@ -308,9 +228,9 @@ public class DrivePID extends Drive
 			}
 		}
 		if (isUsingGyro == true)
-			super.accelerateTo(speed + driveStraightPIDOutput_gyro, speed - driveStraightPIDOutput_gyro, acceleration);
+			super.accelerateTo_old(speed + driveStraightPIDOutput_gyro, speed - driveStraightPIDOutput_gyro, acceleration);
 		else
-			super.accelerateTo(speed + driveStraightPIDOutput_enc, speed - driveStraightPIDOutput_enc, acceleration);
+			super.accelerateTo_old(speed + driveStraightPIDOutput_enc, speed - driveStraightPIDOutput_enc, acceleration);
 
 		driveStraightLastTime = System.currentTimeMillis();
 	}
@@ -419,41 +339,15 @@ public class DrivePID extends Drive
 		switch (type)
 		{
 		case TURN_ENC:
-			// Set the PID and tolerance values
-			turnPIDTolerance = new double[]
-			{ encoderPIDTuner.p, encoderPIDTuner.i, encoderPIDTuner.d, encoderPIDTuner.tolerance };
-			// If enabled, then turn the x degrees. If not, stop.
-			if (encoderPIDTuner.enabled)
-			{
-				if (this.turnDegrees((int) encoderPIDTuner.setpoint, encoderPIDTuner.speed))
-				{
-					stop();
-					encoderPIDTuner.enabled = false;
-				}
 
-			} else
-			{
-				reset();
-			}
-			return encoderPIDTuner.enabled;
 		case TURN_GYRO:
-			// Set the PID and tolerance values
-			turnGyroPIDTolerance = new double[]
-			{ gyroPIDTuner.p, gyroPIDTuner.i, gyroPIDTuner.d, gyroPIDTuner.tolerance };
-			// If enabled, then turn the x degrees. If not, stop.
-			if (gyroPIDTuner.enabled)
-			{
-				if (this.turnDegreesGyro((int) gyroPIDTuner.setpoint, gyroPIDTuner.speed))
-				{
-					stop();
-					gyroPIDTuner.enabled = false;
-				}
 
-			} else
-			{
-				reset();
-			}
-			return gyroPIDTuner.enabled;
+		case DRIVESTRAIGHT_ENC:
+
+		case DRIVESTRAIGHT_GYRO:
+
+		case DRIVESTRAIGHTINCHES:
+
 		default:
 			return false;
 		}
@@ -485,6 +379,50 @@ public class DrivePID extends Drive
 		/**Driving straight X number of inches*/
 		DRIVESTRAIGHTINCHES
 	}
+
+	private final PIDSubsystem turnDegreesPID_enc = new PIDSubsystem(0, 0, 0)
+	{
+
+		@Override
+		protected double returnPIDInput()
+		{
+			return getEncoderDistanceAverage(MotorPosition.ALL);
+		}
+
+		@Override
+		protected void usePIDOutput(double output)
+		{
+			turnDegreesPIDOut = output;
+		}
+
+		@Override
+		protected void initDefaultCommand()
+		{
+
+		}
+	};
+
+	private final PIDSubsystem turnDegreesPID_gyro = new PIDSubsystem(0, 0, 0)
+	{
+
+		@Override
+		protected void initDefaultCommand()
+		{
+
+		}
+
+		@Override
+		protected void usePIDOutput(double output)
+		{
+			turnDegreesGyroPIDOut = output;
+		}
+
+		@Override
+		protected double returnPIDInput()
+		{
+			return getGyro().getAngle();
+		}
+	};
 
 	/**
 	 * The PID controller behind the driveStraight function when using encoders
@@ -560,30 +498,34 @@ public class DrivePID extends Drive
 
 	};
 
-	private final KilroyPID[] encoderPID;
-
-	private final KilroyPID[] gyroPID;
-
 	private final KilroyEncoder[] encoders;
 
 	// ======================Variables======================
 
-	private PIDTuner encoderPIDTuner = new PIDTuner("EncoderPID");
+	private PIDTuner driveStraightTuner_enc = new PIDTuner("Drive Straight Encoder");
 
-	private PIDTuner gyroPIDTuner = new PIDTuner("GyroPID");
+	private PIDTuner driveStraightTuner_gyro = new PIDTuner("Drive Straight Gyro");
+
+	private PIDTuner turnDegreesTuner_enc = new PIDTuner("Turn Degrees Encoder");
+
+	private PIDTuner turnDegreesTuner_gyro = new PIDTuner("Turn Degrees Gyro");
 
 	private boolean isTuningPID = false;
 
-	private double[] turnPIDTolerance =
-			// {P, I, D, Tolerance}
-			{ 0, 0, 0, 0 };
+	private double[] turnPIDToleranceAccel =
+			// {P, I, D, Tolerance, Acceleration}
+			{ 0, 0, 0, 0, 0 };
 
 	private boolean turnDegreesInit = true;
 
-	private double[] turnGyroPIDTolerance =
-	{ 0, 0, 0, 0 };
+	private double turnDegreesPIDOut = 0;
+
+	private double[] turnGyroPIDToleranceAccel =
+	{ 0, 0, 0, 0, 0 };
 
 	private boolean turnDegreesGyroInit = true;
+
+	private double turnDegreesGyroPIDOut = 0;
 
 	private double driveStraightPIDOutput_enc = 0;
 
@@ -624,7 +566,7 @@ public class DrivePID extends Drive
 		// Store the P (proportional), I (integral), D (derivative), setpoint,
 		// tolerance, speed and enabled in variables inside
 		// the object
-		double p, i, d, setpoint, tolerance, speed;
+		double p, i, d, setpoint, tolerance, speed, acceleration;
 		boolean enabled;
 
 		/**
@@ -635,6 +577,11 @@ public class DrivePID extends Drive
 		public PIDTuner(String name)
 		{
 			sendable.setName(name);
+		}
+
+		public SendableBase getSendable()
+		{
+			return sendable;
 		}
 
 		// Creating the sendable creates the widget and sends the values to the
@@ -657,6 +604,7 @@ public class DrivePID extends Drive
 				builder.addDoubleProperty("Setpoint", () -> setpoint, (arg0) -> setpoint = arg0);
 				builder.addDoubleProperty("Speed", () -> speed, (arg0) -> speed = arg0);
 				builder.addDoubleProperty("Tolerance", () -> tolerance, (arg0) -> tolerance = arg0);
+				builder.addDoubleProperty("Acceleration", () -> acceleration, (arg0) -> acceleration = arg0);
 				builder.addBooleanProperty("Enabled", () -> enabled, (arg0) -> enabled = arg0);
 			}
 		};
