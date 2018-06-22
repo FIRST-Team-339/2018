@@ -342,6 +342,10 @@ public static TankTransmission transmission = new TankTransmission(
         new SpeedControllerGroup(leftCANMotor, leftRearCANMotor),
         new SpeedControllerGroup(rightCANMotor, rightRearCANMotor));
 
+// public static MecanumTransmission transmission = new MecanumTransmission(
+// leftRearCANMotor, rightRearCANMotor, leftCANMotor,
+// rightCANMotor);
+
 // ------------------------------------
 // Drive system
 // ------------------------------------

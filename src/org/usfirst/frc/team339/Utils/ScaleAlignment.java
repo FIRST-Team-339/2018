@@ -144,7 +144,7 @@ public boolean alignToScale (double speed, double deadband,
         SmartDashboard.putNumber("Speed", speed);
         RelativeScale = "Too Far";
 
-        Hardware.transmission.drive(speed, speed);
+        // Hardware.transmission.drive(speed, speed);
         }
     // if to close to scale
     else if (this.rearUltrasonic
@@ -156,7 +156,7 @@ public boolean alignToScale (double speed, double deadband,
 
         RelativeScale = "Too close";
 
-        Hardware.transmission.drive(-speed, -speed);
+        // Hardware.transmission.drive(-speed, -speed);
         }
     return false;
 }

@@ -271,7 +271,7 @@ public static void periodic ()
     // && isBeckyTest == false
     // && isTestingEncoderTurn == false)
     if (!drivepid.tunePID(PIDDriveFunction.TURN_ENC))
-        Hardware.drive.drive(Hardware.leftDriver, Hardware.rightDriver);
+        Hardware.drive.drive(Hardware.leftDriver);
     // update
 
     // ------------------------------------

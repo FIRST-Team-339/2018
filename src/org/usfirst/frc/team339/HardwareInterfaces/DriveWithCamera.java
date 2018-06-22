@@ -378,14 +378,6 @@ private int currentPictureIteration = 0;
 public double getCameraCenterValue ()
 {
     double center = 0;
-    // Save an image every 15 iterations: will give us between 1-3 frames per
-    // second, or a max of 10 to 15 pictures on the RIO.
-    if (currentPictureIteration++ >= 15)
-        {
-        this.visionProcessor.saveImage(ImageType.RAW);
-        this.visionProcessor.saveImage(ImageType.PROCESSED);
-        currentPictureIteration = 0;
-        }
 
     visionProcessor.processImage();
     // if we have at least two blobs, the center is equal to the average
