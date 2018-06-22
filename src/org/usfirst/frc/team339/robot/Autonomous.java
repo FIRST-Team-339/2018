@@ -131,7 +131,7 @@ public static void periodic ()
     // prints the main state of autonomous (as a whole) we're in
     // System.out.println("Main State: " + autoState);
     // calls the print statements from Teleop
-    Teleop.printStatements();
+    // Teleop.printStatements();
     // Main switch statement of auto
     switch (autoState)
         {

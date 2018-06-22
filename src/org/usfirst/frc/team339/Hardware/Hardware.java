@@ -27,6 +27,9 @@ import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.ScaleAlignment;
+import org.usfirst.frc.team339.Utils.Telemetry;
+import org.usfirst.frc.team339.vision.VisionProcessor;
+import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -127,7 +130,6 @@ public static WPI_TalonSRX leftRearCANMotor = new WPI_TalonSRX(13);// fix number
 // ====================================
 // Relay classes
 // ====================================
-
 public static Relay ringLightRelay = new Relay(1);
 
 // JANKY temporary fix until wpi gets their crap together with the Relay class.
@@ -332,7 +334,11 @@ public static MomentarySwitch climbButton = new MomentarySwitch(
 // ------------------------------------
 public static final Timer autoTimer = new Timer();
 
+public static Telemetry telemetry = new Telemetry(1000);
 
+public static final Timer testTimer = new Timer();
+
+public static boolean testTimerFlag = false;
 
 
 // ------------------------------------

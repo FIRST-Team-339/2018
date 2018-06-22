@@ -37,7 +37,6 @@ import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID.PIDDriveFunction;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
-import org.usfirst.frc.team339.Utils.Telemetry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -59,8 +58,13 @@ public class Teleop
 
 public static void init ()
 {
-    // User code goes below here
 
+
+    // User code goes below here
+    // temporary timer
+    Hardware.telemetry.printToShuffleboard();
+    Hardware.testTimer.start();
+    Hardware.telemetry.setTimeBetweenPrints(10000);
     // --------------------------------------
     // reset the MotorSafetyHelpers for each
     // of the drive motors
@@ -148,6 +152,8 @@ public static void periodic ()
     // TODO currently untested
     // Hardware.scaleAlignment.alignToScaleByButtons(
     // Hardware.leftOperator.getRawButton(4));
+
+
 
     if (Hardware.demoModeSwitch.isOn() == false)
         {
@@ -324,8 +330,27 @@ public static void periodic ()
     // ------------------------------------
 
     // printStatements();
-    Telemetry.printToConsole();
-    Telemetry.printToShuffleboard();
+    Hardware.telemetry.printToConsole();
+
+    // temporary timer
+    if (Hardware.testTimer.get() >= 30
+            && Hardware.testTimerFlag == false)
+        {
+        Hardware.telemetry.setTimeBetweenPrints(1000);
+        Hardware.testTimer.reset();
+
+
+        Hardware.testTimerFlag = true;
+
+        }
+    if (Hardware.testTimer.get() >= 30
+            && Hardware.testTimerFlag == true)
+        {
+        Hardware.telemetry.setTimeBetweenPrints(5000);
+        Hardware.testTimer.reset();
+
+        Hardware.testTimerFlag = false;
+        }
 
     // -------------------------------------------
     // Put anything you need to test, but the
@@ -510,22 +535,21 @@ public static void printStatements ()
         // =================================
         // System.out.println(
         // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-        SmartDashboard.putNumber("R Drive Motor",
-                Hardware.rightDriveMotor.get());
+        // SmartDashboard.putNumber("R Drive Motor",
+        // Hardware.rightDriveMotor.get());
         // System.out.println(
         // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-        SmartDashboard.putNumber("L Drive Motor",
-                Hardware.leftDriveMotor.get());
+        // SmartDashboard.putNumber("L Drive Motor",
+        // Hardware.leftDriveMotor.get());
 
-        // System.out.println("Lifting Motor " +
-        // Hardware.liftingMotor.get());
+        // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
         // SmartDashboard.putNumber("Lifting Motor",
         // Hardware.liftingMotor.get());
 
         // System.out.println(
         // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-        SmartDashboard.putNumber("Cube Motor",
-                Hardware.cubeIntakeMotor.get());
+        // SmartDashboard.putNumber("Cube Motor",
+        // Hardware.cubeIntakeMotor.get());
         // System.out.println(
         // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
         // SmartDashboard.putNumber("Intake Deploy Motor",
@@ -579,6 +603,7 @@ public static void printStatements ()
         // "Right = on");
         // SmartDashboard.putBoolean("R Auto SW",
         // Hardware.rightAutoSwitch.isOn());
+
 
         // System.out.println("6 pos = "
         // + Hardware.autoSixPosSwitch.getPosition());
@@ -673,6 +698,7 @@ public static void printStatements ()
         SmartDashboard.putBoolean("Bottom RL: ",
                 Hardware.redLight.isOn());
 
+
         // =================================
         // Pneumatics
         // =================================
@@ -709,6 +735,7 @@ public static void printStatements ()
 
         // System.out.println("Gyro: " + Hardware.gyro.getAngle());
         // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+
 
         // ---------------------------------
         // Sonar/UltraSonic
@@ -849,17 +876,20 @@ public static void printStatements ()
         // the box to red; false sets the box to transparent
         SmartDashboard.putBoolean("Has Cube ", false);
 
-        }
-    else if (Hardware.cubeManipulator
-            .getIntakeMotorSpeed() > Hardware.cubeManipulator.INTAKE_STOP_WITH_CUBE
-                    + .1 /*
-                          * the .1 here is just a magic number that wasn't worth
-                          * making a constant for;
-                          * is meant to prevent false positives in cases where
-                          * the getIntakeMotorSpeed is
-                          * returning .2000001 or something
-                          */)
-        {
+        // }
+        // else if (Hardware.cubeManipulator
+        // .getIntakeMotorSpeed() >
+        // Hardware.cubeManipulator.INTAKE_STOP_WITH_CUBE
+        // + .1
+        /*
+         * the .1 here is just a magic number that
+         * wasn't worth making a constant for; is meant
+         * to prevent false positives in cases where
+         * the getIntakeMotorSpeed is returning
+         * .2000001 or something
+         */
+        // )
+        // {
         // sets the boolean box to transparent
         SmartDashboard.putBoolean("Has Cube", false);
         // sets the other boolean box to red
@@ -872,6 +902,7 @@ public static void printStatements ()
         // sets the other boolean box to transparent
         SmartDashboard.putBoolean("Has Cube ", false);
         }
+
 
     SmartDashboard.putBoolean("Too close to scale",
             Hardware.armIR.isOn());
