@@ -59,7 +59,20 @@ public static void printToConsole ()
             // CAN items
             // prints value of the CAN controllers
             // =================================
-            //
+//          System.out.println("voltage " + Hardware.pdp.getVoltage());
+//          System.out.println("total current " + Hardware.pdp.getTotalCurrent());
+      //
+//          System.out.println("pdp 0 = " + Hardware.pdp.getCurrent(0));
+//          System.out.println("pdp 1 = " + Hardware.pdp.getCurrent(1));
+//          System.out.println("pdp 2 = " + Hardware.pdp.getCurrent(2) + "\n");
+      //
+//          System.out.println("pdp 3 = " + Hardware.pdp.getCurrent(3));
+//          System.out.println("pdp 12 = " + Hardware.pdp.getCurrent(12));
+//          System.out.println("pdp 13 = " + Hardware.pdp.getCurrent(13) + "\n");
+      //
+//          System.out.println("pdp 14 = " + Hardware.pdp.getCurrent(14));
+//          System.out.println("pdp 15 = " + Hardware.pdp.getCurrent(15));
+         // System.out.println("pdp 13 = " + Hardware.pdp.getCurrent(13));
             // =================================
             // Relay
             // =================================

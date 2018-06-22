@@ -120,6 +120,7 @@ public static void init ()
  */
 public static void periodic ()
 {
+
     // Hardware.tempRelay.set(true);
 
     // if (Hardware.redLight.isOn() && hasSeenTape == false)
@@ -194,6 +195,7 @@ public static void periodic ()
     // --------------------------------------------------------------
     // CAN TESTING CODE
     // --------------------------------------------------------------
+
 
     // tank code
     if (Hardware.leftDriver.getY() > .2)
@@ -490,19 +492,6 @@ private static void liftTest ()
  */
 public static void printStatements ()
 {
-    System.out.println("pdp 0 = " + Hardware.pdp.getCurrent(0));
-    System.out.println("pdp 1 = " + Hardware.pdp.getCurrent(1));
-    System.out.println("pdp 2 = " + Hardware.pdp.getCurrent(2) + "\n");
-
-    System.out.println("pdp 3 = " + Hardware.pdp.getCurrent(3));
-    System.out.println("pdp 4 = " + Hardware.pdp.getCurrent(4));
-    System.out.println("pdp 5 = " + Hardware.pdp.getCurrent(5) + "\n");
-
-    System.out.println("pdp 6 = " + Hardware.pdp.getCurrent(6));
-    System.out.println("pdp 7 = " + Hardware.pdp.getCurrent(7));
-    System.out.println("pdp 8 = " + Hardware.pdp.getCurrent(8));
-
-
 
     if (Hardware.driverStation.isFMSAttached() == false)
         {

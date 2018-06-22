@@ -92,9 +92,9 @@ public static Talon leftDriveMotor = new Talon(3);
 // Victor Classes
 // ------------------------------------
 
-public static WPI_TalonSRX liftingMotor = new WPI_TalonSRX(4);// change
+public static WPI_TalonSRX liftingMotor = new WPI_TalonSRX(23);// change
 
-// public static VictorSP liftingMotor = new VictorSP(0);
+// public static VictorSP liftingMotor = new VictorSP(0); 
 
 public static VictorSP cubeIntakeMotor = new VictorSP(1);
 
