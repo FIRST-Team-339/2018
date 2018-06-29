@@ -237,9 +237,21 @@ public static void periodic ()
             rightInput);
 
     Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
-            leftInput);    
+            leftInput);
+    
+    if(Hardware.rightDriver.getRawButton(11) == true)
+        {
+        
+            Hardware.liftingMotor.set(.5);
+        }
+    
 //    System.out.println("CAN " + Hardware.rightFrontCANMotor.getMotorOutputPercent()); 
 //    
+
+    //Hardware.liftingMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+    //System.out.println(Hardware.liftingMotor.getSelectedSensorPosition(1));
+    //System.out.println("Sensor velocity " + Hardware.liftingMotor.getSelectedSensorVelocity(1));
+    
     
 
     // --------------------------------------------------------------
