@@ -538,7 +538,7 @@ private static final int KILROY_XIX_US_DISTANCE_FROM_BUMPER = 3;
 public static final double CLIMB_SERVO_INIT_POSITION = 1.0;
 
 // position the climb servo goes to when the root is climbing
-public static final double CLIMB_SERVO_CLIMB_POISITION = 0.0;
+public static final double CLIMB_SERVO_CLIMB_POSITION = 0.0;
 
 } // end class
 

@@ -194,9 +194,11 @@ public void printToConsole ()
 
 
 
-            System.out.println("6 pos = "
-                    + Hardware.autoSixPosSwitch.getPosition());
+//            System.out.println("6 pos = "
+//                    + Hardware.autoSixPosSwitch.getPosition());
 
+            System.out.println("Demo swich isOn" + Hardware.demoModeSwitch.isOn());
+            
             // ---------------------------------
             // Encoders
             // ---------------------------------
@@ -302,9 +304,8 @@ public void printToConsole ()
             // =========================
             // Servos
             // =========================
-            // System.out.println("Climbing Mechanism Servo" +
-            // Hardware.climbingMechanismServo.getAngle());
-
+             System.out.println("Climbing Mechanism Servo" +
+             Hardware.climbingMechanismServo.getAngle());
 
             // System.out.println("Intake Arm Servo " +
             // Hardware.intakeArmPositionServo.getAngle());

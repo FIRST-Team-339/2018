@@ -238,12 +238,26 @@ public static void periodic ()
 
     Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
             leftInput);
+//    
+//    if(Hardware.rightDriver.getRawButton(11) == true)
+//        {
+//        
+//            Hardware.liftMotor.set(ControlMode.PercentOutput,
+//                    .5);
+//        }
+//    else if (Hardware.rightDriver.getRawButton(10) == true)
+//        {
+//        
+//            Hardware.liftMotor.set(ControlMode.PercentOutput,
+//                    -.5);
+//        }
+//    else 
+//        {
+//        Hardware.liftMotor.set(ControlMode.PercentOutput,
+//                0.2);
+//
+//        }
     
-    if(Hardware.rightDriver.getRawButton(11) == true)
-        {
-        
-            Hardware.liftingMotor.set(.5);
-        }
     
 //    System.out.println("CAN " + Hardware.rightFrontCANMotor.getMotorOutputPercent()); 
 //    
@@ -279,7 +293,7 @@ public static void periodic ()
 
         if (Hardware.climbButton.isOnCheckNow() == true)
             Hardware.climbingMechanismServo
-                    .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
+                    .set(Robot.CLIMB_SERVO_CLIMB_POSITION);
         else
             Hardware.climbingMechanismServo
                     .set(Robot.CLIMB_SERVO_INIT_POSITION);
@@ -383,7 +397,7 @@ public static void periodic ()
 
 private static boolean allowAlignment = false;
 
-private static boolean isTestingDrive = false;
+private static boolean isTestingDrive = true;//@ANE flip
 
 private static boolean isTestingEncoderTurn = false;
 
