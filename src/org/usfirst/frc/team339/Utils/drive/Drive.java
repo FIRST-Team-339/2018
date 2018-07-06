@@ -143,6 +143,22 @@ public boolean accelerateTo_old (double leftSpeed, double rightSpeed,
     return false;
 }
 
+/**
+ * Drives the robot with an acceleration input. If enough time has elapsed that
+ * the lastAccelerateTime is greater than the timeout, the accelerate will
+ * automatically reset, allowing acceleration again.
+ * 
+ * Acceleration is measured in percent per second.
+ * 
+ * @param leftSpeed
+ *            The left-side speed that will be accelerated to
+ * @param rightSpeed
+ *            The right-side speed that will be accelerated to
+ * @param percentPerSecond
+ *            The robot's acceleration in percent per second.
+ * @return Whether or not the robot has finished accelerating, and is at
+ *         leftSpeed and rightSpeed
+ */
 public boolean accelerateTo (double leftSpeed, double rightSpeed,
         double percentPerSecond)
 {
@@ -173,6 +189,11 @@ public boolean accelerateTo (double leftSpeed, double rightSpeed,
             Math.min(Math.signum(rightSpeed) * timeSinceLastAccelReset
                     * percentPerSecond, Math.abs(rightSpeed)),
             -Math.abs(rightSpeed));
+
+    transmission.driveRaw(leftOut, rightOut);
+
+    if (leftOut == leftSpeed && rightOut == rightSpeed)
+        return true;
     return false;
 }
 
@@ -402,10 +423,7 @@ public double degreesToEncoderInches (double degrees, boolean pivot)
  */
 public void drive (Joystick leftJoystick, Joystick rightJoystick)
 {
-    if (transmission.getType() == TransmissionType.TANK)
-        this.drive(-leftJoystick.getY(), -rightJoystick.getY());
-    else if (transmission.getType() == TransmissionType.OMNI_DIR)
-        this.drive(leftJoystick);
+    this.drive(-leftJoystick.getY(), -rightJoystick.getY());
 }
 
 /**
@@ -413,14 +431,19 @@ public void drive (Joystick leftJoystick, Joystick rightJoystick)
  * This DOES use gear ratios and joystick deadbands.
  * 
  * @param leftVal
+ *            The left side joystick, controls the left side of the robot
  *            From -1.0 (backwards) to 1.0 (forwards)
  * @param rightVal
+ *            The right side joystick, controls the right side of the robot
  *            From -1.0 (backwards) to 1.0 (forwards)
  */
 public void drive (double leftVal, double rightVal)
 {
+    // If the transmission input into Drive is of type Tank, then use it.
     if (transmission instanceof TankTransmission)
         ((TankTransmission) transmission).drive(leftVal, rightVal);
+    // If the transmission input into Drive is some sort of Omni-Directional,
+    // then use tank drive on it.
     else if (transmission.getType() == TransmissionType.OMNI_DIR)
         {
         double direction = 0;
@@ -440,6 +463,8 @@ public void drive (double leftVal, double rightVal)
  * joystick.
  * 
  * @param joystick
+ *            The singular 3-axis joystick that will control all movements of
+ *            the robot. X and Y control lateral movement, Z controls rotation.
  */
 public void drive (Joystick joystick)
 {
@@ -456,24 +481,32 @@ public void drive (Joystick joystick)
  * @param magnitude
  *            Speed, from 0.0 to 1.0
  * @param direction
- *            Angle for strafing, from -180 to 180
+ *            Angle for strafing, from -180 to 180 (0 forwards)
  * @param rotation
- *            Speed in turns, from -1.0 (left) to 1.0 (right)
+ *            Speed in turns, from -1.0 (left) to 1.0 (right) (Percentage of a
+ *            joystick)
  */
 public void drive (double magnitude, double direction, double rotation)
 {
+    // if the transmission type input is Mecanum, then control it with that
     if (transmission instanceof MecanumTransmission)
         ((MecanumTransmission) transmission).drive(magnitude, direction,
                 rotation);
+    // IF the transmission type input is Swerve (as if it will ever be used),
+    // then control it with that
     else if (transmission instanceof SwerveTransmission)
         ((SwerveTransmission) transmission).drive(magnitude, direction,
                 rotation);
+    // AHHH! we are a Tank transmission! ...Switching to arcade drive I guess?
     else if (transmission instanceof TankTransmission)
         {
-        double leftVal, rightVal;
-        leftVal = Math.min(Math.max(magnitude + rotation, -1), 1);
-        rightVal = Math.min(Math.max(magnitude - rotation, -1), 1);
-        this.drive(leftVal, rightVal);
+        // Arcade Drive
+        double yVal = magnitude * Math.cos(Math.toRadians(direction));
+        double xVal = magnitude * Math.sin(Math.toRadians(direction));
+        double leftVal = Math.min(Math.max(yVal + xVal, -1), 1);
+        double rightVal = Math.min(Math.max(yVal - xVal, -1), 1);
+
+        ((TankTransmission) transmission).drive(leftVal, rightVal);
         }
 }
 
@@ -522,7 +555,7 @@ public boolean driveInches (int distance, double speed)
  * @param isUsingGyro
  *            If true, the chosen sensor is a gyro. If false, it uses encoders.
  */
-public void driveStraight (double speed, boolean acceleration,
+public void driveStraight (double speed, double acceleration,
         boolean isUsingGyro)
 {
     // "Reset" the encoders (will not mess with driveInches or such)
@@ -550,16 +583,13 @@ public void driveStraight (double speed, boolean acceleration,
         }
     else
         {
-        leftSpeed = speed - (Math.signum(
-                getEncoderDistanceAverage(MotorPosition.LEFT)
-                        - getEncoderDistanceAverage(
-                                MotorPosition.RIGHT))
-                * driveStraightConstant);
-        rightSpeed = speed - (Math.signum(
-                getEncoderDistanceAverage(MotorPosition.LEFT)
-                        - getEncoderDistanceAverage(
-                                MotorPosition.RIGHT))
-                * driveStraightConstant);
+        int delta = getEncoderTicks(MotorPosition.LEFT)
+                - getEncoderTicks(MotorPosition.RIGHT);
+
+        leftSpeed = speed
+                - ((Math.signum(delta) * driveStraightConstant));
+        rightSpeed = speed
+                + ((Math.signum(delta) * driveStraightConstant));
         }
 
     // Only send the new power to the side lagging behind
@@ -572,11 +602,7 @@ public void driveStraight (double speed, boolean acceleration,
         leftSpeed = speed;
         }
 
-    if (acceleration)
-        this.accelerateTo_old(leftSpeed, rightSpeed,
-                getDefaultAcceleration());
-    else
-        this.accelerateTo_old(leftSpeed, rightSpeed, 0);
+    this.accelerateTo(leftSpeed, rightSpeed, acceleration);
     // Reset the "timer" to know when to "reset" the encoders for this
     // method.
     driveStraightLastTime = System.currentTimeMillis();
@@ -592,14 +618,14 @@ public void driveStraight (double speed, boolean acceleration,
  *            How far the robot should go (should be greater than 0)
  * @param speed
  *            How fast the robot should travel
- * @param accelerate
- *            Whether or not the robot is accelerating
+ * @param acceleration
+ *            How much the robot should accelerate
  * @param isUsingGyro
  *            If true, the chosen sensor is a gyro. If false, it uses encoders.
  * @return Whether or not the robot has finished traveling that given distance.
  */
 public boolean driveStraightInches (double distance, double speed,
-        boolean accelerate, boolean isUsingGyro)
+        double acceleration, boolean isUsingGyro)
 {
     // Runs once when the method runs the first time, and does not run again
     // until after the method returns true.
@@ -618,7 +644,7 @@ public boolean driveStraightInches (double distance, double speed,
         }
 
     // Drive straight if we have not reached the distance
-    this.driveStraight(speed, accelerate, true);
+    this.driveStraight(speed, acceleration, true);
 
     return false;
 }
@@ -746,9 +772,13 @@ public int getEncoderTicks (MotorPosition encoder)
     switch (encoder)
         {
         case LEFT:
+            if (encoders.length == 4)
+                return encoders[0].get() + encoders[2].get();
         case LEFT_REAR:
             return encoders[0].get();
         case RIGHT:
+            if (encoders.length == 4)
+                return encoders[1].get() + encoders[3].get();
         case RIGHT_REAR:
             return encoders[1].get();
         case LEFT_FRONT:

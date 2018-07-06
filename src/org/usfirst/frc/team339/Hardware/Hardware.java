@@ -341,6 +341,9 @@ public static final Timer autoTimer = new Timer();
 public static TankTransmission transmission = new TankTransmission(
         new SpeedControllerGroup(leftCANMotor, leftRearCANMotor),
         new SpeedControllerGroup(rightCANMotor, rightRearCANMotor));
+// public static MecanumTransmission transmission = new MecanumTransmission(
+// leftCANMotor,
+// rightCANMotor, leftRearCANMotor, rightRearCANMotor);
 
 // public static MecanumTransmission transmission = new MecanumTransmission(
 // leftRearCANMotor, rightRearCANMotor, leftCANMotor,
@@ -350,7 +353,8 @@ public static TankTransmission transmission = new TankTransmission(
 // Drive system
 // ------------------------------------
 public static Drive drive = new Drive(transmission,
-        leftRearDriveEncoder, rightRearDriveEncoder,
+        leftRearDriveEncoder,
+        rightRearDriveEncoder,
         leftFrontDriveEncoder, rightFrontDriveEncoder, gyro);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 

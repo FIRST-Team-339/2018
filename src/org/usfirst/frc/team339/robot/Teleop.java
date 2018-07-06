@@ -34,9 +34,6 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.Telemetry;
-import org.usfirst.frc.team339.Utils.drive.DrivePID;
-import org.usfirst.frc.team339.Utils.drive.DrivePID.PIDDriveFunction;
-import org.usfirst.frc.team339.Utils.drive.DriveTesting;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -102,8 +99,6 @@ public static void init ()
                 Hardware.delayPot.get(0, .7));
         Hardware.drive.setGear(0);
         }
-
-    DriveTesting.reset();
 
 } // end Init
 
@@ -270,7 +265,7 @@ public static void periodic ()
     // && Hardware.scaleAlignment.allowAlignment == false
     // && isBeckyTest == false
     // && isTestingEncoderTurn == false)
-    if (!drivepid.tunePID(PIDDriveFunction.TURN_ENC))
+    if (!testingDrive)
         Hardware.drive.drive(Hardware.leftDriver);
     // update
 
@@ -371,37 +366,35 @@ private static void beckyTest ()
     // }
 } // end beckyTest()
 
-static DrivePID drivepid = new DrivePID(Hardware.transmission,
-        Hardware.leftFrontDriveEncoder,
-        Hardware.rightFrontDriveEncoder, Hardware.gyro);
-
-private static boolean isTestingPID = false;
-
-private static boolean isTestingBangBang = false;
+static boolean testingDrive = false;
 
 private static void testingDrive ()
 {
-    if (Hardware.rightDriver.getRawButton(8))
-        isTestingPID = true;
-    else if (Hardware.rightDriver.getRawButton(7))
-        isTestingBangBang = true;
-    else if (Hardware.rightDriver.getRawButton(9))
+    if (Hardware.leftDriver.getRawButton(8))
         {
-        isTestingPID = false;
-        isTestingBangBang = false;
-        DriveTesting.reset();
+        Hardware.drive.reset();
+        Hardware.drive.resetEncoders();
         }
 
-    if (isTestingPID)
+    Hardware.drive.setDriveStraightConstant(
+            (Hardware.rightDriver.getThrottle() + 1) / 2.0);
+
+    SmartDashboard.putNumber("DS Constant",
+            (Hardware.rightDriver.getThrottle() + 1) / 2.0);
+    SmartDashboard.putNumber("Drive Test Speed",
+            Hardware.leftDriver.getThrottle());
+    SmartDashboard.putNumber("Drive Test Acceleration",
+            (Hardware.rightOperator.getZ() + 1));
+
+    if (Hardware.leftDriver.getRawButton(7))
         {
-        if (DriveTesting.pidDriveInches(.5, 5 * 12, 1, .5))
-            isTestingPID = false;
+        testingDrive = true;
+        Hardware.drive.driveStraight(Hardware.leftDriver.getThrottle(),
+                (Hardware.rightOperator.getZ() + 1) * 2,
+                false);
         }
-    else if (isTestingBangBang)
-        {
-        if (DriveTesting.bangBangDriveInches(.35, 5 * 12, 0))
-            isTestingBangBang = false;
-        }
+    else
+        testingDrive = false;
 } // end of testingDrive()
 
 private static void liftTest ()

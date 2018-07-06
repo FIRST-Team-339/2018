@@ -32,7 +32,6 @@ public MecanumTransmission (SpeedController leftRearMotor,
 {
     super(leftRearMotor, rightRearMotor, leftFrontMotor,
             rightFrontMotor);
-
     super.type = TransmissionType.OMNI_DIR;
 }
 
@@ -314,11 +313,7 @@ protected double returnPIDInput ()
 @Override
 protected void usePIDOutput (double output)
 {
-    // Stop sending correction if we are within the tolerance.
-    if (onTarget() == false)
-        adjustedAngle = output;
-    else
-        adjustedAngle = 0;
+    adjustedAngle = output;
 }
 
 @Override

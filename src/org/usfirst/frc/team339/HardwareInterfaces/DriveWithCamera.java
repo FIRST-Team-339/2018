@@ -216,7 +216,7 @@ public boolean driveToSwitch (double speed)
                 state = DriveWithCameraState.DRIVE_WITH_US;
             break;
         case DRIVE_WITH_US:
-            driveStraight(speed, false, true);
+            driveStraight(speed, 0, true);
 
             // take a picture when we start to drive with ultrasonic
 
@@ -312,7 +312,7 @@ public boolean jankyDriveToSwitch (double speed)
 
             break;
         case DRIVE_WITH_US:
-            driveStraight(speed, false, true);
+            driveStraight(speed, 0, true);
 
             if (this.frontUltrasonic
                     .getDistanceFromNearestBumper() <= DISTANCE_FROM_WALL_TO_STOP)
