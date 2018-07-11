@@ -228,9 +228,9 @@ public class DrivePID extends Drive
 			}
 		}
 		if (isUsingGyro == true)
-			super.accelerateTo_old(speed + driveStraightPIDOutput_gyro, speed - driveStraightPIDOutput_gyro, acceleration);
+			super.accelerateProportionaly(speed + driveStraightPIDOutput_gyro, speed - driveStraightPIDOutput_gyro, acceleration);
 		else
-			super.accelerateTo_old(speed + driveStraightPIDOutput_enc, speed - driveStraightPIDOutput_enc, acceleration);
+			super.accelerateProportionaly(speed + driveStraightPIDOutput_enc, speed - driveStraightPIDOutput_enc, acceleration);
 
 		driveStraightLastTime = System.currentTimeMillis();
 	}

@@ -911,7 +911,7 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_LEFT_SIDE:
             // Turn x degrees to the left, if the switch is on the left
             if (Hardware.drive.pivotTurnDegrees(-80,
-                    MID_DRIVE_SPEED, true) == true)// Changed
+                    MID_DRIVE_SPEED,0, true) == true)// Changed
             // from
             // 2stageturn
                 {
@@ -922,7 +922,7 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_RIGHT_SIDE:
             // Turn x degrees to the right, if the switch is on the right
             if (Hardware.drive.pivotTurnDegrees(80,
-                    MID_DRIVE_SPEED, true) == true)// Changed
+                    MID_DRIVE_SPEED,0, true) == true)// Changed
             // from
             // 2stageTurn
                 {
@@ -982,7 +982,7 @@ public static boolean centerSwitchPath ()
             // turn 90 to the left and sets the state to DRIVE_WITH_CAMERA this
             // is the right side auto
             if (Hardware.drive.pivotTurnDegrees(-80,
-                    MID_DRIVE_SPEED, true) == true)
+                    MID_DRIVE_SPEED,0, true) == true)
                 {
                 visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
@@ -991,7 +991,7 @@ public static boolean centerSwitchPath ()
             // turns 90 to the right then brakes and sets the state to
             // DRIVE_WITH_CAMERA this is the left side auto
             if (Hardware.drive.pivotTurnDegrees(65,
-                    MID_DRIVE_SPEED, true) == true)
+                    MID_DRIVE_SPEED,0, true) == true)
                 {
                 visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
