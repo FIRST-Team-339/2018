@@ -32,6 +32,7 @@
 package org.usfirst.frc.team339.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID.PIDDriveFunction;
@@ -123,6 +124,7 @@ public static void init ()
  */
 public static void periodic ()
 {
+
     // Hardware.tempRelay.set(true);
 
     // if (Hardware.redLight.isOn() && hasSeenTape == false)
@@ -230,15 +232,41 @@ public static void periodic ()
     // Hardware.rightRearCANMotor.set(ControlMode.PercentOutput,
     // Hardware.rightOperator.getY());
 
+
     Hardware.rightFrontCANMotor.set(ControlMode.PercentOutput,
             rightInput);
 
     Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
             leftInput);
-    // System.out.println("CAN " +
-    // Hardware.rightFrontCANMotor.getMotorOutputPercent());
+//    
+//    if(Hardware.rightDriver.getRawButton(11) == true)
+//        {
+//        
+//            Hardware.liftMotor.set(ControlMode.PercentOutput,
+//                    .5);
+//        }
+//    else if (Hardware.rightDriver.getRawButton(10) == true)
+//        {
+//        
+//            Hardware.liftMotor.set(ControlMode.PercentOutput,
+//                    -.5);
+//        }
+//    else 
+//        {
+//        Hardware.liftMotor.set(ControlMode.PercentOutput,
+//                0.2);
+//
+//        }
+    
+    
+//    System.out.println("CAN " + Hardware.rightFrontCANMotor.getMotorOutputPercent()); 
+//    
 
-
+    //Hardware.liftingMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+    //System.out.println(Hardware.liftingMotor.getSelectedSensorPosition(1));
+    //System.out.println("Sensor velocity " + Hardware.liftingMotor.getSelectedSensorVelocity(1));
+    
+    
 
     // --------------------------------------------------------------
     if (Hardware.demoModeSwitch.isOn() == false)
@@ -265,7 +293,7 @@ public static void periodic ()
 
         if (Hardware.climbButton.isOnCheckNow() == true)
             Hardware.climbingMechanismServo
-                    .set(Robot.CLIMB_SERVO_CLIMB_POISITION);
+                    .set(Robot.CLIMB_SERVO_CLIMB_POSITION);
         else
             Hardware.climbingMechanismServo
                     .set(Robot.CLIMB_SERVO_INIT_POSITION);
@@ -369,7 +397,7 @@ public static void periodic ()
 
 private static boolean allowAlignment = false;
 
-private static boolean isTestingDrive = false;
+private static boolean isTestingDrive = true;//@ANE flip
 
 private static boolean isTestingEncoderTurn = false;
 
@@ -515,19 +543,6 @@ private static void liftTest ()
  */
 public static void printStatements ()
 {
-    System.out.println("pdp 0 = " + Hardware.pdp.getCurrent(0));
-    System.out.println("pdp 1 = " + Hardware.pdp.getCurrent(1));
-    System.out.println("pdp 2 = " + Hardware.pdp.getCurrent(2) + "\n");
-
-    System.out.println("pdp 3 = " + Hardware.pdp.getCurrent(3));
-    System.out.println("pdp 4 = " + Hardware.pdp.getCurrent(4));
-    System.out.println("pdp 5 = " + Hardware.pdp.getCurrent(5) + "\n");
-
-    System.out.println("pdp 6 = " + Hardware.pdp.getCurrent(6));
-    System.out.println("pdp 7 = " + Hardware.pdp.getCurrent(7));
-    System.out.println("pdp 8 = " + Hardware.pdp.getCurrent(8));
-
-
 
     if (Hardware.driverStation.isFMSAttached() == false)
         {
