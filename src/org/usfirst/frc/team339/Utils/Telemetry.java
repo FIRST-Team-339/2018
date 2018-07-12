@@ -22,8 +22,6 @@ public Telemetry ()
 {
 
     this.init();
-
-
 }
 
 /**
@@ -38,7 +36,11 @@ public Telemetry (double newTimeBetweenPrints)
     this.init();
 }
 
-
+/**
+ * Returns last time print statements were printed
+ * 
+ * @return lastTimePrinted
+ */
 private double getLastTimePrinted ()
 {
     return (lastTimePrinted);
@@ -47,7 +49,7 @@ private double getLastTimePrinted ()
 /**
  * function dedicated to returning the current time between prints
  * 
- * @return
+ * @return timeBetweenPrints
  */
 public double getTimeBetweenPrints ()
 {
@@ -55,6 +57,10 @@ public double getTimeBetweenPrints ()
 
 }
 
+/**
+ * Initializes telemetry object by setting lastTimePrinted to the system's
+ * current time
+ */
 private void init ()
 {
 
@@ -63,6 +69,11 @@ private void init ()
 
 }
 
+/**
+ * @param newLastTimePrinted
+ *            sets lastTimePrinted to what you want
+ * @return
+ */
 private double setLastTimePrinted (double newLastTimePrinted)
 {
     lastTimePrinted = newLastTimePrinted;
@@ -81,12 +92,6 @@ public double setTimeBetweenPrints (double newTimeBetweenPrints)
     timeBetweenPrints = newTimeBetweenPrints;
     return (this.getTimeBetweenPrints());
 }
-
-// initial state
-private double lastTimePrinted = 0.0;
-
-// in milliseconds
-private double timeBetweenPrints = 10000;
 
 /**
  * prints to console
@@ -725,6 +730,11 @@ public void printToShuffleboard ()
     SmartDashboard.updateValues();
 }
 
+// in milliseconds
+private double timeBetweenPrints = 10000;
+
+// initial state
+private double lastTimePrinted = 0.0;
 
 
 
