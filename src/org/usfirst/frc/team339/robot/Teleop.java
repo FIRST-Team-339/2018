@@ -32,7 +32,6 @@
 package org.usfirst.frc.team339.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID.PIDDriveFunction;
@@ -63,8 +62,6 @@ public static void init ()
     // User code goes below here
     // temporary timer
     Hardware.telemetry.printToShuffleboard();
-    Hardware.testTimer.start();
-    Hardware.telemetry.setTimeBetweenPrints(10000);
     // --------------------------------------
     // reset the MotorSafetyHelpers for each
     // of the drive motors
@@ -238,35 +235,38 @@ public static void periodic ()
 
     Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
             leftInput);
-//    
-//    if(Hardware.rightDriver.getRawButton(11) == true)
-//        {
-//        
-//            Hardware.liftMotor.set(ControlMode.PercentOutput,
-//                    .5);
-//        }
-//    else if (Hardware.rightDriver.getRawButton(10) == true)
-//        {
-//        
-//            Hardware.liftMotor.set(ControlMode.PercentOutput,
-//                    -.5);
-//        }
-//    else 
-//        {
-//        Hardware.liftMotor.set(ControlMode.PercentOutput,
-//                0.2);
-//
-//        }
-    
-    
-//    System.out.println("CAN " + Hardware.rightFrontCANMotor.getMotorOutputPercent()); 
-//    
+    //
+    // if(Hardware.rightDriver.getRawButton(11) == true)
+    // {
+    //
+    // Hardware.liftMotor.set(ControlMode.PercentOutput,
+    // .5);
+    // }
+    // else if (Hardware.rightDriver.getRawButton(10) == true)
+    // {
+    //
+    // Hardware.liftMotor.set(ControlMode.PercentOutput,
+    // -.5);
+    // }
+    // else
+    // {
+    // Hardware.liftMotor.set(ControlMode.PercentOutput,
+    // 0.2);
+    //
+    // }
 
-    //Hardware.liftingMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-    //System.out.println(Hardware.liftingMotor.getSelectedSensorPosition(1));
-    //System.out.println("Sensor velocity " + Hardware.liftingMotor.getSelectedSensorVelocity(1));
-    
-    
+
+    // System.out.println("CAN " +
+    // Hardware.rightFrontCANMotor.getMotorOutputPercent());
+    //
+
+    // Hardware.liftingMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,
+    // 0, 0);
+    // System.out.println(Hardware.liftingMotor.getSelectedSensorPosition(1));
+    // System.out.println("Sensor velocity " +
+    // Hardware.liftingMotor.getSelectedSensorVelocity(1));
+
+
 
     // --------------------------------------------------------------
     if (Hardware.demoModeSwitch.isOn() == false)
@@ -358,26 +358,6 @@ public static void periodic ()
     // printStatements();
     Hardware.telemetry.printToConsole();
 
-    // temporary timer
-    if (Hardware.testTimer.get() >= 30
-            && Hardware.testTimerFlag == false)
-        {
-        Hardware.telemetry.setTimeBetweenPrints(1000);
-        Hardware.testTimer.reset();
-
-
-        Hardware.testTimerFlag = true;
-
-        }
-    if (Hardware.testTimer.get() >= 30
-            && Hardware.testTimerFlag == true)
-        {
-        Hardware.telemetry.setTimeBetweenPrints(5000);
-        Hardware.testTimer.reset();
-
-        Hardware.testTimerFlag = false;
-        }
-
     // -------------------------------------------
     // Put anything you need to test, but the
     // code will not be a part of the final teleop
@@ -397,7 +377,7 @@ public static void periodic ()
 
 private static boolean allowAlignment = false;
 
-private static boolean isTestingDrive = true;//@ANE flip
+private static boolean isTestingDrive = true;// @ANE flip
 
 private static boolean isTestingEncoderTurn = false;
 

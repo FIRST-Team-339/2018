@@ -28,8 +28,6 @@ import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmiss
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.ScaleAlignment;
 import org.usfirst.frc.team339.Utils.Telemetry;
-import org.usfirst.frc.team339.vision.VisionProcessor;
-import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -97,7 +95,7 @@ public static Talon leftDriveMotor = new Talon(3);
 
 public static WPI_TalonSRX liftingMotor = new WPI_TalonSRX(6);
 
-// public static VictorSP liftingMotor = new VictorSP(0); 
+// public static VictorSP liftingMotor = new VictorSP(0);
 
 public static VictorSP cubeIntakeMotor = new VictorSP(1);
 
@@ -116,19 +114,22 @@ public static Servo intakeArmPositionServo = new Servo(6);
 // CAN classes
 // ====================================
 
-public static PowerDistributionPanel pdp = new PowerDistributionPanel(2); 
+public static PowerDistributionPanel pdp = new PowerDistributionPanel(
+        2);
 
 public static WPI_TalonSRX rightFrontCANMotor = new WPI_TalonSRX(14);
 
 public static WPI_TalonSRX leftFrontCANMotor = new WPI_TalonSRX(11);
 
-public static WPI_TalonSRX rightRearCANMotor = new WPI_TalonSRX(12);// fix number
+public static WPI_TalonSRX rightRearCANMotor = new WPI_TalonSRX(12);// fix
+                                                                    // number
 
 public static WPI_TalonSRX leftRearCANMotor = new WPI_TalonSRX(13);// fix number
 // 0
 // ====================================
 // Relay classes
 // ====================================
+
 public static Relay ringLightRelay = new Relay(1);
 
 // JANKY temporary fix until wpi gets their crap together with the Relay class.
@@ -333,12 +334,7 @@ public static MomentarySwitch climbButton = new MomentarySwitch(
 // ------------------------------------
 public static final Timer autoTimer = new Timer();
 
-public static Telemetry telemetry = new Telemetry(1000);
-
-public static final Timer testTimer = new Timer();
-
-public static boolean testTimerFlag = false;
-
+public static Telemetry telemetry = new Telemetry(10000);
 
 // ------------------------------------
 // Transmission class
