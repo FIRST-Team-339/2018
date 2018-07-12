@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -34,7 +35,7 @@ public class SwerveTransmission extends TransmissionBase {
 
 	private final SpeedController directionalController;
 
-	private final PIDSource monoSensor;
+	private final Encoder monoSensor;
 
 	private final SwerveControlType currentControlScheme;
 
@@ -52,7 +53,8 @@ public class SwerveTransmission extends TransmissionBase {
 	 * @param directionalSensor
 	 */
 	public SwerveTransmission(SpeedController leftRear, SpeedController rightRear, SpeedController leftFront,
-			SpeedController rightFront, SpeedController monoDirectionalController, PIDSource directionalSensor) {
+			SpeedController rightFront, SpeedController monoDirectionalController, Encoder directionalSensor) {
+
 		super(leftRear, rightRear, leftFront, rightFront);
 		directionalSensor.setPIDSourceType(PIDSourceType.kDisplacement);
 		this.monoPID = new PIDController(0, 0, 0, directionalSensor, monoDirectionalController);
@@ -284,6 +286,7 @@ public class SwerveTransmission extends TransmissionBase {
 	 */
 	public boolean calibrateMotor(boolean centeredCondition, boolean override) {
 		if (centeredCondition == true) {
+			this.monoSensor.reset();
 			directionalController.stopMotor();
 			return true;
 		}
@@ -311,25 +314,6 @@ public class SwerveTransmission extends TransmissionBase {
 																	// 0 -> 360
 		double adjustedRotation = super.scaleJoystickForDeadband(rotation) * rotationScalar;
 
-		// What angle the motors should be going to, based on their current
-		// position and what's fastest for them.
-		Vector leftFrontFinal = calculateWheelVector(adjustedMagnitude, adjustedDirection, adjustedRotation,
-				MotorPosition.LEFT_FRONT);
-		Vector leftRearFinal = calculateWheelVector(adjustedMagnitude, adjustedDirection, adjustedRotation,
-				MotorPosition.LEFT_REAR);
-		Vector rightFrontFinal = calculateWheelVector(adjustedMagnitude, adjustedDirection, adjustedRotation,
-				MotorPosition.RIGHT_FRONT);
-		Vector rightRearFinal = calculateWheelVector(adjustedMagnitude, adjustedDirection, adjustedRotation,
-				MotorPosition.RIGHT_REAR);
-
-		// Make sure no magnitude is going over 1.0, by changing the ratio of
-		// all others to make sure it doesn't cap on one vector.
-		Vector[] normalized = Vector.normalize(leftRearFinal, rightRearFinal, leftFrontFinal, rightFrontFinal);
-		leftRearFinal = normalized[0];
-		rightRearFinal = normalized[1];
-		leftFrontFinal = normalized[2];
-		rightFrontFinal = normalized[3];
-
 		// Are we using one directional motor or four?
 		switch (currentControlScheme) {
 		case MONO_DIRECTIONAL_CONTROLLER:
@@ -349,21 +333,36 @@ public class SwerveTransmission extends TransmissionBase {
 			double leftFrontSpeed = -rightRearSpeed;
 			double rightFrontSpeed = -leftRearSpeed;
 
-			if (Math.abs(monoPID.getError()) < this.onTargetTolerance) {
-				super.getSpeedController(MotorPosition.LEFT_REAR)
-						.set((leftRearSpeed * Math.abs(adjustedRotation)) + (adjustedMagnitude * motorSigns[4]));
-				super.getSpeedController(MotorPosition.RIGHT_REAR)
-						.set((rightRearSpeed * Math.abs(adjustedRotation)) * (adjustedMagnitude * motorSigns[4]));
-				super.getSpeedController(MotorPosition.LEFT_FRONT)
-						.set((leftFrontSpeed * Math.abs(adjustedRotation)) * (adjustedMagnitude * motorSigns[4]));
-				super.getSpeedController(MotorPosition.RIGHT_FRONT)
-						.set((rightFrontSpeed * Math.abs(adjustedRotation)) * (adjustedMagnitude * motorSigns[4]));
-			} else {
-				super.stop();
-			}
+			//Set all the motors' speeds
+			super.getSpeedController(MotorPosition.LEFT_REAR)
+					.set((leftRearSpeed * Math.abs(adjustedRotation)) + (adjustedMagnitude * motorSigns[4]));
+			super.getSpeedController(MotorPosition.RIGHT_REAR)
+					.set((rightRearSpeed * Math.abs(adjustedRotation)) * (adjustedMagnitude * motorSigns[4]));
+			super.getSpeedController(MotorPosition.LEFT_FRONT)
+					.set((leftFrontSpeed * Math.abs(adjustedRotation)) * (adjustedMagnitude * motorSigns[4]));
+			super.getSpeedController(MotorPosition.RIGHT_FRONT)
+					.set((rightFrontSpeed * Math.abs(adjustedRotation)) * (adjustedMagnitude * motorSigns[4]));
 
 			break;
 		case MULTI_DIRECTIONAL_CONTROLLER:
+			// What angle the motors should be going to, based on their current
+			// position and what's fastest for them.
+			Vector leftFrontVector = calculateWheelVector(adjustedMagnitude, adjustedDirection, adjustedRotation,
+					MotorPosition.LEFT_FRONT);
+			Vector leftRearVector = calculateWheelVector(adjustedMagnitude, adjustedDirection, adjustedRotation,
+					MotorPosition.LEFT_REAR);
+			Vector rightFrontVector = calculateWheelVector(adjustedMagnitude, adjustedDirection, adjustedRotation,
+					MotorPosition.RIGHT_FRONT);
+			Vector rightRearVector = calculateWheelVector(adjustedMagnitude, adjustedDirection, adjustedRotation,
+					MotorPosition.RIGHT_REAR);
+
+			// Make sure no magnitude is going over 1.0, by changing the ratio of
+			// all others to make sure it doesn't cap on one vector.
+			Vector[] normalized = Vector.normalize(leftRearVector, rightRearVector, leftFrontVector, rightFrontVector);
+			leftRearVector = normalized[0];
+			rightRearVector = normalized[1];
+			leftFrontVector = normalized[2];
+			rightFrontVector = normalized[3];
 
 			// Decides whether or not the motors will be allowed to run if the
 			// direction is not yet correct.
@@ -374,26 +373,26 @@ public class SwerveTransmission extends TransmissionBase {
 
 			// Set the PID loop's set-point to be the angle we found.
 			multiPID[0].set(ControlMode.Position, findDesiredEncoderTicks(
-					findShortestRouteTo((int) leftRearFinal.dirDeg, MotorPosition.LEFT_REAR), MotorPosition.LEFT_REAR));
+					findShortestRouteTo((int) leftRearVector.dirDeg, MotorPosition.LEFT_REAR), MotorPosition.LEFT_REAR));
 			multiPID[1].set(ControlMode.Position,
-					findDesiredEncoderTicks(findShortestRouteTo((int) rightRearFinal.dirDeg, MotorPosition.RIGHT_REAR),
+					findDesiredEncoderTicks(findShortestRouteTo((int) rightRearVector.dirDeg, MotorPosition.RIGHT_REAR),
 							MotorPosition.RIGHT_REAR));
 			multiPID[2].set(ControlMode.Position,
-					findDesiredEncoderTicks(findShortestRouteTo((int) leftFrontFinal.dirDeg, MotorPosition.LEFT_FRONT),
+					findDesiredEncoderTicks(findShortestRouteTo((int) leftFrontVector.dirDeg, MotorPosition.LEFT_FRONT),
 							MotorPosition.LEFT_FRONT));
 			multiPID[3].set(ControlMode.Position,
 					findDesiredEncoderTicks(
-							findShortestRouteTo((int) rightFrontFinal.dirDeg, MotorPosition.RIGHT_FRONT),
+							findShortestRouteTo((int) rightFrontVector.dirDeg, MotorPosition.RIGHT_FRONT),
 							MotorPosition.RIGHT_FRONT));
 
 			// If the motors are on target, run them at speed.
 			if (canRunMotors == true) {
 				// If the motors are being reversed to improve efficiency, then
 				// motorSigns contains that data.
-				super.getSpeedController(MotorPosition.LEFT_REAR).set(leftRearFinal.mag * motorSigns[0]);
-				super.getSpeedController(MotorPosition.RIGHT_REAR).set(rightRearFinal.mag * motorSigns[1]);
-				super.getSpeedController(MotorPosition.LEFT_FRONT).set(leftFrontFinal.mag * motorSigns[2]);
-				super.getSpeedController(MotorPosition.RIGHT_FRONT).set(rightFrontFinal.mag * motorSigns[3]);
+				super.getSpeedController(MotorPosition.LEFT_REAR).set(leftRearVector.mag * motorSigns[0]);
+				super.getSpeedController(MotorPosition.RIGHT_REAR).set(rightRearVector.mag * motorSigns[1]);
+				super.getSpeedController(MotorPosition.LEFT_FRONT).set(leftFrontVector.mag * motorSigns[2]);
+				super.getSpeedController(MotorPosition.RIGHT_FRONT).set(rightFrontVector.mag * motorSigns[3]);
 			} else {
 				super.stop();
 			}
