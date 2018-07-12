@@ -86,7 +86,7 @@ public double setTimeBetweenPrints (double newTimeBetweenPrints)
 private double lastTimePrinted = 0.0;
 
 // in milliseconds
-private double timeBetweenPrints = 100000;
+private double timeBetweenPrints = 10000;
 
 /**
  * prints to console
