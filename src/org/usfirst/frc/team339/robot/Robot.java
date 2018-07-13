@@ -270,7 +270,7 @@ public void robotInit ()
         Hardware.intakeDeployEncoder
                 .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
 
-        Hardware.drive.setAllGearPercentages(KILROY_XIX_GEAR_1_SPEED,
+        Hardware.drive.setAllGearPercentages(.2,KILROY_XIX_GEAR_1_SPEED,
                 KILROY_XIX_GEAR_2_SPEED);
 
         Hardware.frontUltraSonic.setOffsetDistanceFromNearestBumper(

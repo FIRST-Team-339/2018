@@ -38,11 +38,11 @@ public static void printToConsole ()
             // =================================
             System.out.println(
                     "Right Drive Motor "
-                            + Hardware.rightDriveMotor.get());
+                            + Hardware.rightCANMotor.get());
 
             System.out.println(
                     "Left Drive Motor "
-                            + Hardware.leftDriveMotor.get());
+                            + Hardware.leftCANMotor.get());
 
             System.out.println("Lifting Motor " +
                     Hardware.liftingMotor.get());
@@ -301,10 +301,10 @@ public static void printToShuffleboard ()
     // Prints the value of motors
     // =================================
     SmartDashboard.putNumber("R Drive Motor",
-            Hardware.rightDriveMotor.get());
+            Hardware.rightCANMotor.get());
 
     SmartDashboard.putNumber("L Drive Motor",
-            Hardware.leftDriveMotor.get());
+            Hardware.leftCANMotor.get());
 
 
     // SmartDashboard.putNumber("Lifting Motor",
@@ -525,8 +525,8 @@ public static void printToShuffleboard ()
     // ---------------------------------
     // Gear number displayed to driver
     // ---------------------------------
-    // SmartDashboard.putNumber("Gear",
-    // Hardware.transmission.getCurrentGear() + 1);
+     SmartDashboard.putNumber("Gear",
+     Hardware.transmission.getCurrentGear() + 1);
 
     // ---------------------------------
     // timers

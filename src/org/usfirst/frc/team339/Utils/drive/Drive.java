@@ -154,11 +154,11 @@ public boolean accelerateTo(double leftSpeed, double rightSpeed, double percentP
 	// If we timeout, then reset all the accelerate values
 	if (System.currentTimeMillis() - lastAccelerateTime > INIT_TIMEOUT)
 	{
-		lastAccelerateTime = System.currentTimeMillis();
+		timeBetweenAccelerations = System.currentTimeMillis();
 	}
 
 	double leftOut, rightOut;
-	long timeDelta = (System.currentTimeMillis() - lastAccelerateTime) / 1000;
+	long timeDelta = (System.currentTimeMillis() - timeBetweenAccelerations) / 1000;
 
 	// Using algebra, we know that if acceleration is distance per second squared,
 	// and we want to get to velocity, which is distance per second, we just have to
@@ -171,6 +171,8 @@ public boolean accelerateTo(double leftSpeed, double rightSpeed, double percentP
 
 	transmission.driveRaw(leftOut, rightOut);
 
+	lastAccelerateTime = System.currentTimeMillis();
+	
 	if (leftOut == leftSpeed && rightOut == rightSpeed)
 		return true;
 	return false;
@@ -507,8 +509,7 @@ public boolean driveInches(int distance, double speed)
  * 
  * @param speed        How fast the robot should be moving, and in which
  *                     direction.
- * @param acceleration Whether or not the robot should accelerate to the
- *                     requested speed.
+ * @param acceleration How much the robot should accelerate, in seconds.
  * @param isUsingGyro  If true, the chosen sensor is a gyro. If false, it uses
  *                     encoders.
  */
@@ -550,7 +551,7 @@ public void driveStraight(double speed, double acceleration, boolean isUsingGyro
 		leftSpeed = speed;
 	}
 
-	this.accelerateTo(leftSpeed, rightSpeed, acceleration);
+	this.accelerateProportionaly(leftSpeed, rightSpeed, acceleration);
 	// Reset the "timer" to know when to "reset" the encoders for this
 	// method.
 	driveStraightLastTime = System.currentTimeMillis();
@@ -1457,6 +1458,8 @@ private int currentBrakeIteration = 0;
 private long driveStraightLastTime = 0;
 
 private long lastAccelerateTime = 0; // Milliseconds
+
+private long timeBetweenAccelerations = 0; //Milliseconds
 
 private long previousBrakeTime = 0; // milliseconds
 
