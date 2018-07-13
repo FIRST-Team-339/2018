@@ -32,6 +32,8 @@
 package org.usfirst.frc.team339.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID.PIDDriveFunction;
@@ -228,37 +230,35 @@ public static void periodic ()
     Hardware.leftRearCANMotor.follow(Hardware.leftFrontCANMotor);
 
 
-    // Hardware.leftRearCANMotor.set(ControlMode.PercentOutput,
-    // Hardware.leftOperator.getY());
-    //
-    // Hardware.rightRearCANMotor.set(ControlMode.PercentOutput,
-    // Hardware.rightOperator.getY());
-
-
     Hardware.rightFrontCANMotor.set(ControlMode.PercentOutput,
             rightInput);
 
     Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
             leftInput);
-    //
-    // if(Hardware.rightDriver.getRawButton(11) == true)
-    // {
-    //
-    // Hardware.liftMotor.set(ControlMode.PercentOutput,
-    // .5);
-    // }
-    // else if (Hardware.rightDriver.getRawButton(10) == true)
-    // {
-    //
-    // Hardware.liftMotor.set(ControlMode.PercentOutput,
-    // -.5);
-    // }
-    // else
-    // {
-    // Hardware.liftMotor.set(ControlMode.PercentOutput,
-    // 0.2);
-    //
-    // }
+    //encoder testing
+    
+    Hardware.liftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+    Hardware.liftMotor.getSelectedSensorPosition(0);
+    
+    
+     if(Hardware.rightDriver.getRawButton(11) == true)
+     {
+    
+     Hardware.liftMotor.set(ControlMode.PercentOutput,
+     .5);
+     }
+     else if (Hardware.rightDriver.getRawButton(10) == true)
+     {
+    
+     Hardware.liftMotor.set(ControlMode.PercentOutput,
+     -.5);
+     }
+     else
+     {
+     Hardware.liftMotor.set(ControlMode.PercentOutput,
+     0.2);
+    
+     }
 
 
     // System.out.println("CAN " +
