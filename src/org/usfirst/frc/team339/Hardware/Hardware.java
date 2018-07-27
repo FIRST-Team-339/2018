@@ -25,7 +25,6 @@ import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.MecanumTransmission;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TankTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.ScaleAlignment;
@@ -137,15 +136,20 @@ public static DigitalOutput tempRelay = new DigitalOutput(0);
 // ------------------------------------
 // Single and double throw switches
 // ------------------------------------
-public static SingleThrowSwitch leftAutoSwitch = new SingleThrowSwitch(20);
+public static SingleThrowSwitch leftAutoSwitch = new SingleThrowSwitch(
+        20);
 
-public static SingleThrowSwitch rightAutoSwitch = new SingleThrowSwitch(25);
+public static SingleThrowSwitch rightAutoSwitch = new SingleThrowSwitch(
+        25);
 
-public static DoubleThrowSwitch disableAutonomousSwitch = new DoubleThrowSwitch(leftAutoSwitch, rightAutoSwitch);
+public static DoubleThrowSwitch disableAutonomousSwitch = new DoubleThrowSwitch(
+        leftAutoSwitch, rightAutoSwitch);
 
-public static SingleThrowSwitch demoModeSwitch = new SingleThrowSwitch(8);
+public static SingleThrowSwitch demoModeSwitch = new SingleThrowSwitch(
+        8);
 
-public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(1, 2, 3, 4, 5, 6);
+public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(
+        1, 2, 3, 4, 5, 6);
 
 // ------------------------------------
 // Gear Tooth Sensors
@@ -154,13 +158,17 @@ public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(1, 2, 3
 // ------------------------------------
 // Encoders
 // ------------------------------------
-public static KilroyEncoder leftRearDriveEncoder = new KilroyEncoder(10, 11);
+public static KilroyEncoder leftRearDriveEncoder = new KilroyEncoder(10,
+        11);
 
-public static KilroyEncoder rightRearDriveEncoder = new KilroyEncoder(12, 13);
+public static KilroyEncoder rightRearDriveEncoder = new KilroyEncoder(
+        12, 13);
 
-public static KilroyEncoder leftFrontDriveEncoder = new KilroyEncoder(14, 15);
+public static KilroyEncoder leftFrontDriveEncoder = new KilroyEncoder(
+        14, 15);
 
-public static KilroyEncoder rightFrontDriveEncoder = new KilroyEncoder(16, 17);
+public static KilroyEncoder rightFrontDriveEncoder = new KilroyEncoder(
+        16, 17);
 
 public static Encoder liftingEncoder = new Encoder(18, 19);
 
@@ -186,7 +194,7 @@ public static Encoder intakeDeployEncoder = new Encoder(23, 24);
 // Red Light/IR Sensor class
 // -------------------------------------
 public static LightSensor armIR = new LightSensor(21);// TODO check port for
-														// 2018 robot
+                                                      // 2018 robot
 
 public static LightSensor redLight = new LightSensor(7);
 
@@ -236,7 +244,8 @@ public static AnalogGyro gyroAnalog = new AnalogGyro(0);
 // -------------------------------------
 // Potentiometers
 // -------------------------------------
-public static RobotPotentiometer delayPot = new RobotPotentiometer(2, 300);
+public static RobotPotentiometer delayPot = new RobotPotentiometer(2,
+        300);
 
 // -------------------------------------
 // Sonar/Ultrasonic
@@ -261,13 +270,15 @@ public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 // Axis/USB Camera class
 // -------------------------------------
 
-public static VisionProcessor axisCamera = new VisionProcessor("10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
+public static VisionProcessor axisCamera = new VisionProcessor(
+        "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
 
 // -------------------------------------
 // declare the USB camera server and the
 // USB camera it serves at the same time
 // -------------------------------------
-public static UsbCamera USBCam = CameraServer.getInstance().startAutomaticCapture(0);
+public static UsbCamera USBCam = CameraServer.getInstance()
+        .startAutomaticCapture(0);
 
 // -------------------------------------
 // declare the USB camera server and the
@@ -298,9 +309,11 @@ public static Joystick rightOperator = new Joystick(3);
 // ------------------------------------
 // Momentary Switches
 // ------------------------------------
-public static MomentarySwitch visionTestButton = new MomentarySwitch(leftOperator, 2, false /* starting state */);
+public static MomentarySwitch visionTestButton = new MomentarySwitch(
+        leftOperator, 2, false /* starting state */);
 
-public static MomentarySwitch climbButton = new MomentarySwitch(rightOperator, 10, false /* starting state */);
+public static MomentarySwitch climbButton = new MomentarySwitch(
+        rightOperator, 10, false /* starting state */);
 
 // **********************************************************
 // Kilroy's Ancillary classes
@@ -322,26 +335,31 @@ public static final Timer autoTimer = new Timer();
 // ------------------------------------
 // Transmission class
 // ------------------------------------
-//public static TankTransmission transmission = new TankTransmission(
-//        new SpeedControllerGroup(leftCANMotor, leftRearCANMotor),
-//        new SpeedControllerGroup(rightCANMotor, rightRearCANMotor));
+// public static TankTransmission transmission = new TankTransmission(
+// new SpeedControllerGroup(leftCANMotor, leftRearCANMotor),
+// new SpeedControllerGroup(rightCANMotor, rightRearCANMotor));
 // public static MecanumTransmission transmission = new MecanumTransmission(
 // leftCANMotor,
 // rightCANMotor, leftRearCANMotor, rightRearCANMotor);
 
-public static TankTransmission transmission = new TankTransmission(new SpeedControllerGroup(leftCANMotor),
-		new SpeedControllerGroup(rightCANMotor));
+public static TankTransmission transmission = new TankTransmission(
+        new SpeedControllerGroup(leftCANMotor),
+        new SpeedControllerGroup(rightCANMotor));
 
 // ------------------------------------
 // Drive system
 // ------------------------------------
-public static Drive drive = new Drive(transmission, leftRearDriveEncoder, rightRearDriveEncoder, leftFrontDriveEncoder,
-		rightFrontDriveEncoder, gyro);
+public static Drive drive = new Drive(transmission,
+        /* leftRearDriveEncoder, rightRearDriveEncoder, */
+        leftFrontDriveEncoder,
+        rightFrontDriveEncoder, gyro);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 // TODO change back to this once relays actually work
-public static DriveWithCamera driveWithCamera = new DriveWithCamera(transmission, leftFrontDriveEncoder,
-		rightFrontDriveEncoder, frontUltraSonic, rearUltraSonic, gyro, axisCamera);
+public static DriveWithCamera driveWithCamera = new DriveWithCamera(
+        transmission, leftFrontDriveEncoder,
+        rightFrontDriveEncoder, frontUltraSonic, rearUltraSonic, gyro,
+        axisCamera);
 
 // this is a janky fix for the ringlight not working
 // public static DriveWithCamera driveWithCamera = new DriveWithCamera(
@@ -351,8 +369,11 @@ public static DriveWithCamera driveWithCamera = new DriveWithCamera(transmission
 // -------------------
 // Assembly classes (e.g. forklift)
 // -------------------
-public static CubeManipulator cubeManipulator = new CubeManipulator(liftingMotor, cubeIntakeMotor, cubePhotoSwitch,
-		liftingEncoder, intakeDeployArm, intakeDeployEncoder, autoTimer, intakeArmPositionServo, armIR);
+public static CubeManipulator cubeManipulator = new CubeManipulator(
+        liftingMotor, cubeIntakeMotor, cubePhotoSwitch,
+        liftingEncoder, intakeDeployArm, intakeDeployEncoder, autoTimer,
+        intakeArmPositionServo, armIR);
 
-public static ScaleAlignment scaleAlignment = new ScaleAlignment(rearUltraSonic);
+public static ScaleAlignment scaleAlignment = new ScaleAlignment(
+        rearUltraSonic);
 } // end class

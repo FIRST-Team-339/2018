@@ -61,7 +61,6 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
-import org.usfirst.frc.team339.Utils.drive.Drive.BrakeType;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -270,8 +269,8 @@ public void robotInit ()
         Hardware.intakeDeployEncoder
                 .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
 
-        Hardware.drive.setAllGearPercentages(.2,KILROY_XIX_GEAR_1_SPEED,
-                KILROY_XIX_GEAR_2_SPEED);
+        Hardware.drive.setAllGearPercentages(KILROY_XIX_GEAR_1_SPEED);// ,
+        // KILROY_XIX_GEAR_2_SPEED);
 
         Hardware.frontUltraSonic.setOffsetDistanceFromNearestBumper(
                 KILROY_XIX_US_DISTANCE_FROM_BUMPER);
@@ -284,15 +283,15 @@ public void robotInit ()
         Hardware.drive.setTurningRadius(KILROY_XIX_TURNING_RADIUS);
 
         // Braking constants
-        Hardware.drive.setBrakePower(KILROY_XIX_BRAKE_DRIVE_POWER,
-                BrakeType.AFTER_DRIVE);
-        Hardware.drive.setBrakePower(KILROY_XIX_BRAKE_TURN_POWER,
-                BrakeType.AFTER_TURN);
+        // Hardware.drive.setBrakePower(KILROY_XIX_BRAKE_DRIVE_POWER,
+        // BrakeType.AFTER_DRIVE);
+        // Hardware.drive.setBrakePower(KILROY_XIX_BRAKE_TURN_POWER,
+        // BrakeType.AFTER_TURN);
 
-        Hardware.drive.setBrakeDeadband(KILROY_XIX_BRAKE_DRIVE_DEADBAND,
-                BrakeType.AFTER_DRIVE);
-        Hardware.drive.setBrakeDeadband(KILROY_XIX_BRAKE_TURN_DEADBAND,
-                BrakeType.AFTER_TURN);
+        // Hardware.drive.setBrakeDeadband(KILROY_XIX_BRAKE_DRIVE_DEADBAND,
+        // BrakeType.AFTER_DRIVE);
+        // Hardware.drive.setBrakeDeadband(KILROY_XIX_BRAKE_TURN_DEADBAND,
+        // BrakeType.AFTER_TURN);
         Hardware.drive.setDriveStraightConstant(
                 KILROY_XIX_DRIVESTRAIGHT_CONSTANT);
 
@@ -508,7 +507,7 @@ private static final double KILROY_XIX_LIFT_ENCODER_DPP = 0.02;
 
 private static final double KILROY_XIX_DEPLOY_ENCODER_DPP = .1;
 
-private static final double KILROY_XIX_TURNING_RADIUS = 11.5 - .35;
+private static final double KILROY_XIX_TURNING_RADIUS = 12.8;// 11.5 - .35;
 
 private static final double KILROY_XV_TURNING_RADIUS = 11 - .35;
 
