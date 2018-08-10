@@ -29,6 +29,7 @@ import org.usfirst.frc.team339.HardwareInterfaces.transmission.TankTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.ScaleAlignment;
 import org.usfirst.frc.team339.Utils.drive.Drive;
+import org.usfirst.frc.team339.Utils.drive.DrivePID;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
@@ -353,6 +354,9 @@ public static Drive drive = new Drive(transmission,
         /* leftRearDriveEncoder, rightRearDriveEncoder, */
         leftFrontDriveEncoder,
         rightFrontDriveEncoder, gyro);
+
+public static DrivePID drivePID = new DrivePID(transmission,
+        leftFrontDriveEncoder, rightFrontDriveEncoder, gyro);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 // TODO change back to this once relays actually work

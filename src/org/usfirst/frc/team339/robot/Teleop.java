@@ -34,7 +34,7 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.Telemetry;
-import org.usfirst.frc.team339.Utils.drive.Drive.BrakeType;
+import org.usfirst.frc.team339.Utils.drive.DrivePID.PIDDriveFunction;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -377,6 +377,8 @@ static boolean testingDrive = false;
 
 private static void testingDrive ()
 {
+    Hardware.drivePID.tunePID(PIDDriveFunction.DRIVESTRAIGHTINCHES);
+    Hardware.drivePID.tunePID(PIDDriveFunction.DRIVESTRAIGHT_GYRO);
     if (Hardware.leftDriver.getRawButton(8))
         {
         Hardware.drive.reset();
@@ -386,15 +388,12 @@ private static void testingDrive ()
     double speed = SmartDashboard.getNumber("Drive Test Speed", 0);
     double accel = SmartDashboard.getNumber("Drive Test Acceleration",
             0);
-    double driveStraightConst = SmartDashboard
-            .getNumber("DStraight Constant", 0);
     int distance = (int) SmartDashboard.getNumber("Distance", 0);
 
 
     // Hardware.drive.setBrakePower(
     // SmartDashboard.getNumber("Brake Value", 0),
     // BrakeType.AFTER_DRIVE);
-    Hardware.drive.setDriveStraightConstant(driveStraightConst);
     // Hardware.drive.setBrakeIterations(
     // (int) SmartDashboard.getNumber("Brake Iterations", 0));
     // Hardware.drive.setBrakeDeadband(
@@ -415,14 +414,14 @@ private static void testingDrive ()
 
     if (testingDrive)
         {
-        if (currentStage == 0 && Hardware.drive
-                .turnDegrees(distance, speed, accel, true))
+        if (currentStage == 0 && Hardware.drivePID
+                .driveStraightInches(speed, distance, accel, true))
             currentStage++;
-        else if (currentStage == 1 &&
-                Hardware.drive.brake(BrakeType.AFTER_TURN))
-            currentStage++;
+        // else if (currentStage == 1 &&
+        // Hardware.drive.brake(BrakeType.AFTER_TURN))
+        // currentStage++;
 
-        if (Hardware.leftDriver.getRawButton(8) || currentStage == 2)
+        if (Hardware.leftDriver.getRawButton(8) || currentStage == 1)
             {
             currentStage = 0;
             testingDrive = false;
