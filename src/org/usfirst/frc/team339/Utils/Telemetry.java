@@ -119,24 +119,25 @@ public void printToConsole ()
             // Motor
             // Prints the value of motors
             // =================================
-            // System.out.println(
-            // "Right Drive Motor "
-            // + Hardware.rightDriveMotor.get());
-            //
-            // System.out.println(
-            // "Left Drive Motor "
-            // + Hardware.leftDriveMotor.get());
-            //
-            // System.out.println("Lifting Motor " +
-            // Hardware.liftingMotor.get());
-            //
-            // System.out.println(
-            // "Cube Intake Motor "
-            // + Hardware.cubeIntakeMotor.get());
-            //
-            // System.out.println(
-            // "Intake Deploy Arm "
-            // + Hardware.intakeDeployArm.get());
+
+            System.out.println(
+                    "Right Drive Motor "
+                            + Hardware.rightFrontCANMotor.get());
+
+            System.out.println(
+                    "Left Drive Motor "
+                            + Hardware.leftFrontCANMotor.get());
+
+            System.out.println("Lifting Motor " +
+                    Hardware.liftingMotor.get());
+
+            System.out.println(
+                    "Cube Intake Motor "
+                            + Hardware.cubeIntakeMotor.get());
+
+            System.out.println(
+                    "Intake Deploy Arm "
+                            + Hardware.intakeDeployArm.get());
 
             // =================================
             // CAN items
@@ -391,6 +392,39 @@ public void printToConsole ()
  */
 public void printToShuffleboard ()
 {
+    // ==================================
+    // Scale Alignment
+    // ==================================
+    // SmartDashboard.putString("Relative to scale",
+    // Hardware.scaleAlignment.RelativeScale);
+
+    // SmartDashboard.putNumber("RearUltraSonic",
+    // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+
+    // =================================
+    // Motor
+    // Prints the value of motors
+    // =================================
+    SmartDashboard.putNumber("R Drive Motor",
+            Hardware.rightFrontCANMotor.get());
+
+    SmartDashboard.putNumber("L Drive Motor",
+            Hardware.leftFrontCANMotor.get());
+
+
+    // SmartDashboard.putNumber("Lifting Motor",
+    // Hardware.liftingMotor.get());
+
+
+    SmartDashboard.putNumber("Cube Motor",
+            Hardware.cubeIntakeMotor.get());
+
+    // SmartDashboard.putNumber("Intake Deploy Motor",
+    // Hardware.intakeDeployArm.get());
+    // =================================
+    // CAN items
+    // prints value of the CAN controllers
+    // =================================
     //
     // // ==================================
     // // Scale Alignment
@@ -624,8 +658,8 @@ public void printToShuffleboard ()
     // ---------------------------------
     // Gear number displayed to driver
     // ---------------------------------
-    // SmartDashboard.putNumber("Gear",
-    // Hardware.transmission.getCurrentGear() + 1);
+    SmartDashboard.putNumber("Gear",
+            Hardware.transmission.getCurrentGear() + 1);
 
     // ---------------------------------
     // timers

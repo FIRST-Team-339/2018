@@ -11,387 +11,390 @@ import edu.wpi.first.wpilibj.SpeedController;
  */
 public abstract class TransmissionBase
 {
-// ================CONSTANTS================
-public static final double DEFAULT_JOYSTICK_DEADBAND = .2;
-// =========================================
 
-private final SpeedController leftRear, rightRear, leftFront,
-        rightFront;
+	/**
+	 * Creates the TransmissionBase object with a 2 wheel drive system. Should only
+	 * be created by sub classes, hence the abstract label.
+	 * 
+	 * @param leftMotor
+	 * @param rightMotor
+	 */
+	public TransmissionBase(SpeedController leftMotor, SpeedController rightMotor)
+	{
+		this.motors = new SpeedController[2];
+		this.motors[0] = leftMotor;
+		this.motors[1] = rightMotor;
+	}
 
-protected double[] gearRatios =
-    {.6, .8, 1};
+	/**
+	 * Creates the TransmissionBase object. Should only be called by any subclasses,
+	 * hence the abstract label.
+	 * 
+	 * @param leftRear
+	 * @param rightRear
+	 * @param leftFront
+	 * @param rightFront
+	 */
+	public TransmissionBase(SpeedController leftRear, SpeedController rightRear, SpeedController leftFront,
+			SpeedController rightFront)
+	{
+		this.motors = new SpeedController[4];
+		this.motors[0] = leftRear;
+		this.motors[1] = rightRear;
+		this.motors[2] = leftFront;
+		this.motors[3] = rightFront;
+	}
 
-// Will default to the highest gear available
-protected int currentGear = 0;
+	/**
+	 * Turns off the deadband for use in auto.
+	 */
+	public void disableDeadband()
+	{
+		currentJoystickDeadband = 0;
+	}
 
-private double inputJoystickDeadband = DEFAULT_JOYSTICK_DEADBAND;
+	/**
+	 * Removes one from the current gear of the robot, allowing the user to drive
+	 * slower.
+	 */
+	public void downShift()
+	{
+		if (currentGear > 0)
+			currentGear--;
+	}
 
-// The motors will start turning only once the joystick is past this
-// deadband.
-protected double currentJoystickDeadband = inputJoystickDeadband;
+	/**
+	 * Drives the transmission based on a Tank drive system, but without gear ratios
+	 * or joystick deadbands. Use for autonomous purposes.
+	 * 
+	 * @param leftVal
+	 * 			The left value of the robot, in percentage (-1.0 to 1.0)
+	 * @param rightVal
+	 * 			The right value of the robot, in percentage (-1.0 to 1.0)
+	 */
+	public void driveRaw(double leftVal, double rightVal)
+	{
+		for (int i = 0; i < this.motors.length; i++)
+			if (i % 2 == 0)
+				this.motors[i].set(leftVal);
+			else
+				this.motors[i].set(rightVal);
+	}
 
-/**
- * Creates the TransmissionBase object. Should only be called by any subclasses,
- * hence the abstract label.
- * 
- * @param leftRear
- * @param rightRear
- * @param leftFront
- * @param rightFront
- */
-public TransmissionBase (SpeedController leftRear,
-        SpeedController rightRear, SpeedController leftFront,
-        SpeedController rightFront)
-{
-    this.leftRear = leftRear;
-    this.rightRear = rightRear;
-    this.leftFront = leftFront;
-    this.rightFront = rightFront;
-}
+	/**
+	 * Drives the robot based on raw inputs, for autonomous uses.
+	 * Also, can use a correction PID loop for rotation, if that is enabled.
+	 * (Functionality overridden in MecanumTransmission class)
+	 * 
+	 * @param magnitude
+	 * 			How fast the robot will travel (0.0 to 1.0)
+	 * @param direction
+	 * 			In which direction, laterally, will the robot travel (degrees, -180 to 180. 0 is forward.)
+	 * @param rotation
+	 * 			How much the robot should be turning (left,(-1.0) to right,(1.0)
+	 */
+	public void driveRaw(double magnitude, double direction, double rotation)
+	{
+		this.stop();
+		// If this object is an omni-directional drive and this method is called,
+		// it will be overridden by the superclass. This prevents a tank style
+		// transmission from forcing the motors against each other, as it will
+		// by default to do nothing.
+	}
 
-/**
- * Creates the TransmissionBase object with a 2 wheel drive system. Should only
- * be created by sub classes, hence the abstract label.
- * 
- * @param leftMotor
- * @param rightMotor
- */
-public TransmissionBase (SpeedController leftMotor,
-        SpeedController rightMotor)
-{
-    this.leftRear = leftMotor;
-    this.rightRear = rightMotor;
-    this.leftFront = leftMotor;
-    this.rightFront = rightMotor;
-}
+	/**
+	 * Turns on the deadband for use in teleop.
+	 */
+	public void enableDeadband()
+	{
+		currentJoystickDeadband = inputJoystickDeadband;
+	}
 
-/**
- * The current types of transmissions available.
- * 
- * @author Ryan McGee
- *
- */
-public enum TransmissionType
-    {
-/**
- * Tank-style drive system with 2 driven traction wheels
- * and two omniwheels for smooth steering.
- */
-TRACTION,
-/**
- * Tank-style drive system with four omniwheels each driven
- * by a separate motor.
- */
-TANK,
-/**
- * Four driven mecanum wheels that allows strafing as well as
- * linear movement and rotation.
- */
-MECANUM
-    }
+	/**
+	 * @return all speed controllers attached to this transmission, as an array.
+	 */
+	public SpeedController[] getAllSpeedControllers()
+	{
+		return this.motors;
+	}
 
-protected TransmissionType type = null;
+	/**
+	 * @return The gear number that is active
+	 */
+	public int getCurrentGear()
+	{
+		return this.currentGear;
+	}
 
-/**
- * @return The type of transmission of a class extending TransmissionBase.
- */
-public TransmissionType getType ()
-{
-    return type;
-}
+	/**
+	 * @return
+	 *         The percentage corresponding to the current gear
+	 */
+	public double getCurrentGearRatio()
+	{
+		return gearRatios[currentGear];
+	}
 
-/**
- * Describes which corner a motor is in when identifying it.
- * 
- * @author Ryan McGee
- */
-public enum MotorPosition
-    {
-LEFT, RIGHT, LEFT_FRONT, LEFT_REAR, RIGHT_FRONT, RIGHT_REAR, ALL
-    }
+	/**
+	 * @param position
+	 *            which corner the motor is in
+	 * @return the motor controller object
+	 */
+	public SpeedController getSpeedController(MotorPosition position)
+	{
+		switch (position)
+		{
+		// Left is the same as left rear
+		case LEFT:
+		case LEFT_REAR:
+			return this.motors[0];
+		// Right is the same as right rear
+		case RIGHT:
+		case RIGHT_REAR:
+			return this.motors[1];
+		case LEFT_FRONT:
+			return this.motors[2];
+		case RIGHT_FRONT:
+			return this.motors[3];
+		default:
+			return null;
+		}
 
-/**
- * @param position
- *            which corner the motor is in
- * @return the motor controller object
- */
-public SpeedController getSpeedController (MotorPosition position)
-{
-    switch (position)
-        {
-        // Left is the same as left rear
-        case LEFT:
-        case LEFT_REAR:
-            return leftRear;
-        // Right is the same as right rear
-        case RIGHT:
-        case RIGHT_REAR:
-            return rightRear;
-        case LEFT_FRONT:
-            return leftFront;
-        case RIGHT_FRONT:
-            return rightFront;
-        default:
-            return null;
-        }
+	}
 
-}
+	/**
+	 * @return The type of transmission of a class extending TransmissionBase.
+	 */
+	public TransmissionType getType()
+	{
+		return type;
+	}
 
-/**
- * Gets the robot ready for autonomous period.
- */
-public void setForAutonomous ()
-{
-    disableDeadband();
-    setMaxGearPercentage(1.0);
-    setMaxGear();
-}
+	/**
+	 * Uses the formula for mapping one set of values to the other:
+	 * y = mx + b
+	 * 
+	 * m = 1 / (1 - deadband)
+	 * b = deadband * -m
+	 * x = joystick input
+	 * y = motor output
+	 * 
+	 * Therefore,
+	 * motor output = (1 / (1 - deadband)) * joystick input
+	 * + (1 - (1 / (1 - deadband)))
+	 * 
+	 * If this equation does not make much sense, try graphing it first
+	 * as the original x = y, and then the scaled output starting at the
+	 * deadband, and use the slope formula.
+	 * 
+	 * @param input
+	 * @return The scaled value, if between -1 and -deadband or deadband and 1, or 0
+	 *         if between -deadband and deadband.
+	 */
+	public double scaleJoystickForDeadband(double input)
+	{
+		double deadbandSlope = 1.0 / (1.0 - currentJoystickDeadband);
+		double constant = -this.currentJoystickDeadband * deadbandSlope;
 
-/**
- * Gets the robot ready for teleop period
- * 
- * @param maxGearPercentage
- *            Speed percentage for top gear
- */
-public void setForTeleop (double maxGearPercentage)
-{
-    enableDeadband();
-    setMaxGearPercentage(maxGearPercentage);
-}
+		if (input > this.currentJoystickDeadband)
+			return (deadbandSlope * input) + constant;
+		else if (input < -this.currentJoystickDeadband)
+			return -((-deadbandSlope * input) + constant);
 
-/**
- * TODO Test gear system
- * Sets the current gear for the robot. This will change the maximum
- * speed of the robot for precise aiming/driving.
- * 
- * @param gear
- *            The requested gear number. If outside the range, it will do
- *            nothing.
- */
-public void setGear (int gear)
-{
-    if (gear >= 0 && gear < gearRatios.length)
-        this.currentGear = gear;
-}
+		// Set to 0 if it is between the deadbands.
+		return 0.0;
+	}
 
-/**
- * Sets the percent multiplied by Transmission.
- * 
- * @param gear
- *            Which gear should be changed: 0 is lowest, increasing.
- * @param value
- *            Percent decimal form: between 0 and 1.0
- */
-public void setGearPercentage (int gear, double value)
-{
-    if (value < 1 && value > 0 && gear < gearRatios.length && gear >= 0)
-        {
-        gearRatios[gear] = value;
-        }
-}
+	/**
+	 * Sets every gear ratio. Make sure that the lowest gear starts at 0, and the
+	 * highest gear is at the max, to make sure the up-shifting and down-shifting
+	 * works properly.
+	 * 
+	 * @param ratios
+	 *            Percent multiplied by the transmission.drive functions
+	 */
+	public void setAllGearPercentages(double... ratios)
+	{
+		this.gearRatios = ratios;
+	}
 
-/**
- * Sets the robot to the maximum gear available
- * 
- */
-public void setMaxGear ()
-{
-    this.currentGear = gearRatios.length - 1;
-}
+	/**
+	 * TODO Test gear system
+	 * Sets the current gear for the robot. This will change the maximum
+	 * speed of the robot for precise aiming/driving.
+	 * 
+	 * @param gear
+	 *            The requested gear number. If outside the range, it will do
+	 *            nothing.
+	 */
+	public void setGear(int gear)
+	{
+		if (gear >= 0 && gear < gearRatios.length)
+			this.currentGear = gear;
+	}
 
-/**
- * Sets the maximum gear to the value input.
- * 
- * @param value
- *            Percent (0.0 to 1.0)
- */
-public void setMaxGearPercentage (double value)
-{
-    this.gearRatios[gearRatios.length - 1] = value;
-}
+	/**
+	 * Sets the percent multiplied by Transmission.
+	 * 
+	 * @param gear
+	 *            Which gear should be changed: 0 is lowest, increasing.
+	 * @param value
+	 *            Percent decimal form: between 0 and 1.0
+	 */
+	public void setGearPercentage(int gear, double value)
+	{
+		if (value < 1 && value > 0 && gear < gearRatios.length && gear >= 0)
+		{
+			gearRatios[gear] = value;
+		}
+	}
 
-/**
- * Sets every gear ratio. Make sure that the lowest gear starts at 0, and the
- * highest gear is at the max, to make sure the up-shifting and down-shifting
- * works properly.
- * 
- * @param ratios
- *            Percent multiplied by the transmission.drive functions
- */
-public void setAllGearRatios (double... ratios)
-{
-    this.gearRatios = ratios;
-}
+	/**
+	 * TODO test deadbands
+	 * Sets the minimum value the joysticks must output in order for the robot to
+	 * start moving.
+	 * 
+	 * @param deadband
+	 *            Percentage value, ranging from 0.0 to 1.0, in decimals.
+	 */
+	public void setJoystickDeadband(double deadband)
+	{
+		this.inputJoystickDeadband = deadband;
+		this.enableDeadband();
+	}
 
-/**
- * Adds one to the current gear of the robot, allowing the user to drive faster.
- */
-public void upShift ()
-{
-    if (currentGear < gearRatios.length - 1)
-        currentGear++;
-}
+	/**
+	 * Sets the maximum gear to the value input.
+	 * 
+	 * @param value
+	 *            Percent (0.0 to 1.0)
+	 */
+	public void setMaxGearPercentage(double value)
+	{
+		this.gearRatios[gearRatios.length - 1] = value;
+	}
 
-/**
- * Removes one from the current gear of the robot, allowing the user to drive
- * slower.
- */
-public void downShift ()
-{
-    if (currentGear > 0)
-        currentGear--;
-}
+	/**
+	 * Sets the robot to the maximum gear available
+	 * 
+	 */
+	public void setToMaxGear()
+	{
+		this.currentGear = gearRatios.length - 1;
+	}
 
-/**
- * Shift gears using a up-shift and down-shift button.
- * Also makes sure that holding the button will not trigger multiple shifts.
- * 
- * @param upShiftButton
- *            The button that should change to the next higher gear
- * @param downShiftButton
- *            The button that should change to the next lowest gear
- */
-public void shiftGears (boolean upShiftButton, boolean downShiftButton)
-{
+	/**
+	 * Shift gears using a up-shift and down-shift button.
+	 * Also makes sure that holding the button will not trigger multiple shifts.
+	 * 
+	 * @param upShiftButton
+	 *            The button that should change to the next higher gear
+	 * @param downShiftButton
+	 *            The button that should change to the next lowest gear
+	 */
+	public void shiftGears(boolean upShiftButton, boolean downShiftButton)
+	{
+		// Makes sure that if the button is held down, it doesn't constantly
+		// cycle through gears.
+		if (downShiftButton && !downShiftButtonStatus)
+		{
+			downShift();
+		} else if (upShiftButton && !upShiftButtonStatus)
+		{
+			upShift();
+		}
 
-    if (downShiftButton && !downShiftButtonStatus)
-        {
-        downShift();
-        }
-    else if (upShiftButton && !upShiftButtonStatus)
-        {
-        upShift();
-        }
+		upShiftButtonStatus = upShiftButton;
+		downShiftButtonStatus = downShiftButton;
+	}
 
-    upShiftButtonStatus = upShiftButton;
-    downShiftButtonStatus = downShiftButton;
-}
+	/**
+	 * Tells the robot to cut all power to the motors.
+	 */
+	public void stop()
+	{
+		for (SpeedController sc : motors)
+			sc.set(0);
+	}
 
-private boolean upShiftButtonStatus = false;
+	/**
+	 * Adds one to the current gear of the robot, allowing the user to drive faster.
+	 */
+	public void upShift()
+	{
+		if (currentGear < gearRatios.length - 1)
+			currentGear++;
+	}
 
-private boolean downShiftButtonStatus = false;
+	// =========================================
 
-/**
- * @return The gear number that is active
- */
-public int getCurrentGear ()
-{
-    return this.currentGear;
-}
+	/**
+	 * Describes which corner a motor is in when identifying it.
+	 * 
+	 * @author Ryan McGee
+	 */
+	public enum MotorPosition
+	{
+		/**the left side (if two wheel drive) or left rear (if four wheel drive)*/
+		LEFT,
+		/**the right side (if two wheel drive) or right rear (if four wheel drive)*/
+		RIGHT,
+		/**the left front wheel*/
+		LEFT_FRONT,
+		/**the left rear wheel*/
+		LEFT_REAR,
+		/**the right front wheel*/
+		RIGHT_FRONT,
+		/**the right rear wheel*/
+		RIGHT_REAR,
+		/**all motor positions, not used in getSpeedController.*/
+		ALL
+	}
 
-/**
- * @return
- *         The percentage corresponding to the current gear
- */
-public double getCurrentGearRatio ()
-{
-    return gearRatios[currentGear];
-}
+	/**
+	 * The current types of transmissions available.
+	 * 
+	 * @author Ryan McGee
+	 *
+	 */
+	public enum TransmissionType
+	{
+		/**
+		 * Tank-style drive system with a left drive, and a right drive.
+		 */
+		TANK,
+		/**
+		 * Omni-Directional Style of drive train
+		 * Mecanum / Holonomic or Swerve Drive where each motor is independent,
+		 * and enables the robot to move laterally, forwards/backwards, and rotate.
+		 */
+		OMNI_DIR
+	}
 
-/**
- * TODO test deadbands
- * Sets the minimum value the joysticks must output in order for the robot to
- * start moving.
- * 
- * @param deadband
- *            Percentage value, ranging from 0.0 to 1.0, in decimals.
- */
-public void setJoystickDeadband (double deadband)
-{
-    this.inputJoystickDeadband = deadband;
-    this.enableDeadband();
-}
+	// ================VARIABLES================
+	// The current stored transmission type
+	TransmissionType type = null;
 
-/**
- * Turns off the deadband for use in auto.
- */
-public void disableDeadband ()
-{
-    currentJoystickDeadband = 0;
-}
+	private double[] gearRatios =
+	{ .6, .8, 1 };
 
-/**
- * Turns on the deadband for use in teleop.
- */
-public void enableDeadband ()
-{
-    currentJoystickDeadband = inputJoystickDeadband;
-}
+	private final SpeedController[] motors;
 
-/**
- * Uses the formula for mapping one set of values to the other:
- * y = mx + b
- * 
- * m = 1 / (1 - deadband)
- * b = deadband * -m
- * x = joystick input
- * y = motor output
- * 
- * Therefore,
- * motor output = (1 / (1 - deadband)) * joystick input
- * + (1 - (1 / (1 - deadband)))
- * 
- * If this equation does not make much sense, try graphing it first
- * as the original x = y, and then the scaled output starting at the
- * deadband, and use the slope formula.
- * 
- * @param input
- * @return The scaled value, if between -1 and -deadband or deadband and 1, or 0
- *         if between -deadband and deadband.
- */
-public double scaleJoystickForDeadband (double input)
-{
-    double deadbandSlope = 1.0 / (1.0 - currentJoystickDeadband);
-    double constant = -this.currentJoystickDeadband * deadbandSlope;
+	// Will default to the highest gear available
+	private int currentGear = 0;
 
-    if (input > this.currentJoystickDeadband)
-        return (deadbandSlope * input) + constant;
-    else if (input < -this.currentJoystickDeadband)
-        return -((-deadbandSlope * input) + constant);
+	private boolean upShiftButtonStatus = false;
 
-    // Set to 0 if it is between the deadbands.
-    return 0.0;
-}
+	private boolean downShiftButtonStatus = false;
 
-/**
- * Tells the robot to cut all power to the motors.
- */
-public void stop ()
-{
-    leftRear.stopMotor();
-    rightRear.stopMotor();
+	private double inputJoystickDeadband = DEFAULT_JOYSTICK_DEADBAND;
 
-    if (getType() != TransmissionType.TRACTION)
-        {
-        leftFront.stopMotor();
-        rightFront.stopMotor();
-        }
-}
+	// The motors will start turning only once the joystick is past this
+	// deadband.
+	private double currentJoystickDeadband = inputJoystickDeadband;
 
-/**
- * Sets the left and right sides of the robot based on the percentage input,
- * deadband, and current gear.
- * 
- * @param leftVal
- *            Percentage, (-1.0 to 1.0)
- * @param rightVal
- *            Percentage, (-1.0 to 1.0)
- * 
- */
-public void drive (double leftVal, double rightVal)
-{
-    double leftY = scaleJoystickForDeadband(leftVal)
-            * gearRatios[currentGear];
-    double rightY = scaleJoystickForDeadband(rightVal)
-            * gearRatios[currentGear];
-
-    leftRear.set(leftY);
-    rightRear.set(rightY);
-    if (getType() != TransmissionType.TRACTION)
-        {
-        leftFront.set(leftY);
-        leftRear.set(rightY);
-        }
-}
-
+	// ================CONSTANTS================
+	/**the default deadband applied to all joysticks used in drive methods*/
+	public static final double DEFAULT_JOYSTICK_DEADBAND = .2;
+	// =========================================
 }
