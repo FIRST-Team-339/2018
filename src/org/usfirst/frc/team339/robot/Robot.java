@@ -258,7 +258,7 @@ public void robotInit ()
     // -------------------------------------
     if (Hardware.on2018 == true)
         {
-        Hardware.rightCANMotor.setInverted(true);
+        Hardware.rightFrontCANMotor.setInverted(true);
         Hardware.rightRearCANMotor.setInverted(true);
 
         Hardware.drive.setEncoderDistancePerPulse(
