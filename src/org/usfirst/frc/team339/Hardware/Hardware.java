@@ -334,7 +334,7 @@ public static MomentarySwitch climbButton = new MomentarySwitch(
 // ------------------------------------
 public static final Timer autoTimer = new Timer();
 
-public static Telemetry telemetry = new Telemetry(10000);
+public static Telemetry telemetry = new Telemetry();
 
 // ------------------------------------
 // Transmission class

@@ -391,7 +391,11 @@ public void printToConsole ()
  */
 public void printToShuffleboard ()
 {
-    //
+	// clock determining change
+
+    if ((System.currentTimeMillis()
+            - lastTimePrinted) >= this.getTimeBetweenPrints())
+        {
     // // ==================================
     // // Scale Alignment
     // // ==================================
@@ -536,20 +540,20 @@ public void printToShuffleboard ()
     // // where the pot is turned to
     // // ---------------------------------
     //
-    // // SmartDashboard.putNumber("Delay Pot",
-    // // Hardware.delayPot.get(0, 5));
+     SmartDashboard.putNumber("Delay Pot",
+     Hardware.delayPot.get(0, 5));
     //
     // // ---------------------------------
     // // GYRO
     // // ---------------------------------
     //
     //
-    // SmartDashboard.putNumber("AnalogGyro",
-    // Hardware.gyroAnalog.getAngle());
-    //
-    // // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
-    //
-    //
+     SmartDashboard.putNumber("AnalogGyro",
+     Hardware.gyroAnalog.getAngle());
+    
+     // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+    
+    
     // // ---------------------------------
     // // Sonar/UltraSonic
     // // ---------------------------------
@@ -728,6 +732,8 @@ public void printToShuffleboard ()
             Hardware.armIR.isOn());
 
     SmartDashboard.updateValues();
+    this.setLastTimePrinted(System.currentTimeMillis());
+}
 }
 
 // in milliseconds

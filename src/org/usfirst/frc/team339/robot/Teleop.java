@@ -65,7 +65,7 @@ public static void init ()
 
     // User code goes below here
     // temporary timer
-    Hardware.telemetry.printToShuffleboard();
+    Hardware.telemetry.setTimeBetweenPrints(20000);
     // --------------------------------------
     // reset the MotorSafetyHelpers for each
     // of the drive motors
@@ -128,7 +128,7 @@ public static void periodic ()
 
 //	ErrorMessage Msg = new ErrorMessage();
 //	Msg.printError("StringError", true);
-
+	Hardware.telemetry.printToShuffleboard();
     // Hardware.tempRelay.set(true);
 
     // if (Hardware.redLight.isOn() && hasSeenTape == false)
@@ -361,7 +361,7 @@ public static void periodic ()
     // ------------------------------------
 
     // printStatements();
-    Hardware.telemetry.printToConsole();
+    //Hardware.telemetry.printToConsole();
 
     // -------------------------------------------
     // Put anything you need to test, but the
