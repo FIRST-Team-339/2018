@@ -747,6 +747,7 @@ public void printToShuffleboard ()
             Hardware.armIR.isOn());
 
     SmartDashboard.updateValues();
+        }
 }
 
 // in milliseconds
