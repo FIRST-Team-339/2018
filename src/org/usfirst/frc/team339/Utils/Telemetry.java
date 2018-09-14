@@ -212,16 +212,16 @@ public void printToConsole ()
             // ---------------------------------
             // Encoders
             // ---------------------------------
-            // System.out.println("Left Front Encoder Inches = "
-            // + Hardware.leftFrontDriveEncoder.getDistance());
+            System.out.println("Left Front Encoder Inches = "
+                    + Hardware.leftFrontDriveEncoder.getDistance());
 
 
             // System.out.println("Left Front Encoder Ticks "
             // + Hardware.leftFrontDriveEncoder.get());
 
 
-            // System.out.println("Right Front Inches = "
-            // + Hardware.rightFrontDriveEncoder.getDistance());
+            System.out.println("Right Front Inches = "
+                    + Hardware.rightFrontDriveEncoder.getDistance());
 
             // System.out.println("Right Front Ticks "
             // + Hardware.rightFrontDriveEncoder.get());

@@ -330,8 +330,8 @@ public void robotInit ()
         } // if
     else if (CANEnabled)
         {
-        Hardware.leftFrontCANMotor.setInverted(true);
-        Hardware.leftRearCANMotor.setInverted(true);
+        Hardware.leftFrontCANMotor.setInverted(false);
+        Hardware.leftRearCANMotor.setInverted(false);
         }
     else
     // ----------------------------------

@@ -201,33 +201,33 @@ public static void periodic ()
 
 
     // tank code
-    if (Hardware.leftDriver.getY() > .2)
-        leftInput = Hardware.leftDriver.getY() * .8 - .2;
-    else if (Hardware.leftDriver.getY() < -.2)
-        leftInput = Hardware.leftDriver.getY() * .8 + .2;
-    else
-        leftInput = 0.0;
-
-    if (Hardware.rightDriver.getY() > .2)
-        rightInput = Hardware.rightDriver.getY() * .8 - .2;
-    else if (Hardware.rightDriver.getY() < -.2)
-        rightInput = Hardware.rightDriver.getY() * .8 + .2;
-    else
-        rightInput = 0.0;
-
-    rightInput *= .4;
-    leftInput *= .4;
-
-
-    Hardware.rightRearCANMotor.follow(Hardware.rightFrontCANMotor);
-    Hardware.leftRearCANMotor.follow(Hardware.leftFrontCANMotor);
-
-
-    Hardware.rightFrontCANMotor.set(ControlMode.PercentOutput,
-            rightInput);
-
-    Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
-            leftInput);
+    // if (Hardware.leftDriver.getY() > .2)
+    // leftInput = Hardware.leftDriver.getY() * .8 - .2;
+    // else if (Hardware.leftDriver.getY() < -.2)
+    // leftInput = Hardware.leftDriver.getY() * .8 + .2;
+    // else
+    // leftInput = 0.0;
+    //
+    // if (Hardware.rightDriver.getY() > .2)
+    // rightInput = Hardware.rightDriver.getY() * .8 - .2;
+    // else if (Hardware.rightDriver.getY() < -.2)
+    // rightInput = Hardware.rightDriver.getY() * .8 + .2;
+    // else
+    // rightInput = 0.0;
+    //
+    // rightInput *= .4;
+    // leftInput *= .4;
+    //
+    //
+    // Hardware.rightRearCANMotor.follow(Hardware.rightFrontCANMotor);
+    // Hardware.leftRearCANMotor.follow(Hardware.leftFrontCANMotor);
+    //
+    //
+    // Hardware.rightFrontCANMotor.set(ControlMode.PercentOutput,
+    // rightInput);
+    //
+    // Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
+    // leftInput);
     // encoder testing
 
     Hardware.liftMotor.configSelectedFeedbackSensor(
@@ -376,7 +376,7 @@ public static void periodic ()
 
 private static boolean allowAlignment = false;
 
-private static boolean isTestingDrive = true;// @ANE flip
+private static boolean isTestingDrive = false;// @ANE flip
 
 private static boolean isTestingEncoderTurn = false;
 

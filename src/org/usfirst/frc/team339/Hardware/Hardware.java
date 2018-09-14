@@ -95,8 +95,6 @@ public static Talon leftDriveMotor = new Talon(3);
 // Victor Classes
 // ------------------------------------
 
-public static WPI_TalonSRX liftMotor = new WPI_TalonSRX(6);
-
 public static VictorSP liftingMotor = new VictorSP(0);
 
 public static VictorSP cubeIntakeMotor = new VictorSP(1);
@@ -118,6 +116,9 @@ public static Servo intakeArmPositionServo = new Servo(6);
 
 public static PowerDistributionPanel pdp = new PowerDistributionPanel(
         2);
+
+
+public static WPI_TalonSRX liftMotor = new WPI_TalonSRX(6);
 
 public static WPI_TalonSRX rightFrontCANMotor = new WPI_TalonSRX(14);
 
@@ -352,8 +353,9 @@ public static Telemetry telemetry = new Telemetry(10000);
 // rightCANMotor, leftRearCANMotor, rightRearCANMotor);
 
 public static TankTransmission transmission = new TankTransmission(
-        new SpeedControllerGroup(leftFrontCANMotor),
-        new SpeedControllerGroup(rightFrontCANMotor));
+        new SpeedControllerGroup(leftFrontCANMotor, leftRearCANMotor),
+        new SpeedControllerGroup(rightFrontCANMotor,
+                rightRearCANMotor));
 
 // ------------------------------------
 // Drive system
