@@ -411,190 +411,194 @@ public void printToShuffleboard ()
     if ((System.currentTimeMillis()
             - lastTimePrinted) >= this.getTimeBetweenPrints())
         {
-    // // ==================================
-    // // Scale Alignment
-    // // ==================================
-    // // SmartDashboard.putString("Relative to scale",
-    // // Hardware.scaleAlignment.RelativeScale);
-    //
-    // // SmartDashboard.putNumber("RearUltraSonic",
-    // // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-    //
-    // // =================================
-    // // Motor
-    // // Prints the value of motors
-    // // =================================
-    // SmartDashboard.putNumber("R Drive Motor",
-    // Hardware.rightDriveMotor.get());
-    //
-    // SmartDashboard.putNumber("L Drive Motor",
-    // Hardware.leftDriveMotor.get());
-    //
-    //
-    // // SmartDashboard.putNumber("Lifting Motor",
-    // // Hardware.liftingMotor.get());
-    //
-    //
-    // SmartDashboard.putNumber("Cube Motor",
-    // Hardware.cubeIntakeMotor.get());
-    //
-    // // SmartDashboard.putNumber("Intake Deploy Motor",
-    // // Hardware.intakeDeployArm.get());
-    // // =================================
-    // // CAN items
-    // // prints value of the CAN controllers
-    // // =================================
-    // //
-    // // =================================
-    // // Relay
-    // // =================================
-    //
-    // // =================================
-    // // // Digital Inputs
-    // // =================================
-    // //
-    // // ---------------------------------
-    // // Switches
-    // // prints state of switches
-    // // ---------------------------------
-    //
-    // // SmartDashboard.putBoolean("Disable SW",
-    // // Hardware.disableAutonomousSwitch.isOn());
-    //
-    // // SmartDashboard.putBoolean("L Auto SW",
-    // // Hardware.leftAutoSwitch.isOn());
-    // //
-    // //
-    // // SmartDashboard.putBoolean("R Auto SW",
-    // // Hardware.rightAutoSwitch.isOn());
-    //
-    // SmartDashboard.putNumber("6 Pos Switch",
-    //        Hardware.autoSixPosSwitch.getPosition());
-    //
-    // // ---------------------------------
-    // // Encoders
-    // // ---------------------------------
-    // SmartDashboard.putNumber("Left Front Encoder Inches",
-    // Hardware.leftFrontDriveEncoder.getDistance());
-    //
-    // SmartDashboard.putNumber("Left Front Encoder Ticks",
-    // Hardware.leftFrontDriveEncoder.get());
-    //
-    //
-    // SmartDashboard.putNumber("Right Front Encoder Inches",
-    // Hardware.rightFrontDriveEncoder.getDistance());
-    //
-    //
-    // SmartDashboard.putNumber("Right Front Encoder Ticks",
-    // Hardware.rightFrontDriveEncoder.get());
-    //
-    // SmartDashboard.putNumber("Left Rear Encoder Inches",
-    // Hardware.leftRearDriveEncoder.getDistance());
-    //
-    //
-    // SmartDashboard.putNumber("Left Rear Encoder Ticks",
-    // Hardware.leftRearDriveEncoder.get());
-    //
-    // SmartDashboard.putNumber("Right Rear Encoder Inches",
-    // Hardware.rightRearDriveEncoder.getDistance());
-    //
-    // SmartDashboard.putNumber("Right Rear Encoder Ticks",
-    // Hardware.rightRearDriveEncoder.get());
-    //
-    // SmartDashboard.putNumber("Lift Encoder Inches",
-    // Hardware.liftingEncoder.getDistance());
-    //
-    // SmartDashboard.putNumber("Lift Encoder Ticks",
-    // Hardware.liftingEncoder.get());
-    //
-    // SmartDashboard.putNumber("Intake Deploy Encoder",
-    // Hardware.intakeDeployEncoder.getDistance());
-    //
-    // SmartDashboard.putNumber("Intake Deploy Ticks",
-    // Hardware.intakeDeployEncoder.get());
-    //
-    // // ---------------------------------
-    // // Red Light/IR Sensors
-    // // prints the state of the sensor
-    // // ---------------------------------
-    //
-    // // SmartDashboard.putBoolean("R Red Light",
-    // // Hardware.rightRedLight.isOn());
-    //
-    // // SmartDashboard.putBoolean("L Red Light",
-    // // Hardware.leftRedLight.isOn());
-    //
-    // SmartDashboard.putBoolean("Photo SW",
-    // Hardware.cubePhotoSwitch.isOn());
-    //
-    // SmartDashboard.putBoolean("IR is On",
-    // Hardware.armIR.isOn());
-    //
-    // SmartDashboard.putBoolean("Bottom RL: ",
-    // Hardware.redLight.isOn());
-    //
-    //
-    // // =================================
-    // // Pneumatics
-    // // =================================
-    //
-    // // ---------------------------------
-    // // Compressor
-    // // prints information on the compressor
-    // // ---------------------------------
-    //
-    // // ---------------------------------
-    // // Solenoids
-    // // ---------------------------------
-    //
-    // // Analogs
-    // // =================================
-    //
-    // // ---------------------------------
-    // // pots
-    // // where the pot is turned to
-    // // ---------------------------------
-    //
-    // SmartDashboard.putNumber("Delay Pot",
-    //  Hardware.delayPot.get(0, 5));
-    //
-    // // ---------------------------------
-    // // GYRO
-    // // ---------------------------------
-    //
-    //
-    // SmartDashboard.putNumber("AnalogGyro",
-    // Hardware.gyroAnalog.getAngle());
-    
-     // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
-    
-    
-    // // ---------------------------------
-    // // Sonar/UltraSonic
-    // // ---------------------------------
-    // // SmartDashboard.putNumber("Rear Ultrasonic distance",
-    // // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-    //
-    //
-    // SmartDashboard.putNumber("Front Ultrasonic",
-    // Hardware.frontUltraSonic
-    // .getDistanceFromNearestBumper());
-    // //
-    // // SmartDashboard.putNumber("Front Ultrasonic Raw",
-    // // Hardware.frontUltraSonic.getRefinedDistanceValue());
-    // //
-    // // SmartDashboard.putNumber("Front ultrasonic bumper",
-    // // Hardware.frontUltraSonic
-    // // .getOffsetDistanceFromNearestBumper());
-    //
-    // // SmartDashboard.putNumber("Rear Ultrasonic",
-    // // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-    // // SmartDashboard.putNumber("Rear Ultrasonic Raw",
-    // // Hardware.rearUltraSonic.getRefinedDistanceValue());
-    //
-    // =================================
-    // SPI Bus
-    // =================================
+        // // ==================================
+        // // Scale Alignment
+        // // ==================================
+        // // SmartDashboard.putString("Relative to scale",
+        // // Hardware.scaleAlignment.RelativeScale);
+        //
+        // // SmartDashboard.putNumber("RearUltraSonic",
+        // // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+        //
+        // // =================================
+        // // Motor
+        // // Prints the value of motors
+        // // =================================
+        // SmartDashboard.putNumber("R Drive Motor",
+        // Hardware.rightDriveMotor.get());
+        //
+        // SmartDashboard.putNumber("L Drive Motor",
+        // Hardware.leftDriveMotor.get());
+        //
+        //
+        // // SmartDashboard.putNumber("Lifting Motor",
+        // // Hardware.liftingMotor.get());
+        //
+        //
+        // SmartDashboard.putNumber("Cube Motor",
+        // Hardware.cubeIntakeMotor.get());
+        //
+        // // SmartDashboard.putNumber("Intake Deploy Motor",
+        // // Hardware.intakeDeployArm.get());
+        // // =================================
+        // // CAN items
+        // // prints value of the CAN controllers
+        // // =================================
+        // //
+        // // =================================
+        // // Relay
+        // // =================================
+        //
+        // // =================================
+        // // // Digital Inputs
+        // // =================================
+        // //
+        // // ---------------------------------
+        // // Switches
+        // // prints state of switches
+        // // ---------------------------------
+        //
+        // // SmartDashboard.putBoolean("Disable SW",
+        // // Hardware.disableAutonomousSwitch.isOn());
+        //
+        // // SmartDashboard.putBoolean("L Auto SW",
+        // // Hardware.leftAutoSwitch.isOn());
+        // //
+        // //
+        // // SmartDashboard.putBoolean("R Auto SW",
+        // // Hardware.rightAutoSwitch.isOn());
+        //
+        // SmartDashboard.putNumber("6 Pos Switch",
+        // Hardware.autoSixPosSwitch.getPosition());
+        //
+        // // ---------------------------------
+        // // Encoders
+        // // ---------------------------------
+        // SmartDashboard.putNumber("Left Front Encoder Inches",
+        // Hardware.leftFrontDriveEncoder.getDistance());
+        //
+        // SmartDashboard.putNumber("Left Front Encoder Ticks",
+        // Hardware.leftFrontDriveEncoder.get());
+        //
+        //
+        // SmartDashboard.putNumber("Right Front Encoder Inches",
+        // Hardware.rightFrontDriveEncoder.getDistance());
+        //
+        //
+        // SmartDashboard.putNumber("Right Front Encoder Ticks",
+        // Hardware.rightFrontDriveEncoder.get());
+        //
+        // SmartDashboard.putNumber("Left Rear Encoder Inches",
+        // Hardware.leftRearDriveEncoder.getDistance());
+        //
+        //
+        // SmartDashboard.putNumber("Left Rear Encoder Ticks",
+        // Hardware.leftRearDriveEncoder.get());
+        //
+        // SmartDashboard.putNumber("Right Rear Encoder Inches",
+        // Hardware.rightRearDriveEncoder.getDistance());
+        //
+        // SmartDashboard.putNumber("Right Rear Encoder Ticks",
+        // Hardware.rightRearDriveEncoder.get());
+        //
+        // SmartDashboard.putNumber("Lift Encoder Inches",
+        // Hardware.liftingEncoder.getDistance());
+        //
+        // SmartDashboard.putNumber("Lift Encoder Ticks",
+        // Hardware.liftingEncoder.get());
+        //
+        // SmartDashboard.putNumber("Intake Deploy Encoder",
+        // Hardware.intakeDeployEncoder.getDistance());
+        //
+        // SmartDashboard.putNumber("Intake Deploy Ticks",
+        // Hardware.intakeDeployEncoder.get());
+        //
+        // // ---------------------------------
+        // // Red Light/IR Sensors
+        // // prints the state of the sensor
+        // // ---------------------------------
+        //
+        // // SmartDashboard.putBoolean("R Red Light",
+        // // Hardware.rightRedLight.isOn());
+        //
+        // // SmartDashboard.putBoolean("L Red Light",
+        // // Hardware.leftRedLight.isOn());
+        //
+        // SmartDashboard.putBoolean("Photo SW",
+        // Hardware.cubePhotoSwitch.isOn());
+        //
+        // SmartDashboard.putBoolean("IR is On",
+        // Hardware.armIR.isOn());
+        //
+        // SmartDashboard.putBoolean("Bottom RL: ",
+        // Hardware.redLight.isOn());
+        //
+        //
+        // // =================================
+        // // Pneumatics
+        // // =================================
+        //
+        // // ---------------------------------
+        // // Compressor
+        // // prints information on the compressor
+        // // ---------------------------------
+        //
+        // // ---------------------------------
+        // // Solenoids
+        // // ---------------------------------
+        //
+        // // Analogs
+        // // =================================
+        //
+        // // ---------------------------------
+        // // pots
+        // // where the pot is turned to
+        // // ---------------------------------
+        //
+        // SmartDashboard.putNumber("Delay Pot",
+        // Hardware.delayPot.get(0, 5));
+        //
+        // // ---------------------------------
+        // // GYRO
+        // // ---------------------------------
+        //
+        //
+        // SmartDashboard.putNumber("AnalogGyro",
+        // Hardware.gyroAnalog.getAngle());
+
+        // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+
+
+        // // ---------------------------------
+        // // Sonar/UltraSonic
+        // // ---------------------------------
+        // // SmartDashboard.putNumber("Rear Ultrasonic distance",
+        // // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+        //
+        //
+        // SmartDashboard.putNumber("Front Ultrasonic",
+        // Hardware.frontUltraSonic
+        // .getDistanceFromNearestBumper());
+        // //
+        // // SmartDashboard.putNumber("Front Ultrasonic Raw",
+        // // Hardware.frontUltraSonic.getRefinedDistanceValue());
+        // //
+        // // SmartDashboard.putNumber("Front ultrasonic bumper",
+        // // Hardware.frontUltraSonic
+        // // .getOffsetDistanceFromNearestBumper());
+        //
+        // // SmartDashboard.putNumber("Rear Ultrasonic",
+        // // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+        // // SmartDashboard.putNumber("Rear Ultrasonic Raw",
+        // // Hardware.rearUltraSonic.getRefinedDistanceValue());
+        //
+        // =================================
+        // SPI Bus
+        // =================================
+
+        // -------------------------------------
+        // Analog Interfaces
+        // -------------------------------------
 
     // -------------------------------------
     // Analog Interfaces
