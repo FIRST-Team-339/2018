@@ -60,7 +60,7 @@ public static void init ()
 
     // User code goes below here
     // temporary timer
-    Hardware.telemetry.printToShuffleboard();
+    Hardware.telemetry.setTimeBetweenPrints(20000);
     // --------------------------------------
     // reset the MotorSafetyHelpers for each
     // of the drive motors
@@ -121,7 +121,7 @@ public static void periodic ()
 
     // ErrorMessage Msg = new ErrorMessage();
     // Msg.printError("StringError", true);
-
+	Hardware.telemetry.printToShuffleboard();
     // Hardware.tempRelay.set(true);
 
     // if (Hardware.redLight.isOn() && hasSeenTape == false)
@@ -233,26 +233,6 @@ public static void periodic ()
     Hardware.liftMotor.configSelectedFeedbackSensor(
             FeedbackDevice.QuadEncoder, 0, 0);
     Hardware.liftMotor.getSelectedSensorPosition(0);
-
-
-    if (Hardware.rightDriver.getRawButton(11) == true)
-        {
-
-        Hardware.liftMotor.set(ControlMode.PercentOutput,
-                .5);
-        }
-    else if (Hardware.rightDriver.getRawButton(10) == true)
-        {
-
-        Hardware.liftMotor.set(ControlMode.PercentOutput,
-                -.5);
-        }
-    else
-        {
-        Hardware.liftMotor.set(ControlMode.PercentOutput,
-                0.2);
-
-        }
 
 
     // System.out.println("CAN " +

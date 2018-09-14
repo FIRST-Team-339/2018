@@ -1,5 +1,6 @@
 package org.usfirst.frc.team339.Utils;
 
+import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
 import edu.wpi.first.wpilibj.Encoder;
@@ -22,7 +23,7 @@ public class CubeManipulator<Button>
 // ================FORKLIFT================
 private SpeedController forkliftMotor = null;
 
-private Encoder forkliftEncoder = null;
+private KilroyEncoder forkliftEncoder = null;
 
 private LightSensor armIR = null;
 
@@ -40,7 +41,7 @@ private SpeedController intakeMotor = null;
 
 private SpeedController intakeDeployMotor = null;
 
-private Encoder intakeDeployEncoder = null;
+private KilroyEncoder intakeDeployEncoder = null;
 
 private LightSensor intakeSwitch = null;
 
@@ -77,8 +78,8 @@ private Servo deployFoldingServo = null;
  */
 public CubeManipulator (SpeedController forkliftMotor,
         SpeedController intakeMotor, LightSensor intakeSwitch,
-        Encoder forkliftEncoder, SpeedController intakeDeploy,
-        Encoder intakeDeployEncoder, Timer timer,
+        KilroyEncoder forkliftEncoder, SpeedController intakeDeploy,
+        KilroyEncoder intakeDeployEncoder, Timer timer,
         Servo deployFoldingServo)
 {
     this.forkliftMotor = forkliftMotor;
@@ -125,8 +126,8 @@ public CubeManipulator (SpeedController forkliftMotor,
  */
 public CubeManipulator (SpeedController forkliftMotor,
         SpeedController intakeMotor, LightSensor intakeSwitch,
-        Encoder forkliftEncoder, SpeedController intakeDeploy,
-        Encoder intakeDeployEncoder, Timer timer,
+        KilroyEncoder forkliftEncoder, SpeedController intakeDeploy,
+        KilroyEncoder intakeDeployEncoder, Timer timer,
         Servo deployFoldingServo, LightSensor armIRSensor)
 {
     this.forkliftMotor = forkliftMotor;

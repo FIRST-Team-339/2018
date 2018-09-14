@@ -46,13 +46,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.VictorSP;
 
 /**
- * ------------------------------------------------------- puts all of the
- * hardware declarations into one place. In addition, it makes them available to
- * both autonomous and teleop.
+ * -------------------------------------------------------
+ * puts all of the hardware declarations into one place. In addition, it makes
+ * them available to both autonomous and teleop.
  *
  * @class HardwareDeclarations
  * @author Bob Brown
- * @written Jan 2, 2011 -------------------------------------------------------
+ * @written Jan 2, 2011
+ *          -------------------------------------------------------
  */
 
 public class Hardware
@@ -135,8 +136,7 @@ public static WPI_TalonSRX leftRearCANMotor = new WPI_TalonSRX(13);// fix number
 
 public static Relay ringLightRelay = new Relay(1);
 
-// JANKY temporary fix until wpi gets their crap together with the Relay
-// class.
+// JANKY temporary fix until wpi gets their crap together with the Relay class.
 public static DigitalOutput tempRelay = new DigitalOutput(0);
 
 // ====================================
@@ -179,9 +179,9 @@ public static KilroyEncoder leftFrontDriveEncoder = new KilroyEncoder(
 public static KilroyEncoder rightFrontDriveEncoder = new KilroyEncoder(
         16, 17);
 
-public static Encoder liftingEncoder = new Encoder(18, 19);
+public static KilroyEncoder liftingEncoder = new KilroyEncoder(18, 19);
 
-public static Encoder intakeDeployEncoder = new Encoder(23, 24);
+public static KilroyEncoder intakeDeployEncoder = new KilroyEncoder(23, 24);
 
 // -----------------------
 // Wiring diagram
@@ -342,6 +342,7 @@ public static MomentarySwitch climbButton = new MomentarySwitch(
 public static final Timer autoTimer = new Timer();
 
 public static Telemetry telemetry = new Telemetry(10000);
+
 // ------------------------------------
 // Transmission class
 // ------------------------------------
@@ -385,7 +386,7 @@ public static DrivePID drivePID = new DrivePID(transmission,
 public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor, cubeIntakeMotor, cubePhotoSwitch,
         liftingEncoder, intakeDeployArm, intakeDeployEncoder, autoTimer,
-        intakeArmPositionServo, armIR);
+        intakeArmPositionServo);
 
 public static ScaleAlignment scaleAlignment = new ScaleAlignment(
         rearUltraSonic);
