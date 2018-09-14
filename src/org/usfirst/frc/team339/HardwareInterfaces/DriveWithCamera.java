@@ -1,15 +1,13 @@
 package org.usfirst.frc.team339.HardwareInterfaces;
 
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.MecanumTransmission;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TankTransmission;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.TransmissionType;
+import org.usfirst.frc.team339.Utils.drive.Drive;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import org.usfirst.frc.team339.vision.VisionProcessor.ImageType;
 import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GyroBase;
 
 /**
@@ -23,11 +21,9 @@ public class DriveWithCamera extends Drive
 
 private TankTransmission tankTransmission = null;
 
-private TractionTransmission tractionTransmission = null;
-
 private MecanumTransmission mecanumTransmission = null;
 
-private Encoder leftFrontEncoder = null, rightFrontEncoder = null,
+private KilroyEncoder leftFrontEncoder = null, rightFrontEncoder = null,
         leftRearEncoder = null, rightRearEncoder = null;
 
 private UltraSonic frontUltrasonic = null;
@@ -64,8 +60,8 @@ private final TransmissionType transmissionType;
  *            The camera's vision processing code, as a sensor.
  */
 public DriveWithCamera (TransmissionBase transmission,
-        Encoder leftFrontEncoder, Encoder rightFrontEncoder,
-        Encoder leftRearEncoder, Encoder rightRearEncoder,
+        KilroyEncoder leftFrontEncoder, KilroyEncoder rightFrontEncoder,
+        KilroyEncoder leftRearEncoder, KilroyEncoder rightRearEncoder,
         GyroBase gyro, VisionProcessor visionProcessor)
 {
     super(transmission, leftFrontEncoder, rightFrontEncoder,
@@ -101,7 +97,7 @@ public DriveWithCamera (TransmissionBase transmission,
  * 
  */
 public DriveWithCamera (TransmissionBase transmission,
-        Encoder leftEncoder, Encoder rightEncoder,
+        KilroyEncoder leftEncoder, KilroyEncoder rightEncoder,
         UltraSonic frontUltrasonic, UltraSonic rearUltrasonic,
         GyroBase gyro, VisionProcessor visionProcessor)
 {
@@ -138,7 +134,7 @@ public DriveWithCamera (TransmissionBase transmission,
  * 
  */
 public DriveWithCamera (TransmissionBase transmission,
-        Encoder leftEncoder, Encoder rightEncoder,
+        KilroyEncoder leftEncoder, KilroyEncoder rightEncoder,
         UltraSonic frontUltrasonic, UltraSonic rearUltrasonic,
         GyroBase gyro, VisionProcessor visionProcessor,
         DigitalOutput ringlightRelay)
@@ -194,7 +190,8 @@ public boolean driveToSwitch (double speed)
                 // the switch's center is too far right, drive faster on the
                 // left
                 // System.out.println("WE ARE TOO RIGHT");
-                this.getTransmission().drive(speed + DRIVE_CORRECTION,
+                this.getTransmission().driveRaw(
+                        speed + DRIVE_CORRECTION,
                         speed - DRIVE_CORRECTION);
                 }
             // if the switch center is to the left of our center set by the
@@ -204,12 +201,13 @@ public boolean driveToSwitch (double speed)
                 // the switch's center is too far left, drive faster on the
                 // right
                 // System.out.println("WE ARE TOO LEFT");
-                this.getTransmission().drive(speed - DRIVE_CORRECTION,
+                this.getTransmission().driveRaw(
+                        speed - DRIVE_CORRECTION,
                         speed + DRIVE_CORRECTION);
                 }
             else
                 {
-                this.getTransmission().drive(speed, speed);
+                this.getTransmission().driveRaw(speed, speed);
                 }
 
             if (this.frontUltrasonic
@@ -218,7 +216,7 @@ public boolean driveToSwitch (double speed)
                 state = DriveWithCameraState.DRIVE_WITH_US;
             break;
         case DRIVE_WITH_US:
-            driveStraight(speed, false);
+            driveStraight(speed, 0, true);
 
             // take a picture when we start to drive with ultrasonic
 
@@ -236,7 +234,7 @@ public boolean driveToSwitch (double speed)
         case STOP:
             // if we are too close to the wall, brake, then set all motors to
             // zero, else drive by ultrasonic
-            this.getTransmission().drive(0, 0);
+            this.getTransmission().driveRaw(0, 0);
             state = DriveWithCameraState.INIT;
             return true;
         }
@@ -290,7 +288,8 @@ public boolean jankyDriveToSwitch (double speed)
                 // the switch's center is too far right, drive faster on the
                 // left
                 // System.out.println("WE ARE TOO RIGHT");
-                this.getTransmission().drive(speed + DRIVE_CORRECTION,
+                this.getTransmission().driveRaw(
+                        speed + DRIVE_CORRECTION,
                         speed - DRIVE_CORRECTION);
                 }
             // if the switch center is to the left of our center set by the
@@ -300,7 +299,8 @@ public boolean jankyDriveToSwitch (double speed)
                 // the switch's center is too far left, drive faster on the
                 // right
                 // System.out.println("WE ARE TOO LEFT");
-                this.getTransmission().drive(speed - DRIVE_CORRECTION,
+                this.getTransmission().driveRaw(
+                        speed - DRIVE_CORRECTION,
                         speed + DRIVE_CORRECTION);
                 }
 
@@ -312,7 +312,7 @@ public boolean jankyDriveToSwitch (double speed)
 
             break;
         case DRIVE_WITH_US:
-            driveStraight(speed, false);
+            driveStraight(speed, 0, true);
 
             if (this.frontUltrasonic
                     .getDistanceFromNearestBumper() <= DISTANCE_FROM_WALL_TO_STOP)
@@ -323,7 +323,7 @@ public boolean jankyDriveToSwitch (double speed)
         case STOP:
             // if we are too close to the wall, brake, then set all motors to
             // zero, else drive by ultrasonic
-            this.getTransmission().drive(0, 0);
+            this.getTransmission().driveRaw(0, 0);
             state = DriveWithCameraState.INIT;
             return true;
         }
@@ -354,13 +354,15 @@ public void visionTest (double compensationFactor, double speed)
             + CAMERA_DEADBAND)
         {
         // center is too far left, drive faster on the right
-        this.getTransmission().drive(speed, speed * compensationFactor);
+        this.getTransmission().driveRaw(speed,
+                speed * compensationFactor);
         // System.out.println("We're too right");
         }
     else
         {
         // center is too far right, drive faster on the left
-        this.getTransmission().drive(speed * compensationFactor, speed);
+        this.getTransmission().driveRaw(speed * compensationFactor,
+                speed);
         // System.out.println("We're too left");
         }
 }
@@ -376,14 +378,6 @@ private int currentPictureIteration = 0;
 public double getCameraCenterValue ()
 {
     double center = 0;
-    // Save an image every 15 iterations: will give us between 1-3 frames per
-    // second, or a max of 10 to 15 pictures on the RIO.
-    if (currentPictureIteration++ >= 15)
-        {
-        this.visionProcessor.saveImage(ImageType.RAW);
-        this.visionProcessor.saveImage(ImageType.PROCESSED);
-        currentPictureIteration = 0;
-        }
 
     visionProcessor.processImage();
     // if we have at least two blobs, the center is equal to the average

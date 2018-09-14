@@ -16,6 +16,7 @@ package org.usfirst.frc.team339.Hardware;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
+import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroySPIGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
@@ -23,11 +24,12 @@ import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.RobotPotentiometer;
 import org.usfirst.frc.team339.HardwareInterfaces.SingleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.SixPositionSwitch;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.TractionTransmission;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TankTransmission;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.ScaleAlignment;
 import org.usfirst.frc.team339.Utils.Telemetry;
+import org.usfirst.frc.team339.Utils.drive.Drive;
+import org.usfirst.frc.team339.Utils.drive.DrivePID;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -38,6 +40,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.VictorSP;
@@ -95,7 +98,7 @@ public static Talon leftDriveMotor = new Talon(3);
 
 public static WPI_TalonSRX liftMotor = new WPI_TalonSRX(6);
 
- public static VictorSP liftingMotor = new VictorSP(0);
+public static VictorSP liftingMotor = new VictorSP(0);
 
 public static VictorSP cubeIntakeMotor = new VictorSP(1);
 
@@ -163,17 +166,21 @@ public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(
 // ------------------------------------
 // Encoders
 // ------------------------------------
-public static Encoder leftRearDriveEncoder = new Encoder(10, 11);
+public static KilroyEncoder leftRearDriveEncoder = new KilroyEncoder(10,
+        11);
 
-public static Encoder rightRearDriveEncoder = new Encoder(12, 13);
+public static KilroyEncoder rightRearDriveEncoder = new KilroyEncoder(
+        12, 13);
 
-public static Encoder leftFrontDriveEncoder = new Encoder(14, 15);
+public static KilroyEncoder leftFrontDriveEncoder = new KilroyEncoder(
+        14, 15);
 
-public static Encoder rightFrontDriveEncoder = new Encoder(16, 17);
+public static KilroyEncoder rightFrontDriveEncoder = new KilroyEncoder(
+        16, 17);
 
-public static Encoder liftingEncoder = new Encoder(18, 19);
+public static KilroyEncoder liftingEncoder = new KilroyEncoder(18, 19);
 
-public static Encoder intakeDeployEncoder = new Encoder(23, 24);
+public static KilroyEncoder intakeDeployEncoder = new KilroyEncoder(23, 24);
 
 // -----------------------
 // Wiring diagram
@@ -198,7 +205,6 @@ public static LightSensor armIR = new LightSensor(21);// TODO check port for
                                                       // 2018 robot
 
 public static LightSensor redLight = new LightSensor(7);
-
 
 // public static LightSensor leftRedLight = new LightSensor(8);
 
@@ -334,21 +340,32 @@ public static MomentarySwitch climbButton = new MomentarySwitch(
 // ------------------------------------
 public static final Timer autoTimer = new Timer();
 
-public static Telemetry telemetry = new Telemetry();
+public static Telemetry telemetry = new Telemetry(10000);
 
 // ------------------------------------
 // Transmission class
 // ------------------------------------
-public static TractionTransmission transmission = new TractionTransmission(
-        leftDriveMotor, rightDriveMotor);
+// public static TankTransmission transmission = new TankTransmission(
+// new SpeedControllerGroup(leftCANMotor, leftRearCANMotor),
+// new SpeedControllerGroup(rightCANMotor, rightRearCANMotor));
+// public static MecanumTransmission transmission = new MecanumTransmission(
+// leftCANMotor,
+// rightCANMotor, leftRearCANMotor, rightRearCANMotor);
+
+public static TankTransmission transmission = new TankTransmission(
+        new SpeedControllerGroup(leftFrontCANMotor),
+        new SpeedControllerGroup(rightFrontCANMotor));
 
 // ------------------------------------
 // Drive system
 // ------------------------------------
-public static Drive autoDrive = new Drive(transmission,
-        leftRearDriveEncoder,
-        rightRearDriveEncoder, leftFrontDriveEncoder,
+public static Drive drive = new Drive(transmission,
+        /* leftRearDriveEncoder, rightRearDriveEncoder, */
+        leftFrontDriveEncoder,
         rightFrontDriveEncoder, gyro);
+
+public static DrivePID drivePID = new DrivePID(transmission,
+        leftFrontDriveEncoder, rightFrontDriveEncoder, gyro);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 // TODO change back to this once relays actually work
@@ -365,9 +382,8 @@ public static Drive autoDrive = new Drive(transmission,
 // Assembly classes (e.g. forklift)
 // -------------------
 public static CubeManipulator cubeManipulator = new CubeManipulator(
-        liftingMotor,
-        cubeIntakeMotor, cubePhotoSwitch, liftingEncoder,
-        intakeDeployArm, intakeDeployEncoder, autoTimer,
+        liftingMotor, cubeIntakeMotor, cubePhotoSwitch,
+        liftingEncoder, intakeDeployArm, intakeDeployEncoder, autoTimer,
         intakeArmPositionServo, armIR);
 
 public static ScaleAlignment scaleAlignment = new ScaleAlignment(

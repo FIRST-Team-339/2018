@@ -104,10 +104,6 @@ public void printToConsole ()
     if ((System.currentTimeMillis()
             - lastTimePrinted) >= this.getTimeBetweenPrints())
         {
-
-
-
-
         if (Hardware.driverStation.isFMSAttached() == false)
             {
             // ==================================
@@ -137,6 +133,25 @@ public void printToConsole ()
             // System.out.println(
             // "Intake Deploy Arm "
             // + Hardware.intakeDeployArm.get());
+
+            // System.out.println(
+            //        "Right Drive Motor "
+            //                + Hardware.rightFrontCANMotor.get());
+
+            // System.out.println(
+            //        "Left Drive Motor "
+            //                + Hardware.leftFrontCANMotor.get());
+
+            // System.out.println("Lifting Motor " +
+            //        Hardware.liftingMotor.get());
+
+            // System.out.println(
+            //        "Cube Intake Motor "
+            //                + Hardware.cubeIntakeMotor.get());
+
+            // System.out.println(
+            //        "Intake Deploy Arm "
+            //                + Hardware.intakeDeployArm.get());
 
             // =================================
             // CAN items
@@ -453,8 +468,8 @@ public void printToShuffleboard ()
     // // SmartDashboard.putBoolean("R Auto SW",
     // // Hardware.rightAutoSwitch.isOn());
     //
-    SmartDashboard.putNumber("6 Pos Switch",
-            Hardware.autoSixPosSwitch.getPosition());
+    // SmartDashboard.putNumber("6 Pos Switch",
+    //        Hardware.autoSixPosSwitch.getPosition());
     //
     // // ---------------------------------
     // // Encoders
@@ -540,16 +555,16 @@ public void printToShuffleboard ()
     // // where the pot is turned to
     // // ---------------------------------
     //
-     SmartDashboard.putNumber("Delay Pot",
-     Hardware.delayPot.get(0, 5));
+    // SmartDashboard.putNumber("Delay Pot",
+    //  Hardware.delayPot.get(0, 5));
     //
     // // ---------------------------------
     // // GYRO
     // // ---------------------------------
     //
     //
-     SmartDashboard.putNumber("AnalogGyro",
-     Hardware.gyroAnalog.getAngle());
+    // SmartDashboard.putNumber("AnalogGyro",
+    // Hardware.gyroAnalog.getAngle());
     
      // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
     
@@ -585,7 +600,7 @@ public void printToShuffleboard ()
     // Analog Interfaces
     // -------------------------------------
 
-    SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
     // =================================
     // Connection Items
@@ -732,8 +747,6 @@ public void printToShuffleboard ()
             Hardware.armIR.isOn());
 
     SmartDashboard.updateValues();
-    this.setLastTimePrinted(System.currentTimeMillis());
-}
 }
 
 // in milliseconds
@@ -741,8 +754,5 @@ private double timeBetweenPrints = 10000;
 
 // initial state
 private double lastTimePrinted = 0.0;
-
-
-
 
 }

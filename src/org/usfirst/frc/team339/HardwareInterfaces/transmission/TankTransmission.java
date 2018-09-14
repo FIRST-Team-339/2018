@@ -1,7 +1,6 @@
 package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 /**
  * Like the traction drive system, except with four motors, usually all as
@@ -17,36 +16,38 @@ public class TankTransmission extends TransmissionBase
 /**
  * Creates the Transmission object.
  * 
- * @param leftFrontMotor
- *            The left-front motor controller
- * @param rightFrontMotor
- *            The right-front motor controller
- * @param leftRearMotor
- *            The left-rear motor controller
- * @param rightRearMotor
- *            The right-rear motor controller
+ * @param leftSide
+ *            the grouped motor controllers on the left side of the robot
+ * 
+ * @param rightSide
+ *            the grouped motor controllers on the right side of the robot
  */
-public TankTransmission (SpeedController leftFrontMotor,
-        SpeedController rightFrontMotor,
-        SpeedController leftRearMotor, SpeedController rightRearMotor)
+public TankTransmission (SpeedControllerGroup leftSide,
+        SpeedControllerGroup rightSide)
 {
-    super(leftRearMotor, rightRearMotor, leftFrontMotor,
-            rightFrontMotor);
+    super(leftSide, rightSide);
 
     super.type = TransmissionType.TANK;
 }
 
 /**
- * Controls the robot with the aid of deadbands and software gear ratios.
+ * Drives the transmission based on a Tank drive system,
+ * where left controls the left wheels, and right controls the right wheels.
  * 
- * @param leftJoystick
- *            The joystick that will control the left side of the robot
- * @param rightJoystick
- *            The joystick that will control the right side of the robot
+ * Uses joystick deadbands and gear ratios.
+ * 
+ * @param leftVal
+ *            Percentage, (-1.0 to 1.0)
+ * @param rightVal
+ *            Percentage, (-1.0 to 1.0)
  */
-public void drive (Joystick leftJoystick, Joystick rightJoystick)
+public void drive (double leftVal, double rightVal)
 {
-    super.drive(-leftJoystick.getY(), -rightJoystick.getY());
-}
+    double leftOut = super.scaleJoystickForDeadband(leftVal)
+            * super.getCurrentGearRatio();
+    double rightOut = super.scaleJoystickForDeadband(rightVal)
+            * super.getCurrentGearRatio();
 
+    super.driveRaw(leftOut, rightOut);
+}
 }

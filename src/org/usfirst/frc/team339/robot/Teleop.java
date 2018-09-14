@@ -33,14 +33,9 @@ package org.usfirst.frc.team339.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-
 import org.usfirst.frc.team339.Hardware.Hardware;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.DrivePID.PIDDriveFunction;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import org.usfirst.frc.team339.Utils.ErrorMessage;
 
 /**
  * This class contains all of the user code for the Autonomous part of the
@@ -87,7 +82,6 @@ public static void init ()
     // ---------------------------------
     // setup motors
     // ---------------------------------
-    Hardware.transmission.setForTeleop(Robot.KILROY_XIX_GEAR_2_SPEED);
     Hardware.rightDriveMotor.set(0);
     Hardware.leftDriveMotor.set(0);
 
@@ -100,7 +94,6 @@ public static void init ()
     // SmartDashboard.putNumber("Drive Brake Deadband", 0);
     //
     SmartDashboard.putNumber("Turn Degrees", 0);
-    drivepid.tunePID(PIDDriveFunction.TURN);
     // SmartDashboard.putNumber("Drive Distance", 0);
 
     if (Hardware.demoModeSwitch.isOn() == true)
@@ -126,8 +119,8 @@ public static void init ()
 public static void periodic ()
 {
 
-//	ErrorMessage Msg = new ErrorMessage();
-//	Msg.printError("StringError", true);
+    // ErrorMessage Msg = new ErrorMessage();
+    // Msg.printError("StringError", true);
 	Hardware.telemetry.printToShuffleboard();
     // Hardware.tempRelay.set(true);
 
@@ -239,26 +232,6 @@ public static void periodic ()
     
     Hardware.liftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
     Hardware.liftMotor.getSelectedSensorPosition(0);
-    
-    
-     if(Hardware.rightDriver.getRawButton(11) == true)
-     {
-    
-     Hardware.liftMotor.set(ControlMode.PercentOutput,
-     .5);
-     }
-     else if (Hardware.rightDriver.getRawButton(10) == true)
-     {
-    
-     Hardware.liftMotor.set(ControlMode.PercentOutput,
-     -.5);
-     }
-     else
-     {
-     Hardware.liftMotor.set(ControlMode.PercentOutput,
-     0.2);
-    
-     }
 
 
     // System.out.println("CAN " +
@@ -351,7 +324,7 @@ public static void periodic ()
     // && isBeckyTest == false
     // && isTestingEncoderTurn == false)
     if (isTestingDrive == false)
-        Hardware.transmission.drive(Hardware.leftDriver,
+        Hardware.drive.drive(Hardware.leftDriver,
                 Hardware.rightDriver);
     // update
 
@@ -361,7 +334,7 @@ public static void periodic ()
     // ------------------------------------
 
     // printStatements();
-    //Hardware.telemetry.printToConsole();
+    Hardware.telemetry.printToConsole();
 
     // -------------------------------------------
     // Put anything you need to test, but the
@@ -466,34 +439,8 @@ private static boolean isBeckyTest = false;
 // // }
 // } // end beckyTest()
 
-static DrivePID drivepid = new DrivePID(Hardware.transmission,
-        Hardware.leftFrontDriveEncoder,
-        Hardware.rightFrontDriveEncoder, Hardware.gyro);
-
 private static void testingDrive ()
 {
-    if (Hardware.rightDriver.getRawButton(10) == true)
-        Hardware.autoDrive.resetEncoders();
-
-    if (Hardware.rightDriver.getRawButton(9) == true)
-        drivepid.tunePID(PIDDriveFunction.TURN);
-
-    if (Hardware.rightDriver.getRawButton(7) == true)
-        isTestingDrive = true;
-
-    if (isTestingDrive == true)
-        {
-        if (Hardware.rightDriver.getRawButton(8) == true
-                || drivepid.turnDegrees(
-                        (int) SmartDashboard.getNumber("Turn Degrees",
-                                0),
-                        SmartDashboard.getNumber("Turn Power", 0)))
-            {
-            drivepid.reset();
-            isTestingDrive = false;
-            }
-        }
-
 } // end of testingDrive()
 
 private static void liftTest ()
