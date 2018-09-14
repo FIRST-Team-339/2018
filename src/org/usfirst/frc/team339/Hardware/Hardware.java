@@ -384,7 +384,7 @@ public static DrivePID drivePID = new DrivePID(transmission,
 public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor, cubeIntakeMotor, cubePhotoSwitch,
         liftingEncoder, intakeDeployArm, intakeDeployEncoder, autoTimer,
-        intakeArmPositionServo, armIR);
+        intakeArmPositionServo);
 
 public static ScaleAlignment scaleAlignment = new ScaleAlignment(
         rearUltraSonic);
