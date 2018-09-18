@@ -307,13 +307,15 @@ public static void periodic ()
     // =================================================================
     // CAMERA CODE
     // =================================================================
-
+    Hardware.axisCamera
+    .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+     && Hardware.leftOperator.getRawButton(7));
     if (Hardware.demoModeSwitch.isOn() == false)
         // We are in COMPETITION MODE!!!
         // TODO @ANE uncomment
-        // Hardware.axisCamera
-        // .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-        // && Hardware.leftOperator.getRawButton(7));
+         Hardware.axisCamera
+        .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+         && Hardware.leftOperator.getRawButton(7));
 
         // =================================================================
         // DRIVING CODE
@@ -451,14 +453,14 @@ private static boolean isBeckyTest = false;
 // // Hardware.ringLightRelay.setDirection(Direction.kReverse);
 // // }
 //
-// // if (Hardware.leftOperator.getRawButton(7))
-// // {
-// // Hardware.ringLightRelay.set(Value.kForward);
-// // }
-// // else
-// // {
-// // Hardware.ringLightRelay.set(Value.kReverse);
-// // }
+// if (Hardware.leftOperator.getRawButton(7))
+// {
+// Hardware.ringLightRelay.set(Value.kForward);
+// }
+// else
+// {
+// Hardware.ringLightRelay.set(Value.kReverse);
+// }
 //
 // // Hardware.axisCamera.saveImage(ImageType.RAW);
 //

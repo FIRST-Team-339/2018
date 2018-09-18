@@ -175,8 +175,11 @@ private final int M1013_VERT_FOV = 51;
  * info. They must instead be calculated manually.
  */
 
+// the first part of the path for images
+private final String IMAGE_BASIC_PATH = "/home/lvuser";
+        
 // the file path where we save the images we take
-private final String SAVE_IMAGE_PATH = "/home/lvuser/images";
+private final String SAVE_IMAGE_PATH = IMAGE_BASIC_PATH + "/images";
 
 private Mat image = new Mat(); // The stored "image" (in a matrix format)
 
@@ -440,6 +443,8 @@ public void setDefaultCameraSettings ()
  *            will save the image after it
  *            has gone through the filters.
  */
+
+
 public void saveImage (ImageType type)
 {
     String fileName = "";
@@ -447,16 +452,25 @@ public void saveImage (ImageType type)
 
     // Create the path the images will be saved in. If the path already
     // exists, do nothing.
+    
     try
         {
         // system command that creates the path the image will be saved in
+        
         Runtime.getRuntime()
                 .exec("mkdir -p " + SAVE_IMAGE_PATH + timeStamp);
+//      "echo $(ls -1rtd images*| head -n$(($(ls -1d images*| wc -l)-" + numImageFolders+"))) \\> temp.txt"
+        Runtime.getRuntime()
+                .exec("ls -ld " + IMAGE_BASIC_PATH + "; sleep 30");
+       
+
         } // end try
     catch (IOException e)
         {
         e.printStackTrace();
         } // catch
+       
+    
     // grab the image
     Mat tempImage = new Mat();
 
@@ -814,10 +828,13 @@ public double getYawAngleDegrees (ParticleReport target)
 // -------------------------------------
 private final int maxProcessedImagesAllowedToCollect = 25;
 
+
 // -------------------------------------
 // Max number of raw images allowed on the roboRIO
 // -------------------------------------
 private final int maxRawImagesAllowedToCollect = 25;
+
+private final int numImageFolders = 5;
 
 private final static String timeStamp = new SimpleDateFormat("MMddHHmm")
         .format(new Date());

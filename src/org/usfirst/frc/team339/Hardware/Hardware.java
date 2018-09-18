@@ -68,7 +68,7 @@ public class Hardware
 // ---------------------------------------
 // Hardware Tunables
 // ---------------------------------------
-public static boolean onNessie = false;
+public static boolean onNessie = true;
 
 public static boolean on2018 = true;
 
@@ -271,8 +271,8 @@ public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 // Axis/USB Camera class
 // -------------------------------------
 
-// public static VisionProcessor axisCamera = new VisionProcessor(
-// "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
+ public static VisionProcessor axisCamera = new VisionProcessor(
+ "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
 
 // -------------------------------------
 // declare the USB camera server and the
