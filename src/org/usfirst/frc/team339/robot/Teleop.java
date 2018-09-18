@@ -31,7 +31,6 @@
 // ====================================================================
 package org.usfirst.frc.team339.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
@@ -60,8 +59,10 @@ public static void init ()
 
     // User code goes below here
     // temporary timer
+
     Hardware.telemetry.printToShuffleboard();
     Hardware.telemetry.setTimeBetweenPrints(15000);
+
     // --------------------------------------
     // reset the MotorSafetyHelpers for each
     // of the drive motors
@@ -122,7 +123,7 @@ public static void periodic ()
 
     // ErrorMessage Msg = new ErrorMessage();
     // Msg.printError("StringError", true);
-
+    Hardware.telemetry.printToShuffleboard();
     // Hardware.tempRelay.set(true);
 
     // if (Hardware.redLight.isOn() && hasSeenTape == false)
@@ -202,58 +203,38 @@ public static void periodic ()
 
 
     // tank code
-    if (Hardware.leftDriver.getY() > .2)
-        leftInput = Hardware.leftDriver.getY() * .8 - .2;
-    else if (Hardware.leftDriver.getY() < -.2)
-        leftInput = Hardware.leftDriver.getY() * .8 + .2;
-    else
-        leftInput = 0.0;
-
-    if (Hardware.rightDriver.getY() > .2)
-        rightInput = Hardware.rightDriver.getY() * .8 - .2;
-    else if (Hardware.rightDriver.getY() < -.2)
-        rightInput = Hardware.rightDriver.getY() * .8 + .2;
-    else
-        rightInput = 0.0;
-
-    rightInput *= .4;
-    leftInput *= .4;
-
-
-    Hardware.rightRearCANMotor.follow(Hardware.rightFrontCANMotor);
-    Hardware.leftRearCANMotor.follow(Hardware.leftFrontCANMotor);
-
-
-    Hardware.rightFrontCANMotor.set(ControlMode.PercentOutput,
-            rightInput);
-
-    Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
-            leftInput);
+    // if (Hardware.leftDriver.getY() > .2)
+    // leftInput = Hardware.leftDriver.getY() * .8 - .2;
+    // else if (Hardware.leftDriver.getY() < -.2)
+    // leftInput = Hardware.leftDriver.getY() * .8 + .2;
+    // else
+    // leftInput = 0.0;
+    //
+    // if (Hardware.rightDriver.getY() > .2)
+    // rightInput = Hardware.rightDriver.getY() * .8 - .2;
+    // else if (Hardware.rightDriver.getY() < -.2)
+    // rightInput = Hardware.rightDriver.getY() * .8 + .2;
+    // else
+    // rightInput = 0.0;
+    //
+    // rightInput *= .4;
+    // leftInput *= .4;
+    //
+    //
+    // Hardware.rightRearCANMotor.follow(Hardware.rightFrontCANMotor);
+    // Hardware.leftRearCANMotor.follow(Hardware.leftFrontCANMotor);
+    //
+    //
+    // Hardware.rightFrontCANMotor.set(ControlMode.PercentOutput,
+    // rightInput);
+    //
+    // Hardware.leftFrontCANMotor.set(ControlMode.PercentOutput,
+    // leftInput);
     // encoder testing
 
     Hardware.liftMotor.configSelectedFeedbackSensor(
             FeedbackDevice.QuadEncoder, 0, 0);
     Hardware.liftMotor.getSelectedSensorPosition(0);
-
-
-    if (Hardware.rightDriver.getRawButton(11) == true)
-        {
-
-        Hardware.liftMotor.set(ControlMode.PercentOutput,
-                .5);
-        }
-    else if (Hardware.rightDriver.getRawButton(10) == true)
-        {
-
-        Hardware.liftMotor.set(ControlMode.PercentOutput,
-                -.5);
-        }
-    else
-        {
-        Hardware.liftMotor.set(ControlMode.PercentOutput,
-                0.2);
-
-        }
 
 
     // System.out.println("CAN " +
@@ -307,36 +288,38 @@ public static void periodic ()
     // =================================================================
     // CAMERA CODE
     // =================================================================
-
+    Hardware.axisCamera
+            .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+                    && Hardware.leftOperator.getRawButton(7));
     if (Hardware.demoModeSwitch.isOn() == false)
         // We are in COMPETITION MODE!!!
         // TODO @ANE uncomment
-        // Hardware.axisCamera
-        // .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-        // && Hardware.leftOperator.getRawButton(7));
+        Hardware.axisCamera
+                .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+                        && Hardware.leftOperator.getRawButton(7));
 
-        // =================================================================
-        // DRIVING CODE
-        // =================================================================
-        // if the right driver button 3 is pressed, shift up a gear, if the left
-        // driver button 3 id pressed, shift down a gear
-        if (Hardware.demoModeSwitch.isOn() == false)
-            // We are in COMPETITION MODE!!!
-            Hardware.transmission.shiftGears(
-                    Hardware.rightDriver.getRawButton(3),
-                    Hardware.leftDriver.getRawButton(3));
-        else
-            {
-            // We are in DEMO MODE!!!
-            if (Hardware.leftDriver.getRawButton(7) == true)
-                Hardware.transmission.setGearPercentage(0, .6);
-            else if (Hardware.leftDriver.getRawButton(8) == true)
-                Hardware.transmission.setGearPercentage(0,
-                        Hardware.delayPot.get(0, .6));
-            else if (Hardware.leftDriver.getRawButton(9) == true)
-                Hardware.transmission.setGearPercentage(0, .4);
+    // =================================================================
+    // DRIVING CODE
+    // =================================================================
+    // if the right driver button 3 is pressed, shift up a gear, if the left
+    // driver button 3 id pressed, shift down a gear
+    if (Hardware.demoModeSwitch.isOn() == false)
+        // We are in COMPETITION MODE!!!
+        Hardware.transmission.shiftGears(
+                Hardware.rightDriver.getRawButton(3),
+                Hardware.leftDriver.getRawButton(3));
+    else
+        {
+        // We are in DEMO MODE!!!
+        if (Hardware.leftDriver.getRawButton(7) == true)
+            Hardware.transmission.setGearPercentage(0, .6);
+        else if (Hardware.leftDriver.getRawButton(8) == true)
+            Hardware.transmission.setGearPercentage(0,
+                    Hardware.delayPot.get(0, .6));
+        else if (Hardware.leftDriver.getRawButton(9) == true)
+            Hardware.transmission.setGearPercentage(0, .4);
 
-            }
+        }
 
     // if is testing drive is equal to true, the joysticks are locked out to
     // test some sort of drive function (of drive by camera)
@@ -377,7 +360,7 @@ public static void periodic ()
 
 private static boolean allowAlignment = false;
 
-private static boolean isTestingDrive = true;// @ANE flip
+private static boolean isTestingDrive = false;// @ANE flip
 
 private static boolean isTestingEncoderTurn = false;
 
@@ -431,14 +414,14 @@ private static boolean isBeckyTest = false;
 // // Hardware.ringLightRelay.setDirection(Direction.kReverse);
 // // }
 //
-// // if (Hardware.leftOperator.getRawButton(7))
-// // {
-// // Hardware.ringLightRelay.set(Value.kForward);
-// // }
-// // else
-// // {
-// // Hardware.ringLightRelay.set(Value.kReverse);
-// // }
+// if (Hardware.leftOperator.getRawButton(7))
+// {
+// Hardware.ringLightRelay.set(Value.kForward);
+// }
+// else
+// {
+// Hardware.ringLightRelay.set(Value.kReverse);
+// }
 //
 // // Hardware.axisCamera.saveImage(ImageType.RAW);
 //

@@ -30,12 +30,13 @@ import org.usfirst.frc.team339.Utils.ScaleAlignment;
 import org.usfirst.frc.team339.Utils.Telemetry;
 import org.usfirst.frc.team339.Utils.drive.Drive;
 import org.usfirst.frc.team339.Utils.drive.DrivePID;
+import org.usfirst.frc.team339.vision.VisionProcessor;
+import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
@@ -46,13 +47,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.VictorSP;
 
 /**
- * ------------------------------------------------------- puts all of the
- * hardware declarations into one place. In addition, it makes them available to
- * both autonomous and teleop.
+ * -------------------------------------------------------
+ * puts all of the hardware declarations into one place. In addition, it makes
+ * them available to both autonomous and teleop.
  *
  * @class HardwareDeclarations
  * @author Bob Brown
- * @written Jan 2, 2011 -------------------------------------------------------
+ * @written Jan 2, 2011
+ *          -------------------------------------------------------
  */
 
 public class Hardware
@@ -68,7 +70,7 @@ public class Hardware
 // ---------------------------------------
 // Hardware Tunables
 // ---------------------------------------
-public static boolean onNessie = false;
+public static boolean onNessie = true;
 
 public static boolean on2018 = true;
 
@@ -95,8 +97,6 @@ public static Talon leftDriveMotor = new Talon(3);
 // Victor Classes
 // ------------------------------------
 
-public static WPI_TalonSRX liftMotor = new WPI_TalonSRX(6);
-
 public static VictorSP liftingMotor = new VictorSP(0);
 
 public static VictorSP cubeIntakeMotor = new VictorSP(1);
@@ -119,6 +119,9 @@ public static Servo intakeArmPositionServo = new Servo(6);
 public static PowerDistributionPanel pdp = new PowerDistributionPanel(
         2);
 
+
+public static WPI_TalonSRX liftMotor = new WPI_TalonSRX(6);
+
 public static WPI_TalonSRX rightFrontCANMotor = new WPI_TalonSRX(14);
 
 public static WPI_TalonSRX leftFrontCANMotor = new WPI_TalonSRX(11);
@@ -134,8 +137,7 @@ public static WPI_TalonSRX leftRearCANMotor = new WPI_TalonSRX(13);// fix number
 
 public static Relay ringLightRelay = new Relay(1);
 
-// JANKY temporary fix until wpi gets their crap together with the Relay
-// class.
+// JANKY temporary fix until wpi gets their crap together with the Relay class.
 public static DigitalOutput tempRelay = new DigitalOutput(0);
 
 // ====================================
@@ -178,9 +180,10 @@ public static KilroyEncoder leftFrontDriveEncoder = new KilroyEncoder(
 public static KilroyEncoder rightFrontDriveEncoder = new KilroyEncoder(
         16, 17);
 
-public static Encoder liftingEncoder = new Encoder(18, 19);
+public static KilroyEncoder liftingEncoder = new KilroyEncoder(18, 19);
 
-public static Encoder intakeDeployEncoder = new Encoder(23, 24);
+public static KilroyEncoder intakeDeployEncoder = new KilroyEncoder(23,
+        24);
 
 // -----------------------
 // Wiring diagram
@@ -278,8 +281,8 @@ public static KilroySPIGyro gyro = new KilroySPIGyro(true);
 // Axis/USB Camera class
 // -------------------------------------
 
-// public static VisionProcessor axisCamera = new VisionProcessor(
-// "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
+public static VisionProcessor axisCamera = new VisionProcessor(
+        "10.3.39.11", CameraModel.AXIS_M1013, tempRelay);
 
 // -------------------------------------
 // declare the USB camera server and the
@@ -340,7 +343,9 @@ public static MomentarySwitch climbButton = new MomentarySwitch(
 // ------------------------------------
 public static final Timer autoTimer = new Timer();
 
-public static Telemetry telemetry = new Telemetry();
+
+public static Telemetry telemetry = new Telemetry(10000);
+
 
 // ------------------------------------
 // Transmission class
@@ -353,8 +358,9 @@ public static Telemetry telemetry = new Telemetry();
 // rightCANMotor, leftRearCANMotor, rightRearCANMotor);
 
 public static TankTransmission transmission = new TankTransmission(
-        new SpeedControllerGroup(leftFrontCANMotor),
-        new SpeedControllerGroup(rightFrontCANMotor));
+        new SpeedControllerGroup(leftFrontCANMotor, leftRearCANMotor),
+        new SpeedControllerGroup(rightFrontCANMotor,
+                rightRearCANMotor));
 
 // ------------------------------------
 // Drive system
@@ -384,7 +390,7 @@ public static DrivePID drivePID = new DrivePID(transmission,
 public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor, cubeIntakeMotor, cubePhotoSwitch,
         liftingEncoder, intakeDeployArm, intakeDeployEncoder, autoTimer,
-        intakeArmPositionServo, armIR);
+        intakeArmPositionServo);
 
 public static ScaleAlignment scaleAlignment = new ScaleAlignment(
         rearUltraSonic);
