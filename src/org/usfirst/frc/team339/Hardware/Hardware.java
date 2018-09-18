@@ -30,6 +30,8 @@ import org.usfirst.frc.team339.Utils.ScaleAlignment;
 import org.usfirst.frc.team339.Utils.Telemetry;
 import org.usfirst.frc.team339.Utils.drive.Drive;
 import org.usfirst.frc.team339.Utils.drive.DrivePID;
+import org.usfirst.frc.team339.vision.VisionProcessor;
+import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
