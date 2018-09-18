@@ -60,7 +60,6 @@
 package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
-import org.usfirst.frc.team339.HardwareInterfaces.transmission.Drive.BrakeType;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -259,17 +258,19 @@ public void robotInit ()
     // -------------------------------------
     if (Hardware.on2018 == true)
         {
-        Hardware.autoDrive.setEncoderDistancePerPulse(
-                KILROY_XIX_ENCODER_DPP,
-                MotorPosition.ALL);
+        Hardware.rightFrontCANMotor.setInverted(true);
+        Hardware.rightRearCANMotor.setInverted(true);
+
+        Hardware.drive.setEncoderDistancePerPulse(
+                KILROY_XIX_ENCODER_DPP, MotorPosition.ALL);
 
         Hardware.liftingEncoder
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder
                 .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
 
-        Hardware.transmission.setAllGearRatios(KILROY_XIX_GEAR_1_SPEED,
-                KILROY_XIX_GEAR_2_SPEED);
+        Hardware.drive.setAllGearPercentages(KILROY_XIX_GEAR_1_SPEED);// ,
+        // KILROY_XIX_GEAR_2_SPEED);
 
         Hardware.frontUltraSonic.setOffsetDistanceFromNearestBumper(
                 KILROY_XIX_US_DISTANCE_FROM_BUMPER);
@@ -279,19 +280,19 @@ public void robotInit ()
 
         // Drive Functions
 
-        Hardware.autoDrive.setTurningRadius(KILROY_XIX_TURNING_RADIUS);
+        Hardware.drive.setTurningRadius(KILROY_XIX_TURNING_RADIUS);
 
         // Braking constants
-        Hardware.autoDrive.setBrakePower(KILROY_XIX_BRAKE_DRIVE_POWER,
-                BrakeType.AFTER_DRIVE);
-        Hardware.autoDrive.setBrakePower(KILROY_XIX_BRAKE_TURN_POWER,
-                BrakeType.AFTER_TURN);
+        // Hardware.drive.setBrakePower(KILROY_XIX_BRAKE_DRIVE_POWER,
+        // BrakeType.AFTER_DRIVE);
+        // Hardware.drive.setBrakePower(KILROY_XIX_BRAKE_TURN_POWER,
+        // BrakeType.AFTER_TURN);
 
-        Hardware.autoDrive.setBrakeDeadband(
-                KILROY_XIX_BRAKE_DRIVE_DEADBAND, BrakeType.AFTER_DRIVE);
-        Hardware.autoDrive.setBrakeDeadband(
-                KILROY_XIX_BRAKE_TURN_DEADBAND, BrakeType.AFTER_TURN);
-        Hardware.autoDrive.setDriveStraightConstant(
+        // Hardware.drive.setBrakeDeadband(KILROY_XIX_BRAKE_DRIVE_DEADBAND,
+        // BrakeType.AFTER_DRIVE);
+        // Hardware.drive.setBrakeDeadband(KILROY_XIX_BRAKE_TURN_DEADBAND,
+        // BrakeType.AFTER_TURN);
+        Hardware.drive.setDriveStraightConstant(
                 KILROY_XIX_DRIVESTRAIGHT_CONSTANT);
 
         Hardware.USBCam.setResolution(320, 240);
@@ -303,8 +304,7 @@ public void robotInit ()
         } // end if
     else
         {
-        Hardware.autoDrive.setEncoderDistancePerPulse(
-                KILROY_XV_ENCODER_DPP,
+        Hardware.drive.setEncoderDistancePerPulse(KILROY_XV_ENCODER_DPP,
                 MotorPosition.ALL);
 
         Hardware.liftingEncoder
@@ -312,9 +312,9 @@ public void robotInit ()
         Hardware.intakeDeployEncoder
                 .setDistancePerPulse(KILROY_XIX_DEPLOY_ENCODER_DPP);
 
-        Hardware.transmission.setAllGearRatios(KILROY_XV_GEAR_1_SPEED,
+        Hardware.drive.setAllGearPercentages(KILROY_XV_GEAR_1_SPEED,
                 KILROY_XV_GEAR_2_SPEED);
-        Hardware.autoDrive.setTurningRadius(KILROY_XV_TURNING_RADIUS);
+        Hardware.drive.setTurningRadius(KILROY_XV_TURNING_RADIUS);
         // Hardware.ringLightRelay.setDirection(Direction.kReverse);
         } // else
 
@@ -325,13 +325,13 @@ public void robotInit ()
         {
         Hardware.leftDriveMotor.setInverted(false);
         Hardware.rightDriveMotor.setInverted(false);
-        Hardware.transmission.setAllGearRatios(NESSIE_GEAR_1_SPEED,
+        Hardware.drive.setAllGearPercentages(NESSIE_GEAR_1_SPEED,
                 NESSIE_GEAR_2_SPEED);
         } // if
     else if (CANEnabled)
         {
-        Hardware.leftFrontCANMotor.setInverted(true);
-        Hardware.leftRearCANMotor.setInverted(true);
+        Hardware.leftFrontCANMotor.setInverted(false);
+        Hardware.leftRearCANMotor.setInverted(false);
         }
     else
     // ----------------------------------
@@ -345,7 +345,7 @@ public void robotInit ()
     // ---------------------------------
     // Sets joystick deadband
     // ---------------------------------
-    Hardware.transmission.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
+    Hardware.drive.setJoystickDeadband(JOYSTICK_DEADBAND_RANGE);
 
     // ---------------------------------
     // Sets the angle of the servo to 100
@@ -454,7 +454,7 @@ public void testInit ()
     // =========================================================
     // User code goes below here
     // =========================================================
-
+    this.teleopInit();
     // =========================================================
     // User code goes above here
     // =========================================================
@@ -476,7 +476,7 @@ public void testPeriodic ()
     // =========================================================
     // User code goes below here
     // =========================================================
-
+    this.teleopPeriodic();
     // =========================================================
     // User code goes above here
     // =========================================================
@@ -514,7 +514,7 @@ private static final double KILROY_XIX_LIFT_ENCODER_DPP = 0.02;
 
 private static final double KILROY_XIX_DEPLOY_ENCODER_DPP = .1;
 
-private static final double KILROY_XIX_TURNING_RADIUS = 11.5 - .35;
+private static final double KILROY_XIX_TURNING_RADIUS = 12.8;// 11.5 - .35;
 
 private static final double KILROY_XV_TURNING_RADIUS = 11 - .35;
 
@@ -532,7 +532,6 @@ private static final double KILROY_XIX_DRIVESTRAIGHT_CONSTANT = .1;
 
 private static final int KILROY_XIX_US_DISTANCE_FROM_BUMPER = 3;
 
-
 // Servo Constants
 // position the climb servo starts in
 public static final double CLIMB_SERVO_INIT_POSITION = 1.0;
@@ -541,4 +540,3 @@ public static final double CLIMB_SERVO_INIT_POSITION = 1.0;
 public static final double CLIMB_SERVO_CLIMB_POSITION = 0.0;
 
 } // end class
-

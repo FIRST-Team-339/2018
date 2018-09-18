@@ -1,7 +1,9 @@
 package org.usfirst.frc.team339.HardwareInterfaces.transmission;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * One of the more complex drive systems: uses 4 mecanum wheels to allow
@@ -12,11 +14,6 @@ import edu.wpi.first.wpilibj.SpeedController;
  */
 public class MecanumTransmission extends TransmissionBase
 {
-
-private double strafeCushion = .2;
-
-private double directionalDeadband = Math.toRadians(0);// Disabled by default.
-
 /**
  * Creates the MecanumTransmission object.
  * 
@@ -29,33 +26,40 @@ private double directionalDeadband = Math.toRadians(0);// Disabled by default.
  * @param rightRearMotor
  *            The right rear motor controller
  */
-public MecanumTransmission (SpeedController leftFrontMotor,
-        SpeedController rightFrontMotor,
-        SpeedController leftRearMotor, SpeedController rightRearMotor)
+public MecanumTransmission (SpeedController leftRearMotor,
+        SpeedController rightRearMotor,
+        SpeedController leftFrontMotor, SpeedController rightFrontMotor)
 {
     super(leftRearMotor, rightRearMotor, leftFrontMotor,
             rightFrontMotor);
-
-    super.type = TransmissionType.MECANUM;
+    super.type = TransmissionType.OMNI_DIR;
 }
 
 /**
- * Drives the robot with the aid of a joystick deadband, directional deadbands,
- * and software gear ratios.
+ * Creates the Mecanum Transmission class with an added gyro sensor, for PID
+ * tuning
+ * functionality and field-oriented driving.
  * 
- * @param joystick
- *            A 3-axis joystick to control 2 axis movement plus turning.
+ * @param leftFrontMotor
+ *            The left front motor controller
+ * @param rightFrontMotor
+ *            The right front motor controller
+ * @param leftRearMotor
+ *            The left rear motor controller
+ * @param rightRearMotor
+ *            The right rear motor controller
+ * @param gyro
+ *            A gyroscopic sensor.
  */
-public void drive (Joystick joystick)
+public MecanumTransmission (SpeedController leftRearMotor,
+        SpeedController rightRearMotor,
+        SpeedController leftFrontMotor, SpeedController rightFrontMotor,
+        GyroBase gyro)
 {
-    if (joystick.getTrigger() == true)
-        this.drive(joystick.getMagnitude(),
-                joystick.getDirectionRadians(),
-                joystick.getZ());
-    else
-        this.drive(joystick.getMagnitude(),
-                joystick.getDirectionRadians(),
-                0);
+    super(leftRearMotor, rightRearMotor, leftFrontMotor,
+            rightFrontMotor);
+    this.gyro = gyro;
+    super.type = TransmissionType.OMNI_DIR;
 }
 
 /**
@@ -75,42 +79,91 @@ public void drive (double magnitude, double direction, double rotation)
     double altMagnitude, altDirection, altRotation;
 
     altMagnitude = super.scaleJoystickForDeadband(magnitude)
-            * super.gearRatios[super.currentGear];
+            * super.getCurrentGearRatio();
     altDirection = direction;
     altRotation = super.scaleJoystickForDeadband(rotation)
-            * super.gearRatios[super.currentGear];
+            * super.getCurrentGearRatio();
 
     // Check between the deadbands for the strafing cushion and and 90
     // degree "snap".
-    if (direction > (-Math.PI / 2.0) - (directionalDeadband / 2.0)
-            && direction < (-Math.PI / 2.0)
-                    + (directionalDeadband / 2.0))
+    if (direction > -90 - (directionalDeadband / 2.0)
+            && direction < -90 + (directionalDeadband / 2.0))
         {
-        altDirection = -Math.PI / 2.0;
+        altDirection = -90;
         altMagnitude += this.strafeCushion;
         }
-    else if (direction > (Math.PI / 2.0) - (directionalDeadband / 2.0)
-            && direction < (Math.PI / 2.0)
-                    + (directionalDeadband / 2.0))
+    else if (direction > 90 - (directionalDeadband / 2.0)
+            && direction < 90 + (directionalDeadband / 2.0))
         {
-        altDirection = Math.PI / 2.0;
+        altDirection = 90;
         altMagnitude += this.strafeCushion;
         }
 
-    double leftFrontVal = Math.cos(direction - (Math.PI / 4.0));
-    double rightFrontVal = Math.cos(direction + (Math.PI / 4.0));
+    this.driveRaw(altMagnitude, altDirection, altRotation);
+
+}
+
+@Override
+/**
+ * Drives the robot based on raw inputs, for autonomous uses.
+ * Also, can use a correction PID loop for rotation, if that is enabled.
+ * 
+ * @param magnitude
+ *            How fast the robot will travel (0.0 to 1.0)
+ * @param direction
+ *            In which direction, laterally, will the robot travel (degrees,
+ *            -180 to 180. 0 is forward.)
+ * @param rotation
+ *            How much the robot should be turning (left,(-1.0) to right,(1.0)
+ */
+public void driveRaw (double magnitude, double direction,
+        double rotation)
+{
+    double altRotation = rotation;
+    double altDirection = Math.toRadians(direction);
+
+    // Only enable / disable / reset based on rotation IF we are using PID
+    // loops.
+    if (isUsingPID == true && altRotation != 0)
+        {
+        // While we are rotating, set the angle and reset/disable the PID.
+        this.mecanumPID.disable();
+        this.mecanumPID.getPIDController().reset();
+        currentSetAngle = this.gyro.getAngle();
+        }
+    else if (isUsingPID == true)
+        {
+        // When we are NOT rotating (but still using PID loops),
+        // enable PID loop and set the setpoint as the last angle since we
+        // rotated.
+        this.mecanumPID.enable();
+        this.mecanumPID.setSetpoint(currentSetAngle);
+        }
+    else
+        {
+        // if we are not using the PID loop, then just disable everything.
+        mecanumPID.disable();
+        mecanumPID.getPIDController().reset();
+        }
+
+    if (isUsingPID == true)
+        {
+        altRotation = inRange(altRotation + adjustedAngle);
+        }
+
+    double leftFrontVal = Math.cos(altDirection - (Math.PI / 4.0));
+    double rightFrontVal = Math.cos(altDirection + (Math.PI / 4.0));
     double rightRearVal = leftFrontVal;// The corner's equations are
     double leftRearVal = rightFrontVal;// equal to each other.
 
     super.getSpeedController(MotorPosition.LEFT_FRONT)
-            .set(inRange((magnitude * leftFrontVal) + rotation));
+            .set(inRange((magnitude * leftFrontVal) + altRotation));
     super.getSpeedController(MotorPosition.LEFT_REAR)
-            .set(inRange((magnitude * leftRearVal) + rotation));
+            .set(inRange((magnitude * leftRearVal) + altRotation));
     super.getSpeedController(MotorPosition.RIGHT_FRONT)
-            .set(inRange((magnitude * rightFrontVal) - rotation));
+            .set(inRange((magnitude * rightFrontVal) - altRotation));
     super.getSpeedController(MotorPosition.RIGHT_REAR)
-            .set(inRange((magnitude * rightRearVal) - rotation));
-
+            .set(inRange((magnitude * rightRearVal) - altRotation));
 }
 
 /**
@@ -121,7 +174,7 @@ public void drive (double magnitude, double direction, double rotation)
  */
 public void setDirectionalDeadband (double value)
 {
-    this.directionalDeadband = Math.toRadians(value);
+    this.directionalDeadband = Math.abs(value);
 }
 
 /**
@@ -130,11 +183,84 @@ public void setDirectionalDeadband (double value)
  * then it will not take affect.
  * 
  * @param value
- *            The value that strafeCusion will be set to.
+ *            The value that strafeCushion will be set to.
  */
-public void setStrafeCusion (double value)
+public void setStrafeCushion (double value)
 {
     this.strafeCushion = value;
+}
+
+/**
+ * Decides if we are using the PID loop to correct the rotation while we are
+ * driving.
+ * 
+ * @param enabled
+ *            true, if we are to enable the PID loop. False to not use it.
+ */
+public void setRotationCorrectionEnabled (boolean enabled)
+{
+    this.isUsingPID = enabled;
+}
+
+/**
+ * Sets the PID values for the rotation correction loop.
+ * 
+ * @param p
+ *            Proportional value
+ * @param i
+ *            Integral value
+ * @param d
+ *            Derivative value
+ * @param tolerance
+ *            voltage shutoff value (Degrees)
+ */
+public void setPIDValues (double p, double i, double d,
+        double tolerance)
+{
+    this.mecanumPID.getPIDController().setPID(p, i, d);
+    this.mecanumPID.getPIDController().setAbsoluteTolerance(tolerance);
+
+    this.p = p;
+    this.i = i;
+    this.d = d;
+    this.tolerance = tolerance;
+}
+
+/**
+ * Sends all values to the SmartDashboard to be able to tune easily.
+ * 
+ * Setpoint - what is the target value? In this case, the setpoint is a number
+ * of
+ * degrees that the robot wants to stay at.
+ * 
+ * P - Proportional - creates the initial straight line of error to correction,
+ * based on the sensor. High error means high correction, low error means low
+ * correction.
+ * I - Integral - Corrects based on how much time the error has had to build up.
+ * The longer
+ * the time, the higher the correction.
+ * D - Derivative - Overall, this smoothes out the P-loop line, by adding
+ * acceleration /
+ * deceleration curves. Use this to get to the setpoint without overshooting it.
+ * 
+ * Tolerance - At how many degrees away do we want to stop adding a value to the
+ * rotation?
+ */
+public void tunePID ()
+{
+    if (tunePIDInit == true)
+        {
+        SmartDashboard.putNumber("Mecanum P", p);
+        SmartDashboard.putNumber("Mecanum I", i);
+        SmartDashboard.putNumber("Mecanum D", d);
+        SmartDashboard.putNumber("Mecanum Tolerance", tolerance);
+        }
+
+    p = SmartDashboard.getNumber("Mecanum P", p);
+    i = SmartDashboard.getNumber("Mecanum I", i);
+    d = SmartDashboard.getNumber("Mecanum D", d);
+    tolerance = SmartDashboard.getNumber("Mecanum Tolerance", 0);
+    this.setPIDValues(p, i, d, tolerance);
 }
 
 /**
@@ -154,5 +280,46 @@ private double inRange (double val)
 
     return val;
 }
+
+private GyroBase gyro = null;
+
+private boolean isUsingPID = false;
+
+private boolean tunePIDInit = true;
+
+private double p, i, d, tolerance;
+
+private double currentSetAngle = 0; // For what is set as the setpoint for
+                                    // PID loop.
+
+private double adjustedAngle = 0;// For what is the output of the PID loop
+
+private double strafeCushion = .2; // Disabled as long as directionDeadband
+                                   // is 0
+
+private double directionalDeadband = 0;// Disabled by default.
+
+/**
+ * The overall PID correction system.
+ */
+private PIDSubsystem mecanumPID = new PIDSubsystem(p, i, d)
+{
+@Override
+protected double returnPIDInput ()
+{
+    return gyro.pidGet();
+}
+
+@Override
+protected void usePIDOutput (double output)
+{
+    adjustedAngle = output;
+}
+
+@Override
+protected void initDefaultCommand ()
+{
+}
+};
 
 }
