@@ -61,6 +61,7 @@ public static void init ()
     // User code goes below here
     // temporary timer
     Hardware.telemetry.printToShuffleboard();
+    Hardware.telemetry.setTimeBetweenPrints(15000);
     // --------------------------------------
     // reset the MotorSafetyHelpers for each
     // of the drive motors

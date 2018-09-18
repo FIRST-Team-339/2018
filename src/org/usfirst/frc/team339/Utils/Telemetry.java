@@ -765,7 +765,7 @@ public void printToShuffleboard ()
 }
 
 // in milliseconds
-private double timeBetweenPrints = 10000;
+private double timeBetweenPrints = 20000;
 
 // initial state
 private double lastTimePrinted = 0.0;
