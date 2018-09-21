@@ -597,6 +597,7 @@ public void takeLitPicture (boolean button)
         if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
             {
+            System.out.println("Lets blind some wirers");
             this.setRelayValue(true);
             }
         // if the timer expires, save the picture , reset booleans, turns off

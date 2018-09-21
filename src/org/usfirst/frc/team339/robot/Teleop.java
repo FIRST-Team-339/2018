@@ -34,6 +34,7 @@ package org.usfirst.frc.team339.robot;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.vision.VisionProcessor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -120,12 +121,15 @@ public static void init ()
  */
 public static void periodic ()
 {
+    
 
+printStatements();
     // ErrorMessage Msg = new ErrorMessage();
     // Msg.printError("StringError", true);
     Hardware.telemetry.printToShuffleboard();
-    // Hardware.tempRelay.set(true);
-
+    if(Hardware.leftOperator.getRawButton(6)) {
+     Hardware.tempRelay.set(true);
+    }
     // if (Hardware.redLight.isOn() && hasSeenTape == false)
     // {
     // hasSeenTape = true;
@@ -291,6 +295,9 @@ public static void periodic ()
     Hardware.axisCamera
             .takeLitPicture(Hardware.leftOperator.getRawButton(6)
                     && Hardware.leftOperator.getRawButton(7));
+    
+   
+    
     if (Hardware.demoModeSwitch.isOn() == false)
         // We are in COMPETITION MODE!!!
         // TODO @ANE uncomment
@@ -496,27 +503,27 @@ public static void printStatements ()
         // Motor
         // Prints the value of motors
         // =================================
-        // System.out.println(
-        // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-        // SmartDashboard.putNumber("R Drive Motor",
-        // Hardware.rightDriveMotor.get());
-        // System.out.println(
-        // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-        // SmartDashboard.putNumber("L Drive Motor",
-        // Hardware.leftDriveMotor.get());
+//         System.out.println(
+//         "Right Drive Motor " + Hardware.rightDriveMotor.get());
+         SmartDashboard.putNumber("R Drive Motor",
+         Hardware.rightDriveMotor.get());
+//         System.out.println(
+//         "Left Drive Motor " + Hardware.leftDriveMotor.get());
+         SmartDashboard.putNumber("L Drive Motor",
+         Hardware.leftDriveMotor.get());
 
-        // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-        // SmartDashboard.putNumber("Lifting Motor",
-        // Hardware.liftingMotor.get());
+//         System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
+         SmartDashboard.putNumber("Lifting Motor",
+         Hardware.liftingMotor.get());
 
-        // System.out.println(
-        // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-        // SmartDashboard.putNumber("Cube Motor",
-        // Hardware.cubeIntakeMotor.get());
-        // System.out.println(
-        // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-        // SmartDashboard.putNumber("Intake Deploy Motor",
-        // Hardware.intakeDeployArm.get());
+//         System.out.println(
+//         "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
+         SmartDashboard.putNumber("Cube Motor",
+         Hardware.cubeIntakeMotor.get());
+//        System.out.println(
+//        "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
+         SmartDashboard.putNumber("Intake Deploy Motor",
+         Hardware.intakeDeployArm.get());
         // =================================
         // CAN items
         // prints value of the CAN controllers
@@ -536,27 +543,27 @@ public static void printStatements ()
         // Switches
         // prints state of switches
         // ---------------------------------
-        // if (Hardware.disableAutonomousSwitch.isOn() == false)
-        // {
-        // System.out.println(
-        // "Disable = off");
-        // }
-        // else
-        // {
-        // System.out.println(
-        // "Disable = on");
-        // }
-        // SmartDashboard.putBoolean("Disable SW",
-        // Hardware.disableAutonomousSwitch.isOn());
+//         if (Hardware.disableAutonomousSwitch.isOn() == false)
+//         {
+//         System.out.println(
+//         "Disable = off");
+//         }
+//         else
+//         {
+//         System.out.println(
+//         "Disable = on");
+//         }
+         SmartDashboard.putBoolean("Disable SW",
+         Hardware.disableAutonomousSwitch.isOn());
 
-        // if (Hardware.leftAutoSwitch.isOn() == false)
-        // System.out.println(
-        // "Left = off");
-        // else
-        // System.out.println(
-        // "Left = on");
-        // SmartDashboard.putBoolean("L Auto SW",
-        // Hardware.leftAutoSwitch.isOn());
+//         if (Hardware.leftAutoSwitch.isOn() == false)
+//         System.out.println(
+//         "Left = off");
+//         else
+//         System.out.println(
+//         "Left = on");
+         SmartDashboard.putBoolean("L Auto SW",
+         Hardware.leftAutoSwitch.isOn());
         //
         // if (Hardware.rightAutoSwitch.isOn() == false)
         // System.out.println(
@@ -564,8 +571,8 @@ public static void printStatements ()
         // else
         // System.out.println(
         // "Right = on");
-        // SmartDashboard.putBoolean("R Auto SW",
-        // Hardware.rightAutoSwitch.isOn());
+         SmartDashboard.putBoolean("R Auto SW",
+         Hardware.rightAutoSwitch.isOn());
 
 
         // System.out.println("6 pos = "
@@ -579,63 +586,63 @@ public static void printStatements ()
         // ---------------------------------
         // Encoders
         // ---------------------------------
-        // System.out.println("Left Front Encoder Inches = "
-        // + Hardware.leftFrontDriveEncoder.getDistance());
+//         System.out.println("Left Front Encoder Inches = "
+//         + Hardware.leftFrontDriveEncoder.getDistance());
         SmartDashboard.putNumber("Left Front Encoder Inches",
                 Hardware.leftFrontDriveEncoder.getDistance());
 
-        // System.out.println("Left Front Encoder Ticks "
-        // + Hardware.leftFrontDriveEncoder.get());
+//         System.out.println("Left Front Encoder Ticks "
+//         + Hardware.leftFrontDriveEncoder.get());
         SmartDashboard.putNumber("Left Front Encoder Ticks",
                 Hardware.leftFrontDriveEncoder.get());
-
-        // System.out.println("Right Front Inches = "
-        // + Hardware.rightFrontDriveEncoder.getDistance());
+//
+//         System.out.println("Right Front Inches = "
+//         + Hardware.rightFrontDriveEncoder.getDistance());
         SmartDashboard.putNumber("Right Front Encoder Inches",
                 Hardware.rightFrontDriveEncoder.getDistance());
 
-        // System.out.println("Right Front Ticks "
-        // + Hardware.rightFrontDriveEncoder.get());
+//         System.out.println("Right Front Ticks "
+//         + Hardware.rightFrontDriveEncoder.get());
         SmartDashboard.putNumber("Right Front Encoder Ticks",
                 Hardware.rightFrontDriveEncoder.get());
 
-        // System.out.println("Left Rear Encoder Inches = "
-        // + Hardware.leftRearDriveEncoder.getDistance());
+//         System.out.println("Left Rear Encoder Inches = "
+//         + Hardware.leftRearDriveEncoder.getDistance());
         SmartDashboard.putNumber("Left Rear Encoder Inches",
                 Hardware.leftRearDriveEncoder.getDistance());
 
-        // System.out.println("Left Rear Encoder Ticks "
-        // + Hardware.leftRearDriveEncoder.get());
+//         System.out.println("Left Rear Encoder Ticks "
+//         + Hardware.leftRearDriveEncoder.get());
         SmartDashboard.putNumber("Left Rear Encoder Ticks",
                 Hardware.leftRearDriveEncoder.get());
 
-        // System.out.println("Right Rear Inches = "
-        // + Hardware.rightRearDriveEncoder.getDistance());
+//         System.out.println("Right Rear Inches = "
+//         + Hardware.rightRearDriveEncoder.getDistance());
         SmartDashboard.putNumber("Right Rear Encoder Inches",
                 Hardware.rightRearDriveEncoder.getDistance());
 
-        // System.out.println("Right Rear Ticks "
-        // + Hardware.rightRearDriveEncoder.get());
+//         System.out.println("Right Rear Ticks "
+//         + Hardware.rightRearDriveEncoder.get());
         SmartDashboard.putNumber("Right Rear Encoder Ticks",
                 Hardware.rightRearDriveEncoder.get());
 
-        // System.out.println("Lift Encoder Inches = "
-        // + Hardware.liftingEncoder.getDistance());
+//         System.out.println("Lift Encoder Inches = "
+//         + Hardware.liftingEncoder.getDistance());
         SmartDashboard.putNumber("Lift Encoder Inches",
                 Hardware.liftingEncoder.getDistance());
 
-        // System.out.println(
-        // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
+//         System.out.println(
+//         "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
         SmartDashboard.putNumber("Lift Encoder Ticks",
                 Hardware.liftingEncoder.get());
-
-        // System.out.println("Intake Deploy Encoder "
-        // + Hardware.intakeDeployEncoder.getDistance());
+//
+//         System.out.println("Intake Deploy Encoder "
+//         + Hardware.intakeDeployEncoder.getDistance());
         SmartDashboard.putNumber("Intake Deploy Encoder",
                 Hardware.intakeDeployEncoder.getDistance());
 
-        // System.out.println("Intake Deploy Encoder Ticks "
-        // + Hardware.intakeDeployEncoder.get());
+//         System.out.println("Intake Deploy Encoder Ticks "
+//         + Hardware.intakeDeployEncoder.get());
         SmartDashboard.putNumber("Intake Deploy Ticks",
                 Hardware.intakeDeployEncoder.get());
 
@@ -651,8 +658,8 @@ public static void printStatements ()
         // Hardware.leftRedLight.isOn());
         // SmartDashboard.putBoolean("L Red Light",
         // Hardware.leftRedLight.isOn());
-        // System.out.println(
-        // "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
+//         System.out.println(
+//         "PhotoSwitch " + Hardware.cubePhotoSwitch.isOn());
         SmartDashboard.putBoolean("Photo SW",
                 Hardware.cubePhotoSwitch.isOn());
 
@@ -682,17 +689,17 @@ public static void printStatements ()
         // pots
         // where the pot is turned to
         // ---------------------------------
-        // System.out
-        // .println("Delay Pot " + Hardware.delayPot.get(0, 5));
-        // SmartDashboard.putNumber("Delay Pot",
-        // Hardware.delayPot.get(0, 5));
+//         System.out
+//         .println("Delay Pot " + Hardware.delayPot.get(0, 5));
+         SmartDashboard.putNumber("Delay Pot",
+         Hardware.delayPot.get(0, 5));
 
         // ---------------------------------
         // GYRO
         // ---------------------------------
 
-        // System.out.println("AnalogGyro: " +
-        // Hardware.gyroAnalog.getAngle());
+//         System.out.println("AnalogGyro: " +
+//         Hardware.gyroAnalog.getAngle());
         SmartDashboard.putNumber("AnalogGyro",
                 Hardware.gyroAnalog.getAngle());
 
@@ -703,11 +710,11 @@ public static void printStatements ()
         // ---------------------------------
         // Sonar/UltraSonic
         // ---------------------------------
-        // SmartDashboard.putNumber("Rear Ultrasonic distance",
-        // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+         //SmartDashboard.putNumber("Rear Ultrasonic distance",
+         //Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
-        // System.out.println("Front UltraSonic "
-        // + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
+//         System.out.println("Front UltraSonic "
+//         + Hardware.frontUltraSonic.getDistanceFromNearestBumper());
         SmartDashboard.putNumber("Front Ultrasonic",
                 Hardware.frontUltraSonic
                         .getDistanceFromNearestBumper());
@@ -730,8 +737,8 @@ public static void printStatements ()
         // =========================
         // System.out.println("Climbing Mechanism Servo" +
         // Hardware.climbingMechanismServo.getAngle());
-        // SmartDashboard.putNumber("Climb Servo",
-        // Hardware.climbingMechanismServo.getAngle());
+         SmartDashboard.putNumber("Climb Servo",
+         Hardware.climbingMechanismServo.getAngle());
 
         // System.out.println("Intake Arm Servo " +
         // Hardware.intakeArmPositionServo.getAngle());
