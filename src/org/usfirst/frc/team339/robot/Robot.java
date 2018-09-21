@@ -224,6 +224,11 @@ public void robotInit ()
     // REMOVE ME!!!
     // Hardware.autoDrive.setGyro(Hardware.gyroAnalog);
 
+    // --------------------------------------
+    // Compressor Initialization
+    // --------------------------------------
+    Hardware.compressor.setClosedLoopControl(true);
+
     // -------------------------------------
     // Resets encoder values
     // -------------------------------------

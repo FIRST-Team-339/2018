@@ -1,9 +1,9 @@
 package org.usfirst.frc.team339.Utils;
 
+import org.usfirst.frc.team339.HardwareInterfaces.DoubleSolenoid;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
 import org.usfirst.frc.team339.HardwareInterfaces.MomentarySwitch;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
@@ -48,6 +48,8 @@ private LightSensor intakeSwitch = null;
 private Timer switchTimer = null;
 
 private Servo deployFoldingServo = null;
+
+private DoubleSolenoid armIntakeSolenoid = null;
 // ========================================
 
 // --------------------------------------------
@@ -90,6 +92,54 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
+
+    this.currentForkliftMaxHeight = FORKLIFT_MAX_HEIGHT;
+
+}
+
+/**
+ * Creates the CubeManipulator class, which conrols the movement of the
+ * forklift, intake, and climbing for autonomous and teleop functions
+ * 
+ * BONUS OF NEW SOLENOID
+ * 
+ * @param forkliftMotor
+ *            Motor controller that powers the up and down movement of the
+ *            forklift
+ * @param intakeMotor
+ *            Motor controller that powers the spinning wheels that grabs the
+ *            cube
+ * @param intakeSwitch
+ *            Light sensor that senses whether or not we are in control of a
+ *            cube
+ * @param forkliftEncoder
+ *            Sensor for software stops on the forklift
+ * @param intakeDeploy
+ *            Motor controller that is used to deploy the intake
+ * @param intakeDeployEncoder
+ *            Sensor for the software stops on the deploy motor
+ * @param timer
+ *            Timer used for the intake mechanism
+ * @param deployFoldingServo
+ *            Servo used to fold the deploy down in order to climb.
+ * @param armIntakeSolenoid
+ *            Solenoid that controls whether the intake arms are open or closed
+ */
+public CubeManipulator (SpeedController forkliftMotor,
+        SpeedController intakeMotor, LightSensor intakeSwitch,
+        KilroyEncoder forkliftEncoder, SpeedController intakeDeploy,
+        KilroyEncoder intakeDeployEncoder, Timer timer,
+        Servo deployFoldingServo, DoubleSolenoid armIntakeSolenoid)
+{
+    this.forkliftMotor = forkliftMotor;
+    this.intakeMotor = intakeMotor;
+    this.intakeSwitch = intakeSwitch;
+    this.forkliftEncoder = forkliftEncoder;
+    this.intakeDeployMotor = intakeDeploy;
+    this.intakeDeployEncoder = intakeDeployEncoder;
+    this.switchTimer = timer;
+    this.deployFoldingServo = deployFoldingServo;
+    this.armIntakeSolenoid = armIntakeSolenoid;
 
     this.currentForkliftMaxHeight = FORKLIFT_MAX_HEIGHT;
 
@@ -1054,12 +1104,16 @@ public void intakeUpdate ()
             // this.intakeMotor.stopMotor();
             // // Don't have a cube? keep pulling in.
             // else
+            // open arms when pulling in cube
+            this.armIntakeSolenoid.set(INTAKE_ARMS_OPEN);
             this.intakeMotor.set(INTAKE_SPEED);
 
             // Set to stop when they stop hitting the button.
             intakeState = IntakeState.STOP;
             break;
         case PUSH_OUT:
+            // keep arm closed when pushing out cube
+            this.armIntakeSolenoid.set(INTAKE_ARMS_CLOSED);
             this.intakeMotor.set(currentEjectSpeed);
             // Set to stop when they stop hitting the button.
             intakeState = IntakeState.STOP;
@@ -1067,6 +1121,9 @@ public void intakeUpdate ()
         default:
             System.out.println("Unknown case in intakeUpdate()");
         case STOP:
+            // keeps the intake arms closed when we are neither
+            // pulling in a cube nor pushing out a cube
+            this.armIntakeSolenoid.set(INTAKE_ARMS_CLOSED);
             // If we have a cube, send a constant voltage to make sure it
             // doesn't come out.
             if (hasCube() == true)
@@ -1296,6 +1353,10 @@ private final double EJECT_TIME = 2.0;
 private final double DEPLOY_45_POSITION_TICKS = 130;// 160;
 
 private final int DEPLOY_DEADBAND = 15;
+
+public static final DoubleSolenoid.Value INTAKE_ARMS_OPEN = DoubleSolenoid.Value.kForward;
+
+public static final DoubleSolenoid.Value INTAKE_ARMS_CLOSED = DoubleSolenoid.Value.kReverse;
 
 // =========================================
 

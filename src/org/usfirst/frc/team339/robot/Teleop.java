@@ -34,6 +34,7 @@ package org.usfirst.frc.team339.robot;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -105,6 +106,12 @@ public static void init ()
         Hardware.transmission.setGear(0);
         }
 
+    // ---------------------------------
+    // setup solenoid
+    // ---------------------------------
+    Hardware.armIntakeSolenoid.set(INTAKE_ARMS_OPEN);
+
+
 } // end Init
 
 // tune pid loop
@@ -120,6 +127,10 @@ public static void init ()
  */
 public static void periodic ()
 {
+    if (Autonomous.passedThroughAuto == false)
+        {
+        Hardware.armIntakeSolenoid.set(INTAKE_ARMS_OPEN);
+        }
 
     // ErrorMessage Msg = new ErrorMessage();
     // Msg.printError("StringError", true);
@@ -883,6 +894,10 @@ public static final int INTAKE_ARM_SERVO_UP_POSITION = 0;
 public static final int INTAKE_ARM_SERVO_DOWN_POSITION = 180;
 
 public static final double FORKLIFT_HEIGHT_TO_PUT_DOWN_SERVO = 20.0;
+
+public static final DoubleSolenoid.Value INTAKE_ARMS_OPEN = DoubleSolenoid.Value.kForward;
+
+public static final DoubleSolenoid.Value INTAKE_ARMS_CLOSED = DoubleSolenoid.Value.kReverse;
 
 // ================================
 // Variables
