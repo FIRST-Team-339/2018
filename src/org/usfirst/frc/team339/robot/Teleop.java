@@ -196,6 +196,120 @@ printStatements();
         if (Hardware.leftOperator.getRawButton(2))
             Hardware.cubeManipulator.angleDeployForScale();
         }
+    // System.out.println("Lifting Motor " +
+    // Hardware.liftingMotor.get());
+    //
+    // System.out.println(
+    // "Cube Intake Motor "
+    // + Hardware.cubeIntakeMotor.get());
+    //
+    // System.out.println(
+    // "Intake Deploy Arm "
+    // + Hardware.intakeDeployArm.get());
+    System.out.println("Climbing Mechanism Servo" +
+            Hardware.climbingMechanismServo.getAngle());
+
+    // System.out.println("Intake Arm Servo " +
+    // Hardware.intakeArmPositionServo.getAngle());
+    // System.out.println("Lift Encoder Inches = "
+    // + Hardware.liftingEncoder.getDistance());
+
+    // System.out.println(
+    // "Lift Encoder Ticks " + Hardware.liftingEncoder.get());
+
+    // System.out.println("Intake Deploy Encoder "
+    // + Hardware.intakeDeployEncoder.getDistance());
+
+    // System.out.println("Intake Deploy Encoder Ticks "
+    // + Hardware.intakeDeployEncoder.get());
+ // set of if elses to properly set the two boolean boxes on the
+    // SmartDashboard that are used to track the status of the cube. On
+    // the
+    // actual SmartDashboard, the boolean boxes are layered so between
+    // the
+    // two
+    // of them, the layered box is green when we have a cube, red when
+    // we
+    // are
+    // intaking a cube, and transparent if we don't have a cube and are
+    // not
+    // intaking
+
+
+
+    if (Hardware.cubeManipulator.hasCube() == true)
+
+        {
+        // SmartDashboard value that is used to tell whether or not we have
+        // a
+        // cube; true sets the boolean box to green; false sets the boolean
+        // box
+        // to transparent
+        SmartDashboard.putBoolean("Has Cube", true);
+        // SmartDashboard value that tracks if the intake is intaking; has
+        // the
+        // the same key as the cube one, except with a space at the end, for
+        // aesthetic reasons when it shows up on the SmartDashboard; true
+        // sets
+        // the box to red; false sets the box to transparent
+        SmartDashboard.putBoolean("Has Cube ", false);
+
+        }
+    else if (Hardware.cubeManipulator
+            .getIntakeMotorSpeed() > Hardware.cubeManipulator.INTAKE_STOP_WITH_CUBE
+                    + .1 /*
+                          * the
+                          * .1
+                          * here
+                          * is
+                          * just
+                          * a
+                          * magic
+                          * number
+                          * that
+                          * wasn
+                          * '
+                          * t
+                          * worth
+                          * making
+                          * a
+                          * constant
+                          * for;
+                          * is
+                          * meant
+                          * to
+                          * prevent
+                          * false
+                          * positives
+                          * in
+                          * cases
+                          * where
+                          * the
+                          * getIntakeMotorSpeed
+                          * is
+                          * returning
+                          * .2000001
+                          * or
+                          * something
+                          */)
+        {
+        // sets the boolean box to transparent
+        SmartDashboard.putBoolean("Has Cube", false);
+        // sets the other boolean box to red
+        SmartDashboard.putBoolean("Has Cube ", true);
+        }
+    else
+        {
+        // sets the boolean box to transparent
+        SmartDashboard.putBoolean("Has Cube", false);
+        // sets the other boolean box to transparent
+        SmartDashboard.putBoolean("Has Cube ", false);
+        }
+
+
+    SmartDashboard.putBoolean("Too close to scale",
+            Hardware.armIR.isOn());
+    SmartDashboard.updateValues();
 
     // -----------------------------------------
     // Forklift (not Cube Manipulator) controls
