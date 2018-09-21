@@ -34,6 +34,7 @@ package org.usfirst.frc.team339.robot;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import org.usfirst.frc.team339.Utils.drive.Drive.BrakeType;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -81,6 +82,8 @@ public static void init ()
     Hardware.rightRearDriveEncoder.reset();
     Hardware.liftingEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
+
+    Hardware.armIntakeSolenoid.set(INTAKE_ARMS_CLOSED);
     // Disable auto
 
     if (Hardware.disableAutonomousSwitch.isOn() == true)
@@ -120,6 +123,7 @@ public static State autoState = State.INIT;
  */
 public static void periodic ()
 {
+    passedThroughAuto = true;
     SmartDashboard.putString("Overall Auto state",
             autoState.toString());
     SmartDashboard.putString("Vision auto state",
@@ -911,7 +915,7 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_LEFT_SIDE:
             // Turn x degrees to the left, if the switch is on the left
             if (Hardware.drive.pivotTurnDegrees(-80,
-                    MID_DRIVE_SPEED,0, true) == true)// Changed
+                    MID_DRIVE_SPEED, 0, true) == true)// Changed
             // from
             // 2stageturn
                 {
@@ -922,7 +926,7 @@ public static boolean centerSwitchPath ()
         case TURN_TOWARDS_RIGHT_SIDE:
             // Turn x degrees to the right, if the switch is on the right
             if (Hardware.drive.pivotTurnDegrees(80,
-                    MID_DRIVE_SPEED,0, true) == true)// Changed
+                    MID_DRIVE_SPEED, 0, true) == true)// Changed
             // from
             // 2stageTurn
                 {
@@ -982,7 +986,7 @@ public static boolean centerSwitchPath ()
             // turn 90 to the left and sets the state to DRIVE_WITH_CAMERA this
             // is the right side auto
             if (Hardware.drive.pivotTurnDegrees(-80,
-                    MID_DRIVE_SPEED,0, true) == true)
+                    MID_DRIVE_SPEED, 0, true) == true)
                 {
                 visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
@@ -991,7 +995,7 @@ public static boolean centerSwitchPath ()
             // turns 90 to the right then brakes and sets the state to
             // DRIVE_WITH_CAMERA this is the left side auto
             if (Hardware.drive.pivotTurnDegrees(65,
-                    MID_DRIVE_SPEED,0, true) == true)
+                    MID_DRIVE_SPEED, 0, true) == true)
                 {
                 visionAuto = centerState.DRIVE_WITH_CAMERA;
                 }
@@ -1043,15 +1047,15 @@ public static boolean centerSwitchPath ()
             // drives to the switch based on the camera
             // sets state to LIFT
             Hardware.tempRelay.set(true);
-            //TODO @ANE uncomment
-//            if (Hardware.driveWithCamera
-//                    .driveToSwitch(AUTO_SPEED_VISION) == true)
-//                {
-//                // Turn off the ringlight camera
-//                Hardware.tempRelay.set(false);
-//                // Hardware.transmission.stop();
-//                visionAuto = centerState.MAKE_DEPOSIT;
-//                }
+            // TODO @ANE uncomment
+            // if (Hardware.driveWithCamera
+            // .driveToSwitch(AUTO_SPEED_VISION) == true)
+            // {
+            // // Turn off the ringlight camera
+            // Hardware.tempRelay.set(false);
+            // // Hardware.transmission.stop();
+            // visionAuto = centerState.MAKE_DEPOSIT;
+            // }
             break;
         case DRIVE_STRAIGHT_NO_CAMERA:
             Hardware.drive.driveStraight(AUTO_SPEED_VISION, 0, true);
@@ -1768,6 +1772,12 @@ private static final int[] OFFSET_SWITCH_DRIVE_DISTANCES = new int[]
             (int) (AUTO_TESTING_SCALAR * 44),
             (int) (AUTO_TESTING_SCALAR * 127),
             (int) (AUTO_TESTING_SCALAR * 117)};
+
+public static final DoubleSolenoid.Value INTAKE_ARMS_OPEN = DoubleSolenoid.Value.kForward;
+
+public static final DoubleSolenoid.Value INTAKE_ARMS_CLOSED = DoubleSolenoid.Value.kReverse;
+
+public static boolean passedThroughAuto = false;
 
 // FINISH
 

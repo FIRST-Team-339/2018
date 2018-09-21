@@ -15,6 +15,7 @@
 package org.usfirst.frc.team339.Hardware;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import org.usfirst.frc.team339.HardwareInterfaces.DoubleSolenoid;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroySPIGyro;
@@ -35,6 +36,7 @@ import org.usfirst.frc.team339.vision.VisionProcessor.CameraModel;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -223,6 +225,7 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // ====================================
 // Compressor class - runs the compressor
 // ====================================
+public static Compressor compressor = new Compressor();
 
 // ====================================
 // Pneumatic Control Module
@@ -234,6 +237,10 @@ public static LightSensor cubePhotoSwitch = new LightSensor(22);
 // ------------------------------------
 // Double Solenoids
 // ------------------------------------
+
+public static DoubleSolenoid armIntakeSolenoid = new DoubleSolenoid(0,
+        1);
+
 
 // ------------------------------------
 // Single Solenoids
@@ -390,7 +397,7 @@ public static DrivePID drivePID = new DrivePID(transmission,
 public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftingMotor, cubeIntakeMotor, cubePhotoSwitch,
         liftingEncoder, intakeDeployArm, intakeDeployEncoder, autoTimer,
-        intakeArmPositionServo);
+        intakeArmPositionServo, armIntakeSolenoid);
 
 public static ScaleAlignment scaleAlignment = new ScaleAlignment(
         rearUltraSonic);
