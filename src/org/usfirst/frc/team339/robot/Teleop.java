@@ -35,6 +35,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Relay.Value;
 import org.usfirst.frc.team339.vision.VisionProcessor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -122,6 +123,7 @@ public static void init ()
  */
 public static void periodic ()
 {
+
     if (Autonomous.passedThroughAuto == false)
         {
         Hardware.armIntakeSolenoid.set(INTAKE_ARMS_OPEN);
@@ -130,7 +132,8 @@ public static void periodic ()
     // ErrorMessage Msg = new ErrorMessage();
     // Msg.printError("StringError", true);
     Hardware.telemetry.printToShuffleboard();
-    // Hardware.tempRelay.set(true);
+    printStatements();
+  // Hardware.tempRelay.set(true);
 
     // if (Hardware.redLight.isOn() && hasSeenTape == false)
     // {
@@ -610,11 +613,11 @@ public static void printStatements ()
         // ==================================
         // Scale Alignment
         // ==================================
-        // SmartDashboard.putString("Relative to scale",
-        // Hardware.scaleAlignment.RelativeScale);
+         SmartDashboard.putString("Relative to scale",
+         Hardware.scaleAlignment.RelativeScale);
 
-        // SmartDashboard.putNumber("RearUltraSonic",
-        // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+         SmartDashboard.putNumber("RearUltraSonic",
+         Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
         // =================================
         // Motor
@@ -622,25 +625,25 @@ public static void printStatements ()
         // =================================
         // System.out.println(
         // "Right Drive Motor " + Hardware.rightDriveMotor.get());
-        // SmartDashboard.putNumber("R Drive Motor",
-        // Hardware.rightDriveMotor.get());
+         SmartDashboard.putNumber("R Drive Motor",
+         Hardware.rightDriveMotor.get());
         // System.out.println(
         // "Left Drive Motor " + Hardware.leftDriveMotor.get());
-        // SmartDashboard.putNumber("L Drive Motor",
-        // Hardware.leftDriveMotor.get());
+         SmartDashboard.putNumber("L Drive Motor",
+         Hardware.leftDriveMotor.get());
 
         // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-        // SmartDashboard.putNumber("Lifting Motor",
-        // Hardware.liftingMotor.get());
+         SmartDashboard.putNumber("Lifting Motor",
+         Hardware.liftingMotor.get());
 
         // System.out.println(
         // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-        // SmartDashboard.putNumber("Cube Motor",
-        // Hardware.cubeIntakeMotor.get());
+         SmartDashboard.putNumber("Cube Motor",
+         Hardware.cubeIntakeMotor.get());
         // System.out.println(
         // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-        // SmartDashboard.putNumber("Intake Deploy Motor",
-        // Hardware.intakeDeployArm.get());
+         SmartDashboard.putNumber("Intake Deploy Motor",
+         Hardware.intakeDeployArm.get());
         // =================================
         // CAN items
         // prints value of the CAN controllers
@@ -649,8 +652,8 @@ public static void printStatements ()
         // =================================
         // Relay
         // =================================
-        // System.out.println(
-        // "Relay " + Hardware.ringLightRelay.get());
+         System.out.println(
+         "Relay " + Hardware.ringLightRelay.get());
         //
         // =================================
         // // Digital Inputs
@@ -670,8 +673,8 @@ public static void printStatements ()
         // System.out.println(
         // "Disable = on");
         // }
-        // SmartDashboard.putBoolean("Disable SW",
-        // Hardware.disableAutonomousSwitch.isOn());
+         SmartDashboard.putBoolean("Disable SW",
+         Hardware.disableAutonomousSwitch.isOn());
 
         // if (Hardware.leftAutoSwitch.isOn() == false)
         // System.out.println(
@@ -808,8 +811,8 @@ public static void printStatements ()
         // ---------------------------------
         // System.out
         // .println("Delay Pot " + Hardware.delayPot.get(0, 5));
-        // SmartDashboard.putNumber("Delay Pot",
-        // Hardware.delayPot.get(0, 5));
+         SmartDashboard.putNumber("Delay Pot",
+         Hardware.delayPot.get(0, 5));
 
         // ---------------------------------
         // GYRO
@@ -836,26 +839,26 @@ public static void printStatements ()
                 Hardware.frontUltraSonic
                         .getDistanceFromNearestBumper());
         //
-        // SmartDashboard.putNumber("Front Ultrasonic Raw",
-        // Hardware.frontUltraSonic.getRefinedDistanceValue());
+         SmartDashboard.putNumber("Front Ultrasonic Raw",
+         Hardware.frontUltraSonic.getRefinedDistanceValue());
         //
-        // SmartDashboard.putNumber("Front ultrasonic bumper",
-        // Hardware.frontUltraSonic
-        // .getOffsetDistanceFromNearestBumper());
+         SmartDashboard.putNumber("Front ultrasonic bumper",
+         Hardware.frontUltraSonic
+         .getOffsetDistanceFromNearestBumper());
         // System.out.println("Rear UltraSonic "
         // + Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-        // SmartDashboard.putNumber("Rear Ultrasonic",
-        // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
-        // SmartDashboard.putNumber("Rear Ultrasonic Raw",
-        // Hardware.rearUltraSonic.getRefinedDistanceValue());
+//         SmartDashboard.putNumber("Rear Ultrasonic",
+//         Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+//         SmartDashboard.putNumber("Rear Ultrasonic Raw",
+//         Hardware.rearUltraSonic.getRefinedDistanceValue());
 
         // =========================
         // Servos
         // =========================
         // System.out.println("Climbing Mechanism Servo" +
         // Hardware.climbingMechanismServo.getAngle());
-        // SmartDashboard.putNumber("Climb Servo",
-        // Hardware.climbingMechanismServo.getAngle());
+         SmartDashboard.putNumber("Climb Servo",
+         Hardware.climbingMechanismServo.getAngle());
 
         // System.out.println("Intake Arm Servo " +
         // Hardware.intakeArmPositionServo.getAngle());
@@ -881,8 +884,8 @@ public static void printStatements ()
         // ---------------------------------
         // System.out.println("The camera center is: "
         // + Hardware.driveWithCamera.getCameraCenterValue());
-        // SmartDashboard.putNumber("Camera Center",
-        // Hardware.driveWithCamera.getCameraCenterValue());
+//         SmartDashboard.putNumber("Camera Center",
+//         Hardware.driveWithCamera.getCameraCenterValue());
 
         // =================================
         // Driver station
@@ -894,20 +897,20 @@ public static void printStatements ()
         // ---------------------------------
         // System.out.println(
         // "Right Driver Joystick " + Hardware.rightDriver.getY());
-        // SmartDashboard.putNumber("R Driver Y Joy",
-        // Hardware.rightDriver.getY());
+//         SmartDashboard.putNumber("R Driver Y Joy",
+//         Hardware.rightDriver.getY());
         // System.out.println(
         // "Left Driver Joystick " + Hardware.leftDriver.getY());
-        // SmartDashboard.putNumber("L Driver Y Joy",
-        // Hardware.leftDriver.getY());
+//         SmartDashboard.putNumber("L Driver Y Joy",
+//         Hardware.leftDriver.getY());
         // System.out.println(
         // "Right Operator Joystick " + Hardware.rightOperator.getY());
-        // SmartDashboard.putNumber("R Operator Y Joy",
-        // Hardware.rightOperator.getY());
+//         SmartDashboard.putNumber("R Operator Y Joy",
+//         Hardware.rightOperator.getY());
         // System.out.println(
         // "Left Operator Joystick " + Hardware.leftOperator.getY());
-        // SmartDashboard.putNumber("L Operator Y Joy",
-        // Hardware.leftOperator.getY());
+//         SmartDashboard.putNumber("L Operator Y Joy",
+//         Hardware.leftOperator.getY());
 
         // =================================
         // KILROY ANCILLARY ITEMS
