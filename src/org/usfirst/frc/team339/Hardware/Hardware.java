@@ -99,7 +99,7 @@ public static Talon leftDriveMotor = new Talon(3);
 // Victor Classes
 // ------------------------------------
 
-public static VictorSP liftingMotor = new VictorSP(0);
+// public static VictorSP liftingMotor = new VictorSP(0);
 
 public static VictorSP cubeIntakeMotor = new VictorSP(1);
 
@@ -122,7 +122,7 @@ public static PowerDistributionPanel pdp = new PowerDistributionPanel(
         2);
 
 
-public static WPI_TalonSRX liftMotor = new WPI_TalonSRX(6);
+public static WPI_TalonSRX liftMotor = new WPI_TalonSRX(23);// CAN version
 
 public static WPI_TalonSRX rightFrontCANMotor = new WPI_TalonSRX(14);
 
@@ -395,7 +395,7 @@ public static DrivePID drivePID = new DrivePID(transmission,
 // Assembly classes (e.g. forklift)
 // -------------------
 public static CubeManipulator cubeManipulator = new CubeManipulator(
-        liftingMotor, cubeIntakeMotor, cubePhotoSwitch,
+        liftMotor, cubeIntakeMotor, cubePhotoSwitch,
         liftingEncoder, intakeDeployArm, intakeDeployEncoder, autoTimer,
         intakeArmPositionServo, armIntakeSolenoid);
 

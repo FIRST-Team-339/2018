@@ -72,7 +72,7 @@ public static void init ()
     // --------------------------------------
     Hardware.leftDriveMotor.setSafetyEnabled(false);
     Hardware.rightDriveMotor.setSafetyEnabled(false);
-    Hardware.liftingMotor.setSafetyEnabled(false);
+    
     Hardware.cubeIntakeMotor.setSafetyEnabled(false);
     Hardware.intakeDeployArm.setSafetyEnabled(false);
 
@@ -132,8 +132,7 @@ public static void periodic ()
     // ErrorMessage Msg = new ErrorMessage();
     // Msg.printError("StringError", true);
     Hardware.telemetry.printToShuffleboard();
-    printStatements();
-  // Hardware.tempRelay.set(true);
+    // Hardware.tempRelay.set(true);
 
     // if (Hardware.redLight.isOn() && hasSeenTape == false)
     // {
@@ -416,9 +415,9 @@ public static void periodic ()
     Hardware.axisCamera
             .takeLitPicture(Hardware.leftOperator.getRawButton(6)
                     && Hardware.leftOperator.getRawButton(7));
-    
-   
-    
+
+
+
     if (Hardware.demoModeSwitch.isOn() == false)
         // We are in COMPETITION MODE!!!
         // TODO @ANE uncomment
@@ -614,11 +613,11 @@ public static void printStatements ()
         // ==================================
         // Scale Alignment
         // ==================================
-         SmartDashboard.putString("Relative to scale",
-         Hardware.scaleAlignment.RelativeScale);
+        // SmartDashboard.putString("Relative to scale",
+        // Hardware.scaleAlignment.RelativeScale);
 
-         SmartDashboard.putNumber("RearUltraSonic",
-         Hardware.rearUltraSonic.getDistanceFromNearestBumper());
+        // SmartDashboard.putNumber("RearUltraSonic",
+        // Hardware.rearUltraSonic.getDistanceFromNearestBumper());
 
         // =================================
         // Motor
@@ -634,17 +633,17 @@ public static void printStatements ()
          Hardware.leftDriveMotor.get());
 
         // System.out.println("Lifting Motor " + Hardware.liftingMotor.get());
-         SmartDashboard.putNumber("Lifting Motor",
-         Hardware.liftingMotor.get());
+        // SmartDashboard.putNumber("Lifting Motor",
+        // Hardware.liftingMotor.get());
 
         // System.out.println(
         // "Cube Intake Motor " + Hardware.cubeIntakeMotor.get());
-         SmartDashboard.putNumber("Cube Motor",
-         Hardware.cubeIntakeMotor.get());
+        // SmartDashboard.putNumber("Cube Motor",
+        // Hardware.cubeIntakeMotor.get());
         // System.out.println(
         // "Intake Deploy Arm " + Hardware.intakeDeployArm.get());
-         SmartDashboard.putNumber("Intake Deploy Motor",
-         Hardware.intakeDeployArm.get());
+        // SmartDashboard.putNumber("Intake Deploy Motor",
+        // Hardware.intakeDeployArm.get());
         // =================================
         // CAN items
         // prints value of the CAN controllers
@@ -653,8 +652,8 @@ public static void printStatements ()
         // =================================
         // Relay
         // =================================
-         System.out.println(
-         "Relay " + Hardware.ringLightRelay.get());
+        // System.out.println(
+        // "Relay " + Hardware.ringLightRelay.get());
         //
         // =================================
         // // Digital Inputs
