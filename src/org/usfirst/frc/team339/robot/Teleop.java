@@ -35,7 +35,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import org.usfirst.frc.team339.vision.VisionProcessor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -71,7 +70,7 @@ public static void init ()
     // --------------------------------------
     Hardware.leftDriveMotor.setSafetyEnabled(false);
     Hardware.rightDriveMotor.setSafetyEnabled(false);
-    Hardware.liftingMotor.setSafetyEnabled(false);
+    Hardware.liftMotor.setSafetyEnabled(false);
     Hardware.cubeIntakeMotor.setSafetyEnabled(false);
     Hardware.intakeDeployArm.setSafetyEnabled(false);
 
@@ -124,7 +123,7 @@ public static void periodic ()
 {
     if (Autonomous.passedThroughAuto == false)
         {
-        Hardware.armIntakeSolenoid.set(INTAKE_ARMS_OPEN);
+        // Hardware.armIntakeSolenoid.set(INTAKE_ARMS_OPEN);
         }
 
     // ErrorMessage Msg = new ErrorMessage();
@@ -209,8 +208,8 @@ public static void periodic ()
     // System.out.println(
     // "Intake Deploy Arm "
     // + Hardware.intakeDeployArm.get());
-    //System.out.println("Climbing Mechanism Servo" +
-    //        Hardware.climbingMechanismServo.getAngle());
+    // System.out.println("Climbing Mechanism Servo" +
+    // Hardware.climbingMechanismServo.getAngle());
 
     // System.out.println("Intake Arm Servo " +
     // Hardware.intakeArmPositionServo.getAngle());
@@ -225,7 +224,7 @@ public static void periodic ()
 
     // System.out.println("Intake Deploy Encoder Ticks "
     // + Hardware.intakeDeployEncoder.get());
- // set of if elses to properly set the two boolean boxes on the
+    // set of if elses to properly set the two boolean boxes on the
     // SmartDashboard that are used to track the status of the cube. On
     // the
     // actual SmartDashboard, the boolean boxes are layered so between
@@ -412,9 +411,9 @@ public static void periodic ()
     Hardware.axisCamera
             .takeLitPicture(Hardware.leftOperator.getRawButton(6)
                     && Hardware.leftOperator.getRawButton(7));
-    
-   
-    
+
+
+
     if (Hardware.demoModeSwitch.isOn() == false)
         // We are in COMPETITION MODE!!!
         // TODO @ANE uncomment
