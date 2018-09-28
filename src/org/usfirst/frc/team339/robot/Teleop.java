@@ -126,7 +126,7 @@ public static void periodic ()
 
     if (Autonomous.passedThroughAuto == false)
         {
-        Hardware.armIntakeSolenoid.set(INTAKE_ARMS_OPEN);
+       // Hardware.armIntakeSolenoid.set(INTAKE_ARMS_OPEN);
         }
 
     // ErrorMessage Msg = new ErrorMessage();
@@ -201,6 +201,7 @@ public static void periodic ()
         if (Hardware.leftOperator.getRawButton(2))
             Hardware.cubeManipulator.angleDeployForScale();
         }
+    
 
     // System.out.println("Lifting Motor " +
     // Hardware.liftingMotor.get());

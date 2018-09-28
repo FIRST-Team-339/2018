@@ -31,7 +31,8 @@ private boolean newCode = true;
 
 // true if we want to use the code to stop the forklift if the armIR
 // thinks we are about to hit the scale
-private boolean usingArmIRStop = true;
+//TODO fix IR
+private boolean usingArmIRStop = false;
 
 private MomentarySwitch climbButton = null;
 // ========================================
