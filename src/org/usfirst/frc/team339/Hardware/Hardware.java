@@ -122,7 +122,9 @@ public static PowerDistributionPanel pdp = new PowerDistributionPanel(
         2);
 
 
-public static WPI_TalonSRX liftMotor = new WPI_TalonSRX(23);// CAN version
+public static WPI_TalonSRX liftMotorOne = new WPI_TalonSRX(23);// CAN version
+
+public static WPI_TalonSRX liftMotorTwo = new WPI_TalonSRX(6);// CAN version
 
 public static WPI_TalonSRX rightFrontCANMotor = new WPI_TalonSRX(14);
 
@@ -395,7 +397,7 @@ public static DrivePID drivePID = new DrivePID(transmission,
 // Assembly classes (e.g. forklift)
 // -------------------
 public static CubeManipulator cubeManipulator = new CubeManipulator(
-        liftMotor, cubeIntakeMotor, cubePhotoSwitch,
+        liftMotorOne, cubeIntakeMotor, cubePhotoSwitch,
         liftingEncoder, intakeDeployArm, intakeDeployEncoder, autoTimer,
         intakeArmPositionServo, armIntakeSolenoid);
 

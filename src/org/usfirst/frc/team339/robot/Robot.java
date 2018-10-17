@@ -251,7 +251,8 @@ public void robotInit ()
     // --------------------------------------
     Hardware.leftDriveMotor.setSafetyEnabled(false);
     Hardware.rightDriveMotor.setSafetyEnabled(false);
-    Hardware.liftMotor.setSafetyEnabled(false);
+    Hardware.liftMotorOne.setSafetyEnabled(false);
+    Hardware.liftMotorTwo.setSafetyEnabled(false);
     Hardware.cubeIntakeMotor.setSafetyEnabled(false);
     Hardware.intakeDeployArm.setSafetyEnabled(false);
 

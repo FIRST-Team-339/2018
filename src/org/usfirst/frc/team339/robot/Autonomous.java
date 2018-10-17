@@ -72,7 +72,7 @@ public static void init ()
     // --------------------------------------
     Hardware.leftDriveMotor.setSafetyEnabled(false);
     Hardware.rightDriveMotor.setSafetyEnabled(false);
-    Hardware.liftMotor.setSafetyEnabled(false);
+    Hardware.liftMotorOne.setSafetyEnabled(false);
     Hardware.cubeIntakeMotor.setSafetyEnabled(false);
     Hardware.intakeDeployArm.setSafetyEnabled(false);
 
@@ -1688,7 +1688,7 @@ private static final double MID_DRIVE_SPEED = .3;
 
 private static final double SLOW_DRIVE_SPEED = .15;
 
-private static final double TURN_SPEED = .25; // percent
+private static final double TURN_SPEED = .4; // percent
 
 // ==========
 
