@@ -1,5 +1,6 @@
 package org.usfirst.frc.team339.Utils;
 
+import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleSolenoid;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
 import org.usfirst.frc.team339.HardwareInterfaces.LightSensor;
@@ -31,7 +32,7 @@ private boolean newCode = true;
 
 // true if we want to use the code to stop the forklift if the armIR
 // thinks we are about to hit the scale
-//TODO fix IR
+// TODO fix IR
 private boolean usingArmIRStop = false;
 
 
@@ -142,6 +143,7 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
     this.armIntakeSolenoid = armIntakeSolenoid;
+    Hardware.liftMotorTwo.follow(Hardware.liftMotorOne);
 
     this.currentForkliftMaxHeight = FORKLIFT_MAX_HEIGHT;
 

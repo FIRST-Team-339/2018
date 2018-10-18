@@ -106,7 +106,7 @@ public void printToConsole ()
         {
         if (Hardware.driverStation.isFMSAttached() == false)
             {
-            
+
 
             // =================================
             // Motor
@@ -123,14 +123,14 @@ public void printToConsole ()
 
 
             // System.out.println(
-            //        "Right Drive Motor "
-            //                + Hardware.rightFrontCANMotor.get());
+            // "Right Drive Motor "
+            // + Hardware.rightFrontCANMotor.get());
 
             // System.out.println(
-            //        "Left Drive Motor "
-            //                + Hardware.leftFrontCANMotor.get());
+            // "Left Drive Motor "
+            // + Hardware.leftFrontCANMotor.get());
 
-           
+
             // =================================
             // CAN items
             // prints value of the CAN controllers
@@ -198,8 +198,8 @@ public void printToConsole ()
             // System.out.println("6 pos = "
             // + Hardware.autoSixPosSwitch.getPosition());
 
-            System.out.println(
-                    "Demo swich isOn" + Hardware.demoModeSwitch.isOn());
+            // System.out.println(
+            // "Demo swich isOn" + Hardware.demoModeSwitch.isOn());
 
             // ---------------------------------
             // Encoders
@@ -369,7 +369,7 @@ public void printToConsole ()
  */
 public void printToShuffleboard ()
 {
-	// clock determining change
+    // clock determining change
 
     if ((System.currentTimeMillis()
             - lastTimePrinted) >= this.getTimeBetweenPrints())
@@ -423,8 +423,8 @@ public void printToShuffleboard ()
         // // SmartDashboard.putBoolean("R Auto SW",
         // // Hardware.rightAutoSwitch.isOn());
         //
-        // SmartDashboard.putNumber("6 Pos Switch",
-        // Hardware.autoSixPosSwitch.getPosition());
+        SmartDashboard.putNumber("6 Pos Switch",
+                Hardware.autoSixPosSwitch.getPosition());
         //
         // // ---------------------------------
         // // Encoders
@@ -456,6 +456,9 @@ public void printToShuffleboard ()
         // SmartDashboard.putNumber("Right Rear Encoder Ticks",
         // Hardware.rightRearDriveEncoder.get());
         //
+
+        SmartDashboard.putNumber("Deploy Encoder Inches",
+                Hardware.intakeDeployEncoder.get());
         //
         // // ---------------------------------
         // // Red Light/IR Sensors
@@ -544,71 +547,71 @@ public void printToShuffleboard ()
         // Analog Interfaces
         // -------------------------------------
 
-    // -------------------------------------
-    // Analog Interfaces
-    // -------------------------------------
+        // -------------------------------------
+        // Analog Interfaces
+        // -------------------------------------
 
-    // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
+        // SmartDashboard.putNumber("Gyro", Hardware.gyro.getAngle());
 
-    // =================================
-    // Connection Items
-    // =================================
+        // =================================
+        // Connection Items
+        // =================================
 
-    // ---------------------------------
-    // Cameras
-    // prints any camera information required
-    // ---------------------------------
+        // ---------------------------------
+        // Cameras
+        // prints any camera information required
+        // ---------------------------------
 
-    // SmartDashboard.putNumber("Camera Center",
-    // Hardware.driveWithCamera.getCameraCenterValue());
-    // SmartDashboard.putNumber("Camera Center",
-    // Hardware.driveWithCamera.getCameraCenterValue());
+        // SmartDashboard.putNumber("Camera Center",
+        // Hardware.driveWithCamera.getCameraCenterValue());
+        // SmartDashboard.putNumber("Camera Center",
+        // Hardware.driveWithCamera.getCameraCenterValue());
 
-    // =================================
-    // Driver station
-    // =================================
+        // =================================
+        // Driver station
+        // =================================
 
-    // ---------------------------------
-    // Joysticks
-    // information about the joysticks
-    // ---------------------------------
+        // ---------------------------------
+        // Joysticks
+        // information about the joysticks
+        // ---------------------------------
 
-    // SmartDashboard.putNumber("R Driver Y Joy",
-    // Hardware.rightDriver.getY());
+        // SmartDashboard.putNumber("R Driver Y Joy",
+        // Hardware.rightDriver.getY());
 
-    // SmartDashboard.putNumber("L Driver Y Joy",
-    // Hardware.leftDriver.getY());
+        // SmartDashboard.putNumber("L Driver Y Joy",
+        // Hardware.leftDriver.getY());
 
-    // SmartDashboard.putNumber("R Operator Y Joy",
-    // Hardware.rightOperator.getY());
+        SmartDashboard.putNumber("R Operator Y Joy",
+                Hardware.rightOperator.getY());
 
-    // SmartDashboard.putNumber("L Operator Y Joy",
-    // Hardware.leftOperator.getY());
+        // SmartDashboard.putNumber("L Operator Y Joy",
+        // Hardware.leftOperator.getY());
 
-    // =================================
-    // KILROY ANCILLARY ITEMS
-    // =================================
-    // ---------------------------------
-    // Gear number displayed to driver
-    // ---------------------------------
-    // SmartDashboard.putNumber("Gear",
-    // Hardware.transmission.getCurrentGear() + 1);
+        // =================================
+        // KILROY ANCILLARY ITEMS
+        // =================================
+        // ---------------------------------
+        // Gear number displayed to driver
+        // ---------------------------------
+        // SmartDashboard.putNumber("Gear",
+        // Hardware.transmission.getCurrentGear() + 1);
 
-    // ---------------------------------
-    // timers
-    // what time does the timer have now
-    // ---------------------------------
+        // ---------------------------------
+        // timers
+        // what time does the timer have now
+        // ---------------------------------
 
-    // ---------------------------------
-    // Final SmartDasboard
-    // code for values we want on the final dashboard layout we use
-    // during
-    // matches
-    // ---------------------------------
+        // ---------------------------------
+        // Final SmartDasboard
+        // code for values we want on the final dashboard layout we use
+        // during
+        // matches
+        // ---------------------------------
 
-    
 
-    SmartDashboard.updateValues();
+
+        SmartDashboard.updateValues();
         }
 }
 
