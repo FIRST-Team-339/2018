@@ -417,7 +417,6 @@ public static void periodic ()
                     && Hardware.leftOperator.getRawButton(7));
 
 
-
     if (Hardware.demoModeSwitch.isOn() == false)
         // We are in COMPETITION MODE!!!
         // TODO @ANE uncomment
@@ -492,6 +491,8 @@ private static boolean isTestingDrive = false;// @ANE flip
 private static boolean isTestingEncoderTurn = false;
 
 private static int driveState = 0;
+
+
 
 public static void alignScale ()
 {

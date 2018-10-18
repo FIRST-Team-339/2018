@@ -387,6 +387,7 @@ public double getCameraCenterValue ()
         {
         center = (visionProcessor.getNthSizeBlob(0).center.x
                 + visionProcessor.getNthSizeBlob(1).center.x) / 2;
+       
         
         // System.out.println("TWO BLOBS");
         }
