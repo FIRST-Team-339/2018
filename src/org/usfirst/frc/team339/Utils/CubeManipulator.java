@@ -917,6 +917,17 @@ public void deployIntakeUpdate ()
         // moves to the next state
         case DEPLOYING:
 
+            this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED_HIGH);
+
+            if (this.getIntakeAngle() <= INTAKE_RETRACT_TICKS - 8)
+                {
+                // stops the intake deploy motor if we've turned far enough;
+                // FINISHED does this as well, but doing it here helps
+                // keep the motor from overshooting too much
+                this.intakeDeployMotor.set(0.0);
+                }
+
+
             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
 
             if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS)
