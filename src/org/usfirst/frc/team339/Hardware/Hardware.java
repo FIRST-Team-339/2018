@@ -17,6 +17,7 @@ package org.usfirst.frc.team339.Hardware;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleSolenoid;
 import org.usfirst.frc.team339.HardwareInterfaces.DoubleThrowSwitch;
+import org.usfirst.frc.team339.HardwareInterfaces.DriveWithCamera;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroyEncoder;
 import org.usfirst.frc.team339.HardwareInterfaces.KilroySPIGyro;
 import org.usfirst.frc.team339.HardwareInterfaces.LVMaxSonarEZ;
@@ -384,9 +385,9 @@ public static DrivePID drivePID = new DrivePID(transmission,
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 // TODO change back to this once relays actually work
-// public static DriveWithCamera driveWithCamera = new DriveWithCamera(
-// transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
-// frontUltraSonic, rearUltraSonic, gyro, axisCamera);
+ public static DriveWithCamera driveWithCamera = new DriveWithCamera(
+ transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
+ frontUltraSonic, rearUltraSonic, gyro, axisCamera);
 
 // this is a janky fix for the ringlight not working
 // public static DriveWithCamera driveWithCamera = new DriveWithCamera(

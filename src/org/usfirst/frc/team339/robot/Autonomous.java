@@ -1048,14 +1048,14 @@ public static boolean centerSwitchPath ()
             // sets state to LIFT
             Hardware.tempRelay.set(true);
             // TODO @ANE uncomment
-            // if (Hardware.driveWithCamera
-            // .driveToSwitch(AUTO_SPEED_VISION) == true)
-            // {
-            // // Turn off the ringlight camera
-            // Hardware.tempRelay.set(false);
-            // // Hardware.transmission.stop();
-            // visionAuto = centerState.MAKE_DEPOSIT;
-            // }
+             if (Hardware.driveWithCamera
+             .driveToSwitch(AUTO_SPEED_VISION) == true)
+             {
+             // Turn off the ringlight camera
+             Hardware.tempRelay.set(false);
+              Hardware.transmission.stop();
+             visionAuto = centerState.MAKE_DEPOSIT;
+             }
             break;
         case DRIVE_STRAIGHT_NO_CAMERA:
             Hardware.drive.driveStraight(AUTO_SPEED_VISION, 0, true);
