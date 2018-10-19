@@ -159,6 +159,16 @@ public static void periodic ()
     // Hardware.leftOperator.getRawButton(4));
 
 
+    if (Hardware.intakeOpenCloseButton.isOnCheckNow() == true)
+        {
+        Hardware.armIntakeSolenoid.set(INTAKE_ARMS_OPEN);
+        }
+    else
+        {
+        Hardware.armIntakeSolenoid.set(INTAKE_ARMS_CLOSED);
+        }
+
+
 
     if (Hardware.demoModeSwitch.isOn() == false)
         {
@@ -197,6 +207,7 @@ public static void periodic ()
 
         if (Hardware.leftOperator.getRawButton(2))
             Hardware.cubeManipulator.angleDeployForScale();
+
         }
 
 

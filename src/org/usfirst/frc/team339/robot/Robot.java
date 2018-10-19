@@ -371,6 +371,14 @@ public void robotInit ()
 
     Hardware.gyro.calibrate();
     Hardware.gyro.reset();
+
+    // ---------------------------------
+    // Solenoid setup
+    // ---------------------------------
+
+    Hardware.armIntakeSolenoid.set(Autonomous.INTAKE_ARMS_CLOSED);
+
+
     // User code goes above here
     // =========================================================
     // ---------------------------------------

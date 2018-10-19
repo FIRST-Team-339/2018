@@ -916,16 +916,16 @@ public void deployIntakeUpdate ()
         // and
         // moves to the next state
         case DEPLOYING:
-
-            this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED_HIGH);
-
-            if (this.getIntakeAngle() <= INTAKE_RETRACT_TICKS - 8)
-                {
-                // stops the intake deploy motor if we've turned far enough;
-                // FINISHED does this as well, but doing it here helps
-                // keep the motor from overshooting too much
-                this.intakeDeployMotor.set(0.0);
-                }
+            // code to retract arm before deploying
+            // this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED_HIGH);
+            //
+            // if (this.getIntakeAngle() <= INTAKE_RETRACT_TICKS - 8)
+            // {
+            // // stops the intake deploy motor if we've turned far enough;
+            // // FINISHED does this as well, but doing it here helps
+            // // keep the motor from overshooting too much
+            // this.intakeDeployMotor.set(0.0);
+            // }
 
 
             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
@@ -1119,16 +1119,12 @@ public void intakeUpdate ()
             // this.intakeMotor.stopMotor();
             // // Don't have a cube? keep pulling in.
             // else
-            // open arms when pulling in cube
-            this.armIntakeSolenoid.set(INTAKE_ARMS_OPEN);
             this.intakeMotor.set(INTAKE_SPEED);
 
             // Set to stop when they stop hitting the button.
             intakeState = IntakeState.STOP;
             break;
         case PUSH_OUT:
-            // keep arm closed when pushing out cube
-            this.armIntakeSolenoid.set(INTAKE_ARMS_CLOSED);
             this.intakeMotor.set(currentEjectSpeed);
             // Set to stop when they stop hitting the button.
             intakeState = IntakeState.STOP;
@@ -1136,9 +1132,6 @@ public void intakeUpdate ()
         default:
             System.out.println("Unknown case in intakeUpdate()");
         case STOP:
-            // keeps the intake arms closed when we are neither
-            // pulling in a cube nor pushing out a cube
-            this.armIntakeSolenoid.set(INTAKE_ARMS_CLOSED);
             // If we have a cube, send a constant voltage to make sure it
             // doesn't come out.
             if (hasCube() == true)

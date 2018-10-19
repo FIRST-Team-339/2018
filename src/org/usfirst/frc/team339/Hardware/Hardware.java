@@ -336,6 +336,9 @@ public static MomentarySwitch visionTestButton = new MomentarySwitch(
 public static MomentarySwitch climbButton = new MomentarySwitch(
         rightOperator, 10, false /* starting state */);
 
+public static MomentarySwitch intakeOpenCloseButton = new MomentarySwitch(
+        rightOperator, 4, false/* startng state */);
+
 // **********************************************************
 // Kilroy's Ancillary classes
 // **********************************************************
@@ -385,9 +388,9 @@ public static DrivePID drivePID = new DrivePID(transmission,
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 // TODO change back to this once relays actually work
- public static DriveWithCamera driveWithCamera = new DriveWithCamera(
- transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
- frontUltraSonic, rearUltraSonic, gyro, axisCamera);
+public static DriveWithCamera driveWithCamera = new DriveWithCamera(
+        transmission, leftFrontDriveEncoder, rightFrontDriveEncoder,
+        frontUltraSonic, rearUltraSonic, gyro, axisCamera);
 
 // this is a janky fix for the ringlight not working
 // public static DriveWithCamera driveWithCamera = new DriveWithCamera(

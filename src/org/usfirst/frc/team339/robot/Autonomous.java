@@ -83,7 +83,8 @@ public static void init ()
     Hardware.liftingEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
 
-    Hardware.armIntakeSolenoid.set(INTAKE_ARMS_CLOSED);
+    // @ANE
+    // Hardware.armIntakeSolenoid.set(INTAKE_ARMS_CLOSED);
     // Disable auto
 
     if (Hardware.disableAutonomousSwitch.isOn() == true)
@@ -1048,14 +1049,14 @@ public static boolean centerSwitchPath ()
             // sets state to LIFT
             Hardware.tempRelay.set(true);
             // TODO @ANE uncomment
-             if (Hardware.driveWithCamera
-             .driveToSwitch(AUTO_SPEED_VISION) == true)
-             {
-             // Turn off the ringlight camera
-             Hardware.tempRelay.set(false);
-              Hardware.transmission.stop();
-             visionAuto = centerState.MAKE_DEPOSIT;
-             }
+            if (Hardware.driveWithCamera
+                    .driveToSwitch(AUTO_SPEED_VISION) == true)
+                {
+                // Turn off the ringlight camera
+                Hardware.tempRelay.set(false);
+                Hardware.transmission.stop();
+                visionAuto = centerState.MAKE_DEPOSIT;
+                }
             break;
         case DRIVE_STRAIGHT_NO_CAMERA:
             Hardware.drive.driveStraight(AUTO_SPEED_VISION, 0, true);
@@ -1384,15 +1385,18 @@ public static boolean switchOrScalePath (Position robotPosition)
         case DRIVE_4:
             // SLOWLY drive away from the scale with arm up to avoid getting a
             // penalty
+
+            // @ANE
             if (Hardware.drive.driveStraightInches(
-                    SWITCH_OR_SCALE_DRIVE_DISTANCE[3], SLOW_DRIVE_SPEED,
+                    SWITCH_OR_SCALE_DRIVE_DISTANCE[3],
+                    -MID_DRIVE_SPEED,
                     DRIVE_STRAIGHT_ACCELERATION_TIME, true))
                 currentSwitchOrScaleState = SwitchOrScaleStates.LOWER_ARM;
             break;
         case LOWER_ARM:
             // Bring the arm back down for teleop
-            if (Hardware.cubeManipulator.setLiftPosition(0) == true)
-                currentSwitchOrScaleState = SwitchOrScaleStates.TURN2;
+            Hardware.cubeManipulator.setLiftPosition(0);
+            currentSwitchOrScaleState = SwitchOrScaleStates.TURN2;
             break;
         case TURN2:
             // Turn back towards the switch based on which side we are on, to
