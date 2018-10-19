@@ -200,19 +200,21 @@ public boolean driveToSwitch (double speed)
                 {
                 // the switch's center is too far left, drive faster on the
                 // right
-                // System.out.println("WE ARE TOO LEFT");
+                 //System.out.println("WE ARE TOO LEFT");
                 this.getTransmission().driveRaw(
                         speed - DRIVE_CORRECTION,
                         speed + DRIVE_CORRECTION);
                 }
             else
                 {
+               // System.out.println("Driving straight");
                 this.getTransmission().driveRaw(speed, speed);
                 }
 
             if (this.frontUltrasonic
                     .getDistanceFromNearestBumper() <= CAMERA_NO_LONGER_WORKS
                     && isAnyEncoderLargerThan(ENCODER_MIN_DISTANCE))
+                System.out.println("ultrasonic distance");
                 state = DriveWithCameraState.DRIVE_WITH_US;
             break;
         case DRIVE_WITH_US:

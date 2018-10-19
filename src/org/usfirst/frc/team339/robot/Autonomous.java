@@ -1044,13 +1044,15 @@ public static boolean centerSwitchPath ()
                 }
             break;
         case DRIVE_WITH_CAMERA:
+        //System.out.println("Driving w/ camera");
             // drives to the switch based on the camera
             // sets state to LIFT
             Hardware.tempRelay.set(true);
-            // TODO @ANE uncomment
+           
              if (Hardware.driveWithCamera
              .driveToSwitch(AUTO_SPEED_VISION) == true)
              {
+             
              // Turn off the ringlight camera
              Hardware.tempRelay.set(false);
               Hardware.transmission.stop();
@@ -1058,6 +1060,7 @@ public static boolean centerSwitchPath ()
              }
             break;
         case DRIVE_STRAIGHT_NO_CAMERA:
+        System.out.println("Drive no camera");
             Hardware.drive.driveStraight(AUTO_SPEED_VISION, 0, true);
             if (Hardware.frontUltraSonic
                     .getDistanceFromNearestBumper() <= 15)
@@ -1583,6 +1586,7 @@ public static boolean offsetSwitchPath ()
             break;
         case DRIVE3R:
             // Drive to the middle of the end of the switch on the right path.
+        
             if (Hardware.drive.driveStraightInches(
                     OFFSET_SWITCH_DRIVE_DISTANCES[3]
                             - Hardware.drive
