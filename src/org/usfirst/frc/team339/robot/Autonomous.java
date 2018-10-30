@@ -220,6 +220,7 @@ public static void periodic ()
                                 || grabData(
                                         GameDataType.SCALE) == Position.RIGHT)
                             autoState = State.SWITCH_OR_SCALE_R;
+
                         else
                             // Switch or scale is NOT on our side? Setup for
                             // exchange.
@@ -1322,6 +1323,7 @@ public static boolean switchOrScalePath (Position robotPosition)
             // We are on the left side? turn right.
             if (robotPosition == Position.LEFT)
                 {
+
                 if (Hardware.drive.turnDegrees2Stage(
                         SWITCH_OR_SCALE_SCALE_ANGLE, TURN_SPEED))
                     currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_TO_SCALE;

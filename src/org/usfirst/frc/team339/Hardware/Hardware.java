@@ -337,7 +337,13 @@ public static MomentarySwitch climbButton = new MomentarySwitch(
         rightOperator, 10, false /* starting state */);
 
 public static MomentarySwitch intakeOpenCloseButton = new MomentarySwitch(
-        rightOperator, 4, false/* startng state */);
+        rightOperator, 4, false/* starting state */);
+
+public static MomentarySwitch deployServoButton = new MomentarySwitch(
+        rightOperator, 8, false/* starting state */);
+
+// public static MomentarySwitch position45Button = new MomentarySwitch(
+// leftOperator, 2, false/* starting state */);
 
 // **********************************************************
 // Kilroy's Ancillary classes
@@ -356,6 +362,7 @@ public static MomentarySwitch intakeOpenCloseButton = new MomentarySwitch(
 // ------------------------------------
 public static final Timer autoTimer = new Timer();
 
+public static final Timer deployTimer = new Timer();
 
 public static Telemetry telemetry = new Telemetry(10000);
 
@@ -403,7 +410,7 @@ public static DriveWithCamera driveWithCamera = new DriveWithCamera(
 public static CubeManipulator cubeManipulator = new CubeManipulator(
         liftMotorOne, cubeIntakeMotor, cubePhotoSwitch,
         liftingEncoder, intakeDeployArm, intakeDeployEncoder, autoTimer,
-        intakeArmPositionServo, armIntakeSolenoid);
+        intakeArmPositionServo, armIntakeSolenoid, climbButton);
 
 public static ScaleAlignment scaleAlignment = new ScaleAlignment(
         rearUltraSonic);

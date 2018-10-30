@@ -62,7 +62,7 @@ public static void init ()
     // temporary timer
 
     Hardware.telemetry.printToShuffleboard();
-    Hardware.telemetry.setTimeBetweenPrints(15000);
+    Hardware.telemetry.setTimeBetweenPrints(1000);
 
     // --------------------------------------
     // reset the MotorSafetyHelpers for each
@@ -205,8 +205,54 @@ public static void periodic ()
         else if (Hardware.rightOperator.getRawButton(11))
             Hardware.cubeManipulator.setDeployForClimb();
 
-        if (Hardware.leftOperator.getRawButton(2))
+        if (/*
+             * Hardware.position45Button.get() == false
+             * &&
+             */ Hardware.leftOperator.getRawButton(2) == true
+                && Robot.deploy45run == false
+                && Robot.deploy45HasBeenPushed == false)
+            {
+
+            System.out.println("FIRST STATEMENT");
+            Hardware.deployTimer.reset();
+            Hardware.deployTimer.start();
             Hardware.cubeManipulator.angleDeployForScale();
+            Robot.deploy45run = true;
+
+            }
+
+        if (Hardware.leftOperator.getRawButton(2) == false
+                && Robot.deploy45run == true)
+            {
+            System.out.println("SECOND STATEMENT");
+            Robot.deploy45run = false;
+            Robot.deploy45HasBeenPushed = true;
+            }
+
+        if (/*
+             * Hardware.position45Button.get() == false
+             * &&
+             */ Hardware.leftOperator.getRawButton(2) == true
+                && Robot.deploy45run == false
+                && Robot.deploy45HasBeenPushed == true)
+            {
+            System.out.println("THIRD STATEMENT");
+            CubeManipulator.timedDeploy45();
+            Robot.deploy45run = true;
+            Robot.deploy45HasBeenPushed = false;
+            }
+
+
+        if (Hardware.deployServoButton.isOnCheckNow() == true)
+            {
+            Hardware.intakeArmPositionServo
+                    .set(CubeManipulator.DEPLOY_SERVO_IN);
+            }
+        else
+            {
+            Hardware.intakeArmPositionServo
+                    .set(CubeManipulator.DEPLOY_SERVO_OUT);
+            }
 
         }
 

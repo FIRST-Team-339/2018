@@ -231,6 +231,9 @@ public void printToConsole ()
             // + Hardware.rightRearDriveEncoder.get());
 
 
+//            System.out.println("deploy Ticks "
+//                    + Hardware.intakeDeployEncoder.get());
+
             // ---------------------------------
             // Red Light/IR Sensors
             // prints the state of the sensor
@@ -456,7 +459,9 @@ public void printToShuffleboard ()
         // SmartDashboard.putNumber("Right Rear Encoder Ticks",
         // Hardware.rightRearDriveEncoder.get());
         //
-
+//        SmartDashboard.putNumber("Lift Encoder Ticks",
+//                Hardware.liftingEncoder.get());
+        //
         SmartDashboard.putNumber("Deploy Encoder Inches",
                 Hardware.intakeDeployEncoder.get());
         //
@@ -582,8 +587,8 @@ public void printToShuffleboard ()
         // SmartDashboard.putNumber("L Driver Y Joy",
         // Hardware.leftDriver.getY());
 
-        SmartDashboard.putNumber("R Operator Y Joy",
-                Hardware.rightOperator.getY());
+        // SmartDashboard.putNumber("R Operator Y Joy",
+        // Hardware.rightOperator.getY());
 
         // SmartDashboard.putNumber("L Operator Y Joy",
         // Hardware.leftOperator.getY());
@@ -616,7 +621,7 @@ public void printToShuffleboard ()
 }
 
 // in milliseconds
-private double timeBetweenPrints = 20000;
+private double timeBetweenPrints = 2000;
 
 // initial state
 private double lastTimePrinted = 0.0;

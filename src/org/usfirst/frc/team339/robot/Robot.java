@@ -61,6 +61,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
+import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -224,6 +225,8 @@ public void robotInit ()
     // REMOVE ME!!!
     // Hardware.autoDrive.setGyro(Hardware.gyroAnalog);
 
+    deploy45run = false;
+
     // --------------------------------------
     // Compressor Initialization
     // --------------------------------------
@@ -357,6 +360,9 @@ public void robotInit ()
     // Sets the angle of the servo to 100
     // ---------------------------------
     Hardware.climbingMechanismServo.set(CLIMB_SERVO_INIT_POSITION);
+
+    Hardware.intakeArmPositionServo
+            .set(CubeManipulator.DEPLOY_SERVO_OUT);
 
     // ---------------------------------
     // sets the ring light to off
@@ -505,6 +511,11 @@ private static final boolean CANEnabled = true;
 private static final int demoForkliftMaxHeight = 49;
 
 public static final double demoForkliftSpeed = .5;
+
+
+public static boolean deploy45run = false;
+
+public static boolean deploy45HasBeenPushed = false;
 
 private static final double KILROY_XV_ENCODER_DPP = .0174;
 
