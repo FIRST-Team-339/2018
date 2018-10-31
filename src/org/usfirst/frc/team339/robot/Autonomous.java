@@ -413,10 +413,10 @@ public static boolean autolinePath ()
                 currentAutolineState = AutolinePathStates.DEPLOY;
             break;
         case DEPLOY:
-            // if (Hardware.cubeManipulator.deployCubeIntake(false))
-            // {
+        // if (Hardware.cubeManipulator.deployCubeIntake(false))
+            {
             currentAutolineState = AutolinePathStates.FINISH;
-            // }
+            }
             break;
         default:
             // if something goes wrong, print we reached default and fall

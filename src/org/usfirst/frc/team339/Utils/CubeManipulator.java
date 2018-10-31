@@ -435,9 +435,9 @@ public boolean deployCubeIntake (boolean override)
             || deployIntakeState == DeployState.UNFOLD_ARM_UP)
 
         {
-//        Hardware.deployTimer.reset();
-//        Hardware.deployTimer.start();
-        deployIntakeState = DeployState.DEPLOYING;
+        // Hardware.deployTimer.reset();
+        // Hardware.deployTimer.start();
+        deployIntakeState = DeployState.PRE_DEPLOYING;
         }
 
     if (newCode == false)
@@ -511,7 +511,7 @@ public boolean angleDeployForScale ()
     if (deployIntakeState != DeployState.STOPPED
             && deployIntakeState != DeployState.OVERRIDE_DEPLOY
             && deployIntakeState != DeployState.OVERRIDE_RETRACT
-            //deployIntakeState == DeployState.DEPLOYED
+    // deployIntakeState == DeployState.DEPLOYED
     // deployIntakeState != DeployState.STOPPED
     // && deployIntakeState != DeployState.OVERRIDE_DEPLOY
     // && deployIntakeState != DeployState.OVERRIDE_RETRACT
@@ -528,11 +528,12 @@ public boolean angleDeployForScale ()
         {
         System.out.println("IN angleDeployForScale");
         deployIntakeState = DeployState.POSITION_45;
-//        Hardware.deployTimer.reset();
-//        Hardware.deployTimer.start();
+        // Hardware.deployTimer.reset();
+        // Hardware.deployTimer.start();
         }
 
-    return getIntakeAngle() < DEPLOY_45_POSITION_TICKS;//(deployIntakeState == DeployState.HOLDING_45);
+    return getIntakeAngle() < DEPLOY_45_POSITION_TICKS;// (deployIntakeState ==
+                                                       // DeployState.HOLDING_45);
 }
 
 /**
@@ -982,7 +983,7 @@ private double currentIntakeAngle = 0;
  */
 public void deployIntakeUpdate ()
 {
-    //System.out.println("deploy state = " + deployIntakeState);
+    // System.out.println("deploy state = " + deployIntakeState);
     // state machine for deploying the intake
     switch (deployIntakeState)
         {
@@ -993,39 +994,46 @@ public void deployIntakeUpdate ()
             this.intakeDeployMotor.set(0.0);
             break;
 
+
+        case PRE_DEPLOYING:
+            // code to retract arm before deploying
+            this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED_HIGH);
+            System.out.println("WE ARE ACTUALLY TRYING TO GO BACK");
+            if (this.getIntakeAngle() <= INTAKE_RETRACT_TICKS
+                    - DEGREES_TO_RETRACT_TO_DEPLOY)
+                {
+                // stops the intake deploy motor if we've turned far enough;
+                // FINISHED does this as well, but doing it here helps
+                // keep the motor from overshooting too much
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.DEPLOYING;
+                }
+            break;
+
         // moves the intake until the encoder reads that the arm has
         // turned the specified angle, then stops the intake deploy motor
         // and
         // moves to the next state
         case DEPLOYING:
-            // code to retract arm before deploying
-            // this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED_HIGH);
-            //
-            // if (this.getIntakeAngle() <= INTAKE_RETRACT_TICKS - 8)
+
+            this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
+            System.out.println("YESSSSSSSSSSSSS");
+            if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS
+                    - DEGREES_TO_RETRACT_TO_DEPLOY)
+                {
+                // stops the intake deploy motor if we've turned far enough;
+                // FINISHED does this as well, but doing it here helps
+                // keep the motor from overshooting too much
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.DEPLOYED;
+                }
+
+
+            // if (this.timedDeploy90() == true)
             // {
-            // // stops the intake deploy motor if we've turned far enough;
-            // // FINISHED does this as well, but doing it here helps
-            // // keep the motor from overshooting too much
-            // this.intakeDeployMotor.set(0.0);
+            //
+            // deployIntakeState = DeployState.DEPLOYED;
             // }
-
-
-             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-            
-             if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS)
-             {
-             // stops the intake deploy motor if we've turned far enough;
-             // FINISHED does this as well, but doing it here helps
-             // keep the motor from overshooting too much
-             this.intakeDeployMotor.set(0.0);
-             deployIntakeState = DeployState.DEPLOYED;
-             }
-
-//            if (this.timedDeploy90() == true)
-//                {
-//
-//                deployIntakeState = DeployState.DEPLOYED;
-//                }
 
             break;
 
@@ -1038,20 +1046,20 @@ public void deployIntakeUpdate ()
         // brings the intake mechanism back into the robot, and sets the
         // state to NOT_DEPLOYED
         case RETRACTING:
-             this.intakeDeployMotor.set(getRetractSpeed());
-             if (this.intakeDeployEncoder
-             .get() <= INTAKE_RETRACT_TICKS)
-             {
-             // brings back in the intake mechanism until the intake
-             // deploy
-             // encoder reads the INTAKE_RETRACT_ANGLE (usually 0)
-             this.intakeDeployMotor.set(0.0);
-             deployIntakeState = DeployState.NOT_DEPLOYED;
-             }
-//            if (this.timedRetract90() == true)
-//                {
-//                deployIntakeState = DeployState.NOT_DEPLOYED;
-//                }
+            this.intakeDeployMotor.set(getRetractSpeed());
+            if (this.intakeDeployEncoder
+                    .get() <= INTAKE_RETRACT_TICKS)
+                {
+                // brings back in the intake mechanism until the intake
+                // deploy
+                // encoder reads the INTAKE_RETRACT_ANGLE (usually 0)
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.NOT_DEPLOYED;
+                }
+            // if (this.timedRetract90() == true)
+            // {
+            // deployIntakeState = DeployState.NOT_DEPLOYED;
+            // }
 
             break;
 
@@ -1067,31 +1075,36 @@ public void deployIntakeUpdate ()
             break;
 
         case POSITION_45:
-             // If the deploy has reached the position, send constant voltage
-             if (intakeDeployEncoder.get() < DEPLOY_45_POSITION_TICKS)
-             {
-             intakeDeployMotor.set(DEPLOY_HOLDING_VOLTAGE);
-             }
-             // If we have gone too far
-             else if (intakeDeployEncoder
-             .get() < DEPLOY_45_POSITION_TICKS
-             - DEPLOY_DEADBAND)
-             {
-             intakeDeployMotor.stopMotor();
-             }
-             // We are still retracting.
-             else
-             {
-             intakeDeployMotor.set(getRetractSpeed());
-             }
-             // Only set it while we are holding the button.
-             deployIntakeState = DeployState.DEPLOYING;
+            if (Hardware.leftOperator.getRawButton(2) == false)
+                {
+                deployIntakeState = DeployState.DEPLOYING;
+                }
 
-//            if (this.timedRetract45() == true)
-//                {
-//                Hardware.intakeDeployArm.set(DEPLOY_HOLDING_VOLTAGE);
-//                deployIntakeState = DeployState.HOLDING_45;
-//                }
+            // If the deploy has reached the position, send constant voltage
+            if (intakeDeployEncoder.get() < DEPLOY_45_POSITION_TICKS)
+                {
+                intakeDeployMotor.set(DEPLOY_HOLDING_VOLTAGE);
+                }
+            // If we have gone too far
+            else if (intakeDeployEncoder
+                    .get() < DEPLOY_45_POSITION_TICKS
+                            - DEPLOY_DEADBAND)
+                {
+                intakeDeployMotor.stopMotor();
+                }
+            // We are still retracting.
+            else
+                {
+                intakeDeployMotor.set(getRetractSpeed());
+                }
+            // Only set it while we are holding the button.
+            deployIntakeState = DeployState.PRE_DEPLOYING;
+
+            // if (this.timedRetract45() == true)
+            // {
+            // Hardware.intakeDeployArm.set(DEPLOY_HOLDING_VOLTAGE);
+            // deployIntakeState = DeployState.HOLDING_45;
+            // }
 
             break;
 
@@ -1314,7 +1327,7 @@ MOVING_UP, MOVING_DOWN, NEUTRAL
  */
 public static enum DeployState
     {
-NOT_DEPLOYED, DEPLOYING, DEPLOYED, POSITION_45, FOLD_ARM_DOWN, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, STOPPED, FOLDED, UNFOLD_ARM_UP, HOLDING_45, DEPLOY_45
+NOT_DEPLOYED, PRE_DEPLOYING, DEPLOYING, DEPLOYED, POSITION_45, FOLD_ARM_DOWN, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, STOPPED, FOLDED, UNFOLD_ARM_UP, HOLDING_45, DEPLOY_45
     }
 
 /**
@@ -1487,6 +1500,10 @@ private final double INTAKE_RETRACT_SPEED_HIGH = -.9;
 private final double DEPLOY_HOLDING_VOLTAGE = -.15;
 
 private final double EJECT_TIME = 2.0;
+
+// number of degrees to retract before deploying, calculated from ticks
+private final double DEGREES_TO_RETRACT_TO_DEPLOY = 2.0
+        * (INTAKE_DEPLOY_TICKS / 90);
 
 private final double DEPLOY_45_POSITION_TICKS = 130;// 160;
 

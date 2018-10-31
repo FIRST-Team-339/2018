@@ -34,6 +34,7 @@ package org.usfirst.frc.team339.robot;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.Utils.CubeManipulator.DeployState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -158,6 +159,10 @@ public static void periodic ()
     // Hardware.scaleAlignment.alignToScaleByButtons(
     // Hardware.leftOperator.getRawButton(4));
 
+    if (Hardware.leftOperator.getRawButton(2) == true)
+        {
+        CubeManipulator.deployIntakeState = DeployState.POSITION_45;
+        }
 
     if (Hardware.intakeOpenCloseButton.isOnCheckNow() == true)
         {
@@ -205,42 +210,42 @@ public static void periodic ()
         else if (Hardware.rightOperator.getRawButton(11))
             Hardware.cubeManipulator.setDeployForClimb();
 
-        if (/*
-             * Hardware.position45Button.get() == false
-             * &&
-             */ Hardware.leftOperator.getRawButton(2) == true
-                && Robot.deploy45run == false
-                && Robot.deploy45HasBeenPushed == false)
-            {
-
-            System.out.println("FIRST STATEMENT");
-            Hardware.deployTimer.reset();
-            Hardware.deployTimer.start();
-            Hardware.cubeManipulator.angleDeployForScale();
-            Robot.deploy45run = true;
-
-            }
-
-        if (Hardware.leftOperator.getRawButton(2) == false
-                && Robot.deploy45run == true)
-            {
-            System.out.println("SECOND STATEMENT");
-            Robot.deploy45run = false;
-            Robot.deploy45HasBeenPushed = true;
-            }
-
-        if (/*
-             * Hardware.position45Button.get() == false
-             * &&
-             */ Hardware.leftOperator.getRawButton(2) == true
-                && Robot.deploy45run == false
-                && Robot.deploy45HasBeenPushed == true)
-            {
-            System.out.println("THIRD STATEMENT");
-            CubeManipulator.timedDeploy45();
-            Robot.deploy45run = true;
-            Robot.deploy45HasBeenPushed = false;
-            }
+        // if (/*
+        // * Hardware.position45Button.get() == false
+        // * &&
+        // */ Hardware.leftOperator.getRawButton(2) == true
+        // && Robot.deploy45run == false
+        // && Robot.deploy45HasBeenPushed == false)
+        // {
+        //
+        // System.out.println("FIRST STATEMENT");
+        // Hardware.deployTimer.reset();
+        // Hardware.deployTimer.start();
+        // Hardware.cubeManipulator.angleDeployForScale();
+        // Robot.deploy45run = true;
+        //
+        // }
+        //
+        // if (Hardware.leftOperator.getRawButton(2) == false
+        // && Robot.deploy45run == true)
+        // {
+        // System.out.println("SECOND STATEMENT");
+        // Robot.deploy45run = false;
+        // Robot.deploy45HasBeenPushed = true;
+        // }
+        //
+        // if (/*
+        // * Hardware.position45Button.get() == false
+        // * &&
+        // */ Hardware.leftOperator.getRawButton(2) == true
+        // && Robot.deploy45run == false
+        // && Robot.deploy45HasBeenPushed == true)
+        // {
+        // System.out.println("THIRD STATEMENT");
+        // CubeManipulator.timedDeploy45();
+        // Robot.deploy45run = true;
+        // Robot.deploy45HasBeenPushed = false;
+        // }
 
 
         if (Hardware.deployServoButton.isOnCheckNow() == true)
