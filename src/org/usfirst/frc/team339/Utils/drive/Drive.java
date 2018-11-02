@@ -1681,7 +1681,7 @@ private double strafeStraightScalar = .08;
 
 private int totalBrakeIterations = 2;
 
-private double turnDegrees2ndStagePower = .19;
+private double turnDegrees2ndStagePower = .22; // @ANE//.19;
 
 private double turnDegreesTriggerStage = 40;// Degrees
 

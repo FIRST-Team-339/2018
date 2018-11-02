@@ -44,7 +44,7 @@ private SpeedController intakeMotor = null;
 
 private SpeedController intakeDeployMotor = null;
 
-private KilroyEncoder intakeDeployEncoder = null;
+private static KilroyEncoder intakeDeployEncoder = null;
 
 private LightSensor intakeSwitch = null;
 
@@ -92,7 +92,7 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.intakeSwitch = intakeSwitch;
     this.forkliftEncoder = forkliftEncoder;
     this.intakeDeployMotor = intakeDeploy;
-    this.intakeDeployEncoder = intakeDeployEncoder;
+    CubeManipulator.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
 
@@ -140,7 +140,7 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.intakeSwitch = intakeSwitch;
     this.forkliftEncoder = forkliftEncoder;
     this.intakeDeployMotor = intakeDeploy;
-    this.intakeDeployEncoder = intakeDeployEncoder;
+    CubeManipulator.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
     this.armIntakeSolenoid = armIntakeSolenoid;
@@ -191,7 +191,7 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.intakeSwitch = intakeSwitch;
     this.forkliftEncoder = forkliftEncoder;
     this.intakeDeployMotor = intakeDeploy;
-    this.intakeDeployEncoder = intakeDeployEncoder;
+    CubeManipulator.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
     this.armIR = armIRSensor;
@@ -381,9 +381,9 @@ public void setMaxLiftHeight (int inches)
  * 
  * @return the ticks of the intakeDeployEncoder
  */
-public double getIntakeAngle ()
+public static double getIntakeAngle ()
 {
-    return this.intakeDeployEncoder.get();
+    return CubeManipulator.intakeDeployEncoder.get();
 }
 
 /**
@@ -505,7 +505,7 @@ public boolean retractCubeIntake (boolean override)
  * Angles the deploy to the 45 degree angle while the button is held, and holds
  * it at that position for placing on the scale.
  */
-public boolean angleDeployForScale ()
+public static boolean angleDeployForScale ()
 {
     System.out.println("TOP angleDeployForScale");
     if (deployIntakeState != DeployState.STOPPED
@@ -983,7 +983,7 @@ private double currentIntakeAngle = 0;
  */
 public void deployIntakeUpdate ()
 {
-    // System.out.println("deploy state = " + deployIntakeState);
+    System.out.println("deploy state = " + deployIntakeState);
     // state machine for deploying the intake
     switch (deployIntakeState)
         {
@@ -999,7 +999,7 @@ public void deployIntakeUpdate ()
             // code to retract arm before deploying
             this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED_HIGH);
             System.out.println("WE ARE ACTUALLY TRYING TO GO BACK");
-            if (this.getIntakeAngle() <= INTAKE_RETRACT_TICKS
+            if (CubeManipulator.getIntakeAngle() <= INTAKE_RETRACT_TICKS
                     - DEGREES_TO_RETRACT_TO_DEPLOY)
                 {
                 // stops the intake deploy motor if we've turned far enough;
@@ -1018,7 +1018,7 @@ public void deployIntakeUpdate ()
 
             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
             System.out.println("YESSSSSSSSSSSSS");
-            if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS
+            if (CubeManipulator.getIntakeAngle() >= INTAKE_DEPLOY_TICKS
                     - DEGREES_TO_RETRACT_TO_DEPLOY)
                 {
                 // stops the intake deploy motor if we've turned far enough;
@@ -1047,7 +1047,7 @@ public void deployIntakeUpdate ()
         // state to NOT_DEPLOYED
         case RETRACTING:
             this.intakeDeployMotor.set(getRetractSpeed());
-            if (this.intakeDeployEncoder
+            if (CubeManipulator.intakeDeployEncoder
                     .get() <= INTAKE_RETRACT_TICKS)
                 {
                 // brings back in the intake mechanism until the intake
@@ -1098,7 +1098,7 @@ public void deployIntakeUpdate ()
                 intakeDeployMotor.set(getRetractSpeed());
                 }
             // Only set it while we are holding the button.
-            deployIntakeState = DeployState.PRE_DEPLOYING;
+            deployIntakeState = DeployState.DEPLOYING;
 
             // if (this.timedRetract45() == true)
             // {
@@ -1465,7 +1465,7 @@ public final double INTAKE_STOP_WITH_CUBE = .06;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
-private final double INTAKE_DEPLOY_TICKS = 245;
+private final static double INTAKE_DEPLOY_TICKS = 240;
 
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 0.0;
@@ -1505,7 +1505,8 @@ private final double EJECT_TIME = 2.0;
 private final double DEGREES_TO_RETRACT_TO_DEPLOY = 2.0
         * (INTAKE_DEPLOY_TICKS / 90);
 
-private final double DEPLOY_45_POSITION_TICKS = 130;// 160;
+private final static double DEPLOY_45_POSITION_TICKS = .5
+        * INTAKE_DEPLOY_TICKS;// 160;
 
 private final int DEPLOY_DEADBAND = 15;
 

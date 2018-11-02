@@ -34,7 +34,6 @@ package org.usfirst.frc.team339.robot;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
-import org.usfirst.frc.team339.Utils.CubeManipulator.DeployState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -161,7 +160,7 @@ public static void periodic ()
 
     if (Hardware.leftOperator.getRawButton(2) == true)
         {
-        CubeManipulator.deployIntakeState = DeployState.POSITION_45;
+        CubeManipulator.angleDeployForScale();
         }
 
     if (Hardware.intakeOpenCloseButton.isOnCheckNow() == true)
@@ -210,6 +209,8 @@ public static void periodic ()
         else if (Hardware.rightOperator.getRawButton(11))
             Hardware.cubeManipulator.setDeployForClimb();
 
+
+
         // if (/*
         // * Hardware.position45Button.get() == false
         // * &&
@@ -247,16 +248,29 @@ public static void periodic ()
         // Robot.deploy45HasBeenPushed = false;
         // }
 
-
-        if (Hardware.deployServoButton.isOnCheckNow() == true)
+        if (Hardware.deployServoButton
+                .isOn() != Hardware.deployServoButton.isOnCheckNow())
             {
-            Hardware.intakeArmPositionServo
-                    .set(CubeManipulator.DEPLOY_SERVO_IN);
+            servoShouldSwitch = true;
             }
-        else
+
+        if (servoShouldSwitch == true)
             {
-            Hardware.intakeArmPositionServo
-                    .set(CubeManipulator.DEPLOY_SERVO_OUT);
+            if (Hardware.intakeArmPositionServo
+                    .get() == CubeManipulator.DEPLOY_SERVO_OUT)
+                {
+                Hardware.intakeArmPositionServo
+                        .set(CubeManipulator.DEPLOY_SERVO_IN);
+                servoShouldSwitch = false;
+                }
+            else if (Hardware.intakeArmPositionServo
+                    .get() == CubeManipulator.DEPLOY_SERVO_IN)
+                {
+                Hardware.intakeArmPositionServo
+                        .set(CubeManipulator.DEPLOY_SERVO_OUT);
+                servoShouldSwitch = false;
+                }
+            servoShouldSwitch = false;
             }
 
         }
@@ -1082,6 +1096,8 @@ public static final DoubleSolenoid.Value INTAKE_ARMS_CLOSED = DoubleSolenoid.Val
 public static double rightInput = 0.0;
 
 public static double leftInput = 0.0;
+
+public static boolean servoShouldSwitch = false;
 
 
 } // end class
