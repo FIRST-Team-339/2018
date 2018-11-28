@@ -206,33 +206,37 @@ public void printToConsole ()
             // ---------------------------------
             // System.out.println("Left Front Encoder Inches = "
             // + Hardware.leftFrontDriveEncoder.getDistance());
-
-
+            //
+            //
             // System.out.println("Left Front Encoder Ticks "
             // + Hardware.leftFrontDriveEncoder.get());
 
+            // System.out.println("RF encoder type"
+            // + Hardware.rightFrontDriveEncoder.getSensorType());
 
             // System.out.println("Right Front Inches = "
             // + Hardware.rightFrontDriveEncoder.getDistance());
-
+            //
             // System.out.println("Right Front Ticks "
             // + Hardware.rightFrontDriveEncoder.get());
 
             // System.out.println("Left Rear Encoder Inches = "
             // + Hardware.leftRearDriveEncoder.getDistance());
-
+            //
             // System.out.println("Left Rear Encoder Ticks "
             // + Hardware.leftRearDriveEncoder.get());
 
+            // System.out.println("RR encoder type"
+            // + Hardware.rightRearDriveEncoder.getSensorType());
             // System.out.println("Right Rear Inches = "
             // + Hardware.rightRearDriveEncoder.getDistance());
-
+            //
             // System.out.println("Right Rear Ticks "
             // + Hardware.rightRearDriveEncoder.get());
 
 
-//            System.out.println("deploy Ticks "
-//                    + Hardware.intakeDeployEncoder.get());
+            // System.out.println("deploy Ticks "
+            // + Hardware.intakeDeployEncoder.get());
 
             // ---------------------------------
             // Red Light/IR Sensors
@@ -435,35 +439,46 @@ public void printToShuffleboard ()
         // SmartDashboard.putNumber("Left Front Encoder Inches",
         // Hardware.leftFrontDriveEncoder.getDistance());
         //
-        // SmartDashboard.putNumber("Left Front Encoder Ticks",
-        // Hardware.leftFrontDriveEncoder.get());
+        SmartDashboard.putNumber("Left Front Encoder Ticks",
+                Hardware.leftFrontDriveEncoder.get());
         //
         //
         // SmartDashboard.putNumber("Right Front Encoder Inches",
         // Hardware.rightFrontDriveEncoder.getDistance());
         //
         //
-        // SmartDashboard.putNumber("Right Front Encoder Ticks",
-        // Hardware.rightFrontDriveEncoder.get());
-        //
+        SmartDashboard.putNumber("Right Front Encoder Ticks",
+                Hardware.rightFrontDriveEncoder.get());
+        // //
         // SmartDashboard.putNumber("Left Rear Encoder Inches",
         // Hardware.leftRearDriveEncoder.getDistance());
         //
         //
-        // SmartDashboard.putNumber("Left Rear Encoder Ticks",
-        // Hardware.leftRearDriveEncoder.get());
+        SmartDashboard.putNumber("Left Rear Encoder Ticks",
+                Hardware.leftRearDriveEncoder.get());
         //
         // SmartDashboard.putNumber("Right Rear Encoder Inches",
         // Hardware.rightRearDriveEncoder.getDistance());
+        // //
+        SmartDashboard.putNumber("Right Rear Encoder Ticks",
+                Hardware.rightRearDriveEncoder.get());
+
+        // SmartDashboard.putNumber("Lift Encoder Ticks",
+        // Hardware.liftingEncoder.get());
         //
-        // SmartDashboard.putNumber("Right Rear Encoder Ticks",
-        // Hardware.rightRearDriveEncoder.get());
-        //
-//        SmartDashboard.putNumber("Lift Encoder Ticks",
-//                Hardware.liftingEncoder.get());
-        //
-        SmartDashboard.putNumber("Deploy Encoder Inches",
+        SmartDashboard.putNumber("Deploy Encoder Ticks",
                 Hardware.intakeDeployEncoder.get());
+
+        SmartDashboard.putNumber("Lift Encoder Ticks",
+                Hardware.liftingEncoder.get());
+
+        SmartDashboard.putNumber("Lift Encoder Inches",
+                Hardware.liftingEncoder.getDistance());
+
+
+        SmartDashboard.putString("max forklift height",
+                Hardware.cubeManipulator.currentForkliftMaxHeight + "");
+
         //
         // // ---------------------------------
         // // Red Light/IR Sensors

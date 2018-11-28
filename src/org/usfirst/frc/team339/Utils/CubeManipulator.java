@@ -264,7 +264,12 @@ public void moveForkliftWithController (double speed,
                                 .getDistance() > USE_ARM_IR_HEIGHT
                         && speed > 0
                         && deployIntakeState == DeployState.DEPLOYED))
+
+            {
+            forkliftTargetSpeed = FORKLIFT_STAY_UP_SPEED; // @ANE take out
+
             return;
+            }
         // Move the forklift the desired speed
         if (speed > 0)
             forkliftTargetSpeed = speed * FORKLIFT_UP_JOYSTICK_SCALAR;
@@ -432,6 +437,8 @@ public boolean deployCubeIntake (boolean override)
     // advances the deploy intake state machine if it hasn't already been
     // deployed/ is deploying
     if (deployIntakeState == DeployState.NOT_DEPLOYED
+            || deployIntakeState == DeployState.STOPPED
+            || deployIntakeState == DeployState.OVERRIDE_DEPLOY
             || deployIntakeState == DeployState.UNFOLD_ARM_UP)
 
         {
@@ -507,7 +514,7 @@ public boolean retractCubeIntake (boolean override)
  */
 public static boolean angleDeployForScale ()
 {
-    System.out.println("TOP angleDeployForScale");
+    // System.out.println("TOP angleDeployForScale");
     if (deployIntakeState != DeployState.STOPPED
             && deployIntakeState != DeployState.OVERRIDE_DEPLOY
             && deployIntakeState != DeployState.OVERRIDE_RETRACT
@@ -719,7 +726,7 @@ public boolean pushOutCubeAuto (double speed)
  */
 public boolean hasCube ()
 {
-    return this.intakeSwitch.isOn();
+    return false;// this.intakeSwitch.isOn();
 }
 
 // TODO make sure this works
@@ -858,6 +865,26 @@ public void masterUpdate ()
 }
 
 /**
+ * Demo update function that calls the update functions for forklift,
+ * and intake/ push out cube, allowing them to properly
+ * use their state machines
+ * 
+ * @author Ashley Espeland
+ * 
+ */
+public void demoUpdate ()
+{
+    // SmartDashboard.putString("Forklift Update", liftState.toString());
+    // SmartDashboard.putString("Intake State", intakeState + "");
+
+    // update the forklift state machine
+    forkliftUpdate();
+
+    // update the intake/ PushOut cube state machines
+    intakeUpdate();
+}
+
+/**
  * For use in teleop and autonomous periodic.
  * 
  * Any functions that move the lift will NOT WORK UNLESS this function is called
@@ -983,7 +1010,7 @@ private double currentIntakeAngle = 0;
  */
 public void deployIntakeUpdate ()
 {
-    System.out.println("deploy state = " + deployIntakeState);
+    // System.out.println("deploy state = " + deployIntakeState);
     // state machine for deploying the intake
     switch (deployIntakeState)
         {
@@ -1017,7 +1044,7 @@ public void deployIntakeUpdate ()
         case DEPLOYING:
 
             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-            System.out.println("YESSSSSSSSSSSSS");
+            // System.out.println("YESSSSSSSSSSSSS");
             if (CubeManipulator.getIntakeAngle() >= INTAKE_DEPLOY_TICKS
                     - DEGREES_TO_RETRACT_TO_DEPLOY)
                 {
@@ -1373,7 +1400,7 @@ private boolean isClimbing = false;
 
 private double currentForkliftDownSpeed = 0;
 
-private double currentForkliftMaxHeight = 0;
+public double currentForkliftMaxHeight = 0; // @ANE change to private
 
 private double forkliftTargetHeight = 0.0;
 
@@ -1502,7 +1529,7 @@ private final double DEPLOY_HOLDING_VOLTAGE = -.15;
 private final double EJECT_TIME = 2.0;
 
 // number of degrees to retract before deploying, calculated from ticks
-private final double DEGREES_TO_RETRACT_TO_DEPLOY = 2.0
+private final double DEGREES_TO_RETRACT_TO_DEPLOY = 0.0
         * (INTAKE_DEPLOY_TICKS / 90);
 
 private final static double DEPLOY_45_POSITION_TICKS = .5

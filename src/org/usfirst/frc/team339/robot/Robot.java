@@ -108,7 +108,7 @@ public void autonomousInit ()
     // =========================================================
     // User code goes below here
     // =========================================================
-    if (Hardware.demoModeSwitch.isOn() == false)
+    if (Hardware.demoModeSwitch.isOn() == true)
         Autonomous.init();
 
     // =========================================================
@@ -139,7 +139,7 @@ public void autonomousPeriodic ()
     // =========================================================
     // User code goes below here
     // =========================================================
-    if (Hardware.demoModeSwitch.isOn() == false)
+    if (Hardware.demoModeSwitch.isOn() == true)
         Autonomous.periodic();
     // =========================================================
     // User code goes above here
@@ -369,7 +369,7 @@ public void robotInit ()
     // ---------------------------------
     // Hardware.ringLightRelay.set(Value.kOff);
 
-    if (Hardware.demoModeSwitch.isOn())
+    if (Hardware.demoModeSwitch.isOn() == true)
         {
         Hardware.cubeManipulator
                 .setMaxLiftHeight(demoForkliftMaxHeight);

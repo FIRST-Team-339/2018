@@ -137,6 +137,7 @@ public static void periodic ()
     // calls the print statements from Teleop
     // Teleop.printStatements();
     // Main switch statement of auto
+    // System.out.println("autostate" + State);
     switch (autoState)
         {
         case INIT:
@@ -1200,7 +1201,7 @@ DONE
 public static boolean switchOrScalePath (Position robotPosition)
 {
     // prints the current state for this autonomous path
-    // System.out.println("Current State: " + currentSwitchOrScaleState);
+    System.out.println("Current State: " + currentSwitchOrScaleState);
 
     switch (currentSwitchOrScaleState)
         {

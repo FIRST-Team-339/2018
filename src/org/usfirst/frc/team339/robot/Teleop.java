@@ -158,7 +158,8 @@ public static void periodic ()
     // Hardware.scaleAlignment.alignToScaleByButtons(
     // Hardware.leftOperator.getRawButton(4));
 
-    if (Hardware.leftOperator.getRawButton(2) == true)
+    if (Hardware.leftOperator.getRawButton(2) == true
+            && Hardware.demoModeSwitch.isOn() == false)
         {
         CubeManipulator.angleDeployForScale();
         }
@@ -208,8 +209,12 @@ public static void periodic ()
                     Hardware.leftOperator.getRawButton(9));
         else if (Hardware.rightOperator.getRawButton(11))
             Hardware.cubeManipulator.setDeployForClimb();
-
-
+        //
+        // if (Hardware.leftOperator.getRawButton(4) == true
+        // && Hardware.rightOperator.getRawButton(2) == true)
+        // {
+        // CubeManipulator.deployIntakeState = DeployState.PRE_DEPLOYING;
+        // }
 
         // if (/*
         // * Hardware.position45Button.get() == false
@@ -254,7 +259,8 @@ public static void periodic ()
             servoShouldSwitch = true;
             }
 
-        if (servoShouldSwitch == true)
+        if (servoShouldSwitch == true
+                && Hardware.demoModeSwitch.isOn() == false)
             {
             if (Hardware.intakeArmPositionServo
                     .get() == CubeManipulator.DEPLOY_SERVO_OUT)
@@ -455,12 +461,16 @@ public static void periodic ()
                 Hardware.rightOperator.getRawButton(5),
                 Hardware.climbButton.isOnCheckNow());
     else
-        // We are in DEMO MODE!!!
+    // We are in DEMO MODE!!!
+        {
         Hardware.cubeManipulator.moveForkliftWithController(
                 Hardware.rightOperator.getY() * Robot.demoForkliftSpeed,
                 false, false);
 
-    if (Hardware.demoModeSwitch.isOn() == false)
+        }
+
+
+    if (Hardware.demoModeSwitch.isOn() == true)
         {
         // We are in COMPETITION MODE!!!
         if (Hardware.rightOperator.getRawButton(6) == true)
@@ -481,22 +491,33 @@ public static void periodic ()
     // update for the cube manipulator (forklift, intake, etc.) and its
     // state
     // machines
-    Hardware.cubeManipulator.masterUpdate();
+    if (Hardware.demoModeSwitch.isOn() == true)
+        {
+        Hardware.cubeManipulator.masterUpdate();
+        }
+    else
+        {
+        Hardware.cubeManipulator.demoUpdate();
+        }
 
     // =================================================================
     // CAMERA CODE
     // =================================================================
-    Hardware.axisCamera
-            .takeLitPicture(Hardware.leftOperator.getRawButton(6)
-                    && Hardware.leftOperator.getRawButton(7));
-
-
-    if (Hardware.demoModeSwitch.isOn() == false)
-        // We are in COMPETITION MODE!!!
-        // TODO @ANE uncomment
+    if (Hardware.demoModeSwitch.isOn() == true)
+        {
         Hardware.axisCamera
                 .takeLitPicture(Hardware.leftOperator.getRawButton(6)
                         && Hardware.leftOperator.getRawButton(7));
+        }
+
+    if (Hardware.demoModeSwitch.isOn() == false)
+    // We are in COMPETITION MODE!!!
+    // TODO @ANE uncomment
+        {
+        Hardware.axisCamera
+                .takeLitPicture(Hardware.leftOperator.getRawButton(6)
+                        && Hardware.leftOperator.getRawButton(7));
+        }
 
     // =================================================================
     // DRIVING CODE
@@ -1078,6 +1099,8 @@ public static void printStatements ()
 // ================================
 // Constants
 // ================================
+public static final int DEMO_MAX_HEIGHT = 40;
+
 public static final int CLIMBING_SERVO_ANGLE = 78;
 
 public static final int INTAKE_ARM_SERVO_UP_POSITION = 0;
