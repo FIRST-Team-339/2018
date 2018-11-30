@@ -99,7 +99,7 @@ public static void init ()
     SmartDashboard.putNumber("Turn Degrees", 0);
     // SmartDashboard.putNumber("Drive Distance", 0);
 
-    if (Hardware.demoModeSwitch.isOn() == true)
+    if (Hardware.demoModeSwitch.isOn() == false)
         {
         Hardware.transmission.setGearPercentage(0,
                 Hardware.delayPot.get(0, .7));
@@ -159,7 +159,7 @@ public static void periodic ()
     // Hardware.leftOperator.getRawButton(4));
 
     if (Hardware.leftOperator.getRawButton(2) == true
-            && Hardware.demoModeSwitch.isOn() == false)
+            && Hardware.demoModeSwitch.isOn() == true)
         {
         CubeManipulator.angleDeployForScale();
         }
@@ -175,7 +175,7 @@ public static void periodic ()
 
 
 
-    if (Hardware.demoModeSwitch.isOn() == false)
+    if (Hardware.demoModeSwitch.isOn() == true)
         {
         // We are in COMPETITION MODE!!!
         Hardware.cubeManipulator.intakeCube(
@@ -198,7 +198,7 @@ public static void periodic ()
     // Deploy Intake controls
     // -----------------------------------------
     // Button 11 to deploy, 10 to retract, and 9 for override for both.
-    if (Hardware.demoModeSwitch.isOn() == false)
+    if (Hardware.demoModeSwitch.isOn() == true)
         {
         // We are in COMPETITION MODE!!!
         if (Hardware.leftOperator.getRawButton(11))
@@ -470,7 +470,7 @@ public static void periodic ()
         }
 
 
-    if (Hardware.demoModeSwitch.isOn() == true)
+    if (Hardware.demoModeSwitch.isOn() == false)
         {
         // We are in COMPETITION MODE!!!
         if (Hardware.rightOperator.getRawButton(6) == true)
@@ -491,7 +491,7 @@ public static void periodic ()
     // update for the cube manipulator (forklift, intake, etc.) and its
     // state
     // machines
-    if (Hardware.demoModeSwitch.isOn() == true)
+    if (Hardware.demoModeSwitch.isOn() == false)
         {
         Hardware.cubeManipulator.masterUpdate();
         }
@@ -522,6 +522,7 @@ public static void periodic ()
     // =================================================================
     // DRIVING CODE
     // =================================================================
+
     // if the right driver button 3 is pressed, shift up a gear, if the left
     // driver button 3 id pressed, shift down a gear
     if (Hardware.demoModeSwitch.isOn() == false)
