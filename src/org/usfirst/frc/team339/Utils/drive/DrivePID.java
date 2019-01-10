@@ -91,6 +91,7 @@ public void reset()
 	super.reset();
 	this.turnDegreesInit = true;
 	this.turnDegreesGyroInit = true;
+	this.driveStraightInchesInit = true;
 	this.brakeInit = true;
 	// this.turnGyroPID.disable();
 }
@@ -157,21 +158,28 @@ public void setPIDToleranceAccel(PIDDriveFunction driveFunction, double p, doubl
 
 /**
  * Brakes the robot using a PID loop, setting the setpoint to 0.
+ * 
+ * @deprecated This was a test function, and is BAD. do not use.
  * @return
  */
-public boolean brakePID()
+public boolean brakePID(BrakeType brakeType)
 {
 	if (brakeInit == true)
 	{
+		this.brakeType = brakeType;
 		super.resetEncoders();
 		this.brakePID.getPIDController().setPID(brakePIDTolerance[0], brakePIDTolerance[1], brakePIDTolerance[2]);
 		this.brakePID.getPIDController().setAbsoluteTolerance(brakePIDTolerance[3]);
 		this.brakePID.getPIDController().reset();
+		this.brakePID.setSetpoint(0);
 		this.brakePID.enable();
 		brakeInit = false;
 	}
 	
-	getTransmission().driveRaw(brakePIDOut, brakePIDOut);
+	if(brakeType == BrakeType.AFTER_DRIVE)
+		getTransmission().driveRaw(brakePIDOut, brakePIDOut);
+	else if(brakeType == BrakeType.AFTER_TURN)
+		getTransmission().driveRaw(brakePIDOut, -brakePIDOut);
 	
 	if(brakePID.onTarget() == true)
 	{
@@ -461,7 +469,12 @@ private final PIDSubsystem brakePID = new PIDSubsystem(0, 0, 0)
 @Override
 protected double returnPIDInput()
 {
-	return getEncoderRate(MotorPosition.ALL);
+	if(brakeType == BrakeType.AFTER_DRIVE)
+		return getEncoderRate(MotorPosition.ALL);
+	else if(brakeType == BrakeType.AFTER_TURN)
+		return getEncoderRate(MotorPosition.LEFT);
+	//If all else fails, return 0
+	return 0;
 }
 
 @Override
@@ -619,6 +632,8 @@ private double[] brakePIDTolerance =
 private boolean brakeInit = true;
 
 private double brakePIDOut = 0;
+
+private BrakeType brakeType = BrakeType.AFTER_DRIVE;
 
 private double[] turnPIDToleranceAccel =
 		// {P, I, D, Tolerance, Acceleration}

@@ -436,29 +436,29 @@ public void printToShuffleboard ()
         // // ---------------------------------
         // // Encoders
         // // ---------------------------------
-        // SmartDashboard.putNumber("Left Front Encoder Inches",
-        // Hardware.leftFrontDriveEncoder.getDistance());
+         SmartDashboard.putNumber("Left Front Encoder Inches",
+         Hardware.leftFrontDriveEncoder.getDistance());
         //
         SmartDashboard.putNumber("Left Front Encoder Ticks",
                 Hardware.leftFrontDriveEncoder.get());
         //
         //
-        // SmartDashboard.putNumber("Right Front Encoder Inches",
-        // Hardware.rightFrontDriveEncoder.getDistance());
+         SmartDashboard.putNumber("Right Front Encoder Inches",
+         Hardware.rightFrontDriveEncoder.getDistance());
         //
         //
         SmartDashboard.putNumber("Right Front Encoder Ticks",
                 Hardware.rightFrontDriveEncoder.get());
         // //
-        // SmartDashboard.putNumber("Left Rear Encoder Inches",
-        // Hardware.leftRearDriveEncoder.getDistance());
+         SmartDashboard.putNumber("Left Rear Encoder Inches",
+         Hardware.leftRearDriveEncoder.getDistance());
         //
         //
         SmartDashboard.putNumber("Left Rear Encoder Ticks",
                 Hardware.leftRearDriveEncoder.get());
         //
-        // SmartDashboard.putNumber("Right Rear Encoder Inches",
-        // Hardware.rightRearDriveEncoder.getDistance());
+         SmartDashboard.putNumber("Right Rear Encoder Inches",
+         Hardware.rightRearDriveEncoder.getDistance());
         // //
         SmartDashboard.putNumber("Right Rear Encoder Ticks",
                 Hardware.rightRearDriveEncoder.get());

@@ -33,7 +33,11 @@ package org.usfirst.frc.team339.robot;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.Utils.drive.Drive.BrakeType;
+import org.usfirst.frc.team339.Utils.drive.DrivePID.PIDDriveFunction;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -668,8 +672,31 @@ private static boolean isBeckyTest = false;
 // // }
 // } // end beckyTest()
 
+
 private static void testingDrive ()
 {
+	
+	if(Hardware.rightDriver.getRawButton(8))
+		isTestingDrive = true;
+	
+	if(isTestingDrive)
+	{
+		if(driveState == 0 && Hardware.drivePID.driveStraightInches(.7, 48, .8, true))
+			driveState++;
+		
+		if(driveState == 1 || Hardware.rightDriver.getRawButton(7))
+		{
+			driveState = 0;
+			Hardware.drive.resetEncoders();
+			isTestingDrive = false;
+		}
+		
+	}
+	
+	Hardware.drivePID.tunePID(PIDDriveFunction.DRIVESTRAIGHT_GYRO);
+	Hardware.drivePID.tunePID(PIDDriveFunction.DRIVESTRAIGHTINCHES);
+	
+	
 } // end of testingDrive()
 
 private static void liftTest ()

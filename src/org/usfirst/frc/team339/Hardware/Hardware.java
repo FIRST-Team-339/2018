@@ -386,7 +386,7 @@ public static TankTransmission transmission = new TankTransmission(
 // Drive system
 // ------------------------------------
 public static Drive drive = new Drive(transmission,
-        leftRearDriveEncoder, rightRearDriveEncoder,
+        leftFrontDriveEncoder, rightFrontDriveEncoder,
         /*
          * leftFrontDriveEncoder,
          * rightFrontDriveEncoder,
@@ -394,7 +394,7 @@ public static Drive drive = new Drive(transmission,
 
 public static DrivePID drivePID = new DrivePID(transmission,
         /* leftFrontDriveEncoder, rightFrontDriveEncoder, */
-        leftRearDriveEncoder, rightRearDriveEncoder, gyro);
+        leftFrontDriveEncoder, rightFrontDriveEncoder, gyro);
 // TODO CHANGE TO FRONT ENCODERS ON REAL ROBOT
 
 // TODO change back to this once relays actually work

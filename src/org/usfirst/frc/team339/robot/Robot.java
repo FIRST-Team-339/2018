@@ -269,10 +269,14 @@ public void robotInit ()
         {
         Hardware.rightFrontCANMotor.setInverted(true);
         Hardware.rightRearCANMotor.setInverted(true);
-
-        Hardware.drive.setEncoderDistancePerPulse(
-                KILROY_XIX_ENCODER_DPP, MotorPosition.ALL);
-
+//
+//        Hardware.drive.setEncoderDistancePerPulse(
+//                KILROY_XIX_ENCODER_DPP, MotorPosition.ALL);
+        Hardware.leftFrontDriveEncoder.setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.rightFrontDriveEncoder.setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.leftRearDriveEncoder.setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.rightRearDriveEncoder.setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        
         Hardware.liftingEncoder
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder

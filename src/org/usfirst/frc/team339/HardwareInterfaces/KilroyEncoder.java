@@ -76,7 +76,7 @@ public class KilroyEncoder implements PIDSource
 		case D_IO:
 			return dioSensor.getDistance();
 		default:
-			return this.get();
+			return 339339339;
 		}
 	}
 

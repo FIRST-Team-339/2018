@@ -566,7 +566,7 @@ public boolean driveInches (int distance, double speed)
         this.resetEncoders();
         this.driveInchesInit = false;
         }
-
+    
     // Test if ANY encoder is past the distance. stop if there is
     if (this.isAnyEncoderLargerThan(distance) == true)
         {
@@ -954,7 +954,7 @@ public TransmissionBase getTransmission ()
 public boolean isAnyEncoderLargerThan (double length)
 {
     for (KilroyEncoder enc : encoders)
-        if (Math.abs(enc.getDistance()) > length)
+        if (Math.abs(enc.getDistance()) > Math.abs(length))
             return true;
     return false;
 }
