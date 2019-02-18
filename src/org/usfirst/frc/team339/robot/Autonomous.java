@@ -137,6 +137,7 @@ public static void periodic ()
     // calls the print statements from Teleop
     // Teleop.printStatements();
     // Main switch statement of auto
+    // System.out.println("autostate" + State);
     switch (autoState)
         {
         case INIT:
@@ -220,6 +221,7 @@ public static void periodic ()
                                 || grabData(
                                         GameDataType.SCALE) == Position.RIGHT)
                             autoState = State.SWITCH_OR_SCALE_R;
+
                         else
                             // Switch or scale is NOT on our side? Setup for
                             // exchange.
@@ -412,10 +414,10 @@ public static boolean autolinePath ()
                 currentAutolineState = AutolinePathStates.DEPLOY;
             break;
         case DEPLOY:
-            // if (Hardware.cubeManipulator.deployCubeIntake(false))
-            // {
-            currentAutolineState = AutolinePathStates.FINISH;
-            // }
+            if (Hardware.cubeManipulator.deployCubeIntake(false))
+                {
+                currentAutolineState = AutolinePathStates.FINISH;
+                }
             break;
         default:
             // if something goes wrong, print we reached default and fall
@@ -472,8 +474,10 @@ public static boolean autoLineScalePath ()
             break;
 
         case DEPLOY:
-            Hardware.cubeManipulator.deployCubeIntake(false);
-            currentAutolineState = AutolinePathStates.FINISH;
+            if (Hardware.cubeManipulator.deployCubeIntake(false))
+                {
+                currentAutolineState = AutolinePathStates.FINISH;
+                }
             break;
 
         default: // prints we reached the default case, then fall through to
@@ -659,8 +663,10 @@ public static boolean leftAutoLineExchangePath ()
 
         case DEPLOY:
             // deploys the cube intake DONE
-            Hardware.cubeManipulator.deployCubeIntake(false);
-            leftExchangeAuto = leftExchangeState.DONE;
+            if (Hardware.cubeManipulator.deployCubeIntake(false))
+                {
+                leftExchangeAuto = leftExchangeState.DONE;
+                }
             break;
         default:
             System.out.println(
@@ -835,8 +841,10 @@ public static boolean rightAutoLineExchangePath ()
 
         case DEPLOY:
             // deploys the cube intake DONE
-            Hardware.cubeManipulator.deployCubeIntake(false);
-            rightExchangeAuto = rightExchangeState.DONE;
+            if (Hardware.cubeManipulator.deployCubeIntake(false))
+                {
+                rightExchangeAuto = rightExchangeState.DONE;
+                }
             break;
 
         default:
@@ -873,11 +881,13 @@ public static boolean centerSwitchPath ()
             Hardware.drive.setDefaultAcceleration(CENTER_ACCEL);
             // start deploying the intake mechanism; will keep running in
             // background
-            Hardware.cubeManipulator.deployCubeIntake(false);
-            Hardware.cubeManipulator
-                    .setLiftPosition(SWITCH_LIFT_HEIGHT, .7);
-            Hardware.tempRelay.set(true);
-            visionAuto = centerState.DRIVE_FOUR_INCHES;
+            if (Hardware.cubeManipulator.deployCubeIntake(false))
+                {
+                Hardware.cubeManipulator
+                        .setLiftPosition(SWITCH_LIFT_HEIGHT, .7);
+                Hardware.tempRelay.set(true);
+                visionAuto = centerState.DRIVE_FOUR_INCHES;
+                }
             break;
         case DRIVE_FOUR_INCHES:
             // drive 4 inches to make the turn and sets state to BRAKE_1
@@ -1191,7 +1201,7 @@ DONE
 public static boolean switchOrScalePath (Position robotPosition)
 {
     // prints the current state for this autonomous path
-    // System.out.println("Current State: " + currentSwitchOrScaleState);
+    System.out.println("Current State: " + currentSwitchOrScaleState);
 
     switch (currentSwitchOrScaleState)
         {
@@ -1199,9 +1209,11 @@ public static boolean switchOrScalePath (Position robotPosition)
             // starts deploying the cube intake and moves on to the next state
             // does not wait for the intake to finish deploying before moving
             // onto the next state
-            Hardware.cubeManipulator.deployCubeIntake(false);
-            Hardware.cubeManipulator
-                    .setLiftPosition(CubeManipulator.SWITCH_HEIGHT);
+            if (Hardware.cubeManipulator.deployCubeIntake(false))
+                {
+                Hardware.cubeManipulator
+                        .setLiftPosition(CubeManipulator.SWITCH_HEIGHT);
+                }
 
             // Scale is on our side? Go to it EVEN IF the switch is also on our
             // side.
@@ -1322,6 +1334,7 @@ public static boolean switchOrScalePath (Position robotPosition)
             // We are on the left side? turn right.
             if (robotPosition == Position.LEFT)
                 {
+
                 if (Hardware.drive.turnDegrees2Stage(
                         SWITCH_OR_SCALE_SCALE_ANGLE, TURN_SPEED))
                     currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_TO_SCALE;
@@ -1377,12 +1390,12 @@ public static boolean switchOrScalePath (Position robotPosition)
             break;
         case ANGLE_DEPLOY:
             // Set the deploy to a 45 degree angle to launch the cube
-            if (Hardware.cubeManipulator.angleDeployForScale() == true)
+            if (CubeManipulator.angleDeployForScale() == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.EJECT_CUBE_SCALE;
             break;
         case EJECT_CUBE_SCALE:
             // Push out the cube, keeping it at a 45 degree angle.
-            Hardware.cubeManipulator.angleDeployForScale();
+            CubeManipulator.angleDeployForScale();
             if (Hardware.cubeManipulator.pushOutCubeAuto(.6) == true)
                 currentSwitchOrScaleState = SwitchOrScaleStates.DRIVE_4;
             break;
@@ -1462,9 +1475,11 @@ public static boolean offsetSwitchPath ()
         case PATH_INIT:
             Hardware.drive.setDefaultAcceleration(
                     DRIVE_STRAIGHT_ACCELERATION_TIME);
-            currentOffsetSwitchState = OffsetSwitchPath.DRIVE1;
             // tell the cube intake mechanism to deploy
-            Hardware.cubeManipulator.deployCubeIntake(false);
+            if (Hardware.cubeManipulator.deployCubeIntake(false))
+                {
+                currentOffsetSwitchState = OffsetSwitchPath.DRIVE1;
+                }
             break;
 
         case DRIVE1:

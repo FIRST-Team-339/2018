@@ -193,20 +193,21 @@ public int getRawEncoderPosition (MotorPosition wheel)
     switch (wheel)
         {
         case LEFT_REAR:
-            return multiPID[0].getSensorCollection()
-                    .getQuadraturePosition();
+        	// FIXME Yeah, it was throwing errors and we're not using this any time soon...
+//            return multiPID[0].getSensorCollection()
+//                    .getQuadraturePosition();
 
         case RIGHT_REAR:
-            return multiPID[1].getSensorCollection()
-                    .getQuadraturePosition();
+//            return multiPID[1].getSensorCollection()
+//                    .getQuadraturePosition();
 
         case LEFT_FRONT:
-            return multiPID[2].getSensorCollection()
-                    .getQuadraturePosition();
+//            return multiPID[2].getSensorCollection()
+//                    .getQuadraturePosition();
 
         case RIGHT_FRONT:
-            return multiPID[3].getSensorCollection()
-                    .getQuadraturePosition();
+//            return multiPID[3].getSensorCollection()
+//                    .getQuadraturePosition();
 
         case ALL:
             return (int) Math.round(monoSensor.pidGet());

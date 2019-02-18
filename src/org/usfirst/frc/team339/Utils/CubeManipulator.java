@@ -44,7 +44,7 @@ private SpeedController intakeMotor = null;
 
 private SpeedController intakeDeployMotor = null;
 
-private KilroyEncoder intakeDeployEncoder = null;
+private static KilroyEncoder intakeDeployEncoder = null;
 
 private LightSensor intakeSwitch = null;
 
@@ -92,7 +92,7 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.intakeSwitch = intakeSwitch;
     this.forkliftEncoder = forkliftEncoder;
     this.intakeDeployMotor = intakeDeploy;
-    this.intakeDeployEncoder = intakeDeployEncoder;
+    CubeManipulator.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
 
@@ -132,18 +132,20 @@ public CubeManipulator (SpeedController forkliftMotor,
         SpeedController intakeMotor, LightSensor intakeSwitch,
         KilroyEncoder forkliftEncoder, SpeedController intakeDeploy,
         KilroyEncoder intakeDeployEncoder, Timer timer,
-        Servo deployFoldingServo, DoubleSolenoid armIntakeSolenoid)
+        Servo deployFoldingServo, DoubleSolenoid armIntakeSolenoid,
+        MomentarySwitch climbButton)
 {
     this.forkliftMotor = forkliftMotor;
     this.intakeMotor = intakeMotor;
     this.intakeSwitch = intakeSwitch;
     this.forkliftEncoder = forkliftEncoder;
     this.intakeDeployMotor = intakeDeploy;
-    this.intakeDeployEncoder = intakeDeployEncoder;
+    CubeManipulator.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
     this.armIntakeSolenoid = armIntakeSolenoid;
     Hardware.liftMotorTwo.follow(Hardware.liftMotorOne);
+    this.climbButton = climbButton;
 
     this.currentForkliftMaxHeight = FORKLIFT_MAX_HEIGHT;
 
@@ -189,7 +191,7 @@ public CubeManipulator (SpeedController forkliftMotor,
     this.intakeSwitch = intakeSwitch;
     this.forkliftEncoder = forkliftEncoder;
     this.intakeDeployMotor = intakeDeploy;
-    this.intakeDeployEncoder = intakeDeployEncoder;
+    CubeManipulator.intakeDeployEncoder = intakeDeployEncoder;
     this.switchTimer = timer;
     this.deployFoldingServo = deployFoldingServo;
     this.armIR = armIRSensor;
@@ -262,7 +264,12 @@ public void moveForkliftWithController (double speed,
                                 .getDistance() > USE_ARM_IR_HEIGHT
                         && speed > 0
                         && deployIntakeState == DeployState.DEPLOYED))
+
+            {
+            forkliftTargetSpeed = FORKLIFT_STAY_UP_SPEED; // @ANE take out
+
             return;
+            }
         // Move the forklift the desired speed
         if (speed > 0)
             forkliftTargetSpeed = speed * FORKLIFT_UP_JOYSTICK_SCALAR;
@@ -379,9 +386,9 @@ public void setMaxLiftHeight (int inches)
  * 
  * @return the ticks of the intakeDeployEncoder
  */
-public double getIntakeAngle ()
+public static double getIntakeAngle ()
 {
-    return this.intakeDeployEncoder.get();
+    return CubeManipulator.intakeDeployEncoder.get();
 }
 
 /**
@@ -430,10 +437,14 @@ public boolean deployCubeIntake (boolean override)
     // advances the deploy intake state machine if it hasn't already been
     // deployed/ is deploying
     if (deployIntakeState == DeployState.NOT_DEPLOYED
+            || deployIntakeState == DeployState.STOPPED
+            || deployIntakeState == DeployState.OVERRIDE_DEPLOY
             || deployIntakeState == DeployState.UNFOLD_ARM_UP)
-        ;
+
         {
-        deployIntakeState = DeployState.DEPLOYING;
+        // Hardware.deployTimer.reset();
+        // Hardware.deployTimer.start();
+        deployIntakeState = DeployState.PRE_DEPLOYING;
         }
 
     if (newCode == false)
@@ -501,14 +512,35 @@ public boolean retractCubeIntake (boolean override)
  * Angles the deploy to the 45 degree angle while the button is held, and holds
  * it at that position for placing on the scale.
  */
-public boolean angleDeployForScale ()
+public static boolean angleDeployForScale ()
 {
+    // System.out.println("TOP angleDeployForScale");
     if (deployIntakeState != DeployState.STOPPED
             && deployIntakeState != DeployState.OVERRIDE_DEPLOY
-            && deployIntakeState != DeployState.OVERRIDE_RETRACT)
+            && deployIntakeState != DeployState.OVERRIDE_RETRACT
+    // deployIntakeState == DeployState.DEPLOYED
+    // deployIntakeState != DeployState.STOPPED
+    // && deployIntakeState != DeployState.OVERRIDE_DEPLOY
+    // && deployIntakeState != DeployState.OVERRIDE_RETRACT
+    // && deployIntakeState != DeployState.HOLDING_45
+    // && deployIntakeState != DeployState.DEPLOY_45
+    // && deployIntakeState != DeployState.POSITION_45
+    // && deployIntakeState != DeployState.DEPLOYING
+    // && deployIntakeState != DeployState.FOLD_ARM_DOWN
+    // && deployIntakeState != DeployState.FOLDED
+    // && deployIntakeState != DeployState.NOT_DEPLOYED
+    // && deployIntakeState != DeployState.RETRACTING
+    // && deployIntakeState != DeployState.UNFOLD_ARM_UP
+    )
+        {
+        System.out.println("IN angleDeployForScale");
         deployIntakeState = DeployState.POSITION_45;
+        // Hardware.deployTimer.reset();
+        // Hardware.deployTimer.start();
+        }
 
-    return getIntakeAngle() < DEPLOY_45_POSITION_TICKS;
+    return getIntakeAngle() < DEPLOY_45_POSITION_TICKS;// (deployIntakeState ==
+                                                       // DeployState.HOLDING_45);
 }
 
 /**
@@ -694,7 +726,7 @@ public boolean pushOutCubeAuto (double speed)
  */
 public boolean hasCube ()
 {
-    return this.intakeSwitch.isOn();
+    return false;// this.intakeSwitch.isOn();
 }
 
 // TODO make sure this works
@@ -752,6 +784,62 @@ private double getRetractSpeed ()
     return INTAKE_RETRACT_SPEED_LOW;
 }
 
+public boolean timedRetract90 ()
+{
+    Hardware.deployTimer.reset();
+    Hardware.deployTimer.start();
+    Hardware.intakeDeployArm.set(INTAKE_RETRACT_SPEED_HIGH);
+    if (Hardware.deployTimer.get() >= TIME_TO_RETRACT_90)
+        {
+        Hardware.intakeDeployArm.set(0.0);
+        return true;
+        }
+
+    return false;
+}
+
+
+public boolean timedDeploy90 ()
+{
+    Hardware.intakeDeployArm.set(INTAKE_DEPLOY_SPEED);
+    System.out.println("WE GOT HERE");
+    System.out.println("DEPLOY TIMER = " + Hardware.deployTimer.get());
+    if (Hardware.deployTimer.get() >= TIME_TO_DEPLOY_90)
+        {
+        Hardware.intakeDeployArm.set(0.0);
+        return true;
+        }
+
+    return false;
+}
+
+
+public boolean timedRetract45 ()
+{
+    Hardware.intakeDeployArm.set(INTAKE_RETRACT_SPEED_LOW);
+    if (Hardware.deployTimer.get() >= TIME_TO_RETRACT_45)
+        {
+        Hardware.intakeDeployArm.set(0.0);
+        return true;
+        }
+
+    return false;
+}
+
+public static boolean timedDeploy45 ()
+{
+    Hardware.intakeDeployArm.set(INTAKE_DEPLOY_SPEED);
+    deployIntakeState = DeployState.DEPLOY_45;
+    if (Hardware.deployTimer.get() >= TIME_TO_DEPLOY_45)
+        {
+        deployIntakeState = DeployState.DEPLOYED;
+        Hardware.intakeDeployArm.set(0.0);
+        return true;
+        }
+
+    return false;
+}
+
 // ===================== Update Methods ========================
 
 /**
@@ -774,6 +862,26 @@ public void masterUpdate ()
     deployIntakeUpdate();
     // update the intake/ PushOut cube state machines
     // intakeUpdate();
+}
+
+/**
+ * Demo update function that calls the update functions for forklift,
+ * and intake/ push out cube, allowing them to properly
+ * use their state machines
+ * 
+ * @author Ashley Espeland
+ * 
+ */
+public void demoUpdate ()
+{
+    // SmartDashboard.putString("Forklift Update", liftState.toString());
+    // SmartDashboard.putString("Intake State", intakeState + "");
+
+    // update the forklift state machine
+    forkliftUpdate();
+
+    // update the intake/ PushOut cube state machines
+    intakeUpdate();
 }
 
 /**
@@ -902,13 +1010,31 @@ private double currentIntakeAngle = 0;
  */
 public void deployIntakeUpdate ()
 {
+    // System.out.println("deploy state = " + deployIntakeState);
     // state machine for deploying the intake
     switch (deployIntakeState)
         {
+
         // initial state of the intake deploy motor; just stays still
         // until the deployCubeIntake() function is called
         case NOT_DEPLOYED:
             this.intakeDeployMotor.set(0.0);
+            break;
+
+
+        case PRE_DEPLOYING:
+            // code to retract arm before deploying
+            this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED_HIGH);
+            System.out.println("WE ARE ACTUALLY TRYING TO GO BACK");
+            if (CubeManipulator.getIntakeAngle() <= INTAKE_RETRACT_TICKS
+                    - DEGREES_TO_RETRACT_TO_DEPLOY)
+                {
+                // stops the intake deploy motor if we've turned far enough;
+                // FINISHED does this as well, but doing it here helps
+                // keep the motor from overshooting too much
+                this.intakeDeployMotor.set(0.0);
+                deployIntakeState = DeployState.DEPLOYING;
+                }
             break;
 
         // moves the intake until the encoder reads that the arm has
@@ -916,21 +1042,11 @@ public void deployIntakeUpdate ()
         // and
         // moves to the next state
         case DEPLOYING:
-            // code to retract arm before deploying
-            // this.intakeDeployMotor.set(INTAKE_RETRACT_SPEED_HIGH);
-            //
-            // if (this.getIntakeAngle() <= INTAKE_RETRACT_TICKS - 8)
-            // {
-            // // stops the intake deploy motor if we've turned far enough;
-            // // FINISHED does this as well, but doing it here helps
-            // // keep the motor from overshooting too much
-            // this.intakeDeployMotor.set(0.0);
-            // }
-
 
             this.intakeDeployMotor.set(INTAKE_DEPLOY_SPEED);
-
-            if (this.getIntakeAngle() >= INTAKE_DEPLOY_TICKS)
+            // System.out.println("YESSSSSSSSSSSSS");
+            if (CubeManipulator.getIntakeAngle() >= INTAKE_DEPLOY_TICKS
+                    - DEGREES_TO_RETRACT_TO_DEPLOY)
                 {
                 // stops the intake deploy motor if we've turned far enough;
                 // FINISHED does this as well, but doing it here helps
@@ -938,6 +1054,13 @@ public void deployIntakeUpdate ()
                 this.intakeDeployMotor.set(0.0);
                 deployIntakeState = DeployState.DEPLOYED;
                 }
+
+
+            // if (this.timedDeploy90() == true)
+            // {
+            //
+            // deployIntakeState = DeployState.DEPLOYED;
+            // }
 
             break;
 
@@ -951,7 +1074,7 @@ public void deployIntakeUpdate ()
         // state to NOT_DEPLOYED
         case RETRACTING:
             this.intakeDeployMotor.set(getRetractSpeed());
-            if (this.intakeDeployEncoder
+            if (CubeManipulator.intakeDeployEncoder
                     .get() <= INTAKE_RETRACT_TICKS)
                 {
                 // brings back in the intake mechanism until the intake
@@ -960,6 +1083,11 @@ public void deployIntakeUpdate ()
                 this.intakeDeployMotor.set(0.0);
                 deployIntakeState = DeployState.NOT_DEPLOYED;
                 }
+            // if (this.timedRetract90() == true)
+            // {
+            // deployIntakeState = DeployState.NOT_DEPLOYED;
+            // }
+
             break;
 
         case OVERRIDE_DEPLOY:
@@ -974,6 +1102,11 @@ public void deployIntakeUpdate ()
             break;
 
         case POSITION_45:
+            if (Hardware.leftOperator.getRawButton(2) == false)
+                {
+                deployIntakeState = DeployState.DEPLOYING;
+                }
+
             // If the deploy has reached the position, send constant voltage
             if (intakeDeployEncoder.get() < DEPLOY_45_POSITION_TICKS)
                 {
@@ -991,10 +1124,37 @@ public void deployIntakeUpdate ()
                 {
                 intakeDeployMotor.set(getRetractSpeed());
                 }
-
             // Only set it while we are holding the button.
             deployIntakeState = DeployState.DEPLOYING;
+
+            // if (this.timedRetract45() == true)
+            // {
+            // Hardware.intakeDeployArm.set(DEPLOY_HOLDING_VOLTAGE);
+            // deployIntakeState = DeployState.HOLDING_45;
+            // }
+
             break;
+
+
+        case HOLDING_45:
+
+            Hardware.intakeDeployArm.set(DEPLOY_HOLDING_VOLTAGE);
+            System.out.println("HOLDING 45");
+            break;
+
+
+        case DEPLOY_45:
+            System.out.println("DEPLOY 45");
+            if (CubeManipulator.timedDeploy45() == true)
+                {
+                Hardware.intakeDeployArm.set(INTAKE_DEPLOY_SPEED);
+                deployIntakeState = DeployState.DEPLOYED;
+                }
+
+
+            break;
+
+
 
         case FOLD_ARM_DOWN:
 
@@ -1035,7 +1195,7 @@ public void deployIntakeUpdate ()
                         // Reset the state for next time and change the overall
                         // deploy state.
                         this.foldDownDeployState = FoldDownDeployState.RAISE_ARM;
-                        this.deployIntakeState = DeployState.FOLDED;
+                        CubeManipulator.deployIntakeState = DeployState.FOLDED;
                         }
                     // We have NOT finished going down?
                     else
@@ -1098,7 +1258,7 @@ public void intakeUpdate ()
         {
         this.currentEjectSpeed = EJECT_SPEED_DROP;
         }
-    else if (this.deployIntakeState == DeployState.POSITION_45)
+    else if (CubeManipulator.deployIntakeState == DeployState.POSITION_45)
         {
         this.currentEjectSpeed = EJECT_SPEED_45;
         }
@@ -1192,9 +1352,9 @@ MOVING_UP, MOVING_DOWN, NEUTRAL
  * 
  * @author Cole Ramos
  */
-private static enum DeployState
+public static enum DeployState
     {
-NOT_DEPLOYED, DEPLOYING, DEPLOYED, POSITION_45, FOLD_ARM_DOWN, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, STOPPED, FOLDED, UNFOLD_ARM_UP
+NOT_DEPLOYED, PRE_DEPLOYING, DEPLOYING, DEPLOYED, POSITION_45, FOLD_ARM_DOWN, RETRACTING, OVERRIDE_DEPLOY, OVERRIDE_RETRACT, STOPPED, FOLDED, UNFOLD_ARM_UP, HOLDING_45, DEPLOY_45
     }
 
 /**
@@ -1240,7 +1400,7 @@ private boolean isClimbing = false;
 
 private double currentForkliftDownSpeed = 0;
 
-private double currentForkliftMaxHeight = 0;
+public double currentForkliftMaxHeight = 0; // @ANE change to private
 
 private double forkliftTargetHeight = 0.0;
 
@@ -1253,7 +1413,7 @@ private double currentMinLiftPosition = 0;
 // private boolean deployedArm = false;
 
 // variable that controls the deploy intake state machine
-private DeployState deployIntakeState = DeployState.NOT_DEPLOYED;
+public static DeployState deployIntakeState = DeployState.NOT_DEPLOYED;
 
 private FoldDownDeployState foldDownDeployState = FoldDownDeployState.RAISE_ARM;
 
@@ -1332,7 +1492,7 @@ public final double INTAKE_STOP_WITH_CUBE = .06;
 
 // how many degrees the intake deploy motor needs to turn for the intake
 // to be fully deployed
-private final double INTAKE_DEPLOY_TICKS = 245;
+private final static double INTAKE_DEPLOY_TICKS = 240;
 
 // the encoder value that counts as the intake being retracted
 private final double INTAKE_RETRACT_TICKS = 0.0;
@@ -1342,12 +1502,22 @@ private final double INTAKE_RETRACT_TICKS = 0.0;
 private final double INTAKE_FOLDED_TICKS = 365;// 300;
 
 // Servo is IN, deploy will be able to fold down.
-public final double DEPLOY_SERVO_IN = .4;
+public final static double DEPLOY_SERVO_IN = .4;
 
 // Servo is OUT, deploy will be supported by servo.
-public final double DEPLOY_SERVO_OUT = .9;
+public final static double DEPLOY_SERVO_OUT = .9;
 
-private final double INTAKE_DEPLOY_SPEED = .3;
+// @ANE
+
+public final double TIME_TO_DEPLOY_90 = .4;
+
+public final double TIME_TO_RETRACT_90 = .4;
+
+public final double TIME_TO_RETRACT_45 = .2;
+
+public final static double TIME_TO_DEPLOY_45 = .2;
+
+private final static double INTAKE_DEPLOY_SPEED = .3;
 
 // speed we retract the intake mechanism at
 private final double INTAKE_RETRACT_SPEED_LOW = -.5;
@@ -1358,7 +1528,12 @@ private final double DEPLOY_HOLDING_VOLTAGE = -.15;
 
 private final double EJECT_TIME = 2.0;
 
-private final double DEPLOY_45_POSITION_TICKS = 130;// 160;
+// number of degrees to retract before deploying, calculated from ticks
+private final double DEGREES_TO_RETRACT_TO_DEPLOY = 0.0
+        * (INTAKE_DEPLOY_TICKS / 90);
+
+private final static double DEPLOY_45_POSITION_TICKS = .5
+        * INTAKE_DEPLOY_TICKS;// 160;
 
 private final int DEPLOY_DEADBAND = 15;
 

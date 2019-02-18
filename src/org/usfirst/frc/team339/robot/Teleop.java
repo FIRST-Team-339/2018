@@ -33,7 +33,11 @@ package org.usfirst.frc.team339.robot;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.usfirst.frc.team339.Hardware.Hardware;
+import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
 import org.usfirst.frc.team339.Utils.CubeManipulator;
+import org.usfirst.frc.team339.Utils.drive.Drive.BrakeType;
+import org.usfirst.frc.team339.Utils.drive.DrivePID.PIDDriveFunction;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -62,7 +66,7 @@ public static void init ()
     // temporary timer
 
     Hardware.telemetry.printToShuffleboard();
-    Hardware.telemetry.setTimeBetweenPrints(15000);
+    Hardware.telemetry.setTimeBetweenPrints(1000);
 
     // --------------------------------------
     // reset the MotorSafetyHelpers for each
@@ -99,7 +103,7 @@ public static void init ()
     SmartDashboard.putNumber("Turn Degrees", 0);
     // SmartDashboard.putNumber("Drive Distance", 0);
 
-    if (Hardware.demoModeSwitch.isOn() == true)
+    if (Hardware.demoModeSwitch.isOn() == false)
         {
         Hardware.transmission.setGearPercentage(0,
                 Hardware.delayPot.get(0, .7));

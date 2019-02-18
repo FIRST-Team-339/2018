@@ -566,7 +566,7 @@ public boolean driveInches (int distance, double speed)
         this.resetEncoders();
         this.driveInchesInit = false;
         }
-
+    
     // Test if ANY encoder is past the distance. stop if there is
     if (this.isAnyEncoderLargerThan(distance) == true)
         {
@@ -799,6 +799,33 @@ public double getEncoderDistanceAverage (MotorPosition encoderGroup)
         }
 }
 
+public double getEncoderVelocityAverage(MotorPosition encoderGroup)
+{
+	double added = 0;
+    switch (encoderGroup)
+        {
+        case LEFT:
+            // Average them, if necessary
+            for (int i = 0; i < encoders.length; i++)
+                if (i % 2 == 0)
+                    added += encoders[i].getRate();
+            return added / (encoders.length / 2);
+        case RIGHT:
+            // Average them, if necessary
+            for (int i = 0; i < encoders.length; i++)
+                if (i % 2 == 1)
+                    added += encoders[i].getRate();
+            return added / (encoders.length / 2);
+        default:
+        case ALL:
+            for (int i = 0; i < encoders.length; i++)
+                added += Math.abs(encoders[i].getRate());
+            // System.out.println(added / encoders.length);
+            return added / encoders.length;
+        // Absolute value, in case turning makes it near 0
+        }
+}
+
 /**
  * Gets the rate of the encoder selected. If a group of encoders is selected,
  * then get the average of all of them put together.
@@ -927,7 +954,7 @@ public TransmissionBase getTransmission ()
 public boolean isAnyEncoderLargerThan (double length)
 {
     for (KilroyEncoder enc : encoders)
-        if (Math.abs(enc.getDistance()) > length)
+        if (Math.abs(enc.getDistance()) > Math.abs(length))
             return true;
     return false;
 }
@@ -1681,7 +1708,7 @@ private double strafeStraightScalar = .08;
 
 private int totalBrakeIterations = 2;
 
-private double turnDegrees2ndStagePower = .19;
+private double turnDegrees2ndStagePower = .22; // @ANE//.19;
 
 private double turnDegreesTriggerStage = 40;// Degrees
 

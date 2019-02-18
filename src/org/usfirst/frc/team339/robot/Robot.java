@@ -61,6 +61,7 @@ package org.usfirst.frc.team339.robot;
 
 import org.usfirst.frc.team339.Hardware.Hardware;
 import org.usfirst.frc.team339.HardwareInterfaces.transmission.TransmissionBase.MotorPosition;
+import org.usfirst.frc.team339.Utils.CubeManipulator;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -224,6 +225,8 @@ public void robotInit ()
     // REMOVE ME!!!
     // Hardware.autoDrive.setGyro(Hardware.gyroAnalog);
 
+    deploy45run = false;
+
     // --------------------------------------
     // Compressor Initialization
     // --------------------------------------
@@ -266,10 +269,14 @@ public void robotInit ()
         {
         Hardware.rightFrontCANMotor.setInverted(true);
         Hardware.rightRearCANMotor.setInverted(true);
-
-        Hardware.drive.setEncoderDistancePerPulse(
-                KILROY_XIX_ENCODER_DPP, MotorPosition.ALL);
-
+//
+//        Hardware.drive.setEncoderDistancePerPulse(
+//                KILROY_XIX_ENCODER_DPP, MotorPosition.ALL);
+        Hardware.leftFrontDriveEncoder.setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.rightFrontDriveEncoder.setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.leftRearDriveEncoder.setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        Hardware.rightRearDriveEncoder.setDistancePerPulse(KILROY_XIX_ENCODER_DPP);
+        
         Hardware.liftingEncoder
                 .setDistancePerPulse(KILROY_XIX_LIFT_ENCODER_DPP);
         Hardware.intakeDeployEncoder
@@ -358,15 +365,20 @@ public void robotInit ()
     // ---------------------------------
     Hardware.climbingMechanismServo.set(CLIMB_SERVO_INIT_POSITION);
 
+    Hardware.intakeArmPositionServo
+            .set(CubeManipulator.DEPLOY_SERVO_OUT);
+
     // ---------------------------------
     // sets the ring light to off
     // ---------------------------------
     // Hardware.ringLightRelay.set(Value.kOff);
 
-    if (Hardware.demoModeSwitch.isOn())
+    if (Hardware.demoModeSwitch.isOn() == true)
         {
         Hardware.cubeManipulator
                 .setMaxLiftHeight(demoForkliftMaxHeight);
+        Hardware.transmission.setGearPercentage(0,
+                Hardware.delayPot.get(0, .6));
         }
 
     Hardware.gyro.calibrate();
@@ -505,6 +517,11 @@ private static final boolean CANEnabled = true;
 private static final int demoForkliftMaxHeight = 49;
 
 public static final double demoForkliftSpeed = .5;
+
+
+public static boolean deploy45run = false;
+
+public static boolean deploy45HasBeenPushed = false;
 
 private static final double KILROY_XV_ENCODER_DPP = .0174;
 
