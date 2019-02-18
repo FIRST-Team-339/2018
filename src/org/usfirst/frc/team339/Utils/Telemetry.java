@@ -1,5 +1,8 @@
 package org.usfirst.frc.team339.Utils;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.usfirst.frc.team339.Hardware.Hardware;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -14,6 +17,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Telemetry
 {
+// the first part of the path for logs
+private final String LOG_BASIC_PATH = "/home/lvuser";
+
+// the file path where we save the logs we take
+private final String SAVE_LOG_PATH = LOG_BASIC_PATH + "/logs";
+
+private final static String timeStamp = new SimpleDateFormat("MMddHHmm")
+        .format(new Date());
+
+private final int numLogFolders = 10;
+
+
 /**
  * constructor for
  * 
@@ -613,6 +628,58 @@ public void printToShuffleboard ()
 
         SmartDashboard.updateValues();
         }
+}
+
+
+public void saveToRoboRIO ()
+{
+    String fileName = "";
+    try
+        {
+        Runtime.getRuntime()
+                .exec("mkdir -p " + SAVE_LOG_PATH);
+        /*
+         * if TS is blank
+         * if >9 delete all but first 9
+         * Create new file under logs directory named TS & write TS as a string
+         * & write into TS}
+         * else timestamp is filled, write into file TS}
+         */
+        // if TS fileName is blank
+        if (fileName == "")
+            {
+            // remove all but top 9 files
+            fileName = "log_" + timeStamp;
+            // create new file
+            // under
+            // directory
+            // SAVE_LOG_PATH+timeStamp
+
+
+            }
+        // system command that creates the path the image will be saved in
+        /*
+         * Run.Runtime()
+         * .exec("ls -1rtd *log | head -n$(($(ls -1d *log | wc -l)-"
+         * + numLogFolders + ")) | xargs rm");
+         */
+        System.out.println("delete delete delete delete");
+        Runtime.getRuntime()
+                .exec("sleep 300; ls -trd *.log | head -n$(expr $(ls -d *.log | wc -l) - 10) | xargs"
+                        + "rm");
+
+
+        /*
+         * Runtime.getRuntime()
+         * .exec("printf \"" + input + "\" >> " + fileName
+         * + ".log");
+         */
+        } // end try
+    catch (IOException e)
+        {
+        e.printStackTrace();
+        } // catch
+
 }
 
 // in milliseconds

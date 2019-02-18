@@ -78,8 +78,8 @@ public static void init ()
 
     Hardware.leftFrontDriveEncoder.reset();
     Hardware.rightFrontDriveEncoder.reset();
-    Hardware.leftRearDriveEncoder.reset();
-    Hardware.rightRearDriveEncoder.reset();
+    // Hardware.leftRearDriveEncoder.reset();
+    // Hardware.rightRearDriveEncoder.reset();
     Hardware.liftingEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
 

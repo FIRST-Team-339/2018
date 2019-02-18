@@ -177,7 +177,7 @@ private final int M1013_VERT_FOV = 51;
 
 // the first part of the path for images
 private final String IMAGE_BASIC_PATH = "/home/lvuser";
-        
+
 // the file path where we save the images we take
 private final String SAVE_IMAGE_PATH = IMAGE_BASIC_PATH + "/images";
 
@@ -452,25 +452,23 @@ public void saveImage (ImageType type)
 
     // Create the path the images will be saved in. If the path already
     // exists, do nothing.
-    
+
     try
         {
         // system command that creates the path the image will be saved in
-        
         Runtime.getRuntime()
                 .exec("mkdir -p " + SAVE_IMAGE_PATH + timeStamp);
-//      "echo $(ls -1rtd images*| head -n$(($(ls -1d images*| wc -l)-" + numImageFolders+"))) \\> temp.txt"
         Runtime.getRuntime()
                 .exec("ls -ld " + IMAGE_BASIC_PATH + "; sleep 30");
-       
+
 
         } // end try
     catch (IOException e)
         {
         e.printStackTrace();
         } // catch
-       
-    
+
+
     // grab the image
     Mat tempImage = new Mat();
 
@@ -597,7 +595,7 @@ public void takeLitPicture (boolean button)
         if (this.pictureTimer.get() <= TAKE_PICTURE_DELAY
                 / 2.0)
             {
-            //TODO remove once tested
+            // TODO remove once tested
             System.out.println("Lets blind some wirers");
             this.setRelayValue(true);
             }
@@ -617,6 +615,21 @@ public void takeLitPicture (boolean button)
             this.pictureTimer.reset();
             } // end if
         } // end if
+    int fileCount = 18; // number of allowable files
+    System.out.println(
+            "find /home/lvuser -name \"images*\" -maxdepth 1 | head -n -12 | "
+                    + "xargs -I {} rm -rf {}");
+    try
+        {
+        Runtime.getRuntime()
+                .exec("find /home/lvuser -name \"images\\*\" -maxdepth 1 | head -n -12 | "
+                        + "xargs -I {} rm -rf {}");
+        } // end try
+    catch (IOException e)
+        {
+        e.printStackTrace();
+        } // catch
+
 } // end takeLitPicture()
 
 private boolean takePictureByButton = false;

@@ -234,12 +234,12 @@ public void robotInit ()
     // -------------------------------------
     Hardware.rightFrontDriveEncoder.setReverseDirection(false);
     Hardware.leftFrontDriveEncoder.setReverseDirection(false);
-    Hardware.rightRearDriveEncoder.setReverseDirection(false);
-    Hardware.leftRearDriveEncoder.setReverseDirection(false);
+    // Hardware.rightRearDriveEncoder.setReverseDirection(false);
+    // Hardware.leftRearDriveEncoder.setReverseDirection(false);
     Hardware.rightFrontDriveEncoder.reset();
     Hardware.leftFrontDriveEncoder.reset();
-    Hardware.rightRearDriveEncoder.reset();
-    Hardware.leftRearDriveEncoder.reset();
+    // Hardware.rightRearDriveEncoder.reset();
+    // Hardware.leftRearDriveEncoder.reset();
     Hardware.intakeDeployEncoder.reset();
     Hardware.liftingEncoder.reset();
     Hardware.liftingEncoder.setReverseDirection(true);

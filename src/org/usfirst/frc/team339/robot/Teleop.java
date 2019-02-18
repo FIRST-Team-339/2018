@@ -79,8 +79,8 @@ public static void init ()
     // ---------------------------------
     Hardware.rightFrontDriveEncoder.reset();
     Hardware.leftFrontDriveEncoder.reset();
-    Hardware.rightRearDriveEncoder.reset();
-    Hardware.leftRearDriveEncoder.reset();
+    // Hardware.rightRearDriveEncoder.reset();
+    // Hardware.leftRearDriveEncoder.reset();
 
     // ---------------------------------
     // setup motors
@@ -130,6 +130,7 @@ public static void periodic ()
     // ErrorMessage Msg = new ErrorMessage();
     // Msg.printError("StringError", true);
     Hardware.telemetry.printToShuffleboard();
+    Hardware.telemetry.saveToRoboRIO();
     // Hardware.tempRelay.set(true);
 
     // if (Hardware.redLight.isOn() && hasSeenTape == false)
@@ -170,45 +171,55 @@ public static void periodic ()
 
 
 
-    if (Hardware.demoModeSwitch.isOn() == false)
+    // if (Hardware.demoModeSwitch.isOn() == true)
+    // {
+    // // We are in COMPETITION MODE!!!
+    // Hardware.cubeManipulator.intakeCube(
+    // Hardware.rightOperator.getTrigger(),
+    // Hardware.rightOperator.getRawButton(2));
+    // Hardware.cubeManipulator.ejectCube(
+    // Hardware.leftOperator.getTrigger(),
+    // (Hardware.leftOperator.getRawButton(3)));
+    // }
+    // else
+    // {
+    // We are in DEMO MODE!!!
+    System.out.println(Hardware.liftingEncoder.get());
+    if (Hardware.rightOperator.getTrigger() == true)
         {
-        // We are in COMPETITION MODE!!!
-        Hardware.cubeManipulator.intakeCube(
-                Hardware.rightOperator.getTrigger(),
-                Hardware.rightOperator.getRawButton(2));
-        Hardware.cubeManipulator.ejectCube(
-                Hardware.leftOperator.getTrigger(),
-                (Hardware.leftOperator.getRawButton(3)));
+        Hardware.cubeIntakeMotor.set(.35);
+        }
+    else if (Hardware.rightOperator.getRawButton(2) == true)
+        {
+        Hardware.cubeIntakeMotor.set(-.3);
         }
     else
         {
-        // We are in DEMO MODE!!!
-        Hardware.cubeManipulator
-                .intakeCube(Hardware.rightOperator.getTrigger(), false);
-        Hardware.cubeManipulator.ejectCube(false,
-                Hardware.rightOperator.getRawButton(2));
+        Hardware.cubeIntakeMotor.set(0);
         }
+
 
     // -----------------------------------------
     // Deploy Intake controls
     // -----------------------------------------
     // Button 11 to deploy, 10 to retract, and 9 for override for both.
-    if (Hardware.demoModeSwitch.isOn() == false)
-        {
-        // We are in COMPETITION MODE!!!
-        if (Hardware.leftOperator.getRawButton(11))
-            Hardware.cubeManipulator.deployCubeIntake(
-                    Hardware.leftOperator.getRawButton(9));
-        else if (Hardware.leftOperator.getRawButton(10))
-            Hardware.cubeManipulator.retractCubeIntake(
-                    Hardware.leftOperator.getRawButton(9));
-        else if (Hardware.rightOperator.getRawButton(11))
-            Hardware.cubeManipulator.setDeployForClimb();
-
-        if (Hardware.leftOperator.getRawButton(2))
-            Hardware.cubeManipulator.angleDeployForScale();
-
-        }
+    // if (Hardware.demoModeSwitch.isOn() == false)
+    //
+    // {
+    // // We are in COMPETITION MODE!!!
+    // if (Hardware.leftOperator.getRawButton(11))
+    // Hardware.cubeManipulator.deployCubeIntake(
+    // Hardware.leftOperator.getRawButton(9));
+    // else if (Hardware.leftOperator.getRawButton(10))
+    // Hardware.cubeManipulator.retractCubeIntake(
+    // Hardware.leftOperator.getRawButton(9));
+    // else if (Hardware.rightOperator.getRawButton(11))
+    // Hardware.cubeManipulator.setDeployForClimb();
+    //
+    // if (Hardware.leftOperator.getRawButton(2))
+    // Hardware.cubeManipulator.angleDeployForScale();
+    //
+    // }
 
 
     // System.out.println("Lifting Motor " +
@@ -464,8 +475,7 @@ public static void periodic ()
     // && isBeckyTest == false
     // && isTestingEncoderTurn == false)
     if (isTestingDrive == false)
-        Hardware.drive.drive(Hardware.leftDriver,
-                Hardware.rightDriver);
+        Hardware.drive.drive(Hardware.leftDriver, Hardware.rightDriver);
     // update
 
     // ------------------------------------
@@ -738,23 +748,23 @@ public static void printStatements ()
 
         // System.out.println("Left Rear Encoder Inches = "
         // + Hardware.leftRearDriveEncoder.getDistance());
-        SmartDashboard.putNumber("Left Rear Encoder Inches",
-                Hardware.leftRearDriveEncoder.getDistance());
+        // SmartDashboard.putNumber("Left Rear Encoder Inches",
+        // Hardware.leftRearDriveEncoder.getDistance());
 
         // System.out.println("Left Rear Encoder Ticks "
         // + Hardware.leftRearDriveEncoder.get());
-        SmartDashboard.putNumber("Left Rear Encoder Ticks",
-                Hardware.leftRearDriveEncoder.get());
+        // SmartDashboard.putNumber("Left Rear Encoder Ticks",
+        // Hardware.leftRearDriveEncoder.get());
 
         // System.out.println("Right Rear Inches = "
         // + Hardware.rightRearDriveEncoder.getDistance());
-        SmartDashboard.putNumber("Right Rear Encoder Inches",
-                Hardware.rightRearDriveEncoder.getDistance());
+        // SmartDashboard.putNumber("Right Rear Encoder Inches",
+        // Hardware.rightRearDriveEncoder.getDistance());
 
         // System.out.println("Right Rear Ticks "
         // + Hardware.rightRearDriveEncoder.get());
-        SmartDashboard.putNumber("Right Rear Encoder Ticks",
-                Hardware.rightRearDriveEncoder.get());
+        // SmartDashboard.putNumber("Right Rear Encoder Ticks",
+        // Hardware.rightRearDriveEncoder.get());
 
         // System.out.println("Lift Encoder Inches = "
         // + Hardware.liftingEncoder.getDistance());

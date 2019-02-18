@@ -155,16 +155,16 @@ public static SingleThrowSwitch leftAutoSwitch = new SingleThrowSwitch(
         20);
 
 public static SingleThrowSwitch rightAutoSwitch = new SingleThrowSwitch(
-        25);
+        8);
 
 public static DoubleThrowSwitch disableAutonomousSwitch = new DoubleThrowSwitch(
         leftAutoSwitch, rightAutoSwitch);
 
 public static SingleThrowSwitch demoModeSwitch = new SingleThrowSwitch(
-        8);
+        25);
 
 public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(
-        1, 2, 3, 4, 5, 6);
+        13, 14, 15, 16, 17, 18);
 
 // ------------------------------------
 // Gear Tooth Sensors
@@ -173,19 +173,13 @@ public static SixPositionSwitch autoSixPosSwitch = new SixPositionSwitch(
 // ------------------------------------
 // Encoders
 // ------------------------------------
-public static KilroyEncoder leftRearDriveEncoder = new KilroyEncoder(10,
-        11);
-
-public static KilroyEncoder rightRearDriveEncoder = new KilroyEncoder(
-        12, 13);
-
 public static KilroyEncoder leftFrontDriveEncoder = new KilroyEncoder(
-        14, 15);
+        4, 5);
 
 public static KilroyEncoder rightFrontDriveEncoder = new KilroyEncoder(
-        16, 17);
+        2, 3);
 
-public static KilroyEncoder liftingEncoder = new KilroyEncoder(18, 19);
+public static KilroyEncoder liftingEncoder = new KilroyEncoder(10, 11);
 
 public static KilroyEncoder intakeDeployEncoder = new KilroyEncoder(23,
         24);

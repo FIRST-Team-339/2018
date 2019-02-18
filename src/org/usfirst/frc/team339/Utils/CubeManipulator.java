@@ -662,7 +662,7 @@ public boolean pushOutCubeAuto (double speed)
             // EJECT_TIME seconds has not elapsed? run motors.
             if (this.switchTimer.get() < EJECT_TIME)
                 {
-                this.intakeMotor.set(-Math.abs(speed));
+                this.intakeMotor.set((speed));
                 }
             // Time has elapsed? stop timer and move to next state.
             else
@@ -773,7 +773,7 @@ public void masterUpdate ()
     // update the deployIntake state machine
     deployIntakeUpdate();
     // update the intake/ PushOut cube state machines
-    intakeUpdate();
+    // intakeUpdate();
 }
 
 /**
@@ -1316,7 +1316,7 @@ public final static double SCALE_HEIGHT = 69;// Changed 3/22/18 from 76
 
 // ================INTAKE===================
 
-private final double INTAKE_SPEED = .35;
+private final double INTAKE_SPEED = -.35;
 
 private final double EJECT_SPEED_45 = -1;
 
